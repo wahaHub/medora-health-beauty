@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medora Health : Beauty | 艺美整形中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['"Cormorant Garamond"', 'serif'],
+              sans: ['"Lato"', 'sans-serif'],
+            },
+            colors: {
+              gold: {
+                100: '#f9f5eb',
+                200: '#efe6d0',
+                300: '#e2cfb0',
+                400: '#d1b084',
+                500: '#c29662',
+                600: '#a6794b',
+              },
+              // Replaced Navy with Deep Forest Green tones for a more organic, premium look
+              navy: {
+                800: '#1e3a34', // Lighter forest
+                900: '#0f201b', // Very deep, almost black green
+              },
+              // Added Sage palette for the "Light Green" requirement
+              sage: {
+                50: '#f4f7f5', // Mist
+                100: '#e3ebe7',
+                200: '#c5d6ce',
+                300: '#9eb8ad',
+                400: '#7d9a8d', // Medium Sage
+                500: '#5e7d71', // Deep Sage
+                800: '#2d4039',
+                900: '#25332f',
+              }
+            },
+            backgroundImage: {
+              'forest-gradient': 'linear-gradient(135deg, #0f201b 0%, #1c3b33 100%)',
+              'sage-gradient': 'linear-gradient(to right, #f4f7f5, #eef5f2)',
+              'luxury-green': 'linear-gradient(to right, #11241f, #203e35)',
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      /* Custom scrollbar for chat */
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+      .animate-fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-sage-50 text-stone-800 font-sans antialiased">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

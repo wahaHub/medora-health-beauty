@@ -1,0 +1,654 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { supabase } from '../services/supabaseClient';
+import type { CompleteProcedureData } from '../services/supabaseClient';
+
+interface ProcedureDetailProps {
+  procedureName?: string;
+  onBack?: () => void;
+  onCaseClick?: (id: string) => void;
+}
+
+const ProcedureDetail: React.FC<ProcedureDetailProps> = ({ 
+  onBack,
+  onCaseClick
+}) => {
+  const { procedureName } = useParams<{ procedureName: string }>();
+  const navigate = useNavigate();
+  const [procedure, setProcedure] = useState<CompleteProcedureData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Create slug from procedure name (must match import script logic)
+  const createSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[®™©]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+
+  useEffect(() => {
+    async function fetchProcedure() {
+      if (!procedureName) return;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const decodedName = decodeURIComponent(procedureName);
+        const slug = createSlug(decodedName);
+        
+        console.log('Searching for procedure:', decodedName);
+        console.log('Generated slug:', slug);
+
+        // Try to fetch by slug first
+        let { data, error: fetchError } = await supabase
+          .from('procedures')
+          .select(`
+            *,
+            procedure_translations!inner(*),
+            procedure_recovery!inner(*),
+            procedure_benefits(*),
+            procedure_candidacy(*),
+            procedure_techniques(*),
+            procedure_recovery_timeline(*),
+            procedure_recovery_tips(*),
+            complementary_procedures(*),
+            procedure_risks(*)
+          `)
+          .eq('slug', slug)
+          .eq('procedure_translations.language_code', 'en')
+          .eq('procedure_recovery.language_code', 'en')
+          .eq('procedure_benefits.language_code', 'en')
+          .eq('procedure_candidacy.language_code', 'en')
+          .eq('procedure_techniques.language_code', 'en')
+          .eq('procedure_recovery_timeline.language_code', 'en')
+          .eq('procedure_recovery_tips.language_code', 'en')
+          .eq('complementary_procedures.language_code', 'en')
+          .eq('procedure_risks.language_code', 'en')
+          .maybeSingle();
+
+        // If not found by slug, try by procedure name with fuzzy matching
+        if (!data && !fetchError) {
+          console.log('Not found by slug, trying by procedure name (fuzzy match)...');
+          
+          // First, find matching procedure(s) by name
+          const { data: matchingProcs, error: searchError } = await supabase
+            .from('procedures')
+            .select('id, procedure_name, slug')
+            .ilike('procedure_name', `${decodedName}%`); // Match names starting with the search term
+          
+          if (searchError) {
+            console.error('Search error:', searchError);
+          }
+          
+          if (matchingProcs && matchingProcs.length > 0) {
+            // Use the first matching procedure
+            const matchedProc = matchingProcs[0];
+            console.log('Found matching procedure:', matchedProc.procedure_name);
+            
+            // Now fetch the full procedure data
+            const result = await supabase
+              .from('procedures')
+              .select(`
+                *,
+                procedure_translations!inner(*),
+                procedure_recovery!inner(*),
+                procedure_benefits(*),
+                procedure_candidacy(*),
+                procedure_techniques(*),
+                procedure_recovery_timeline(*),
+                procedure_recovery_tips(*),
+                complementary_procedures(*),
+                procedure_risks(*)
+              `)
+              .eq('id', matchedProc.id)
+              .eq('procedure_translations.language_code', 'en')
+              .eq('procedure_recovery.language_code', 'en')
+              .eq('procedure_benefits.language_code', 'en')
+              .eq('procedure_candidacy.language_code', 'en')
+              .eq('procedure_techniques.language_code', 'en')
+              .eq('procedure_recovery_timeline.language_code', 'en')
+              .eq('procedure_recovery_tips.language_code', 'en')
+              .eq('complementary_procedures.language_code', 'en')
+              .eq('procedure_risks.language_code', 'en')
+              .maybeSingle();
+            
+            data = result.data;
+            fetchError = result.error;
+          }
+        }
+
+        if (fetchError) {
+          console.error('Supabase error:', fetchError);
+          throw fetchError;
+        }
+        
+        if (!data) {
+          throw new Error('Procedure not found');
+        }
+
+        // Sort arrays by sort_order
+        if (data) {
+          data.procedure_benefits?.sort((a, b) => a.sort_order - b.sort_order);
+          data.procedure_candidacy?.sort((a, b) => a.sort_order - b.sort_order);
+          data.procedure_techniques?.sort((a, b) => a.sort_order - b.sort_order);
+          data.procedure_recovery_timeline?.sort((a, b) => a.sort_order - b.sort_order);
+          data.procedure_recovery_tips?.sort((a, b) => a.sort_order - b.sort_order);
+          data.complementary_procedures?.sort((a, b) => a.sort_order - b.sort_order);
+          data.procedure_risks?.sort((a, b) => a.sort_order - b.sort_order);
+        }
+
+        setProcedure(data as CompleteProcedureData);
+      } catch (err) {
+        console.error('Error fetching procedure:', err);
+        setError('Failed to load procedure details');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProcedure();
+  }, [procedureName]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gold-600 mx-auto mb-4"></div>
+          <p className="text-stone-600 text-lg">Loading procedure details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !procedure) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center max-w-md">
+          <h2 className="font-serif text-3xl text-navy-900 mb-4">Procedure Not Found</h2>
+          <p className="text-stone-600 mb-8">{error || 'The requested procedure could not be found.'}</p>
+          <button 
+            onClick={() => navigate('/')}
+            className="bg-navy-900 text-white px-8 py-3 uppercase tracking-widest text-sm hover:bg-gold-600 transition-colors"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const translation = procedure.procedure_translations[0];
+  const recovery = procedure.procedure_recovery[0];
+
+  return (
+    <div className="bg-white animate-fade-in-up">
+      {/* 1. HERO SECTION */}
+      <section className="relative h-[60vh] min-h-[600px] bg-[#1a1a1a] overflow-hidden flex items-center pt-24 md:pt-32">
+        <div className="container mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center h-full">
+          <div className="md:w-1/2 text-white z-20">
+            <div className="mb-8 opacity-90">
+               <div className="font-serif text-3xl italic tracking-wide">Medora Health</div>
+               <div className="text-xs uppercase tracking-[0.2em] font-light border-t border-white/30 pt-1 mt-1 inline-block">
+                 Center for Plastic Surgery
+               </div>
+            </div>
+
+            <div className="text-[10px] md:text-xs uppercase tracking-widest text-gold-400 mb-4 flex gap-2">
+               <span className="cursor-pointer hover:text-white" onClick={() => navigate('/')}>HOME</span>
+               <span>|</span>
+               <span className="uppercase">{procedure.category}</span>
+               <span>|</span>
+               <span className="text-white">{procedure.procedure_name}</span>
+            </div>
+
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl mb-6 text-white leading-none">
+              {procedure.procedure_name.toUpperCase()}
+            </h1>
+
+            <div className="max-w-md text-gray-300 text-sm md:text-base leading-relaxed hidden md:block">
+              {translation?.overview?.substring(0, 150)}...
+            </div>
+          </div>
+
+          <div className="absolute inset-0 md:relative md:w-1/2 h-full">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a] via-[#1a1a1a]/50 to-transparent md:via-[#1a1a1a] z-10 md:hidden"></div>
+            <img 
+              src="https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=2574&auto=format&fit=crop" 
+              alt="Procedure Model" 
+              className="absolute inset-0 w-full h-full object-cover object-center"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* 2. OVERVIEW & PROCEDURE SNAPSHOT */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col lg:flex-row gap-16 items-start">
+             <div className="lg:w-1/2">
+                <h2 className="font-serif text-3xl text-navy-900 mb-6">Overview</h2>
+                <div className="text-stone-600 text-lg leading-relaxed font-light space-y-4">
+                  {translation?.overview?.split('\n\n').map((para, idx) => (
+                    <p key={idx}>{para}</p>
+                  ))}
+                </div>
+             </div>
+             <div className="lg:w-1/2 w-full">
+                <h3 className="uppercase tracking-[0.15em] text-navy-900 text-xl font-serif mb-6 border-b border-stone-300 pb-2">
+                  Procedure Snapshot
+                </h3>
+                <div className="space-y-4">
+                  {translation?.anesthesia && (
+                    <div className="flex justify-between items-start border-b border-stone-200 pb-4 text-stone-600">
+                       <span className="font-bold text-navy-900">Anesthesia:</span>
+                       <span className="font-light text-right max-w-md">{translation.anesthesia}</span>
+                    </div>
+                  )}
+                  {recovery?.recovery_time && (
+                    <div className="flex justify-between items-start border-b border-stone-200 pb-4 text-stone-600">
+                       <span className="font-bold text-navy-900">Recovery:</span>
+                       <span className="font-light text-right max-w-md">{recovery.recovery_time}</span>
+                    </div>
+                  )}
+                  {recovery?.ready_to_go_out && (
+                    <div className="flex justify-between items-start border-b border-stone-200 pb-4 text-stone-600">
+                       <span className="font-bold text-navy-900">Ready to go out:</span>
+                       <span className="font-light text-right max-w-md">{recovery.ready_to_go_out}</span>
+                    </div>
+                  )}
+                  {recovery?.resume_exercise && (
+                    <div className="flex justify-between items-start border-b border-stone-200 pb-4 text-stone-600">
+                       <span className="font-bold text-navy-900">Resume exercise:</span>
+                       <span className="font-light text-right max-w-md">{recovery.resume_exercise}</span>
+                    </div>
+                  )}
+                  {recovery?.final_results && (
+                    <div className="flex justify-between items-start border-b border-stone-200 pb-4 text-stone-600">
+                       <span className="font-bold text-navy-900">Final results:</span>
+                       <span className="font-light text-right max-w-md">{recovery.final_results}</span>
+                    </div>
+                  )}
+                </div>
+             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. BENEFITS SECTION */}
+      {procedure.procedure_benefits && procedure.procedure_benefits.length > 0 && (
+        <section className="py-20 md:py-28 bg-stone-50">
+          <div className="container mx-auto px-6">
+            <div className="flex flex-col lg:flex-row items-center gap-16">
+              <div className="lg:w-1/2">
+                <h2 className="font-serif text-4xl text-navy-900 mb-8">Benefits of {procedure.procedure_name}</h2>
+                <ul className="space-y-4 text-stone-600 text-lg leading-relaxed font-light">
+                  {procedure.procedure_benefits.map((benefit, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gold-500 mt-2.5 shrink-0"></span>
+                      <span>{benefit.benefit_text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="lg:w-1/2">
+                 <img 
+                   src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop" 
+                   alt="Benefits" 
+                   className="w-full h-auto shadow-xl"
+                 />
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 4. CANDIDACY SECTION */}
+      {procedure.procedure_candidacy && procedure.procedure_candidacy.length > 0 && (
+        <section className="py-20 md:py-28 bg-white">
+          <div className="container mx-auto px-6">
+            <div className="flex flex-col lg:flex-row-reverse items-center gap-16">
+              <div className="lg:w-1/2">
+                <h2 className="font-serif text-4xl text-navy-900 mb-8">Is {procedure.procedure_name} Right for You?</h2>
+                <p className="text-stone-600 text-lg leading-relaxed font-light mb-6">
+                  You may be a good candidate for {procedure.procedure_name.toLowerCase()} if:
+                </p>
+                <ul className="space-y-4 text-stone-600 text-lg font-light">
+                   {procedure.procedure_candidacy.map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-gold-500 mt-2.5 shrink-0"></span>
+                        <span>{item.candidacy_text}</span>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+              <div className="lg:w-1/2">
+                 <img 
+                   src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop" 
+                   alt="Candidacy" 
+                   className="w-full h-auto shadow-xl"
+                 />
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 5. CASE STUDY (Featured Before & After) */}
+      <section className="py-24 bg-sage-50/50">
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex justify-between items-end mb-12 border-b border-stone-300 pb-4">
+              <div>
+                <h4 className="text-gold-600 uppercase tracking-widest text-sm font-bold mb-2">FEATURED</h4>
+                <h2 className="font-serif text-3xl md:text-4xl text-navy-900 uppercase">
+                  {procedure.procedure_name} Before & After Photos
+                </h2>
+              </div>
+              <div className="text-navy-900 font-bold text-lg hidden md:block">
+                Case: 7 of 9
+              </div>
+            </div>
+
+            <div className="flex flex-col lg:flex-row gap-12 items-start relative">
+               <button className="hidden lg:block absolute -left-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors">
+                  <ChevronLeft size={48} strokeWidth={1.5} />
+               </button>
+               <button className="hidden lg:block absolute -right-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors">
+                  <ChevronRight size={48} strokeWidth={1.5} />
+               </button>
+
+               <div className="lg:w-1/3 space-y-8">
+                  <h3 className="font-serif text-4xl text-navy-900">CASE #1001510</h3>
+                  <div className="border-t border-stone-300 pt-4">
+                    <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">Procedures Performed</h4>
+                    <p className="text-gold-500 text-lg">{procedure.procedure_name}</p>
+                  </div>
+                  <div className="border-t border-stone-300 pt-4">
+                    <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">Provider</h4>
+                    <p className="text-stone-600">Provider: <span className="text-gold-600">Dr. Heather Lee</span></p>
+                  </div>
+                  <div className="border-t border-stone-300 pt-4">
+                    <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">Description</h4>
+                    <p className="text-stone-600 leading-relaxed font-light">
+                      {procedure.procedure_name} performed by Dr. Heather Lee with excellent results.
+                    </p>
+                  </div>
+               </div>
+
+               <div className="lg:w-2/3">
+                 <div className="grid grid-cols-2 gap-1" onClick={() => onCaseClick && onCaseClick('1001510')}>
+                    <div className="relative group cursor-pointer overflow-hidden">
+                      <img 
+                        src="https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop" 
+                        alt="Before" 
+                        className="w-full h-auto object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="text-center mt-3 uppercase tracking-widest text-xs font-bold text-navy-900">Before</div>
+                    </div>
+                    <div className="relative group cursor-pointer overflow-hidden">
+                      <img 
+                        src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop" 
+                        alt="After" 
+                        className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="text-center mt-3 uppercase tracking-widest text-xs font-bold text-navy-900">After</div>
+                      <div className="absolute bottom-12 right-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                        <div className="font-serif text-4xl text-white italic">M</div>
+                      </div>
+                    </div>
+                 </div>
+                 <div className="text-center mt-4 text-xs text-stone-400 font-light tracking-wide italic">Click to view full case details</div>
+               </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row justify-center gap-6 mt-16">
+               <button 
+                 onClick={() => navigate('/gallery')}
+                 className="bg-navy-900 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-navy-800 transition-colors text-sm"
+               >
+                 View Photo Gallery
+               </button>
+               <button className="bg-gold-600 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-gold-500 transition-colors text-sm">
+                 Request A Consultation
+               </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. TECHNIQUES SECTION */}
+      {procedure.procedure_techniques && procedure.procedure_techniques.length > 0 && (
+        <section className="py-20 md:py-28 bg-sage-50/50">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="font-serif text-4xl text-navy-900 mb-4 text-center">Surgical Techniques</h2>
+              <p className="text-stone-600 text-lg text-center mb-12 max-w-2xl mx-auto">
+                Our surgeons use advanced techniques tailored to your unique needs and goals.
+              </p>
+              
+              <div className="space-y-8">
+                {procedure.procedure_techniques.map((tech, i) => (
+                  <div key={i} className="bg-white p-8 shadow-sm border border-stone-200">
+                    <h3 className="text-gold-600 font-bold text-xl mb-4">{tech.technique_name}</h3>
+                    <p className="text-stone-600 leading-relaxed">{tech.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 7. THE PROCEDURE */}
+      {translation?.procedure_description && (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="font-serif text-4xl text-navy-900 mb-8">The Procedure</h2>
+              <div className="text-stone-600 text-lg leading-relaxed font-light space-y-4">
+                {translation.procedure_description.split('\n\n').map((para, idx) => (
+                  <p key={idx}>{para}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 8. RECOVERY TIMELINE */}
+      {procedure.procedure_recovery_timeline && procedure.procedure_recovery_timeline.length > 0 && (
+        <section className="py-24 bg-[#f9f5f1]">
+           <div className="container mx-auto px-6">
+              <div className="text-center mb-16">
+                 <h2 className="font-serif text-4xl text-navy-900 mb-6">Recovery Timeline</h2>
+                 <p className="text-stone-600 max-w-3xl mx-auto leading-relaxed font-light text-lg">
+                    Understanding what to expect during your recovery helps ensure the best possible outcome.
+                 </p>
+              </div>
+
+              <div className="max-w-4xl mx-auto relative">
+                 <div className="absolute left-[30px] md:left-[50%] top-0 bottom-0 w-1 bg-gold-200 -translate-x-1/2"></div>
+                 
+                 <div className="space-y-12 relative z-10">
+                    {procedure.procedure_recovery_timeline.map((item, idx) => (
+                       <div key={idx} className="flex flex-col md:flex-row md:items-center w-full group">
+                          <div className="md:w-1/2 md:pr-12 md:text-right pl-16 md:pl-0 mb-2 md:mb-0">
+                             <h4 className="text-navy-900 font-bold text-lg md:text-xl">{item.timepoint}</h4>
+                          </div>
+                          
+                          <div className="absolute left-[30px] md:left-[50%] w-5 h-5 rounded-full bg-gold-600 border-4 border-[#f9f5f1] -translate-x-1/2 group-hover:scale-125 transition-transform"></div>
+
+                          <div className="md:w-1/2 md:pl-12 pl-16">
+                             <p className="text-stone-600 font-light">{item.guidance}</p>
+                          </div>
+                       </div>
+                    ))}
+                 </div>
+              </div>
+           </div>
+        </section>
+      )}
+
+      {/* 9. RECOVERY TIPS */}
+      {procedure.procedure_recovery_tips && procedure.procedure_recovery_tips.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="font-serif text-4xl text-navy-900 mb-12">Recovery Tips</h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                {procedure.procedure_recovery_tips.map((tip, i) => (
+                  <div key={i} className="flex items-start gap-4 p-6 bg-sage-50 rounded">
+                    <div className="w-8 h-8 rounded-full bg-gold-600 text-white flex items-center justify-center font-bold shrink-0 text-sm">
+                      {i + 1}
+                    </div>
+                    <p className="text-stone-600 leading-relaxed">{tip.tip_text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 10. COMPLEMENTARY PROCEDURES */}
+      {procedure.complementary_procedures && procedure.complementary_procedures.length > 0 && (
+        <section className="py-20 bg-stone-50">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="font-serif text-4xl text-navy-900 mb-4 text-center">Complementary Procedures</h2>
+              <p className="text-stone-600 text-lg text-center mb-12 max-w-2xl mx-auto">
+                These procedures are often performed together with {procedure.procedure_name.toLowerCase()} to enhance your results.
+              </p>
+              
+              <div className="space-y-6">
+                {procedure.complementary_procedures.map((comp, i) => (
+                  <div key={i} className="bg-white p-6 shadow-sm border-l-4 border-gold-600">
+                    <h3 className="text-navy-900 font-bold text-xl mb-3">{comp.complementary_name}</h3>
+                    <p className="text-stone-600 leading-relaxed">{comp.reason}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 11. RISKS & CONSIDERATIONS */}
+      {procedure.procedure_risks && procedure.procedure_risks.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="font-serif text-4xl text-navy-900 mb-4">Risks & Considerations</h2>
+              <p className="text-stone-600 text-lg mb-8">
+                As with any surgical procedure, it's important to be aware of potential risks and considerations:
+              </p>
+              
+              <ul className="space-y-4">
+                {procedure.procedure_risks.map((risk, i) => (
+                  <li key={i} className="flex items-start gap-3 text-stone-600 leading-relaxed">
+                    <span className="w-2 h-2 rounded-full bg-stone-400 mt-2.5 shrink-0"></span>
+                    <span>{risk.risk_text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 12. CHOOSING THE RIGHT SURGEON */}
+      <section className="bg-[#1c1c1c] py-24 text-white">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h4 className="text-gold-600 uppercase tracking-widest text-sm font-bold mb-4">
+              Medora Health Center for Plastic Surgery
+            </h4>
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white">
+              CHOOSING THE RIGHT PLASTIC SURGEON
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto">
+            <div className="flex flex-col">
+              <div className="mb-6 aspect-[4/3] overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?q=80&w=2670&auto=format&fit=crop" 
+                  alt="Dr. Vito Medora" 
+                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+              <h3 className="font-bold text-xl mb-4">Dr. Vito Medora</h3>
+              <p className="text-stone-400 text-sm leading-relaxed mb-6 font-light">
+                Dr. Vito Medora is a double board-certified facial plastic and reconstructive surgeon with over 30 years of experience.
+              </p>
+              <a href="#" className="text-gold-500 hover:text-white uppercase tracking-wider text-xs font-bold flex items-center gap-1 mt-auto">
+                Meet Dr. Medora <ChevronRight size={14} />
+              </a>
+            </div>
+
+            <div className="flex flex-col">
+              <div className="mb-6 aspect-[4/3] overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=2665&auto=format&fit=crop" 
+                  alt="Dr. Heather Lee" 
+                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+              <h3 className="font-bold text-xl mb-4">Dr. Heather Lee</h3>
+              <p className="text-stone-400 text-sm leading-relaxed mb-6 font-light">
+                Dr. Heather Lee is a double board-certified facial plastic surgeon who specializes in aesthetic and functional procedures.
+              </p>
+              <a href="#" className="text-gold-500 hover:text-white uppercase tracking-wider text-xs font-bold flex items-center gap-1 mt-auto">
+                Meet Dr. Lee <ChevronRight size={14} />
+              </a>
+            </div>
+
+            <div className="flex-col">
+              <div className="mb-6 aspect-[4/3] overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2670&auto=format&fit=crop" 
+                  alt="Dr. Alex Montague" 
+                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+              <h3 className="font-bold text-xl mb-4">Dr. Alex Montague</h3>
+              <p className="text-stone-400 text-sm leading-relaxed mb-6 font-light">
+                Dr. Alex Montague is a board-certified facial plastic surgeon specializing in cosmetic and reconstructive surgery.
+              </p>
+              <a href="#" className="text-gold-500 hover:text-white uppercase tracking-wider text-xs font-bold flex items-center gap-1 mt-auto">
+                Meet Dr. Montague <ChevronRight size={14} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 13. CTA SECTION */}
+      <section className="py-20 bg-sage-50/50">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="font-serif text-4xl text-navy-900 mb-6">Ready to Get Started?</h2>
+          <p className="text-stone-600 text-lg mb-10 max-w-2xl mx-auto">
+            Schedule a consultation to learn more about {procedure.procedure_name.toLowerCase()} and discover how we can help you achieve your aesthetic goals.
+          </p>
+          <div className="flex flex-col md:flex-row justify-center gap-6">
+             <button 
+               onClick={() => navigate('/gallery')}
+               className="bg-navy-900 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-navy-800 transition-colors text-sm"
+             >
+               View Photo Gallery
+             </button>
+             <button className="bg-gold-600 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-gold-500 transition-colors text-sm">
+               Request A Consultation
+             </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default ProcedureDetail;
