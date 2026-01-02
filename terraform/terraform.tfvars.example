@@ -1,0 +1,18 @@
+# 复制此文件为 terraform.tfvars 并填入你的实际值
+# cp terraform.tfvars.example terraform.tfvars
+
+# Cloudflare Zone ID
+# 获取方式: Cloudflare Dashboard → 选择你的域名 → Overview → 右侧 Zone ID
+cloudflare_zone_id = "your-zone-id-here"
+
+# Cloudflare Account ID
+# 获取方式: Cloudflare Dashboard → 右上角头像下拉菜单 → Account ID
+cloudflare_account_id = "your-account-id-here"
+
+# 你的域名 (例如: medorahealth.com)
+domain_name = "your-domain.com"
+
+# 以下是默认值，通常不需要修改
+# vercel_cname = "cname.vercel-dns.com"
+# vercel_domain = "medora-health-beauty.vercel.app"
+

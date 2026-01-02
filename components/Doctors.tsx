@@ -1,4 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface DoctorProps {
   name: string;
@@ -39,6 +41,9 @@ const DoctorCard: React.FC<DoctorProps> = ({ name, title, specialty, image }) =>
 };
 
 const Doctors: React.FC = () => {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  
   // Simulating a larger list of doctors to demonstrate the grid
   const doctors: DoctorProps[] = [
     {
@@ -103,8 +108,11 @@ const Doctors: React.FC = () => {
         
         {/* 'View All' Button if there are dozens */}
         <div className="mt-20 text-center">
-            <button className="border border-navy-900 text-navy-900 px-12 py-4 uppercase tracking-[0.2em] text-xs font-bold hover:bg-navy-900 hover:text-white transition-all duration-300">
-              View All 32 Surgeons
+            <button 
+              onClick={() => navigate('/surgeons')}
+              className="border border-navy-900 text-navy-900 px-12 py-4 uppercase tracking-[0.2em] text-xs font-bold hover:bg-navy-900 hover:text-white transition-all duration-300"
+            >
+              {t('viewAllSurgeons')} 32 {t('viewAllSurgeonsCount')}
             </button>
         </div>
       </div>

@@ -1,7 +1,9 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { useTranslation } from '../hooks/useTranslation';
 
 const Hero: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}

@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from '../hooks/useTranslation';
 
 const Intro: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <section className="relative h-screen min-h-[700px] flex items-center overflow-hidden">
       {/* Background Image - Luxury/Team Vibe */}
@@ -23,31 +25,31 @@ const Intro: React.FC = () => {
           <div className="mb-6 animate-fade-in-up">
             <h3 className="text-gold-500 tracking-[0.25em] uppercase text-xs font-bold flex items-center gap-3">
               <span className="w-6 h-[1px] bg-gold-500 inline-block"></span>
-              Center for Plastic Surgery
+              {t('centerForPlasticSurgery')}
             </h3>
           </div>
 
           {/* Main Heading - Reduced from 5xl/6xl/7xl to 4xl/5xl/6xl */}
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-tight mb-6 text-white font-light tracking-wide animate-fade-in-up delay-100">
-            AN INTERNATIONAL <br />
-            AESTHETIC DESTINATION <br />
-            <span className="font-normal border-b-2 border-gold-600">RENOWNED FOR EXCELLENCE</span>
+            {t('anInternational')} <br />
+            {t('aestheticDestination')} <br />
+            <span className="font-normal border-b-2 border-gold-600">{t('introRenowned')}</span>
           </h1>
           
           {/* Subheading - Reduced from 2xl/3xl to xl/2xl */}
           <h2 className="text-xl md:text-2xl font-serif italic text-sage-200 mb-6 font-light animate-fade-in-up delay-200">
-            "精雕细琢，诠释自然之美"
+            {t('artisanSubtitle')}
           </h2>
 
           {/* Description - Reduced font size slightly */}
           <p className="text-sage-50 text-base md:text-lg leading-relaxed mb-8 max-w-xl font-light border-l border-white/20 pl-6 animate-fade-in-up delay-300">
-            With nearly a century of combined experience, our board-certified plastic surgeons have cemented their places among the most qualified and best-loved in the region. Patients don't choose us just to perform their surgeries—they choose us to carry out life-changing transformations with unparalleled artistry and skill.
+            {t('introDescriptionLong')}
           </p>
 
           {/* CTA Button */}
           <div className="animate-fade-in-up delay-400">
             <button className="bg-[#8b5e3c] text-white px-8 py-3.5 uppercase tracking-[0.2em] text-xs font-bold hover:bg-[#6d4a2f] transition-all hover:scale-105 shadow-xl">
-              Request A Consultation
+              {t('requestConsultation')}
             </button>
           </div>
         </div>

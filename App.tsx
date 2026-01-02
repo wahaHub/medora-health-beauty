@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
+import { LanguageProvider } from './contexts/LanguageContext';
 import Header from './components/Header';
 import Intro from './components/Intro';
 import Partnership from './components/Partnership';
@@ -15,6 +16,7 @@ import ChatWidget from './components/ChatWidget';
 import ProcedureDetail from './components/ProcedureDetail';
 import CaseDetail from './components/CaseDetail';
 import OurTeam from './components/OurTeam';
+import AllSurgeons from './pages/AllSurgeons';
 import Gallery from './components/Gallery';
 import TravelPage from './components/TravelPage';
 import ReviewsPage from './components/ReviewsPage';
@@ -97,23 +99,26 @@ function GalleryWrapper() {
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col font-sans selection:bg-gold-200 selection:text-navy-900">
-      <Header />
-      <main className="flex-grow">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/team" element={<OurTeam />} />
-          <Route path="/gallery" element={<GalleryWrapper />} />
-          <Route path="/travel" element={<TravelPage />} />
-          <Route path="/reviews" element={<ReviewsPage />} />
-          <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
-          <Route path="/procedure/:procedureName" element={<ProcedureDetailWrapper />} />
-          <Route path="/procedure/:procedureName/case/:caseId" element={<CaseDetailWrapper />} />
-        </Routes>
-      </main>
-      <Footer />
-      <ChatWidget />
-    </div>
+    <LanguageProvider>
+      <div className="min-h-screen flex flex-col font-sans selection:bg-gold-200 selection:text-navy-900">
+        <Header />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/team" element={<OurTeam />} />
+            <Route path="/surgeons" element={<AllSurgeons />} />
+            <Route path="/gallery" element={<GalleryWrapper />} />
+            <Route path="/travel" element={<TravelPage />} />
+            <Route path="/reviews" element={<ReviewsPage />} />
+            <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
+            <Route path="/procedure/:procedureName" element={<ProcedureDetailWrapper />} />
+            <Route path="/procedure/:procedureName/case/:caseId" element={<CaseDetailWrapper />} />
+          </Routes>
+        </main>
+        <Footer />
+        <ChatWidget />
+      </div>
+    </LanguageProvider>
   );
 }
 

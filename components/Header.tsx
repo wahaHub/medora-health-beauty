@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Phone } from 'lucide-react';
+import LanguageSelector from './LanguageSelector';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface SubMenuItem {
   label: string;
@@ -18,6 +20,7 @@ interface NavItem {
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
@@ -80,7 +83,7 @@ const Header: React.FC = () => {
 
   const navItems: NavItem[] = [
     { 
-      name: 'ABOUT', 
+      name: t('navAbout'), 
       href: '#about',
       columns: [
         [
@@ -106,7 +109,7 @@ const Header: React.FC = () => {
       ]
     },
     { 
-      name: 'FACE', 
+      name: t('navFace'), 
       href: '#face',
       columns: [
         [
@@ -164,7 +167,7 @@ const Header: React.FC = () => {
       ]
     },
     { 
-      name: 'BODY', 
+      name: t('navBody'), 
       href: '#body',
       columns: [
         [
@@ -206,7 +209,7 @@ const Header: React.FC = () => {
       ]
     },
     { 
-      name: 'NON-SURGICAL', 
+      name: t('navNonSurgical'), 
       href: '#nonsurgical',
       columns: [
         [
@@ -240,10 +243,10 @@ const Header: React.FC = () => {
         ]
       ]
     },
-    { name: 'GALLERY', href: '#gallery' },
-    { name: 'TRAVEL', href: '#travel' },
+    { name: t('navGallery'), href: '#gallery' },
+    { name: t('navTravel'), href: '#travel' },
     { 
-      name: 'RESOURCES', 
+      name: t('navResources'), 
       href: '#resources',
       columns: [
         [
@@ -266,8 +269,10 @@ const Header: React.FC = () => {
         ]
       ]
     },
-    { name: 'CONTACT', href: '#contact' },
+    { name: t('navContact'), href: '#contact' },
   ];
+
+  const hasWhiteBg = isScrolled || Boolean(hoveredNav) || window.scrollY === 0;
 
   return (
     <header 
@@ -282,7 +287,9 @@ const Header: React.FC = () => {
           className={`z-50 transition-colors duration-300 cursor-pointer flex items-baseline gap-3 group shrink-0`}
           onClick={(e) => handleLinkClick(e, 'intro', false)}
         >
-          <span className="font-serif text-lg lg:text-xl tracking-widest font-bold text-navy-900 group-hover:text-gold-600 transition-colors">
+          <span className={`font-serif text-lg lg:text-xl tracking-widest font-bold transition-colors ${
+            hasWhiteBg ? 'text-navy-900 group-hover:text-gold-600' : 'text-white group-hover:text-gold-300'
+          }`}>
             MEDORA HEALTH
           </span>
           <span className="text-[10px] lg:text-xs uppercase tracking-[0.2em] text-gold-500 group-hover:text-navy-900 transition-colors font-medium">
@@ -301,9 +308,9 @@ const Header: React.FC = () => {
               <a 
                 href={link.href}
                 onClick={(e) => handleLinkClick(e, link.name, false)}
-                className={`text-sm tracking-[0.1em] font-medium uppercase transition-colors relative text-stone-600 hover:text-gold-600
-                  ${hoveredNav === link.name ? 'text-gold-600' : ''}
-                `}
+                className={`text-sm tracking-[0.1em] font-medium uppercase transition-colors relative
+                  ${hasWhiteBg ? 'text-stone-600 hover:text-gold-600' : 'text-white hover:text-gold-300'}
+                  ${hoveredNav === link.name ? 'text-gold-600' : ''}`}
               >
                 {link.name}
                 {/* Underline effect */}
@@ -312,6 +319,11 @@ const Header: React.FC = () => {
             </div>
           ))}
         </nav>
+
+        {/* Language Selector */}
+        <div className="hidden lg:block">
+          <LanguageSelector isTransparent={!hasWhiteBg} />
+        </div>
 
         {/* CTA Button */}
         <div className="hidden lg:flex">

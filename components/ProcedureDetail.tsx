@@ -3,6 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { supabase } from '../services/supabaseClient';
 import type { CompleteProcedureData } from '../services/supabaseClient';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslation } from '../hooks/useTranslation';
+import procedureNames from '../i18n/procedureNames.json';
 
 interface ProcedureDetailProps {
   procedureName?: string;
@@ -16,6 +19,8 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 }) => {
   const { procedureName } = useParams<{ procedureName: string }>();
   const navigate = useNavigate();
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation();
   const [procedure, setProcedure] = useState<CompleteProcedureData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +47,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
         
         console.log('Searching for procedure:', decodedName);
         console.log('Generated slug:', slug);
+        console.log('Language:', currentLanguage);
 
         // Try to fetch by slug first
         let { data, error: fetchError } = await supabase
@@ -59,15 +65,15 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
             procedure_risks(*)
           `)
           .eq('slug', slug)
-          .eq('procedure_translations.language_code', 'en')
-          .eq('procedure_recovery.language_code', 'en')
-          .eq('procedure_benefits.language_code', 'en')
-          .eq('procedure_candidacy.language_code', 'en')
-          .eq('procedure_techniques.language_code', 'en')
-          .eq('procedure_recovery_timeline.language_code', 'en')
-          .eq('procedure_recovery_tips.language_code', 'en')
-          .eq('complementary_procedures.language_code', 'en')
-          .eq('procedure_risks.language_code', 'en')
+          .eq('procedure_translations.language_code', currentLanguage)
+          .eq('procedure_recovery.language_code', currentLanguage)
+          .eq('procedure_benefits.language_code', currentLanguage)
+          .eq('procedure_candidacy.language_code', currentLanguage)
+          .eq('procedure_techniques.language_code', currentLanguage)
+          .eq('procedure_recovery_timeline.language_code', currentLanguage)
+          .eq('procedure_recovery_tips.language_code', currentLanguage)
+          .eq('complementary_procedures.language_code', currentLanguage)
+          .eq('procedure_risks.language_code', currentLanguage)
           .maybeSingle();
 
         // If not found by slug, try by procedure name with fuzzy matching
@@ -105,15 +111,15 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                 procedure_risks(*)
               `)
               .eq('id', matchedProc.id)
-              .eq('procedure_translations.language_code', 'en')
-              .eq('procedure_recovery.language_code', 'en')
-              .eq('procedure_benefits.language_code', 'en')
-              .eq('procedure_candidacy.language_code', 'en')
-              .eq('procedure_techniques.language_code', 'en')
-              .eq('procedure_recovery_timeline.language_code', 'en')
-              .eq('procedure_recovery_tips.language_code', 'en')
-              .eq('complementary_procedures.language_code', 'en')
-              .eq('procedure_risks.language_code', 'en')
+              .eq('procedure_translations.language_code', currentLanguage)
+              .eq('procedure_recovery.language_code', currentLanguage)
+              .eq('procedure_benefits.language_code', currentLanguage)
+              .eq('procedure_candidacy.language_code', currentLanguage)
+              .eq('procedure_techniques.language_code', currentLanguage)
+              .eq('procedure_recovery_timeline.language_code', currentLanguage)
+              .eq('procedure_recovery_tips.language_code', currentLanguage)
+              .eq('complementary_procedures.language_code', currentLanguage)
+              .eq('procedure_risks.language_code', currentLanguage)
               .maybeSingle();
             
             data = result.data;
@@ -151,14 +157,14 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
     }
 
     fetchProcedure();
-  }, [procedureName]);
+  }, [procedureName, currentLanguage]);
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gold-600 mx-auto mb-4"></div>
-          <p className="text-stone-600 text-lg">Loading procedure details...</p>
+          <p className="text-stone-600 text-lg">{t('loading')}</p>
         </div>
       </div>
     );
@@ -168,13 +174,13 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center max-w-md">
-          <h2 className="font-serif text-3xl text-navy-900 mb-4">Procedure Not Found</h2>
-          <p className="text-stone-600 mb-8">{error || 'The requested procedure could not be found.'}</p>
+          <h2 className="font-serif text-3xl text-navy-900 mb-4">{t('procedureNotFound')}</h2>
+          <p className="text-stone-600 mb-8">{error || t('failedToLoad')}</p>
           <button 
             onClick={() => navigate('/')}
             className="bg-navy-900 text-white px-8 py-3 uppercase tracking-widest text-sm hover:bg-gold-600 transition-colors"
           >
-            Back to Home
+            {t('backToHome')}
           </button>
         </div>
       </div>
@@ -183,6 +189,18 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
   const translation = procedure.procedure_translations[0];
   const recovery = procedure.procedure_recovery[0];
+  
+  // Get translated procedure name from procedureNames.json
+  const getTranslatedName = () => {
+    const enName = procedure.procedure_name;
+    const translations = procedureNames[enName as keyof typeof procedureNames];
+    if (translations && currentLanguage in translations) {
+      return translations[currentLanguage as keyof typeof translations] as string;
+    }
+    return enName; // Fallback to English name
+  };
+  
+  const displayName = getTranslatedName();
 
   return (
     <div className="bg-white animate-fade-in-up">
@@ -202,11 +220,11 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                <span>|</span>
                <span className="uppercase">{procedure.category}</span>
                <span>|</span>
-               <span className="text-white">{procedure.procedure_name}</span>
+               <span className="text-white">{displayName}</span>
             </div>
 
             <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl mb-6 text-white leading-none">
-              {procedure.procedure_name.toUpperCase()}
+              {displayName.toUpperCase()}
             </h1>
 
             <div className="max-w-md text-gray-300 text-sm md:text-base leading-relaxed hidden md:block">
@@ -230,7 +248,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row gap-16 items-start">
              <div className="lg:w-1/2">
-                <h2 className="font-serif text-3xl text-navy-900 mb-6">Overview</h2>
+                <h2 className="font-serif text-3xl text-navy-900 mb-6">{t('overview')}</h2>
                 <div className="text-stone-600 text-lg leading-relaxed font-light space-y-4">
                   {translation?.overview?.split('\n\n').map((para, idx) => (
                     <p key={idx}>{para}</p>
@@ -239,36 +257,36 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
              </div>
              <div className="lg:w-1/2 w-full">
                 <h3 className="uppercase tracking-[0.15em] text-navy-900 text-xl font-serif mb-6 border-b border-stone-300 pb-2">
-                  Procedure Snapshot
+                  {t('procedureSnapshot')}
                 </h3>
                 <div className="space-y-4">
                   {translation?.anesthesia && (
                     <div className="flex justify-between items-start border-b border-stone-200 pb-4 text-stone-600">
-                       <span className="font-bold text-navy-900">Anesthesia:</span>
+                       <span className="font-bold text-navy-900">{t('anesthesia')}:</span>
                        <span className="font-light text-right max-w-md">{translation.anesthesia}</span>
                     </div>
                   )}
                   {recovery?.recovery_time && (
                     <div className="flex justify-between items-start border-b border-stone-200 pb-4 text-stone-600">
-                       <span className="font-bold text-navy-900">Recovery:</span>
+                       <span className="font-bold text-navy-900">{t('recovery')}:</span>
                        <span className="font-light text-right max-w-md">{recovery.recovery_time}</span>
                     </div>
                   )}
                   {recovery?.ready_to_go_out && (
                     <div className="flex justify-between items-start border-b border-stone-200 pb-4 text-stone-600">
-                       <span className="font-bold text-navy-900">Ready to go out:</span>
+                       <span className="font-bold text-navy-900">{t('readyToGoOut')}:</span>
                        <span className="font-light text-right max-w-md">{recovery.ready_to_go_out}</span>
                     </div>
                   )}
                   {recovery?.resume_exercise && (
                     <div className="flex justify-between items-start border-b border-stone-200 pb-4 text-stone-600">
-                       <span className="font-bold text-navy-900">Resume exercise:</span>
+                       <span className="font-bold text-navy-900">{t('resumeExercise')}:</span>
                        <span className="font-light text-right max-w-md">{recovery.resume_exercise}</span>
                     </div>
                   )}
                   {recovery?.final_results && (
                     <div className="flex justify-between items-start border-b border-stone-200 pb-4 text-stone-600">
-                       <span className="font-bold text-navy-900">Final results:</span>
+                       <span className="font-bold text-navy-900">{t('finalResults')}:</span>
                        <span className="font-light text-right max-w-md">{recovery.final_results}</span>
                     </div>
                   )}
@@ -284,7 +302,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
           <div className="container mx-auto px-6">
             <div className="flex flex-col lg:flex-row items-center gap-16">
               <div className="lg:w-1/2">
-                <h2 className="font-serif text-4xl text-navy-900 mb-8">Benefits of {procedure.procedure_name}</h2>
+                <h2 className="font-serif text-4xl text-navy-900 mb-8">{displayName} {t('benefitsDescription')}</h2>
                 <ul className="space-y-4 text-stone-600 text-lg leading-relaxed font-light">
                   {procedure.procedure_benefits.map((benefit, i) => (
                     <li key={i} className="flex items-start gap-3">
@@ -312,9 +330,9 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
           <div className="container mx-auto px-6">
             <div className="flex flex-col lg:flex-row-reverse items-center gap-16">
               <div className="lg:w-1/2">
-                <h2 className="font-serif text-4xl text-navy-900 mb-8">Is {procedure.procedure_name} Right for You?</h2>
+                <h2 className="font-serif text-4xl text-navy-900 mb-8">{t('candidacyDescription')} {displayName} {t('candidacyDescriptionIf')}</h2>
                 <p className="text-stone-600 text-lg leading-relaxed font-light mb-6">
-                  You may be a good candidate for {procedure.procedure_name.toLowerCase()} if:
+                  {t('youMayBeGoodCandidate')} {displayName.toLowerCase()} {t('if')}
                 </p>
                 <ul className="space-y-4 text-stone-600 text-lg font-light">
                    {procedure.procedure_candidacy.map((item, i) => (
@@ -343,13 +361,13 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
           <div className="max-w-6xl mx-auto">
             <div className="flex justify-between items-end mb-12 border-b border-stone-300 pb-4">
               <div>
-                <h4 className="text-gold-600 uppercase tracking-widest text-sm font-bold mb-2">FEATURED</h4>
+                <h4 className="text-gold-600 uppercase tracking-widest text-sm font-bold mb-2">{t('featured')}</h4>
                 <h2 className="font-serif text-3xl md:text-4xl text-navy-900 uppercase">
-                  {procedure.procedure_name} Before & After Photos
+                  {displayName} {t('beforeAfterPhotos')}
                 </h2>
               </div>
               <div className="text-navy-900 font-bold text-lg hidden md:block">
-                Case: 7 of 9
+                {t('caseOf')} 7 {t('of')} 9
               </div>
             </div>
 
@@ -362,19 +380,19 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                </button>
 
                <div className="lg:w-1/3 space-y-8">
-                  <h3 className="font-serif text-4xl text-navy-900">CASE #1001510</h3>
+                  <h3 className="font-serif text-4xl text-navy-900">{t('caseNumber')} #1001510</h3>
                   <div className="border-t border-stone-300 pt-4">
-                    <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">Procedures Performed</h4>
-                    <p className="text-gold-500 text-lg">{procedure.procedure_name}</p>
+                    <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">{t('proceduresPerformed')}</h4>
+                    <p className="text-gold-500 text-lg">{displayName}</p>
                   </div>
                   <div className="border-t border-stone-300 pt-4">
                     <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">Provider</h4>
-                    <p className="text-stone-600">Provider: <span className="text-gold-600">Dr. Heather Lee</span></p>
+                    <p className="text-stone-600">{t('provider')}: <span className="text-gold-600">Dr. Heather Lee</span></p>
                   </div>
                   <div className="border-t border-stone-300 pt-4">
-                    <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">Description</h4>
+                    <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">{t('description')}</h4>
                     <p className="text-stone-600 leading-relaxed font-light">
-                      {procedure.procedure_name} performed by Dr. Heather Lee with excellent results.
+                      {displayName} performed by Dr. Heather Lee with excellent results.
                     </p>
                   </div>
                </div>
@@ -387,7 +405,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                         alt="Before" 
                         className="w-full h-auto object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div className="text-center mt-3 uppercase tracking-widest text-xs font-bold text-navy-900">Before</div>
+                      <div className="text-center mt-3 uppercase tracking-widest text-xs font-bold text-navy-900">{t('beforePhotos')}</div>
                     </div>
                     <div className="relative group cursor-pointer overflow-hidden">
                       <img 
@@ -395,13 +413,13 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                         alt="After" 
                         className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div className="text-center mt-3 uppercase tracking-widest text-xs font-bold text-navy-900">After</div>
+                      <div className="text-center mt-3 uppercase tracking-widest text-xs font-bold text-navy-900">{t('afterPhotos')}</div>
                       <div className="absolute bottom-12 right-4 opacity-50 group-hover:opacity-100 transition-opacity">
                         <div className="font-serif text-4xl text-white italic">M</div>
                       </div>
                     </div>
                  </div>
-                 <div className="text-center mt-4 text-xs text-stone-400 font-light tracking-wide italic">Click to view full case details</div>
+                 <div className="text-center mt-4 text-xs text-stone-400 font-light tracking-wide italic">{t('clickToViewFullCase')}</div>
                </div>
             </div>
 
@@ -410,10 +428,10 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                  onClick={() => navigate('/gallery')}
                  className="bg-navy-900 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-navy-800 transition-colors text-sm"
                >
-                 View Photo Gallery
+                 {t('viewPhotoGallery')}
                </button>
                <button className="bg-gold-600 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-gold-500 transition-colors text-sm">
-                 Request A Consultation
+                 {t('requestConsultation')}
                </button>
             </div>
           </div>
@@ -425,9 +443,9 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
         <section className="py-20 md:py-28 bg-sage-50/50">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
-              <h2 className="font-serif text-4xl text-navy-900 mb-4 text-center">Surgical Techniques</h2>
+              <h2 className="font-serif text-4xl text-navy-900 mb-4 text-center">{t('techniquesApproaches')}</h2>
               <p className="text-stone-600 text-lg text-center mb-12 max-w-2xl mx-auto">
-                Our surgeons use advanced techniques tailored to your unique needs and goals.
+                {t('techniquesDescription')}
               </p>
               
               <div className="space-y-8">
@@ -448,7 +466,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
         <section className="py-20 bg-white">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
-              <h2 className="font-serif text-4xl text-navy-900 mb-8">The Procedure</h2>
+              <h2 className="font-serif text-4xl text-navy-900 mb-8">{t('procedureDescription')}</h2>
               <div className="text-stone-600 text-lg leading-relaxed font-light space-y-4">
                 {translation.procedure_description.split('\n\n').map((para, idx) => (
                   <p key={idx}>{para}</p>
@@ -464,9 +482,9 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
         <section className="py-24 bg-[#f9f5f1]">
            <div className="container mx-auto px-6">
               <div className="text-center mb-16">
-                 <h2 className="font-serif text-4xl text-navy-900 mb-6">Recovery Timeline</h2>
+                 <h2 className="font-serif text-4xl text-navy-900 mb-6">{t('recoveryTimeline')}</h2>
                  <p className="text-stone-600 max-w-3xl mx-auto leading-relaxed font-light text-lg">
-                    Understanding what to expect during your recovery helps ensure the best possible outcome.
+                    {t('recoveryTimelineDescription')}
                  </p>
               </div>
 
@@ -498,7 +516,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
         <section className="py-20 bg-white">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
-              <h2 className="font-serif text-4xl text-navy-900 mb-12">Recovery Tips</h2>
+              <h2 className="font-serif text-4xl text-navy-900 mb-12">{t('recoveryTips')}</h2>
               <div className="grid md:grid-cols-2 gap-6">
                 {procedure.procedure_recovery_tips.map((tip, i) => (
                   <div key={i} className="flex items-start gap-4 p-6 bg-sage-50 rounded">
@@ -519,9 +537,9 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
         <section className="py-20 bg-stone-50">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
-              <h2 className="font-serif text-4xl text-navy-900 mb-4 text-center">Complementary Procedures</h2>
+              <h2 className="font-serif text-4xl text-navy-900 mb-4 text-center">{t('complementaryProcedures')}</h2>
               <p className="text-stone-600 text-lg text-center mb-12 max-w-2xl mx-auto">
-                These procedures are often performed together with {procedure.procedure_name.toLowerCase()} to enhance your results.
+                {t('complementaryDescription')} {displayName.toLowerCase()} {t('complementaryDescriptionEnd')}
               </p>
               
               <div className="space-y-6">
@@ -542,9 +560,9 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
         <section className="py-20 bg-white">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
-              <h2 className="font-serif text-4xl text-navy-900 mb-4">Risks & Considerations</h2>
+              <h2 className="font-serif text-4xl text-navy-900 mb-4">{t('risksConsiderations')}</h2>
               <p className="text-stone-600 text-lg mb-8">
-                As with any surgical procedure, it's important to be aware of potential risks and considerations:
+                {t('risksIntro')}
               </p>
               
               <ul className="space-y-4">
@@ -565,10 +583,10 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h4 className="text-gold-600 uppercase tracking-widest text-sm font-bold mb-4">
-              Medora Health Center for Plastic Surgery
+              {t('medoraHealthCenterFull')}
             </h4>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white">
-              CHOOSING THE RIGHT PLASTIC SURGEON
+              {t('choosingTheRightSurgeon')}
             </h2>
           </div>
 
@@ -630,19 +648,19 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
       {/* 13. CTA SECTION */}
       <section className="py-20 bg-sage-50/50">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="font-serif text-4xl text-navy-900 mb-6">Ready to Get Started?</h2>
+          <h2 className="font-serif text-4xl text-navy-900 mb-6">{t('readyToGetStarted')}</h2>
           <p className="text-stone-600 text-lg mb-10 max-w-2xl mx-auto">
-            Schedule a consultation to learn more about {procedure.procedure_name.toLowerCase()} and discover how we can help you achieve your aesthetic goals.
+            {t('scheduleConsultationDescription')} {displayName.toLowerCase()} {t('andDiscoverHow')}
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-6">
              <button 
                onClick={() => navigate('/gallery')}
                className="bg-navy-900 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-navy-800 transition-colors text-sm"
              >
-               View Photo Gallery
+               {t('viewPhotoGallery')}
              </button>
              <button className="bg-gold-600 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-gold-500 transition-colors text-sm">
-               Request A Consultation
+               {t('requestConsultation')}
              </button>
           </div>
         </div>

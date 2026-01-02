@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface CategoryProps {
   title: string;
@@ -13,6 +14,7 @@ interface CategoryProps {
 }
 
 const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description, items, image, theme, align, id }) => {
+  const { t } = useTranslation();
   const isDark = theme === 'dark';
   
   // Define colors
@@ -69,7 +71,7 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
           
           {/* Decorative Label */}
           <div className={`text-xs font-bold tracking-[0.3em] uppercase mb-4 ${isDark ? 'text-sage-300' : 'text-gold-600'}`}>
-             Medora Health Procedures
+             {t('medoraHealthProcedures')}
           </div>
 
           <h2 className={`font-serif text-5xl md:text-7xl mb-6 tracking-wide uppercase leading-none ${textColor}`}>
@@ -105,7 +107,9 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
               ? 'border-white text-white hover:bg-white hover:text-navy-900' 
               : 'border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white'
             }`}>
-            Explore {title}
+            {id === 'face' && t('exploreFace')}
+            {id === 'body' && t('exploreBody')}
+            {id === 'nonsurgical' && t('exploreNonsurgical')}
           </button>
         </div>
       </div>
