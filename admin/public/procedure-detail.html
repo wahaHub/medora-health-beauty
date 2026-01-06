@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procedure Images - Medora Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      padding: 20px;
+    }
+
+    .header {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .procedure-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .procedure-path {
+      font-size: 13px;
+      color: #999;
+      font-family: monospace;
+      margin-top: 5px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .back-btn:hover {
+      background: #5568d3;
+    }
+
+    /* Section */
+    .section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-description {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    /* Image Slots Grid */
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .slots-grid.before-after {
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    }
+
+    /* Image Slot */
+    .image-slot {
+      border: 2px dashed #e0e0e0;
+      border-radius: 12px;
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      background: #fafafa;
+    }
+
+    .image-slot:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    .image-slot.has-image {
+      border-style: solid;
+      border-color: #4caf50;
+    }
+
+    .image-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .slot-placeholder {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .slot-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+
+    .slot-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #666;
+    }
+
+    .slot-path {
+      font-size: 11px;
+      color: #999;
+      margin-top: 5px;
+      font-family: monospace;
+    }
+
+    /* Before/After Pair */
+    .before-after-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+    }
+
+    .before-after-pair:hover {
+      border-color: #667eea;
+    }
+
+    .pair-label {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      z-index: 10;
+    }
+
+    /* Upload Overlay */
+    .upload-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .upload-overlay.active {
+      display: flex;
+    }
+
+    .upload-modal {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .upload-modal h3 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .upload-area {
+      border: 2px dashed #667eea;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .upload-area:hover {
+      background: #f8f9ff;
+    }
+
+    .upload-area.drag-over {
+      background: #e8f0ff;
+      border-color: #5568d3;
+    }
+
+    .upload-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .upload-buttons button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #666;
+    }
+
+    .btn-secondary:hover {
+      background: #d0d0d0;
+    }
+
+    .upload-progress {
+      margin-top: 15px;
+      height: 4px;
+      background: #e0e0e0;
+      border-radius: 2px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .upload-progress.active {
+      display: block;
+    }
+
+    .upload-progress-bar {
+      height: 100%;
+      background: #667eea;
+      transition: width 0.3s;
+    }
+
+    /* Actions */
+    .slot-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: none;
+      gap: 5px;
+    }
+
+    .image-slot.has-image:hover .slot-actions {
+      display: flex;
+    }
+
+    .action-btn {
+      background: rgba(0,0,0,0.7);
+      color: white;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .action-btn:hover {
+      background: rgba(0,0,0,0.9);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <a href="/admin/procedures-manager.html" class="back-btn">← Back to Procedures</a>
+      </div>
+      <div style="text-align: right;">
+        <div class="procedure-title" id="procedureName"></div>
+        <div class="procedure-path" id="procedurePath"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="section">
+    <div class="section-title">
+      🎯 Hero Banner
+      <span style="font-size: 13px; color: #999; font-weight: normal;">(1 image)</span>
+    </div>
+    <div class="section-description">
+      Main banner image for the procedure page. Recommended: 1920x1080px
+    </div>
+    <div class="slots-grid">
+      <div class="image-slot" data-slot-type="hero" onclick="openUpload('hero')">
+        <div class="slot-placeholder">
+          <div class="slot-icon">🖼️</div>
+          <div class="slot-label">Hero Banner</div>
+          <div class="slot-path">hero.jpg</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Before/After Section -->
+  <div class="section">
+    <div class="section-title">
+      📸 Before & After Comparisons
+      <span style="font-size: 13px; color: #999; font-weight: normal;">(up to 10 pairs)</span>
+    </div>
+    <div class="section-description">
+      Upload before and after comparison images. Recommended: 800x800px each
+    </div>
+    <div class="slots-grid before-after" id="beforeAfterGrid">
+      <!-- Will be populated by JS -->
+    </div>
+  </div>
+
+  <!-- Detail Images Section -->
+  <div class="section">
+    <div class="section-title">
+      🔍 Detail Images
+      <span style="font-size: 13px; color: #999; font-weight: normal;">(up to 8 images)</span>
+    </div>
+    <div class="section-description">
+      Detailed procedure images, technique demonstrations, etc. Recommended: 1200x800px
+    </div>
+    <div class="slots-grid" id="detailGrid">
+      <!-- Will be populated by JS -->
+    </div>
+  </div>
+
+  <!-- Gallery Section -->
+  <div class="section">
+    <div class="section-title">
+      🎨 Gallery
+      <span style="font-size: 13px; color: #999; font-weight: normal;">(up to 20 images)</span>
+    </div>
+    <div class="section-description">
+      Additional case images and examples. Recommended: 800x600px
+    </div>
+    <div class="slots-grid" id="galleryGrid">
+      <!-- Will be populated by JS -->
+    </div>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="upload-overlay" id="uploadOverlay">
+    <div class="upload-modal">
+      <h3 id="uploadTitle">Upload Image</h3>
+      <div class="upload-area" id="uploadArea">
+        <div style="font-size: 48px; margin-bottom: 10px;">📤</div>
+        <div style="font-size: 16px; margin-bottom: 10px;">Drop image here or click to select</div>
+        <div style="font-size: 13px; color: #999;">Supported: JPG, PNG, WebP (max 10MB)</div>
+        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+      </div>
+      <div class="upload-progress" id="uploadProgress">
+        <div class="upload-progress-bar" id="uploadProgressBar"></div>
+      </div>
+      <div class="upload-buttons">
+        <button class="btn-secondary" onclick="closeUpload()">Cancel</button>
+        <button class="btn-primary" id="uploadBtn" onclick="startUpload()">Upload</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createSlug, generateR2Path } from './image-slots-config.js';
+
+    let currentProcedureName = '';
+    let currentSlug = '';
+    let currentSlotType = '';
+    let selectedFile = null;
+    let r2PublicUrl = '';
+
+    // 初始化
+    async function init() {
+      // 获取 procedure name from URL
+      const params = new URLSearchParams(window.location.search);
+      currentProcedureName = decodeURIComponent(params.get('name') || '');
+
+      if (!currentProcedureName) {
+        window.location.href = '/admin/procedures-manager.html';
+        return;
+      }
+
+      currentSlug = createSlug(currentProcedureName);
+
+      // 更新标题
+      document.getElementById('procedureName').textContent = currentProcedureName;
+      document.getElementById('procedurePath').textContent = `procedures/${currentSlug}/`;
+
+      // 获取配置
+      const config = await fetch('/admin/api/health').then(r => r.json());
+      r2PublicUrl = config.publicUrl;
+
+      // 渲染槽位
+      renderBeforeAfterSlots();
+      renderDetailSlots();
+      renderGallerySlots();
+
+      // 加载已有图片
+      await loadExistingImages();
+    }
+
+    // 渲染 Before/After 槽位
+    function renderBeforeAfterSlots() {
+      const container = document.getElementById('beforeAfterGrid');
+      let html = '';
+
+      for (let i = 1; i <= 10; i++) {
+        html += `
+          <div class="before-after-pair">
+            <div class="image-slot" data-slot-type="before-${i}" onclick="openUpload('before-${i}')">
+              <div class="pair-label">Before ${i}</div>
+              <div class="slot-placeholder">
+                <div class="slot-icon">📷</div>
+                <div class="slot-label">Before ${i}</div>
+                <div class="slot-path">before-${i}.jpg</div>
+              </div>
+            </div>
+            <div class="image-slot" data-slot-type="after-${i}" onclick="openUpload('after-${i}')">
+              <div class="pair-label">After ${i}</div>
+              <div class="slot-placeholder">
+                <div class="slot-icon">✨</div>
+                <div class="slot-label">After ${i}</div>
+                <div class="slot-path">after-${i}.jpg</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // 渲染 Detail 槽位
+    function renderDetailSlots() {
+      const container = document.getElementById('detailGrid');
+      let html = '';
+
+      for (let i = 1; i <= 8; i++) {
+        html += createSlotHTML(`detail-${i}`, `Detail ${i}`, `detail-${i}.jpg`);
+      }
+
+      container.innerHTML = html;
+    }
+
+    // 渲染 Gallery 槽位
+    function renderGallerySlots() {
+      const container = document.getElementById('galleryGrid');
+      let html = '';
+
+      for (let i = 1; i <= 20; i++) {
+        html += createSlotHTML(`gallery-${i}`, `Gallery ${i}`, `gallery-${i}.jpg`);
+      }
+
+      container.innerHTML = html;
+    }
+
+    // 创建槽位 HTML
+    function createSlotHTML(slotType, label, path) {
+      return `
+        <div class="image-slot" data-slot-type="${slotType}" onclick="openUpload('${slotType}')">
+          <div class="slot-placeholder">
+            <div class="slot-icon">🖼️</div>
+            <div class="slot-label">${label}</div>
+            <div class="slot-path">${path}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 加载已存在的图片
+    async function loadExistingImages() {
+      try {
+        const prefix = `procedures/${currentSlug}/`;
+        const response = await fetch(`/admin/api/images?prefix=${encodeURIComponent(prefix)}`);
+        const data = await response.json();
+
+        if (data.success && data.images) {
+          data.images.forEach(img => {
+            const filename = img.key.split('/').pop();
+            const slotType = filename.split('.')[0];
+            updateSlotWithImage(slotType, img.url);
+          });
+        }
+      } catch (error) {
+        console.error('Error loading images:', error);
+      }
+    }
+
+    // 更新槽位显示图片
+    function updateSlotWithImage(slotType, imageUrl) {
+      const slot = document.querySelector(`[data-slot-type="${slotType}"]`);
+      if (!slot) return;
+
+      slot.classList.add('has-image');
+      slot.innerHTML = `
+        <img src="${imageUrl}" alt="${slotType}">
+        <div class="slot-actions">
+          <button class="action-btn" onclick="event.stopPropagation(); viewImage('${imageUrl}')" title="View">👁️</button>
+          <button class="action-btn" onclick="event.stopPropagation(); deleteImage('${slotType}')" title="Delete">🗑️</button>
+        </div>
+      `;
+    }
+
+    // 打开上传弹窗
+    window.openUpload = function(slotType) {
+      currentSlotType = slotType;
+      document.getElementById('uploadTitle').textContent = `Upload ${slotType}`;
+      document.getElementById('uploadOverlay').classList.add('active');
+      selectedFile = null;
+      document.getElementById('uploadBtn').disabled = false;
+    };
+
+    // 关闭上传弹窗
+    window.closeUpload = function() {
+      document.getElementById('uploadOverlay').classList.remove('active');
+      selectedFile = null;
+      document.getElementById('fileInput').value = '';
+      document.getElementById('uploadProgress').classList.remove('active');
+    };
+
+    // 文件选择
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        selectedFile = e.target.files[0];
+        uploadArea.querySelector('div:nth-child(2)').textContent = `Selected: ${selectedFile.name}`;
+      }
+    });
+
+    // 拖拽上传
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('drag-over');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('drag-over');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('drag-over');
+      if (e.dataTransfer.files.length > 0) {
+        selectedFile = e.dataTransfer.files[0];
+        fileInput.files = e.dataTransfer.files;
+        uploadArea.querySelector('div:nth-child(2)').textContent = `Selected: ${selectedFile.name}`;
+      }
+    });
+
+    // 开始上传
+    window.startUpload = async function() {
+      if (!selectedFile) {
+        alert('Please select a file first');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('path', `procedures/${currentSlug}`);
+      formData.append('filename', `${currentSlotType}.${selectedFile.name.split('.').pop()}`);
+
+      try {
+        document.getElementById('uploadProgress').classList.add('active');
+        document.getElementById('uploadBtn').disabled = true;
+
+        const response = await fetch('/admin/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          updateSlotWithImage(currentSlotType, data.url);
+          closeUpload();
+          alert('Upload successful!');
+        } else {
+          alert('Upload failed: ' + data.message);
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+        alert('Upload failed: ' + error.message);
+      } finally {
+        document.getElementById('uploadProgress').classList.remove('active');
+        document.getElementById('uploadBtn').disabled = false;
+      }
+    };
+
+    // 查看图片
+    window.viewImage = function(url) {
+      window.open(url, '_blank');
+    };
+
+    // 删除图片
+    window.deleteImage = async function(slotType) {
+      if (!confirm('Are you sure you want to delete this image?')) return;
+
+      const key = `procedures/${currentSlug}/${slotType}.jpg`;
+
+      try {
+        const response = await fetch(`/admin/api/images/${encodeURIComponent(key)}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          const slot = document.querySelector(`[data-slot-type="${slotType}"]`);
+          slot.classList.remove('has-image');
+          slot.innerHTML = createSlotHTML(slotType, slotType, `${slotType}.jpg`);
+          alert('Image deleted successfully');
+        } else {
+          alert('Delete failed: ' + data.message);
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('Delete failed: ' + error.message);
+      }
+    };
+
+    // 启动
+    init();
+  </script>
+
+</body>
+</html>

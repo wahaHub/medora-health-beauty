@@ -37,3 +37,6 @@ crash.*.log
 .env
 .env.local
 .env.production.local
+
+# Admin Console
+admin/uploads/

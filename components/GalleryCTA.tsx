@@ -1,11 +1,14 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
+import { getHomepageImage } from '../utils/imageUtils';
 
 interface GalleryCTAProps {
   onNavigate?: (page: string) => void;
 }
 
 const GalleryCTA: React.FC<GalleryCTAProps> = ({ onNavigate }) => {
+  const galleryImage = getHomepageImage('gallery');
+
   const handleGalleryClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (onNavigate) {
@@ -17,9 +20,12 @@ const GalleryCTA: React.FC<GalleryCTAProps> = ({ onNavigate }) => {
     <section id="gallery" className="relative h-[600px] lg:h-[700px] w-full overflow-hidden group">
       {/* Background Image - Elegant fashion aesthetic */}
       <img
-        src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?q=80&w=2070&auto=format&fit=crop"
+        src={galleryImage}
         alt="Envision a new you"
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+        onError={(e) => {
+          e.currentTarget.src = "https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?q=80&w=2070&auto=format&fit=crop";
+        }}
       />
       
       {/* Mobile Overlay for readability */}

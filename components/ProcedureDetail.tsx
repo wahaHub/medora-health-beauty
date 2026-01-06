@@ -6,6 +6,7 @@ import type { CompleteProcedureData } from '../services/supabaseClient';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../hooks/useTranslation';
 import procedureNames from '../i18n/procedureNames.json';
+import { getProcedureImage, getProcedureCaseImage } from '../utils/imageUtils';
 
 interface ProcedureDetailProps {
   procedureName?: string;
@@ -234,10 +235,13 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
           <div className="absolute inset-0 md:relative md:w-1/2 h-full">
             <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a] via-[#1a1a1a]/50 to-transparent md:via-[#1a1a1a] z-10 md:hidden"></div>
-            <img 
-              src="https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=2574&auto=format&fit=crop" 
-              alt="Procedure Model" 
+            <img
+              src={procedureName ? getProcedureImage(decodeURIComponent(procedureName), 'hero') : "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=2574&auto=format&fit=crop"}
+              alt="Procedure Model"
               className="absolute inset-0 w-full h-full object-cover object-center"
+              onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                e.currentTarget.src = "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=2574&auto=format&fit=crop";
+              }}
             />
           </div>
         </div>
@@ -313,10 +317,13 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                 </ul>
               </div>
               <div className="lg:w-1/2">
-                 <img 
-                   src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop" 
-                   alt="Benefits" 
+                 <img
+                   src={procedureName ? getProcedureImage(decodeURIComponent(procedureName), 'benefits') : "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop"}
+                   alt="Benefits"
                    className="w-full h-auto shadow-xl"
+                   onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                     e.currentTarget.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop";
+                   }}
                  />
               </div>
             </div>
@@ -344,10 +351,13 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                 </ul>
               </div>
               <div className="lg:w-1/2">
-                 <img 
-                   src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop" 
-                   alt="Candidacy" 
+                 <img
+                   src={procedureName ? getProcedureImage(decodeURIComponent(procedureName), 'candidate') : "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop"}
+                   alt="Candidacy"
                    className="w-full h-auto shadow-xl"
+                   onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                     e.currentTarget.src = "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop";
+                   }}
                  />
               </div>
             </div>

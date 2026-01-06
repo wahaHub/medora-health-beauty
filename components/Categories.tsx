@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
+import { getHomepageImage } from '../utils/imageUtils';
 
 interface CategoryProps {
   title: string;
@@ -52,12 +53,21 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
     <div id={id} className="relative min-h-[700px] md:h-screen max-h-[900px] flex items-center overflow-hidden">
       {/* 1. Background Image Layer */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src={image} 
-          alt={title} 
+        <img
+          src={image}
+          alt={title}
           className={`w-full h-full object-cover transition-transform duration-[2000ms] ease-out ${
              align === 'left' ? 'object-[80%_center]' : 'object-[20%_center]'
           }`}
+          onError={(e) => {
+            // Fallback images if R2 loading fails
+            const fallbacks: Record<string, string> = {
+              'face': 'https://images.unsplash.com/photo-1510526786859-99a38f8f267c?q=80&w=2070&auto=format&fit=crop',
+              'body': 'https://images.unsplash.com/photo-1609121855913-9a3d4f40f3c5?q=80&w=1974&auto=format&fit=crop',
+              'nonsurgical': 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1964&auto=format&fit=crop'
+            };
+            e.currentTarget.src = fallbacks[id] || fallbacks['face'];
+          }}
         />
       </div>
 
@@ -118,6 +128,10 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
 };
 
 const Categories: React.FC = () => {
+  const faceImage = getHomepageImage('face');
+  const bodyImage = getHomepageImage('body');
+  const nonSurgicalImage = getHomepageImage('non-surgical');
+
   const categories: CategoryProps[] = [
     {
       id: "face",
@@ -125,7 +139,7 @@ const Categories: React.FC = () => {
       subtitle: "Personalized Facial Rejuvenation",
       description: "Designed around the unique facial anatomy of different ethnicities and your individual structure. Deep-plane lifting, eyelid refinement, and precision rhinoplasty—crafted for balance, harmony, and natural-looking results.",
       items: ["Facelift (面部提升)", "Eyelid Surgery (眼部整形)", "Rhinoplasty (综合隆鼻)", "Deep Neck Contouring (颈部塑形)"],
-      image: "https://images.unsplash.com/photo-1510526786859-99a38f8f267c?q=80&w=2070&auto=format&fit=crop",
+      image: faceImage,
       theme: 'warm', // Light Sage Gradient
       align: 'left'
     },
@@ -135,7 +149,7 @@ const Categories: React.FC = () => {
       subtitle: "Love your silhouette. Own your confidence.",
       description: "Tailored contouring and restoration—designed to refine shape, improve tone, and bring back a firmer, more youthful silhouette.",
       items: ["Tummy Tuck (腹壁整形)", "Liposuction (吸脂塑形)", "Mommy Makeover (产后修复)", "Body Contouring (身体塑形)"],
-      image: "https://images.unsplash.com/photo-1609121855913-9a3d4f40f3c5?q=80&w=1974&auto=format&fit=crop", 
+      image: bodyImage,
       theme: 'warm', // Light Sage Gradient
       align: 'right'
     },
@@ -145,7 +159,7 @@ const Categories: React.FC = () => {
       subtitle: "A refined look—no surgery required",
       description: "Clinically guided, individually tailored rejuvenation for balanced features, smoother lines, and healthier-looking skin.",
       items: ["BOTOX® Cosmetic (肉毒素)", "Dermal Fillers (玻尿酸填充)", "Lip Injections (丰唇)", "Skin Rejuvenation (皮肤管理)"],
-      image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1964&auto=format&fit=crop", 
+      image: nonSurgicalImage,
       theme: 'dark', // Dark Forest Gradient
       align: 'right'
     }

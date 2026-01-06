@@ -1,16 +1,23 @@
 import React from 'react';
 import { useTranslation } from '../hooks/useTranslation';
+import { getHomepageImage } from '../utils/imageUtils';
 
 const Intro: React.FC = () => {
   const { t } = useTranslation();
+  const heroImage = getHomepageImage('hero');
+
   return (
     <section className="relative h-screen min-h-[700px] flex items-center overflow-hidden">
       {/* Background Image - Luxury/Team Vibe */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop" 
-          alt="Medora Health Team and Interior" 
+        <img
+          src={heroImage}
+          alt="Medora Health Team and Interior"
           className="w-full h-full object-cover object-center"
+          onError={(e) => {
+            // Fallback 到 Unsplash 图片如果 R2 图片加载失败
+            e.currentTarget.src = "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop";
+          }}
         />
       </div>
 
