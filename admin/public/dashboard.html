@@ -268,7 +268,7 @@
 <body>
   <div class="header">
     <h1>📊 Admin Dashboard</h1>
-    <button onclick="logout()">退出登录</button>
+    <button type="button" onclick="logout()">退出登录</button>
   </div>
 
   <div class="container">
@@ -292,12 +292,12 @@
           value=""
         >
         <div class="path-shortcuts">
-          <button onclick="setPath('')">根目录</button>
-          <button onclick="setPath('hero')">hero/</button>
-          <button onclick="setPath('doctors')">doctors/</button>
-          <button onclick="setPath('procedures')">procedures/</button>
-          <button onclick="setPath('gallery')">gallery/</button>
-          <button onclick="setPath('logos')">logos/</button>
+          <button type="button" onclick="setPath('')">根目录</button>
+          <button type="button" onclick="setPath('hero')">hero/</button>
+          <button type="button" onclick="setPath('doctors')">doctors/</button>
+          <button type="button" onclick="setPath('procedures')">procedures/</button>
+          <button type="button" onclick="setPath('gallery')">gallery/</button>
+          <button type="button" onclick="setPath('logos')">logos/</button>
         </div>
       </div>
     </div>
@@ -306,11 +306,11 @@
     <div class="images-section">
       <h2>🖼️ 已上传图片</h2>
       <div class="path-shortcuts">
-        <button onclick="loadImages('')">全部</button>
-        <button onclick="loadImages('hero/')">hero/</button>
-        <button onclick="loadImages('doctors/')">doctors/</button>
-        <button onclick="loadImages('procedures/')">procedures/</button>
-        <button onclick="loadImages('gallery/')">gallery/</button>
+        <button type="button" onclick="loadImages('')">全部</button>
+        <button type="button" onclick="loadImages('hero/')">hero/</button>
+        <button type="button" onclick="loadImages('doctors/')">doctors/</button>
+        <button type="button" onclick="loadImages('procedures/')">procedures/</button>
+        <button type="button" onclick="loadImages('gallery/')">gallery/</button>
       </div>
       <div id="imagesGrid" class="images-grid">
         <div class="loading">加载中...</div>
@@ -423,8 +423,8 @@
                 ${formatSize(img.size)} · ${formatDate(img.lastModified)}
               </div>
               <div class="image-actions">
-                <button class="btn-copy" onclick="copyUrl('${img.url}')">复制 URL</button>
-                <button class="btn-delete" onclick="deleteImage('${img.key}')">删除</button>
+                <button type="button" class="btn-copy" onclick="copyUrl('${img.url}')">复制 URL</button>
+                <button type="button" class="btn-delete" onclick="deleteImage('${img.key}')">删除</button>
               </div>
             </div>
           `).join('');
