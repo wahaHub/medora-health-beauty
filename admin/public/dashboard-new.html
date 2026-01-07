@@ -813,7 +813,7 @@
       } else {
         console.log('🎨 [renderImageSlot] 渲染空槽位:', { key, label });
         return `
-          <div class="image-slot" onclick="uploadImage('${key}')">
+          <div class="image-slot" data-key="${key}" onclick="uploadImage('${key}')">
             <div class="icon">📷</div>
             <div class="label">${label}</div>
           </div>
