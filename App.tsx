@@ -59,7 +59,8 @@ function ProcedureDetailWrapper() {
         window.scrollTo(0, 0);
       }} 
       onCaseClick={(caseId) => {
-        navigate(`/procedure/${procedureName}/case/${caseId}`);
+        // 使用 encodeURIComponent 确保包含 / 的名称也能正确编码
+        navigate(`/procedure/${encodeURIComponent(procedureName || '')}/case/${caseId}`);
         window.scrollTo(0, 0);
       }}
     />
