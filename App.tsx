@@ -69,15 +69,27 @@ function ProcedureDetailWrapper() {
 
 // Case Detail Wrapper
 function CaseDetailWrapper() {
-  const { procedureName, caseId } = useParams<{ procedureName: string; caseId: string }>();
+  const { procedureName, caseId, '*': wildcardPath } = useParams<{ procedureName: string; caseId: string; '*': string }>();
   const navigate = useNavigate();
 
+  // 处理通配符路由：从 URL 路径中提取 procedure 名称
+  // 对于 /procedure/Temples Lift / Temporofrontal Lift/case/1001510
+  // wildcardPath 会是完整路径，需要提取出 procedure 名称
+  let actualProcedureName = procedureName;
+  if (!procedureName && wildcardPath) {
+    // 从通配符路径中提取 procedure 名称（去掉最后的 /case/xxx）
+    const match = window.location.pathname.match(/\/procedure\/(.+)\/case\//);
+    if (match) {
+      actualProcedureName = decodeURIComponent(match[1]);
+    }
+  }
+
   return (
-    <CaseDetail 
+    <CaseDetail
       caseId={caseId || '1001510'}
-      procedureName={procedureName || 'Chin Augmentation'}
+      procedureName={actualProcedureName || 'Chin Augmentation'}
       onBack={() => {
-        navigate(`/procedure/${procedureName}`);
+        navigate(`/procedure/${encodeURIComponent(actualProcedureName || '')}`);
         window.scrollTo(0, 0);
       }}
     />
@@ -114,6 +126,8 @@ function App() {
             <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
             <Route path="/procedure/:procedureName" element={<ProcedureDetailWrapper />} />
             <Route path="/procedure/:procedureName/case/:caseId" element={<CaseDetailWrapper />} />
+            {/* 通配符路由：处理包含 / 的 procedure 名称 */}
+            <Route path="/procedure/*/case/:caseId" element={<CaseDetailWrapper />} />
           </Routes>
         </main>
         <Footer />
