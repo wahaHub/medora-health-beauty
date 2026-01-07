@@ -410,18 +410,24 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                <div className="lg:w-2/3">
                  <div className="grid grid-cols-2 gap-1" onClick={() => onCaseClick && onCaseClick('1001510')}>
                     <div className="relative group cursor-pointer overflow-hidden">
-                      <img 
-                        src="https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop" 
-                        alt="Before" 
+                      <img
+                        src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), 1, 1) : "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop"}
+                        alt="Before"
                         className="w-full h-auto object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105"
+                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop";
+                        }}
                       />
                       <div className="text-center mt-3 uppercase tracking-widest text-xs font-bold text-navy-900">{t('beforePhotos')}</div>
                     </div>
                     <div className="relative group cursor-pointer overflow-hidden">
-                      <img 
-                        src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop" 
-                        alt="After" 
+                      <img
+                        src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), 1, 2) : "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop"}
+                        alt="After"
                         className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop";
+                        }}
                       />
                       <div className="text-center mt-3 uppercase tracking-widest text-xs font-bold text-navy-900">{t('afterPhotos')}</div>
                       <div className="absolute bottom-12 right-4 opacity-50 group-hover:opacity-100 transition-opacity">
