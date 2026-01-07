@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, Heart, User } from 'lucide-react';
 import Contact from './Contact';
+import { getProcedureCaseImage } from '../utils/imageUtils';
 
 interface CaseDetailProps {
   caseId?: string;
@@ -8,12 +9,19 @@ interface CaseDetailProps {
   onBack?: () => void;
 }
 
-const CaseDetail: React.FC<CaseDetailProps> = ({ 
-  caseId = "1001510", 
+const CaseDetail: React.FC<CaseDetailProps> = ({
+  caseId = "1001510",
   procedureName = "Deep Neck Contouring",
-  onBack 
+  onBack
 }) => {
-  // Mock data matching the screenshot
+  // 从 R2 获取 case 图片
+  const beforeImage = getProcedureCaseImage(procedureName, 1, 1);
+  const afterImage = getProcedureCaseImage(procedureName, 1, 2);
+
+  // 备用图片
+  const fallbackBefore = "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop";
+  const fallbackAfter = "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop";
+
   const caseData = {
     provider: "Dr. Vito Medora",
     procedures: procedureName,
@@ -21,9 +29,8 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
     gender: "Female",
     description: "Deep neck contouring details...",
     images: {
-       // Using placeholders that look like clinical photos
-       beforeSide: "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop",
-       afterSide: "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop",
+       beforeSide: beforeImage,
+       afterSide: afterImage,
     }
   };
 
@@ -93,13 +100,27 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
             <div className="flex flex-col lg:flex-row gap-1 h-auto lg:h-[700px]">
                {/* Large Left (Before Profile) */}
                <div className="flex-1 bg-black relative group overflow-hidden min-h-[400px]">
-                  <img src={caseData.images.beforeSide} className="w-full h-full object-cover" alt="Before Side Profile" />
+                  <img
+                    src={caseData.images.beforeSide}
+                    className="w-full h-full object-cover"
+                    alt="Before Side Profile"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                      e.currentTarget.src = fallbackBefore;
+                    }}
+                  />
                   <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-2">Before</div>
                </div>
-               
+
                {/* Large Middle (After Profile) */}
                <div className="flex-1 bg-black relative group overflow-hidden min-h-[400px]">
-                  <img src={caseData.images.afterSide} className="w-full h-full object-cover" alt="After Side Profile" />
+                  <img
+                    src={caseData.images.afterSide}
+                    className="w-full h-full object-cover"
+                    alt="After Side Profile"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                      e.currentTarget.src = fallbackAfter;
+                    }}
+                  />
                    <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-2">After</div>
                   {/* Watermark */}
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
@@ -111,11 +132,25 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                <div className="lg:w-1/4 flex flex-col gap-1 h-[400px] lg:h-auto">
                   <div className="flex-1 bg-black relative overflow-hidden group">
                      {/* Flipping image to simulate a different angle/photo */}
-                     <img src={caseData.images.beforeSide} className="w-full h-full object-cover scale-x-[-1]" alt="Before 45 Degree" />
+                     <img
+                       src={caseData.images.beforeSide}
+                       className="w-full h-full object-cover scale-x-[-1]"
+                       alt="Before 45 Degree"
+                       onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                         e.currentTarget.src = fallbackBefore;
+                       }}
+                     />
                      <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-1">Before</div>
                   </div>
                    <div className="flex-1 bg-black relative overflow-hidden group">
-                     <img src={caseData.images.afterSide} className="w-full h-full object-cover scale-x-[-1]" alt="After 45 Degree" />
+                     <img
+                       src={caseData.images.afterSide}
+                       className="w-full h-full object-cover scale-x-[-1]"
+                       alt="After 45 Degree"
+                       onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                         e.currentTarget.src = fallbackAfter;
+                       }}
+                     />
                      <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-1">After</div>
                   </div>
                </div>
