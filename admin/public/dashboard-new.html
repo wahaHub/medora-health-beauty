@@ -514,12 +514,21 @@
      * 加载指定路径前缀的所有图片
      */
     async function loadImagesForPage(prefix) {
+      console.log('🔍 [loadImagesForPage] 开始加载图片:', { prefix });
+
       try {
-        const response = await fetch(`/admin/api/images?prefix=${prefix}/`);
+        const apiUrl = `/admin/api/images?prefix=${prefix}/`;
+        console.log('📡 [loadImagesForPage] 请求 API:', apiUrl);
+
+        const response = await fetch(apiUrl);
         const data = await response.json();
 
+        console.log('📥 [loadImagesForPage] API 响应:', data);
+
         if (data.success && data.images) {
-          data.images.forEach(img => {
+          console.log(`✅ [loadImagesForPage] 成功获取 ${data.images.length} 张图片`);
+
+          data.images.forEach((img, index) => {
             const parts = img.key.split('/');
             const filename = parts[parts.length - 1];
             const filenameWithoutExt = filename.replace(/\.(jpg|png|webp)$/, '');
@@ -527,12 +536,22 @@
             // 构建 key：prefix-filename
             const key = `${prefix}-${filenameWithoutExt}`;
 
+            console.log(`🔄 [loadImagesForPage] 图片 ${index + 1}:`, {
+              originalKey: img.key,
+              filename,
+              filenameWithoutExt,
+              constructedKey: key,
+              url: img.url
+            });
+
             // 更新页面上对应的图片槽位
             updateImageSlot(key, img.url);
           });
+        } else {
+          console.warn('⚠️ [loadImagesForPage] 没有找到图片或请求失败');
         }
       } catch (error) {
-        console.error('加载图片失败:', error);
+        console.error('❌ [loadImagesForPage] 加载图片失败:', error);
       }
     }
 
@@ -540,21 +559,31 @@
      * 更新图片槽位显示
      */
     function updateImageSlot(key, imageUrl) {
+      console.log('🔍 [updateImageSlot] 尝试更新槽位:', { key, imageUrl });
+
       const slot = document.querySelector(`[data-key="${key}"]`);
-      if (!slot) return;
+      if (!slot) {
+        console.warn('⚠️ [updateImageSlot] 未找到槽位元素:', key);
+        return;
+      }
 
       const label = slot.querySelector('.label')?.textContent || key;
+      console.log('✅ [updateImageSlot] 找到槽位，准备更新:', { key, label, imageUrl });
 
       slot.outerHTML = `
         <div class="image-slot filled" data-key="${key}">
-          <img src="${imageUrl}" alt="${label}">
+          <img src="${imageUrl}" alt="${label}"
+               onload="console.log('✅ [IMG] 图片加载成功:', '${key}', '${imageUrl}')"
+               onerror="console.error('❌ [IMG] 图片加载失败:', '${key}', '${imageUrl}')">
           <div class="overlay">
-            <button class="btn-view" onclick="viewImage('${imageUrl}')">查看</button>
-            <button class="btn-replace" onclick="uploadImage('${key}')">替换</button>
-            <button class="btn-delete" onclick="deleteImage('${key}')">删除</button>
+            <button type="button" class="btn-view" onclick="viewImage('${imageUrl}')">查看</button>
+            <button type="button" class="btn-replace" onclick="uploadImage('${key}')">替换</button>
+            <button type="button" class="btn-delete" onclick="deleteImage('${key}')">删除</button>
           </div>
         </div>
       `;
+
+      console.log('✅ [updateImageSlot] 槽位HTML已更新');
     }
 
     // ==================== Dashboard 页面 ====================
@@ -758,17 +787,21 @@
     // ==================== 渲染图片槽位 ====================
     function renderImageSlot(key, label, imageUrl = null) {
       if (imageUrl) {
+        console.log('🎨 [renderImageSlot] 渲染已填充槽位:', { key, label, imageUrl });
         return `
           <div class="image-slot filled" data-key="${key}">
-            <img src="${imageUrl}" alt="${label}">
+            <img src="${imageUrl}" alt="${label}"
+                 onload="console.log('✅ [IMG] 图片加载成功:', '${key}', '${imageUrl}')"
+                 onerror="console.error('❌ [IMG] 图片加载失败:', '${key}', '${imageUrl}')">
             <div class="overlay">
-              <button class="btn-view" onclick="viewImage('${imageUrl}')">查看</button>
-              <button class="btn-replace" onclick="uploadImage('${key}')">替换</button>
-              <button class="btn-delete" onclick="deleteImage('${key}')">删除</button>
+              <button type="button" class="btn-view" onclick="viewImage('${imageUrl}')">查看</button>
+              <button type="button" class="btn-replace" onclick="uploadImage('${key}')">替换</button>
+              <button type="button" class="btn-delete" onclick="deleteImage('${key}')">删除</button>
             </div>
           </div>
         `;
       } else {
+        console.log('🎨 [renderImageSlot] 渲染空槽位:', { key, label });
         return `
           <div class="image-slot" onclick="uploadImage('${key}')">
             <div class="icon">📷</div>
@@ -804,6 +837,16 @@
         // 解析 key 来确定路径和文件名
         const { path, filename } = parseImageKey(key);
 
+        console.log('📤 [uploadImage] 开始上传:', {
+          key,
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type,
+          parsedPath: path,
+          parsedFilename: filename,
+          fullR2Key: `${path}/${filename}`
+        });
+
         const formData = new FormData();
         formData.append('file', file);
         formData.append('path', path);
@@ -819,18 +862,30 @@
 
           const data = await response.json();
 
+          console.log('📥 [uploadImage] 上传响应:', data);
+
           if (data.success) {
+            console.log('✅ [uploadImage] 上传成功!', {
+              url: data.url,
+              key: data.key,
+              size: data.size
+            });
+
             showNotification('上传成功！', 'success');
+
             // 重新加载当前页面内容
+            console.log('🔄 [uploadImage] 准备重新加载页面...');
             setTimeout(() => {
               const hash = window.location.hash.slice(1) || 'dashboard';
+              console.log('🔄 [uploadImage] 重新加载页面:', hash);
               loadPage(hash);
             }, 500);
           } else {
+            console.error('❌ [uploadImage] 上传失败:', data.message);
             showNotification('上传失败: ' + data.message, 'error');
           }
         } catch (error) {
-          console.error('Upload error:', error);
+          console.error('❌ [uploadImage] 上传错误:', error);
           showNotification('上传失败: ' + error.message, 'error');
         }
       };
