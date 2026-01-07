@@ -561,9 +561,19 @@
     function updateImageSlot(key, imageUrl) {
       console.log('🔍 [updateImageSlot] 尝试更新槽位:', { key, imageUrl });
 
+      // Debug: 列出页面上所有槽位
+      const allSlots = document.querySelectorAll('.image-slot');
+      console.log('📋 [updateImageSlot] 页面上所有槽位:', Array.from(allSlots).map(s => ({
+        dataKey: s.getAttribute('data-key'),
+        hasDataKey: s.hasAttribute('data-key'),
+        outerHTML: s.outerHTML.substring(0, 100)
+      })));
+
       const slot = document.querySelector(`[data-key="${key}"]`);
       if (!slot) {
-        console.warn('⚠️ [updateImageSlot] 未找到槽位元素:', key);
+        console.error('⚠️ [updateImageSlot] 未找到槽位元素:', key);
+        console.error('   期望的 key:', key);
+        console.error('   查询选择器:', `[data-key="${key}"]`);
         return;
       }
 
