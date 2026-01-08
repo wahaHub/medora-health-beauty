@@ -661,11 +661,13 @@
       }
 
       let html = '';
+      const cacheBuster = `?t=${Date.now()}`;
       caseItem.images.forEach((img, idx) => {
         const sizeClass = getSizeClass(img.width, img.height);
+        const displayUrl = img.url + cacheBuster;
         html += `
           <div class="case-image-slot has-image ${sizeClass}" data-image-index="${idx}">
-            <img src="${img.url}" alt="Case ${caseItem.id} - Image ${idx + 1}">
+            <img src="${displayUrl}" alt="Case ${caseItem.id} - Image ${idx + 1}">
             <div class="slot-actions">
               <button class="action-btn" onclick="event.stopPropagation(); viewImage('${img.url}')" title="View">👁️</button>
               <button class="action-btn" onclick="event.stopPropagation(); deleteCaseImage(${caseItem.id}, ${idx})" title="Delete">🗑️</button>
@@ -782,14 +784,18 @@
       }
     }
 
-    // 更新槽位显示图片
+    // 更新槽位显示图片（添加时间戳破坏缓存）
     function updateSlotWithImage(slotId, imageUrl) {
       const slot = document.querySelector(`[data-slot-id="${slotId}"], [data-slot-type="${slotId}"]`);
       if (!slot) return;
 
+      // 添加时间戳破坏浏览器缓存
+      const cacheBuster = `?t=${Date.now()}`;
+      const displayUrl = imageUrl + cacheBuster;
+
       slot.classList.add('has-image');
       slot.innerHTML = `
-        <img src="${imageUrl}" alt="${slotId}">
+        <img src="${displayUrl}" alt="${slotId}">
         <div class="slot-actions">
           <button class="action-btn" onclick="event.stopPropagation(); viewImage('${imageUrl}')" title="View">👁️</button>
           <button class="action-btn" onclick="event.stopPropagation(); deleteImage('${slotId}')" title="Delete">🗑️</button>
