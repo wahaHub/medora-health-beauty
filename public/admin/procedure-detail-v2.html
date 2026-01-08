@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procedure Images - Medora Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      padding: 20px;
+    }
+
+    .header {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .procedure-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .procedure-path {
+      font-size: 13px;
+      color: #999;
+      font-family: monospace;
+      margin-top: 5px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .back-btn:hover {
+      background: #5568d3;
+    }
+
+    /* Section */
+    .section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-description {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    /* Hero Section - Single Image */
+    .hero-slot {
+      width: 100%;
+      max-width: 800px;
+      aspect-ratio: 16/9;
+      border: 2px dashed #e0e0e0;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      background: #fafafa;
+    }
+
+    .hero-slot:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    .hero-slot.has-image {
+      border-style: solid;
+      border-color: #4caf50;
+      padding: 0;
+    }
+
+    .hero-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Benefits/Candidate Sections - Grid of images */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+    }
+
+    .info-slot {
+      aspect-ratio: 4/3;
+      border: 2px dashed #e0e0e0;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      background: #fafafa;
+    }
+
+    .info-slot:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    .info-slot.has-image {
+      border-style: solid;
+      border-color: #4caf50;
+      padding: 0;
+    }
+
+    .info-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Cases Section - Flexible masonry layout */
+    .cases-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .case-item {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      border: 2px solid #e0e0e0;
+    }
+
+    .case-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .case-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .case-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 13px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-add {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-add:hover {
+      background: #5568d3;
+    }
+
+    .btn-delete-case {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-delete-case:hover {
+      background: #d32f2f;
+    }
+
+    /* Masonry Grid for Case Images */
+    .case-images-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      grid-auto-flow: dense;
+    }
+
+    .case-image-slot {
+      border: 2px dashed #ddd;
+      border-radius: 10px;
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      background: white;
+    }
+
+    /* Smart sizing based on image dimensions */
+    .case-image-slot.portrait {
+      grid-row: span 2;
+    }
+
+    .case-image-slot.landscape {
+      grid-column: span 2;
+    }
+
+    .case-image-slot.large {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .case-image-slot:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    .case-image-slot.has-image {
+      border-style: solid;
+      border-color: #4caf50;
+      padding: 0;
+    }
+
+    .case-image-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .slot-placeholder {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .slot-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+
+    .slot-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #666;
+    }
+
+    .slot-path {
+      font-size: 11px;
+      color: #999;
+      margin-top: 5px;
+      font-family: monospace;
+    }
+
+    /* Actions overlay */
+    .slot-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: none;
+      gap: 5px;
+    }
+
+    .has-image:hover .slot-actions {
+      display: flex;
+    }
+
+    .action-btn {
+      background: rgba(0,0,0,0.7);
+      color: white;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .action-btn:hover {
+      background: rgba(0,0,0,0.9);
+    }
+
+    /* Upload Modal */
+    .upload-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .upload-overlay.active {
+      display: flex;
+    }
+
+    .upload-modal {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .upload-modal h3 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .upload-area {
+      border: 2px dashed #667eea;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .upload-area:hover {
+      background: #f8f9ff;
+    }
+
+    .upload-area.drag-over {
+      background: #e8f0ff;
+      border-color: #5568d3;
+    }
+
+    .upload-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .upload-buttons button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #666;
+    }
+
+    .btn-secondary:hover {
+      background: #d0d0d0;
+    }
+
+    .upload-progress {
+      margin-top: 15px;
+      height: 4px;
+      background: #e0e0e0;
+      border-radius: 2px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .upload-progress.active {
+      display: block;
+    }
+
+    .upload-progress-bar {
+      height: 100%;
+      background: #667eea;
+      transition: width 0.3s;
+    }
+
+    /* Add new case button */
+    .add-case-btn {
+      width: 100%;
+      padding: 20px;
+      border: 2px dashed #667eea;
+      border-radius: 12px;
+      background: white;
+      color: #667eea;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .add-case-btn:hover {
+      background: #f8f9ff;
+      border-color: #5568d3;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <a href="/admin/procedures-manager.html" class="back-btn">← Back to Procedures</a>
+      </div>
+      <div style="text-align: right;">
+        <div class="procedure-title" id="procedureName"></div>
+        <div class="procedure-path" id="procedurePath"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. Hero Section -->
+  <div class="section">
+    <div class="section-title">
+      🎯 Hero Banner
+    </div>
+    <div class="section-description">
+      Main banner image for the procedure page. Recommended: 1920x1080px
+    </div>
+    <div class="hero-slot" data-slot-type="hero" onclick="openUpload('hero', 'hero')">
+      <div class="slot-placeholder">
+        <div class="slot-icon">🖼️</div>
+        <div class="slot-label">Click to upload Hero image</div>
+        <div class="slot-path">hero.jpg</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Benefits Section -->
+  <div class="section">
+    <div class="section-title">
+      ✨ Benefits of <span id="benefitsTitle"></span>
+    </div>
+    <div class="section-description">
+      Visual representation of procedure benefits. Recommended: 1200x800px
+    </div>
+    <div class="hero-slot" data-slot-type="benefits" onclick="openUpload('benefits', 'benefits')">
+      <div class="slot-placeholder">
+        <div class="slot-icon">✨</div>
+        <div class="slot-label">Click to upload Benefits image</div>
+        <div class="slot-path">benefits.jpg</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Candidate Section -->
+  <div class="section">
+    <div class="section-title">
+      👤 You may be a good candidate if...
+    </div>
+    <div class="section-description">
+      Images showing ideal candidates. Recommended: 1200x800px
+    </div>
+    <div class="hero-slot" data-slot-type="candidate" onclick="openUpload('candidate', 'candidate')">
+      <div class="slot-placeholder">
+        <div class="slot-icon">👤</div>
+        <div class="slot-label">Click to upload Candidate image</div>
+        <div class="slot-path">candidate.jpg</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Before & After Cases -->
+  <div class="section">
+    <div class="section-title">
+      📸 Before & After Cases
+      <span style="font-size: 13px; color: #999; font-weight: normal;">(unlimited cases)</span>
+    </div>
+    <div class="section-description">
+      Upload multiple images per case. System will automatically arrange different image sizes intelligently.
+    </div>
+
+    <div class="cases-container" id="casesContainer">
+      <!-- Cases will be dynamically added here -->
+    </div>
+
+    <button class="add-case-btn" onclick="addNewCase()">
+      <span style="font-size: 24px;">+</span>
+      <span>Add New Case</span>
+    </button>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="upload-overlay" id="uploadOverlay">
+    <div class="upload-modal">
+      <h3 id="uploadTitle">Upload Image</h3>
+      <div class="upload-area" id="uploadArea">
+        <div style="font-size: 48px; margin-bottom: 10px;">📤</div>
+        <div style="font-size: 16px; margin-bottom: 10px;">Drop image here or click to select</div>
+        <div style="font-size: 13px; color: #999;">Supported: JPG, PNG, WebP (max 10MB)</div>
+        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+      </div>
+      <div class="upload-progress" id="uploadProgress">
+        <div class="upload-progress-bar" id="uploadProgressBar"></div>
+      </div>
+      <div class="upload-buttons">
+        <button class="btn-secondary" onclick="closeUpload()">Cancel</button>
+        <button class="btn-primary" id="uploadBtn" onclick="startUpload()">Upload</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createSlug } from './procedures-categories.js';
+    import { checkAuth, authFetch } from './auth.js';
+
+    // Check authentication
+    if (!checkAuth()) {
+      throw new Error('Not authenticated');
+    }
+
+    let currentProcedureName = '';
+    let currentSlug = '';
+    let currentSlotType = '';
+    let currentSection = ''; // 'hero', 'benefits', 'candidate', 'case'
+    let currentCaseId = null;
+    let currentImageIndex = null;
+    let selectedFile = null;
+    let r2PublicUrl = '';
+    let cases = []; // Array to store case data
+
+    // 初始化
+    async function init() {
+      const params = new URLSearchParams(window.location.search);
+      currentProcedureName = decodeURIComponent(params.get('name') || '');
+
+      if (!currentProcedureName) {
+        window.location.href = '/admin/procedures-manager.html';
+        return;
+      }
+
+      currentSlug = createSlug(currentProcedureName);
+
+      // 更新标题
+      document.getElementById('procedureName').textContent = currentProcedureName;
+      document.getElementById('benefitsTitle').textContent = currentProcedureName;
+      document.getElementById('procedurePath').textContent = `procedures/${currentSlug}/`;
+
+      // R2 公开 URL 从环境配置获取（硬编码或从API获取）
+      r2PublicUrl = 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev';
+
+      // 渲染槽位
+      renderCases();
+
+      // 加载已有图片
+      await loadExistingImages();
+    }
+
+    // 渲染案例
+    function renderCases() {
+      const container = document.getElementById('casesContainer');
+
+      if (cases.length === 0) {
+        // 添加第一个默认案例
+        cases.push({ id: 1, images: [] });
+      }
+
+      let html = '';
+      cases.forEach(caseItem => {
+        html += `
+          <div class="case-item" data-case-id="${caseItem.id}">
+            <div class="case-header">
+              <div class="case-title">Case ${caseItem.id}</div>
+              <div class="case-actions">
+                <button class="btn-small btn-add" onclick="openUpload('case', ${caseItem.id})">
+                  + Add Image
+                </button>
+                ${cases.length > 1 ? `
+                  <button class="btn-small btn-delete-case" onclick="deleteCase(${caseItem.id})">
+                    Delete Case
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+            <div class="case-images-grid" id="case-${caseItem.id}-grid">
+              ${renderCaseImages(caseItem)}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // 渲染单个案例的图片
+    function renderCaseImages(caseItem) {
+      if (!caseItem.images || caseItem.images.length === 0) {
+        return `
+          <div class="case-image-slot" onclick="openUpload('case', ${caseItem.id}, 1)">
+            <div class="slot-placeholder">
+              <div class="slot-icon">📷</div>
+              <div class="slot-label">Add first image</div>
+            </div>
+          </div>
+        `;
+      }
+
+      let html = '';
+      caseItem.images.forEach((img, idx) => {
+        const sizeClass = getSizeClass(img.width, img.height);
+        html += `
+          <div class="case-image-slot has-image ${sizeClass}" data-image-index="${idx}">
+            <img src="${img.url}" alt="Case ${caseItem.id} - Image ${idx + 1}">
+            <div class="slot-actions">
+              <button class="action-btn" onclick="event.stopPropagation(); viewImage('${img.url}')" title="View">👁️</button>
+              <button class="action-btn" onclick="event.stopPropagation(); deleteCaseImage(${caseItem.id}, ${idx})" title="Delete">🗑️</button>
+            </div>
+          </div>
+        `;
+      });
+
+      // 添加一个空槽位用于添加更多图片
+      html += `
+        <div class="case-image-slot" onclick="openUpload('case', ${caseItem.id}, ${caseItem.images.length + 1})">
+          <div class="slot-placeholder">
+            <div class="slot-icon">+</div>
+            <div class="slot-label">Add more</div>
+          </div>
+        </div>
+      `;
+
+      return html;
+    }
+
+    // 智能判断图片尺寸类别
+    function getSizeClass(width, height) {
+      if (!width || !height) return '';
+
+      const ratio = width / height;
+
+      if (ratio > 1.5) return 'landscape'; // 横向
+      if (ratio < 0.7) return 'portrait';  // 竖向
+      if (width > 1000 && height > 1000) return 'large'; // 大图
+      return '';
+    }
+
+    // 添加新案例
+    window.addNewCase = function() {
+      const newId = Math.max(...cases.map(c => c.id), 0) + 1;
+      cases.push({ id: newId, images: [] });
+      renderCases();
+    };
+
+    // 删除案例
+    window.deleteCase = function(caseId) {
+      if (!confirm('Are you sure you want to delete this entire case?')) return;
+      cases = cases.filter(c => c.id !== caseId);
+      renderCases();
+      // TODO: 同时删除 R2 中的图片
+    };
+
+    // 删除案例中的某张图片
+    window.deleteCaseImage = async function(caseId, imageIndex) {
+      if (!confirm('Are you sure you want to delete this image?')) return;
+
+      const caseItem = cases.find(c => c.id === caseId);
+      if (!caseItem) return;
+
+      const image = caseItem.images[imageIndex];
+
+      try {
+        // 从 R2 删除
+        const response = await authFetch(`/api/admin/delete?key=${encodeURIComponent(image.key)}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          caseItem.images.splice(imageIndex, 1);
+          renderCases();
+          alert('Image deleted successfully');
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('Delete failed: ' + error.message);
+      }
+    };
+
+    // 加载已存在的图片
+    async function loadExistingImages() {
+      try {
+        const prefix = `procedures/${currentSlug}/`;
+        const response = await authFetch(`/api/admin/images?prefix=${encodeURIComponent(prefix)}`);
+        const data = await response.json();
+
+        if (data.success && data.images) {
+          data.images.forEach(img => {
+            const parts = img.key.split('/');
+            const filename = parts[parts.length - 1];
+            const [type, ...rest] = filename.replace('.jpg', '').split('-');
+
+            if (type === 'hero' || type === 'benefits' || type === 'candidate') {
+              updateSlotWithImage(type, img.url);
+            } else if (type === 'case') {
+              // case-1-1.jpg, case-1-2.jpg
+              const caseId = parseInt(rest[0]);
+              const imgIndex = parseInt(rest[1]) - 1;
+
+              let caseItem = cases.find(c => c.id === caseId);
+              if (!caseItem) {
+                caseItem = { id: caseId, images: [] };
+                cases.push(caseItem);
+              }
+
+              caseItem.images[imgIndex] = {
+                url: img.url,
+                key: img.key,
+                width: 800, // TODO: 从图片元数据获取实际尺寸
+                height: 600
+              };
+            }
+          });
+
+          renderCases();
+        }
+      } catch (error) {
+        console.error('Error loading images:', error);
+      }
+    }
+
+    // 更新槽位显示图片
+    function updateSlotWithImage(slotId, imageUrl) {
+      const slot = document.querySelector(`[data-slot-id="${slotId}"], [data-slot-type="${slotId}"]`);
+      if (!slot) return;
+
+      slot.classList.add('has-image');
+      slot.innerHTML = `
+        <img src="${imageUrl}" alt="${slotId}">
+        <div class="slot-actions">
+          <button class="action-btn" onclick="event.stopPropagation(); viewImage('${imageUrl}')" title="View">👁️</button>
+          <button class="action-btn" onclick="event.stopPropagation(); deleteImage('${slotId}')" title="Delete">🗑️</button>
+        </div>
+      `;
+    }
+
+    // 打开上传弹窗
+    window.openUpload = function(section, idOrIndex, imageIndex = null) {
+      currentSection = section;
+
+      if (section === 'hero' || section === 'benefits' || section === 'candidate') {
+        currentSlotType = section;
+        currentImageIndex = null;
+        const titles = {
+          hero: 'Hero Image',
+          benefits: 'Benefits Image',
+          candidate: 'Candidate Image'
+        };
+        document.getElementById('uploadTitle').textContent = `Upload ${titles[section]}`;
+      } else if (section === 'case') {
+        currentCaseId = idOrIndex;
+        currentImageIndex = imageIndex;
+        document.getElementById('uploadTitle').textContent = `Upload Case ${idOrIndex} Image`;
+      }
+
+      document.getElementById('uploadOverlay').classList.add('active');
+      selectedFile = null;
+      document.getElementById('uploadBtn').disabled = false;
+    };
+
+    // 关闭上传弹窗
+    window.closeUpload = function() {
+      document.getElementById('uploadOverlay').classList.remove('active');
+      selectedFile = null;
+      document.getElementById('fileInput').value = '';
+      document.getElementById('uploadProgress').classList.remove('active');
+    };
+
+    // 文件选择
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        selectedFile = e.target.files[0];
+        uploadArea.querySelector('div:nth-child(2)').textContent = `Selected: ${selectedFile.name}`;
+      }
+    });
+
+    // 拖拽上传
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('drag-over');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('drag-over');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('drag-over');
+      if (e.dataTransfer.files.length > 0) {
+        selectedFile = e.dataTransfer.files[0];
+        fileInput.files = e.dataTransfer.files;
+        uploadArea.querySelector('div:nth-child(2)').textContent = `Selected: ${selectedFile.name}`;
+      }
+    });
+
+    // 开始上传
+    window.startUpload = async function() {
+      if (!selectedFile) {
+        alert('Please select a file first');
+        return;
+      }
+
+      let filename, remotePath;
+
+      if (currentSection === 'case') {
+        const caseItem = cases.find(c => c.id === currentCaseId);
+        const imageCount = caseItem ? caseItem.images.length : 0;
+        filename = `case-${currentCaseId}-${imageCount + 1}.jpg`;
+      } else {
+        filename = `${currentSlotType}.jpg`;
+      }
+
+      remotePath = `procedures/${currentSlug}`;
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('path', remotePath);
+      formData.append('filename', filename);
+
+      try {
+        document.getElementById('uploadProgress').classList.add('active');
+        document.getElementById('uploadBtn').disabled = true;
+
+        const response = await authFetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          if (currentSection === 'case') {
+            // 添加到案例图片数组
+            let caseItem = cases.find(c => c.id === currentCaseId);
+            if (!caseItem) {
+              caseItem = { id: currentCaseId, images: [] };
+              cases.push(caseItem);
+            }
+
+            // 获取图片尺寸
+            const img = new Image();
+            img.onload = function() {
+              caseItem.images.push({
+                url: data.url,
+                key: data.key,
+                width: img.width,
+                height: img.height
+              });
+              renderCases();
+            };
+            img.src = data.url;
+          } else {
+            updateSlotWithImage(currentSlotType, data.url);
+          }
+
+          closeUpload();
+          alert('Upload successful!');
+        } else {
+          alert('Upload failed: ' + data.message);
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+        alert('Upload failed: ' + error.message);
+      } finally {
+        document.getElementById('uploadProgress').classList.remove('active');
+        document.getElementById('uploadBtn').disabled = false;
+      }
+    };
+
+    // 查看图片
+    window.viewImage = function(url) {
+      window.open(url, '_blank');
+    };
+
+    // 删除图片
+    window.deleteImage = async function(slotId) {
+      if (!confirm('Are you sure you want to delete this image?')) return;
+
+      const key = `procedures/${currentSlug}/${slotId}.jpg`;
+
+      try {
+        const response = await authFetch(`/api/admin/delete?key=${encodeURIComponent(key)}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          const slot = document.querySelector(`[data-slot-id="${slotId}"], [data-slot-type="${slotId}"]`);
+          if (slot) {
+            slot.classList.remove('has-image');
+            const isHero = slotId === 'hero';
+            slot.innerHTML = `
+              <div class="slot-placeholder">
+                <div class="slot-icon">🖼️</div>
+                <div class="slot-label">Click to upload ${slotId}</div>
+                <div class="slot-path">${slotId}.jpg</div>
+              </div>
+            `;
+          }
+          alert('Image deleted successfully');
+        } else {
+          alert('Delete failed: ' + data.message);
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('Delete failed: ' + error.message);
+      }
+    };
+
+    // 启动
+    init();
+  </script>
+
+</body>
+</html>
