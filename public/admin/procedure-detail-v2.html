@@ -185,10 +185,51 @@
       margin-bottom: 15px;
     }
 
+    .case-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     .case-title {
       font-size: 16px;
       font-weight: 600;
       color: #333;
+    }
+
+    .case-number-label {
+      font-size: 12px;
+      color: #999;
+      font-family: monospace;
+    }
+
+    .case-description {
+      margin-bottom: 15px;
+    }
+
+    .case-description label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #666;
+      margin-bottom: 6px;
+    }
+
+    .case-description textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+
+    .case-description textarea:focus {
+      outline: none;
+      border-color: #667eea;
     }
 
     .case-actions {
@@ -616,8 +657,8 @@
       const container = document.getElementById('casesContainer');
 
       if (cases.length === 0) {
-        // 添加第一个默认案例
-        cases.push({ id: 1, images: [] });
+        // 添加第一个默认案例，生成6位随机 case number
+        cases.push({ id: 1, caseNumber: generateCaseNumber(), description: '', images: [] });
       }
 
       let html = '';
@@ -625,17 +666,27 @@
         html += `
           <div class="case-item" data-case-id="${caseItem.id}">
             <div class="case-header">
-              <div class="case-title">Case ${caseItem.id}</div>
+              <div class="case-info">
+                <div class="case-title">Case #${caseItem.caseNumber || generateCaseNumber()}</div>
+                <div class="case-number-label">ID: ${caseItem.caseNumber || 'N/A'}</div>
+              </div>
               <div class="case-actions">
-                <button class="btn-small btn-add" onclick="openUpload('case', ${caseItem.id})">
+                <button type="button" class="btn-small btn-add" onclick="openUpload('case', ${caseItem.id})">
                   + Add Image
                 </button>
                 ${cases.length > 1 ? `
-                  <button class="btn-small btn-delete-case" onclick="deleteCase(${caseItem.id})">
+                  <button type="button" class="btn-small btn-delete-case" onclick="deleteCase(${caseItem.id})">
                     Delete Case
                   </button>
                 ` : ''}
               </div>
+            </div>
+            <div class="case-description">
+              <label>Description:</label>
+              <textarea
+                placeholder="Enter case description (e.g., Patient age, procedure details, recovery notes...)"
+                onchange="updateCaseDescription(${caseItem.id}, this.value)"
+              >${caseItem.description || ''}</textarea>
             </div>
             <div class="case-images-grid" id="case-${caseItem.id}-grid">
               ${renderCaseImages(caseItem)}
@@ -701,10 +752,25 @@
       return '';
     }
 
+    // 生成6位随机 case number
+    function generateCaseNumber() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    // 更新案例描述
+    window.updateCaseDescription = function(caseId, description) {
+      const caseItem = cases.find(c => c.id === caseId);
+      if (caseItem) {
+        caseItem.description = description;
+        // TODO: 保存到后端/R2
+        console.log(`Case ${caseId} description updated:`, description);
+      }
+    };
+
     // 添加新案例
     window.addNewCase = function() {
       const newId = Math.max(...cases.map(c => c.id), 0) + 1;
-      cases.push({ id: newId, images: [] });
+      cases.push({ id: newId, caseNumber: generateCaseNumber(), description: '', images: [] });
       renderCases();
     };
 
@@ -764,7 +830,7 @@
 
               let caseItem = cases.find(c => c.id === caseId);
               if (!caseItem) {
-                caseItem = { id: caseId, images: [] };
+                caseItem = { id: caseId, caseNumber: generateCaseNumber(), description: '', images: [] };
                 cases.push(caseItem);
               }
 
