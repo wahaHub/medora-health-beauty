@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Phone } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from '../hooks/useTranslation';
+import { useLanguage } from '../contexts/LanguageContext';
+import procedureNames from '../i18n/procedureNames.json';
 
 interface SubMenuItem {
   label: string;
@@ -17,13 +19,40 @@ interface NavItem {
   columns?: SubMenuItem[][]; // Array of columns, each column is an array of items
 }
 
+// Type for procedure names translation
+type ProcedureNameTranslations = {
+  [key: string]: {
+    en: string;
+    zh: string;
+    es: string;
+    fr: string;
+    de: string;
+    ru: string;
+    ar: string;
+    vi: string;
+    id: string;
+  };
+};
+
+const typedProcedureNames = procedureNames as ProcedureNameTranslations;
+
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
+
+  // Helper function to translate procedure/menu item names
+  const translateLabel = (englishLabel: string): string => {
+    const translation = typedProcedureNames[englishLabel];
+    if (translation && translation[currentLanguage as keyof typeof translation]) {
+      return translation[currentLanguage as keyof typeof translation];
+    }
+    return englishLabel; // Fallback to English if no translation found
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,19 +62,20 @@ const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleLinkClick = (e: React.MouseEvent, pageName: string, isMenuLink: boolean) => {
+  const handleLinkClick = (e: React.MouseEvent, pageName: string, isMenuLink: boolean, href?: string) => {
     e.preventDefault();
     setMobileMenuOpen(false);
     setHoveredNav(null);
-    
+
     // Handle different navigation cases
-    if (pageName === 'GALLERY' || pageName === 'gallery') {
+    // Check href first (language-independent), then fallback to pageName for backwards compatibility
+    if (href === '#gallery' || pageName === 'GALLERY' || pageName === 'gallery') {
       navigate('/gallery');
       window.scrollTo(0, 0);
     } else if (pageName === 'Our Team') {
       navigate('/team');
       window.scrollTo(0, 0);
-    } else if (pageName === 'TRAVEL' || pageName === 'travel') {
+    } else if (href === '#travel' || pageName === 'TRAVEL' || pageName === 'travel') {
       navigate('/travel');
       window.scrollTo(0, 0);
     } else if (pageName === 'Patient Reviews' || pageName === 'reviews') {
@@ -108,61 +138,70 @@ const Header: React.FC = () => {
         ]
       ]
     },
-    { 
-      name: t('navFace'), 
+    {
+      name: t('navFace'),
       href: '#face',
       columns: [
         [
-          { label: 'Face & Neck', isHeader: true },
-          { label: 'Brow Lift', isSub: true },
-          { label: 'Temples Lift / Temporofrontal Lift', isSub: true },
-          { label: 'Forehead Reduction Surgery', isSub: true },
+          // 1. 面部整形手术 (Facial Surgery)
+          { label: 'Eye Surgery', isHeader: true },
           { label: 'Eyelid Surgery', isSub: true },
-          { label: 'Facelift', isSub: true },
-          { label: 'Midface Lift (Mid Facelift)', isSub: true },
-          { label: 'Mini Facelift', isSub: true },
-          { label: 'Neck Lift', isSub: true },
-          { label: 'Deep Neck Contouring', isSub: true },
-          { label: 'Neck Liposuction', isSub: true },
-          { label: 'Platysmaplasty', isSub: true },
-          { label: 'Cervicoplasty', isSub: true },
-          { label: 'Otoplasty (Ear Pinning)', isSub: true },
+          { label: 'Nose Surgery', isHeader: true },
           { label: 'Rhinoplasty', isSub: true },
           { label: 'Revision Rhinoplasty', isSub: true },
           { label: 'Nose Tip Refinement', isSub: true },
-          { label: 'Mohs Skin Cancer Reconstruction', isSub: true },
-          { label: 'Facial Contouring & Implants', isHeader: true },
+          { label: 'Facelift Surgery', isHeader: true },
+          { label: 'Facelift', isSub: true },
+          { label: 'Mini Facelift', isSub: true },
+          { label: 'Midface Lift (Mid Facelift)', isSub: true },
+          { label: 'Neck Lift', isSub: true },
+          { label: 'Deep Neck Contouring', isSub: true },
+          { label: 'Brow Lift', isSub: true },
+          { label: 'Temples Lift / Temporofrontal Lift', isSub: true },
+          { label: 'Forehead Reduction Surgery', isSub: true },
+          { label: 'Facial Contouring', isHeader: true },
           { label: 'Cheek Augmentation', isSub: true },
           { label: 'Chin Augmentation', isSub: true },
           { label: 'Jawline Contouring', isSub: true },
           { label: 'Zygomatic Arch Contouring', isSub: true },
-          { label: 'Facial Implants', isSub: true },
-          { label: 'Submalar Implants', isSub: true },
+          { label: 'Other Facial Surgery', isHeader: true },
+          { label: 'Otoplasty (Ear Pinning)', isSub: true },
           { label: 'Buccal Fat Removal', isSub: true }
         ],
         [
+          // 2. 皮肤和注射类 (Skin & Injectables)
+          { label: 'Skin Tightening & Resurfacing', isHeader: true },
+          { label: 'Renuvion® Skin Tightening Treatment', isSub: true },
+          { label: 'Laser Liposuction', isSub: true },
+          { label: 'Skin Resurfacing', isSub: true },
+          { label: 'Microdermabrasion', isSub: true },
           { label: 'Injectables & Regenerative', isHeader: true },
           { label: 'Facial Injectables', isSub: true },
           { label: 'BOTOX® & Neurotoxins', isSub: true },
           { label: 'Dermal Fillers', isSub: true },
-          { label: 'Lip Filler', isSub: true },
-          { label: 'Lip Injections', isSub: true },
           { label: 'Fat Dissolving Injections', isSub: true },
           { label: 'Fat Transfer (Facial Fat Grafting)', isSub: true },
           { label: 'Facial Rejuvenation with PRP', isSub: true },
-          { label: 'Lips', isHeader: true },
+          { label: 'Lip Filler', isSub: true },
+          { label: 'Lip Injections', isSub: true },
           { label: 'Lip Augmentation', isSub: true },
           { label: 'Lip Lift', isSub: true }
         ],
         [
-          { label: 'Skin Tightening & Resurfacing', isHeader: true },
+          // 3. 颈部整形 (Neck Surgery)
+          { label: 'Neck Surgery', isHeader: true },
+          { label: 'Neck Liposuction', isSub: true },
           { label: 'Neck Tightening', isSub: true },
-          { label: 'Renuvion® Skin Tightening Treatment', isSub: true },
-          { label: 'Skin Resurfacing', isSub: true },
-          { label: 'Microdermabrasion', isSub: true },
-          { label: 'Laser Liposuction', isSub: true },
-          { label: 'Hair', isHeader: true },
-          { label: 'Hair Restoration', isSub: true }
+          { label: 'Platysmaplasty', isSub: true },
+          { label: 'Cervicoplasty', isSub: true },
+          // 4. 头发恢复 (Hair Restoration)
+          { label: 'Hair Restoration', isHeader: true },
+          { label: 'Hair Restoration', isSub: true },
+          // 5. 其他整形 (Other Procedures)
+          { label: 'Other Procedures', isHeader: true },
+          { label: 'Mohs Skin Cancer Reconstruction', isSub: true },
+          { label: 'Facial Implants', isSub: true },
+          { label: 'Submalar Implants', isSub: true }
         ]
       ]
     },
@@ -305,9 +344,9 @@ const Header: React.FC = () => {
               className="h-full flex items-center group px-4 cursor-pointer"
               onMouseEnter={() => link.columns ? setHoveredNav(link.name) : setHoveredNav(null)}
             >
-              <a 
+              <a
                 href={link.href}
-                onClick={(e) => handleLinkClick(e, link.name, false)}
+                onClick={(e) => handleLinkClick(e, link.name, false, link.href)}
                 className={`text-sm tracking-[0.1em] font-medium uppercase transition-colors relative
                   ${hasWhiteBg ? 'text-stone-600 hover:text-gold-600' : 'text-white hover:text-gold-300'}
                   ${hoveredNav === link.name ? 'text-gold-600' : ''}`}
@@ -371,20 +410,20 @@ const Header: React.FC = () => {
                         <div key={itemIdx} className="group/item">
                           {item.isHeader ? (
                             <span className="block text-white text-sm font-medium tracking-wide mb-3 mt-4 first:mt-0">
-                              {item.label}
+                              {translateLabel(item.label)}
                             </span>
                           ) : (
-                            <a 
+                            <a
                               href={item.href || "#"}
                               onClick={(e) => handleLinkClick(e, item.label, true)}
                               className={`block transition-colors hover:text-gold-500 ${
-                                item.isSub 
-                                  ? 'pl-4 text-sage-300 text-sm flex items-center' 
+                                item.isSub
+                                  ? 'pl-4 text-sage-300 text-sm flex items-center'
                                   : 'text-sage-200 text-sm tracking-wide font-light'
                               }`}
                             >
                               {item.isSub && <span className="inline-block w-1 h-1 rounded-full bg-gold-600 mr-2 opacity-60 group-hover/item:opacity-100 transition-opacity"></span>}
-                              {item.label}
+                              {translateLabel(item.label)}
                             </a>
                           )}
                         </div>
@@ -404,10 +443,10 @@ const Header: React.FC = () => {
           <div className="flex flex-col space-y-6">
             {navItems.map((link) => (
               <div key={link.name}>
-                <a 
+                <a
                   href={link.href}
                   className="text-navy-900 text-xl font-serif font-bold"
-                  onClick={(e) => handleLinkClick(e, link.name, ['GALLERY', 'TRAVEL'].includes(link.name))}
+                  onClick={(e) => handleLinkClick(e, link.name, false, link.href)}
                 >
                   {link.name}
                 </a>
@@ -416,12 +455,12 @@ const Header: React.FC = () => {
                   <div className="mt-4 pl-4 border-l-2 border-gold-200 space-y-3">
                     {link.columns.flat().map((item, idx) => (
                       !item.isHeader && (
-                        <div 
-                          key={idx} 
+                        <div
+                          key={idx}
                           className={`text-stone-600 text-sm ${item.isSub ? 'pl-4' : ''}`}
                           onClick={(e) => handleLinkClick(e, item.label, true)}
                         >
-                          {item.label}
+                          {translateLabel(item.label)}
                         </div>
                       )
                     ))}

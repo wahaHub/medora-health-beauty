@@ -48,6 +48,8 @@ export const translations = {
     clickToViewFullCase: 'Click to view full case details',
     viewPhotoGallery: 'View Photo Gallery',
     requestConsultation: 'Request A Consultation',
+    comingSoon: 'Coming Soon',
+    noCasesYet: 'We are currently preparing before & after photos for this procedure. Please check back soon or contact us for more information.',
     
     // CTA section
     readyToGetStarted: 'Ready to Get Started?',
@@ -55,9 +57,6 @@ export const translations = {
     
     // Additional UI text
     medoraHealth: 'Medora Health',
-    centerForPlasticSurgery: 'Center for Plastic Surgery',
-    overview: 'Overview',
-    caseNumber: 'CASE',
     youMayBeGoodCandidate: 'You may be a good candidate for',
     if: 'if:',
     choosingTheRightSurgeon: 'CHOOSING THE RIGHT PLASTIC SURGEON',
@@ -84,16 +83,64 @@ export const translations = {
     homeScheduleConsultation: 'Schedule Consultation',
     
     // Gallery Page
-    galleryTitle: 'Before & After Gallery',
+    galleryTitle: 'Photo Gallery',
     gallerySubtitle: 'Real Patients. Real Results.',
     galleryDescription: 'Explore our comprehensive collection of before and after photos showcasing the artistry and precision of our surgical team.',
     galleryFilterAll: 'All',
-    
+    galleryHome: 'HOME',
+    galleryPhotoGallery: 'PHOTO GALLERY',
+    galleryFace: 'Face',
+    galleryBody: 'Body',
+    galleryNonSurgical: 'Non-Surgical',
+    gallerySignIn: 'Sign In',
+    galleryModel: 'MODEL',
+
     // Travel Page
-    travelTitle: 'Travel to Us',
+    travelTitle: 'Travel For Plastic Surgery',
     travelSubtitle: 'Concierge Program for International Patients',
-    travelDescription: 'We welcome patients from around the world and provide comprehensive support to make your journey seamless.',
-    
+    travelDescription: 'Having served thousands of patients from all 50 states and more than 25 countries, our team of plastic surgery specialists, featuring internationally recognized plastic surgeons, has perfected the travel process.',
+    travelHome: 'Home',
+    travelTravel: 'Travel',
+    travelPeaceOfMind: 'Peace of Mind by Design',
+    travelPeaceOfMindDesc1: 'At the Medora Health Center for Plastic Surgery, we take pride in providing unsurpassed concierge-level care for our out-of-town guests, who comprise more than 30% of our patients. For over 20 years, we have successfully aided in the planning and execution of travel arrangements to ensure our in-state, out-of-state, and international patients have an exceptional experience from start to finish.',
+    travelPeaceOfMindDesc2: 'Our world-class plastic surgeons, knowledgeable Patient Consultants, and skilled support staff ensure that no matter where you are traveling from, you\'ll find support and guidance that begins with a phone call and lasts a lifetime.',
+    travelEasyAs123: 'Traveling Here For Surgery',
+    travelEasyAs123Subtitle: 'Easy As 1-2-3',
+    travelEasyAs123Desc: 'Details matter, and we\'ve covered them all so you can skip the hassle.',
+    travelStep1: 'STEP 1:',
+    travelStep2: 'STEP 2:',
+    travelStep3: 'STEP 3:',
+    travelInitialConsultation: 'Initial Consultation',
+    travelPlanningYourSurgery: 'Planning Your Surgery & Trip',
+    travelSurgeryRecovery: 'Surgery & Recovery',
+    travelRequestConsultation: 'Request Your Consultation',
+    travelSubmitInquiry: 'I. Submit an Inquiry',
+    travelSubmitInquiryDesc: 'Call us at (585) 460-5468 or use our online form to request a consultation. Choose the "Virtual Consultation" option. Please provide us with your name, email address, phone number, procedure of interest, and any additional details you think would be helpful. Once you submit the form, a Patient Consultant will contact you within 24 hours.',
+    travelIntroductoryCall: 'II. Introductory Call',
+    travelIntroductoryCallDesc1: 'During this initial call, a Patient Consultant will gather information regarding your goals for cosmetic surgery. You will receive a preliminary price range for your surgery, details regarding your procedure(s) of interest, information on both initial and long-term healing, and specifics related to your surgery.',
+    travelIntroductoryCallDesc2: 'If we determine you are a candidate and you are ready to move forward in the process, we will schedule an in-person or virtual consultation depending on the procedure you are considering and your personal preference.',
+    travelInPerson: 'In Person',
+    travelInPersonDesc: 'If you choose to travel by car or plane for your consultation, we will help you arrange lodging for your stay. During the in-person consultation, you will meet with your Patient Consultant, tour our historic mansion, and meet one-on-one with one of our renowned plastic surgeons.',
+    travelVirtual: 'Virtual',
+    travelVirtualDesc: 'We conduct virtual consultations using the Nextech online communication platform. You will need a smartphone, tablet, or computer with a web camera. We will email you a link for your appointment; you do not need to download an app.',
+    travelScheduleSurgery: 'I. Schedule Your Surgery',
+    travelScheduleSurgeryDesc: 'After your consultation, you can schedule your surgery at your convenience. While most patients book during their consultation, we will not pressure you to move forward. Your Patient Consultant will give you a comprehensive pre-operative checklist, including necessary medical clearances.',
+    travelSchedulePreOp: 'II. Schedule Your In-Person Consult and Pre-Op Visit',
+    travelSchedulePreOpDesc: 'We require an in-person consultation and a pre-operative visit with your surgeon before surgery at no additional cost. Sometimes, patients can combine these appointments with their travel for surgery.',
+    travelLocalTravel: 'Local Travel',
+    travelLocalTravelDesc: 'Our Rochester location is easily accessible from Buffalo and Syracuse and offers a tranquil environment outside the urban bustle.',
+    travelFromBuffalo: 'Travel from Buffalo',
+    travelFromSyracuse: 'Travel from Syracuse',
+    travelTransportation: 'Transportation',
+    travelTransportationDesc: 'Your Patient Consultant will help you arrange transportation for your trip that may include:',
+    travelFlights: 'Flights to/from Rochester International Airport (ROC)',
+    travelGroundTransport: 'Ground transportation',
+    travelCarRentals: 'Car rentals',
+    travelReadyToStart: 'Are You Ready To Get Started?',
+    travelReadyToStartDesc: 'To begin your life-changing plastic surgery journey with the Medora Health Center, request a virtual or in-person consultation using our online form or call our office at (585) 460-5468 to schedule an appointment.',
+    travelWeCreate: 'We Create Uplifting Experiences That Change People\'s Lives®',
+    travelBackToTop: 'Back to Top',
+
     // Homepage Components
     introRenowned: 'RENOWNED FOR EXCELLENCE',
     introTitle: 'Medora Health Center for Plastic Surgery',
@@ -108,7 +155,6 @@ export const translations = {
     aestheticDestination: 'AESTHETIC DESTINATION',
     artisanSubtitle: '"Artistry. Precision. Natural Beauty."',
     introDescriptionLong: 'With nearly a century of combined experience, our board-certified plastic surgeons have cemented their places among the most qualified and best-loved in the region. Patients don\'t choose us just to perform their surgeries—they choose us to carry out life-changing transformations with unparalleled artistry and skill.',
-    requestConsultation: 'Request A Consultation',
     
     // Partnership Component
     globalStrategy: 'Global Strategy',
@@ -183,16 +229,15 @@ export const translations = {
     clickToViewFullCase: '点击查看完整案例详情',
     viewPhotoGallery: '查看照片库',
     requestConsultation: '申请咨询',
-    
+    comingSoon: '即将推出',
+    noCasesYet: '我们正在准备此手术的前后对比照片。请稍后查看或联系我们获取更多信息。',
+
     // CTA section
     readyToGetStarted: '准备好开始了吗？',
     scheduleConsultation: '预约您的咨询',
     
     // Additional UI text
     medoraHealth: '美多拉医疗',
-    centerForPlasticSurgery: '整形外科中心',
-    overview: '概述',
-    caseNumber: '案例',
     youMayBeGoodCandidate: '如果您符合以下条件，您可能是',
     if: '的理想候选人：',
     choosingTheRightSurgeon: '选择合适的整形外科医生',
@@ -219,16 +264,64 @@ export const translations = {
     homeScheduleConsultation: '预约咨询',
     
     // Gallery Page
-    galleryTitle: '前后对比案例库',
+    galleryTitle: '照片库',
     gallerySubtitle: '真实患者。真实效果。',
     galleryDescription: '浏览我们全面的前后对比照片集，展示我们外科团队的艺术性和精确性。',
     galleryFilterAll: '全部',
-    
+    galleryHome: '首页',
+    galleryPhotoGallery: '照片库',
+    galleryFace: '面部',
+    galleryBody: '身体',
+    galleryNonSurgical: '非手术',
+    gallerySignIn: '登录',
+    galleryModel: '模特',
+
     // Travel Page
-    travelTitle: '旅行到我们这里',
+    travelTitle: '整形手术旅行',
     travelSubtitle: '国际患者礼宾计划',
-    travelDescription: '我们欢迎来自世界各地的患者，并提供全面支持，使您的旅程无缝衔接。',
-    
+    travelDescription: '我们的整形外科专家团队已为来自美国50个州及25个以上国家的数千名患者提供服务，国际知名整形外科医生精心完善了整个旅行流程。',
+    travelHome: '首页',
+    travelTravel: '旅行',
+    travelPeaceOfMind: '精心设计的安心体验',
+    travelPeaceOfMindDesc1: '在美多拉医疗整形外科中心，我们为外地客人提供无与伦比的礼宾级护理服务，这些客人占我们患者的30%以上。20多年来，我们成功协助规划和执行旅行安排，确保我们的州内、州外和国际患者从始至终都能获得卓越的体验。',
+    travelPeaceOfMindDesc2: '我们世界级的整形外科医生、知识渊博的患者顾问和技术精湛的支持人员确保无论您从哪里来，都能获得从一个电话开始并持续终生的支持和指导。',
+    travelEasyAs123: '来这里做手术',
+    travelEasyAs123Subtitle: '简单三步',
+    travelEasyAs123Desc: '细节很重要，我们已经为您考虑周全，让您省去麻烦。',
+    travelStep1: '第一步：',
+    travelStep2: '第二步：',
+    travelStep3: '第三步：',
+    travelInitialConsultation: '初次咨询',
+    travelPlanningYourSurgery: '规划您的手术和行程',
+    travelSurgeryRecovery: '手术与恢复',
+    travelRequestConsultation: '预约咨询',
+    travelSubmitInquiry: '一、提交咨询',
+    travelSubmitInquiryDesc: '请致电 (585) 460-5468 或使用我们的在线表格预约咨询。选择"虚拟咨询"选项。请提供您的姓名、电子邮件地址、电话号码、感兴趣的手术项目以及任何您认为有帮助的其他详细信息。提交表格后，患者顾问将在24小时内与您联系。',
+    travelIntroductoryCall: '二、介绍性电话',
+    travelIntroductoryCallDesc1: '在这次初始电话中，患者顾问将收集有关您整形手术目标的信息。您将获得手术的初步价格范围、您感兴趣的手术项目详情、初期和长期恢复信息，以及与您手术相关的具体内容。',
+    travelIntroductoryCallDesc2: '如果我们确定您是合适的候选人，并且您准备好继续进行，我们将根据您正在考虑的手术项目和个人偏好安排面对面或虚拟咨询。',
+    travelInPerson: '面对面',
+    travelInPersonDesc: '如果您选择开车或乘飞机来进行咨询，我们将帮助您安排住宿。在面对面咨询期间，您将与患者顾问会面，参观我们历史悠久的大楼，并与我们著名的整形外科医生进行一对一会谈。',
+    travelVirtual: '虚拟咨询',
+    travelVirtualDesc: '我们使用Nextech在线通信平台进行虚拟咨询。您需要一部智能手机、平板电脑或带有网络摄像头的电脑。我们将通过电子邮件向您发送预约链接；您无需下载任何应用程序。',
+    travelScheduleSurgery: '一、安排您的手术',
+    travelScheduleSurgeryDesc: '咨询后，您可以在方便的时候安排手术。虽然大多数患者在咨询期间就预约了，但我们不会强迫您继续进行。您的患者顾问将为您提供全面的术前检查清单，包括必要的医疗许可。',
+    travelSchedulePreOp: '二、安排面对面咨询和术前检查',
+    travelSchedulePreOpDesc: '我们要求在手术前与您的外科医生进行面对面咨询和术前检查，无需额外费用。有时，患者可以将这些预约与手术旅行结合起来。',
+    travelLocalTravel: '当地交通',
+    travelLocalTravelDesc: '我们的罗切斯特位置从布法罗和锡拉丘兹都很容易到达，提供远离城市喧嚣的宁静环境。',
+    travelFromBuffalo: '从布法罗出发',
+    travelFromSyracuse: '从锡拉丘兹出发',
+    travelTransportation: '交通安排',
+    travelTransportationDesc: '您的患者顾问将帮助您安排行程交通，可能包括：',
+    travelFlights: '往返罗切斯特国际机场 (ROC) 的航班',
+    travelGroundTransport: '地面交通',
+    travelCarRentals: '租车',
+    travelReadyToStart: '准备好开始了吗？',
+    travelReadyToStartDesc: '要开始您在美多拉医疗中心改变人生的整形手术之旅，请使用我们的在线表格预约虚拟或面对面咨询，或致电 (585) 460-5468 预约。',
+    travelWeCreate: '我们创造提升人生的体验®',
+    travelBackToTop: '返回顶部',
+
     // Homepage Components
     introRenowned: '卓越声誉',
     introTitle: '美多拉医疗整形外科中心',
@@ -238,13 +331,11 @@ export const translations = {
     viewAllSurgeonsCount: '位医生',
     
     // Intro Component
-    centerForPlasticSurgery: '整形外科中心',
     anInternational: '国际',
     aestheticDestination: '美学目的地',
     artisanSubtitle: '"精雕细琢，诠释自然之美"',
     introDescriptionLong: '凭借近一个世纪的综合经验，我们的委员会认证整形外科医生已经巩固了他们在该地区最合格和最受欢迎的地位。患者选择我们不仅仅是为了进行手术——他们选择我们是为了用无与伦比的艺术性和技能实现改变人生的转变。',
-    requestConsultation: '申请咨询',
-    
+
     // Partnership Component
     globalStrategy: '全球战略',
     partneringWith: '与中国领先的',
@@ -318,16 +409,15 @@ export const translations = {
     clickToViewFullCase: 'Haga clic para ver los detalles completos del caso',
     viewPhotoGallery: 'Ver Galería de Fotos',
     requestConsultation: 'Solicitar Consulta',
-    
+    comingSoon: 'Próximamente',
+    noCasesYet: 'Actualmente estamos preparando fotos de antes y después para este procedimiento. Por favor vuelva pronto o contáctenos para más información.',
+
     // CTA section
     readyToGetStarted: '¿Listo para Comenzar?',
     scheduleConsultation: 'Programe Su Consulta',
     
     // Additional UI text
     medoraHealth: 'Medora Health',
-    centerForPlasticSurgery: 'Centro de Cirugía Plástica',
-    overview: 'Descripción General',
-    caseNumber: 'CASO',
     youMayBeGoodCandidate: 'Puede ser un buen candidato para',
     if: 'si:',
     choosingTheRightSurgeon: 'ELEGIR EL CIRUJANO PLÁSTICO ADECUADO',
@@ -367,13 +457,11 @@ export const translations = {
     viewAllSurgeonsCount: 'Cirujanos',
     
     // Intro Component
-    centerForPlasticSurgery: 'Centro de Cirugía Plástica',
     anInternational: 'UN DESTINO',
     aestheticDestination: 'ESTÉTICO INTERNACIONAL',
     artisanSubtitle: '"Arte. Precisión. Belleza Natural."',
     introDescriptionLong: 'Con casi un siglo de experiencia combinada, nuestros cirujanos plásticos certificados han consolidado sus lugares entre los más calificados y queridos de la región. Los pacientes no nos eligen solo para realizar sus cirugías, nos eligen para llevar a cabo transformaciones que cambian vidas con arte y habilidad incomparables.',
-    requestConsultation: 'Solicitar Consulta',
-    
+
     // Partnership Component
     globalStrategy: 'Estrategia Global',
     partneringWith: 'Asociándose con las Principales',
@@ -398,52 +486,6 @@ export const translations = {
     yiMeiCenter: 'El Centro YiMei para Cirugía Plástica',
     ourTeamIncludes: 'NUESTRO EQUIPO INCLUYE',
     internationallyAcclaimed: 'CIRUJANOS ACLAMADOS INTERNACIONALMENTE',
-  },
-  fr: {
-    // Procedure Detail Page - Français
-    backToHome: 'Retour à l\'Accueil',
-    
-    // (rest of French translations...)
-    // Homepage Components
-    introRenowned: 'RECONNU POUR L\'EXCELLENCE',
-    introTitle: 'Centre Medora Health pour la Chirurgie Plastique',
-    introDescription: 'Excellence en rajeunissement facial, contour corporel et amélioration esthétique.',
-    meetOurDoctors: 'RENCONTREZ NOS MÉDECINS',
-    viewAllSurgeons: 'Voir Tous',
-    viewAllSurgeonsCount: 'Chirurgiens',
-    
-    // Intro Component
-    centerForPlasticSurgery: 'Centre de Chirurgie Plastique',
-    anInternational: 'UNE DESTINATION',
-    aestheticDestination: 'ESTHÉTIQUE INTERNATIONALE',
-    artisanSubtitle: '"Art. Précision. Beauté Naturelle."',
-    introDescriptionLong: 'Avec près d\'un siècle d\'expérience combinée, nos chirurgiens plasticiens certifiés ont consolidé leur place parmi les plus qualifiés et les plus aimés de la région. Les patients ne nous choisissent pas seulement pour effectuer leurs chirurgies - ils nous choisissent pour réaliser des transformations qui changent la vie avec un art et une compétence inégalés.',
-    requestConsultation: 'Demander une Consultation',
-    
-    // Partnership Component
-    globalStrategy: 'Stratégie Mondiale',
-    partneringWith: 'Partenariat avec les Principales',
-    aestheticInstitutions: 'Institutions Esthétiques de Chine',
-    worldClassServices: 'Pour Offrir des Services Cosmétiques de Classe Mondiale',
-    partnershipDescription: 'Nous avons établi des partenariats stratégiques à long terme avec les institutions esthétiques les plus prestigieuses et innovantes de Chine, garantissant que nous offrons aux clients mondiaux le plus haut niveau de chirurgie plastique et de traitements de beauté.',
-    exceptionalExpertise: 'Expertise Exceptionnelle',
-    expertiseDescription: 'Nous collaborons avec les meilleurs chirurgiens plasticiens et spécialistes de la beauté de Chine pour garantir que chaque traitement répond aux normes internationales de sécurité et d\'art.',
-    globalRecognition: 'Reconnaissance Mondiale',
-    recognitionDescription: 'Nos institutions partenaires ont une large clientèle internationale et ont été présentées et recommandées par les principaux médias mondiaux.',
-    personalizedTreatments: 'Traitements Personnalisés',
-    personalizedDescription: 'Nous fournissons des plans de traitement personnalisés qui répondent aux besoins individuels, vous aidant à atteindre vos objectifs de beauté et de confiance avec précision.',
-    partnershipQuote: '"Où que vous soyez, nous offrons les dernières technologies et l\'expérience de traitement la plus confortable pour vous aider à obtenir votre apparence idéale."',
-    
-    // Categories Component
-    medoraHealthProcedures: 'Procédures Medora Health',
-    exploreFace: 'Explorer Visage',
-    exploreBody: 'Explorer Corps',
-    exploreNonsurgical: 'Explorer Non Chirurgical',
-    
-    // TeamIntro Component
-    yiMeiCenter: 'Le Centre YiMei pour la Chirurgie Plastique',
-    ourTeamIncludes: 'NOTRE ÉQUIPE COMPREND',
-    internationallyAcclaimed: 'CHIRURGIENS ACCLAMÉS INTERNATIONALEMENT',
   },
   fr: {
     // Procedure Detail Page - Français
@@ -493,16 +535,15 @@ export const translations = {
     clickToViewFullCase: 'Cliquez pour voir les détails complets du cas',
     viewPhotoGallery: 'Voir la Galerie Photo',
     requestConsultation: 'Demander une Consultation',
-    
+    comingSoon: 'Bientôt Disponible',
+    noCasesYet: 'Nous préparons actuellement des photos avant/après pour cette procédure. Veuillez revenir bientôt ou contactez-nous pour plus d\'informations.',
+
     // CTA section
     readyToGetStarted: 'Prêt à Commencer?',
     scheduleConsultation: 'Planifiez Votre Consultation',
     
     // Additional UI text
     medoraHealth: 'Medora Health',
-    centerForPlasticSurgery: 'Centre de Chirurgie Plastique',
-    overview: 'Aperçu',
-    caseNumber: 'CAS',
     youMayBeGoodCandidate: 'Vous pouvez être un bon candidat pour',
     if: 'si:',
     choosingTheRightSurgeon: 'CHOISIR LE BON CHIRURGIEN PLASTICIEN',
@@ -534,45 +575,44 @@ export const translations = {
     travelDescription: 'Nous accueillons des patients du monde entier et fournissons un soutien complet pour rendre votre voyage sans tracas.',
 
     // Homepage Components
-    introRenowned: 'ANERKANNT FÜR EXZELLENZ',
-    introTitle: 'Medora Health Zentrum für Plastische Chirurgie',
-    introDescription: 'Exzellenz in Gesichtsverjüngung, Körperformung und ästhetischer Verbesserung.',
-    meetOurDoctors: 'LERNEN SIE UNSERE ÄRZTE KENNEN',
-    viewAllSurgeons: 'Alle Anzeigen',
-    viewAllSurgeonsCount: 'Chirurgen',
-    
+    introRenowned: 'RECONNU POUR L\'EXCELLENCE',
+    introTitle: 'Centre Medora Health pour la Chirurgie Plastique',
+    introDescription: 'Excellence en rajeunissement facial, contour corporel et amélioration esthétique.',
+    meetOurDoctors: 'RENCONTREZ NOS MÉDECINS',
+    viewAllSurgeons: 'Voir Tous',
+    viewAllSurgeonsCount: 'Chirurgiens',
+
     // Intro Component
-    centerForPlasticSurgery: 'Zentrum für Plastische Chirurgie',
-    anInternational: 'EIN INTERNATIONALES',
-    aestheticDestination: 'ÄSTHETISCHES ZIEL',
-    artisanSubtitle: '"Kunst. Präzision. Natürliche Schönheit."',
-    introDescriptionLong: 'Mit fast einem Jahrhundert kombinierter Erfahrung haben unsere zertifizierten plastischen Chirurgen ihre Plätze unter den qualifiziertesten und beliebtesten in der Region gefestigt. Patienten wählen uns nicht nur, um ihre Operationen durchzuführen - sie wählen uns, um lebensverändernde Transformationen mit unvergleichlicher Kunstfertigkeit und Geschicklichkeit durchzuführen.',
-    requestConsultation: 'Beratung Anfordern',
-    
+    centerForPlasticSurgery: 'Centre de Chirurgie Plastique',
+    anInternational: 'UNE DESTINATION',
+    aestheticDestination: 'ESTHÉTIQUE INTERNATIONALE',
+    artisanSubtitle: '"Art. Précision. Beauté Naturelle."',
+    introDescriptionLong: 'Avec près d\'un siècle d\'expérience combinée, nos chirurgiens plasticiens certifiés ont consolidé leur place parmi les plus qualifiés et les plus aimés de la région. Les patients ne nous choisissent pas seulement pour effectuer leurs chirurgies - ils nous choisissent pour réaliser des transformations qui changent la vie avec un art et une compétence inégalés.',
+
     // Partnership Component
-    globalStrategy: 'Globale Strategie',
-    partneringWith: 'Partnerschaft mit Chinas Führenden',
-    aestheticInstitutions: 'Ästhetischen Institutionen',
-    worldClassServices: 'Zur Bereitstellung Erstklassiger Kosmetikdienste',
-    partnershipDescription: 'Wir haben langfristige strategische Partnerschaften mit Chinas angesehensten und innovativsten ästhetischen Institutionen aufgebaut und stellen sicher, dass wir globalen Kunden das höchste Niveau an plastischer Chirurgie und Schönheitsbehandlungen bieten.',
-    exceptionalExpertise: 'Außergewöhnliche Expertise',
-    expertiseDescription: 'Wir arbeiten mit Chinas Top-Plastikchirurgen und Schönheitsspezialisten zusammen, um sicherzustellen, dass jede Behandlung internationalen Standards für Sicherheit und Kunstfertigkeit entspricht.',
-    globalRecognition: 'Globale Anerkennung',
-    recognitionDescription: 'Unsere Partnerinstitutionen haben eine breite internationale Kundenbasis und wurden von führenden globalen Medien vorgestellt und empfohlen.',
-    personalizedTreatments: 'Personalisierte Behandlungen',
-    personalizedDescription: 'Wir bieten maßgeschneiderte Behandlungspläne, die individuellen Bedürfnissen gerecht werden und Ihnen helfen, Ihre Schönheits- und Selbstvertrauensziele mit Präzision zu erreichen.',
-    partnershipQuote: '"Wo auch immer Sie sind, wir bieten die neuesten Technologien und die komfortabelste Behandlungserfahrung, um Ihnen zu helfen, Ihr ideales Aussehen zu erreichen."',
-    
+    globalStrategy: 'Stratégie Mondiale',
+    partneringWith: 'Partenariat avec les Principales',
+    aestheticInstitutions: 'Institutions Esthétiques de Chine',
+    worldClassServices: 'Pour Offrir des Services Cosmétiques de Classe Mondiale',
+    partnershipDescription: 'Nous avons établi des partenariats stratégiques à long terme avec les institutions esthétiques les plus prestigieuses et innovantes de Chine, garantissant que nous offrons aux clients mondiaux le plus haut niveau de chirurgie plastique et de traitements de beauté.',
+    exceptionalExpertise: 'Expertise Exceptionnelle',
+    expertiseDescription: 'Nous collaborons avec les meilleurs chirurgiens plasticiens et spécialistes de la beauté de Chine pour garantir que chaque traitement répond aux normes internationales de sécurité et d\'art.',
+    globalRecognition: 'Reconnaissance Mondiale',
+    recognitionDescription: 'Nos institutions partenaires ont une large clientèle internationale et ont été présentées et recommandées par les principaux médias mondiaux.',
+    personalizedTreatments: 'Traitements Personnalisés',
+    personalizedDescription: 'Nous fournissons des plans de traitement personnalisés qui répondent aux besoins individuels, vous aidant à atteindre vos objectifs de beauté et de confiance avec précision.',
+    partnershipQuote: '"Où que vous soyez, nous offrons les dernières technologies et l\'expérience de traitement la plus confortable pour vous aider à obtenir votre apparence idéale."',
+
     // Categories Component
-    medoraHealthProcedures: 'Medora Health Verfahren',
-    exploreFace: 'Gesicht Erkunden',
-    exploreBody: 'Körper Erkunden',
-    exploreNonsurgical: 'Nicht-Chirurgisch Erkunden',
-    
+    medoraHealthProcedures: 'Procédures Medora Health',
+    exploreFace: 'Explorer Visage',
+    exploreBody: 'Explorer Corps',
+    exploreNonsurgical: 'Explorer Non Chirurgical',
+
     // TeamIntro Component
-    yiMeiCenter: 'Das YiMei Zentrum für Plastische Chirurgie',
-    ourTeamIncludes: 'UNSER TEAM UMFASST',
-    internationallyAcclaimed: 'INTERNATIONAL ANERKANNTE CHIRURGEN',
+    yiMeiCenter: 'Le Centre YiMei pour la Chirurgie Plastique',
+    ourTeamIncludes: 'NOTRE ÉQUIPE COMPREND',
+    internationallyAcclaimed: 'CHIRURGIENS ACCLAMÉS INTERNATIONALEMENT',
   },
   de: {
     // Procedure Detail Page - Deutsch
@@ -622,16 +662,15 @@ export const translations = {
     clickToViewFullCase: 'Klicken Sie, um vollständige Falldetails anzuzeigen',
     viewPhotoGallery: 'Fotogalerie Ansehen',
     requestConsultation: 'Beratung Anfordern',
-    
+    comingSoon: 'Demnächst Verfügbar',
+    noCasesYet: 'Wir bereiten derzeit Vorher/Nachher-Fotos für dieses Verfahren vor. Bitte schauen Sie bald wieder vorbei oder kontaktieren Sie uns für weitere Informationen.',
+
     // CTA section
     readyToGetStarted: 'Bereit Anzufangen?',
     scheduleConsultation: 'Planen Sie Ihre Beratung',
     
     // Additional UI text
     medoraHealth: 'Medora Health',
-    centerForPlasticSurgery: 'Zentrum für Plastische Chirurgie',
-    overview: 'Überblick',
-    caseNumber: 'FALL',
     youMayBeGoodCandidate: 'Sie können ein guter Kandidat für',
     if: 'sein, wenn:',
     choosingTheRightSurgeon: 'DEN RICHTIGEN PLASTISCHEN CHIRURGEN WÄHLEN',
@@ -663,45 +702,44 @@ export const translations = {
     travelDescription: 'Wir heißen Patienten aus der ganzen Welt willkommen und bieten umfassende Unterstützung für eine reibungslose Reise.',
 
     // Homepage Components
-    introRenowned: 'ПРИЗНАННЫЙ ПРЕВОСХОДСТВОМ',
-    introTitle: 'Центр Пластической Хирургии Medora Health',
-    introDescription: 'Превосходство в омоложении лица, контурировании тела и эстетическом улучшении.',
-    meetOurDoctors: 'ПОЗНАКОМЬТЕСЬ С НАШИМИ ВРАЧАМИ',
-    viewAllSurgeons: 'Посмотреть Всех',
-    viewAllSurgeonsCount: 'Хирургов',
-    
+    introRenowned: 'ANERKANNT FÜR EXZELLENZ',
+    introTitle: 'Medora Health Zentrum für Plastische Chirurgie',
+    introDescription: 'Exzellenz in Gesichtsverjüngung, Körperformung und ästhetischer Verbesserung.',
+    meetOurDoctors: 'LERNEN SIE UNSERE ÄRZTE KENNEN',
+    viewAllSurgeons: 'Alle Anzeigen',
+    viewAllSurgeonsCount: 'Chirurgen',
+
     // Intro Component
-    centerForPlasticSurgery: 'Центр Пластической Хирургии',
-    anInternational: 'МЕЖДУНАРОДНОЕ',
-    aestheticDestination: 'ЭСТЕТИЧЕСКОЕ НАПРАВЛЕНИЕ',
-    artisanSubtitle: '"Искусство. Точность. Естественная Красота."',
-    introDescriptionLong: 'Благодаря почти столетнему совместному опыту наши сертифицированные пластические хирурги заняли свое место среди самых квалифицированных и любимых в регионе. Пациенты выбирают нас не только для проведения операций - они выбирают нас для осуществления изменяющих жизнь преобразований с непревзойденным мастерством и навыками.',
-    requestConsultation: 'Запросить Консультацию',
-    
+    centerForPlasticSurgery: 'Zentrum für Plastische Chirurgie',
+    anInternational: 'EIN INTERNATIONALES',
+    aestheticDestination: 'ÄSTHETISCHES ZIEL',
+    artisanSubtitle: '"Kunst. Präzision. Natürliche Schönheit."',
+    introDescriptionLong: 'Mit fast einem Jahrhundert kombinierter Erfahrung haben unsere zertifizierten plastischen Chirurgen ihre Plätze unter den qualifiziertesten und beliebtesten in der Region gefestigt. Patienten wählen uns nicht nur, um ihre Operationen durchzuführen - sie wählen uns, um lebensverändernde Transformationen mit unvergleichlicher Kunstfertigkeit und Geschicklichkeit durchzuführen.',
+
     // Partnership Component
-    globalStrategy: 'Глобальная Стратегия',
-    partneringWith: 'Партнерство с Ведущими',
-    aestheticInstitutions: 'Эстетическими Институтами Китая',
-    worldClassServices: 'Для Предоставления Косметических Услуг Мирового Класса',
-    partnershipDescription: 'Мы установили долгосрочные стратегические партнерства с самыми престижными и инновационными эстетическими институтами Китая, обеспечивая предоставление глобальным клиентам высочайшего уровня пластической хирургии и косметических процедур.',
-    exceptionalExpertise: 'Исключительная Экспертиза',
-    expertiseDescription: 'Мы сотрудничаем с ведущими пластическими хирургами и специалистами по красоте Китая, чтобы гарантировать, что каждая процедура соответствует международным стандартам безопасности и мастерства.',
-    globalRecognition: 'Глобальное Признание',
-    recognitionDescription: 'Наши партнерские учреждения имеют широкую международную клиентскую базу и были представлены и рекомендованы ведущими мировыми СМИ.',
-    personalizedTreatments: 'Персонализированные Процедуры',
-    personalizedDescription: 'Мы предоставляем индивидуальные планы лечения, которые отвечают индивидуальным потребностям, помогая вам достичь ваших целей в области красоты и уверенности с точностью.',
-    partnershipQuote: '"Где бы вы ни находились, мы предлагаем новейшие технологии и наиболее комфортный опыт лечения, чтобы помочь вам достичь идеального внешнего вида."',
-    
+    globalStrategy: 'Globale Strategie',
+    partneringWith: 'Partnerschaft mit Chinas Führenden',
+    aestheticInstitutions: 'Ästhetischen Institutionen',
+    worldClassServices: 'Zur Bereitstellung Erstklassiger Kosmetikdienste',
+    partnershipDescription: 'Wir haben langfristige strategische Partnerschaften mit Chinas angesehensten und innovativsten ästhetischen Institutionen aufgebaut und stellen sicher, dass wir globalen Kunden das höchste Niveau an plastischer Chirurgie und Schönheitsbehandlungen bieten.',
+    exceptionalExpertise: 'Außergewöhnliche Expertise',
+    expertiseDescription: 'Wir arbeiten mit Chinas Top-Plastikchirurgen und Schönheitsspezialisten zusammen, um sicherzustellen, dass jede Behandlung internationalen Standards für Sicherheit und Kunstfertigkeit entspricht.',
+    globalRecognition: 'Globale Anerkennung',
+    recognitionDescription: 'Unsere Partnerinstitutionen haben eine breite internationale Kundenbasis und wurden von führenden globalen Medien vorgestellt und empfohlen.',
+    personalizedTreatments: 'Personalisierte Behandlungen',
+    personalizedDescription: 'Wir bieten maßgeschneiderte Behandlungspläne, die individuellen Bedürfnissen gerecht werden und Ihnen helfen, Ihre Schönheits- und Selbstvertrauensziele mit Präzision zu erreichen.',
+    partnershipQuote: '"Wo auch immer Sie sind, wir bieten die neuesten Technologien und die komfortabelste Behandlungserfahrung, um Ihnen zu helfen, Ihr ideales Aussehen zu erreichen."',
+
     // Categories Component
-    medoraHealthProcedures: 'Процедуры Medora Health',
-    exploreFace: 'Исследовать Лицо',
-    exploreBody: 'Исследовать Тело',
-    exploreNonsurgical: 'Исследовать Безоперационные',
-    
+    medoraHealthProcedures: 'Medora Health Verfahren',
+    exploreFace: 'Gesicht Erkunden',
+    exploreBody: 'Körper Erkunden',
+    exploreNonsurgical: 'Nicht-Chirurgisch Erkunden',
+
     // TeamIntro Component
-    yiMeiCenter: 'Центр Пластической Хирургии YiMei',
-    ourTeamIncludes: 'НАША КОМАНДА ВКЛЮЧАЕТ',
-    internationallyAcclaimed: 'МЕЖДУНАРОДНО ПРИЗНАННЫХ ХИРУРГОВ',
+    yiMeiCenter: 'Das YiMei Zentrum für Plastische Chirurgie',
+    ourTeamIncludes: 'UNSER TEAM UMFASST',
+    internationallyAcclaimed: 'INTERNATIONAL ANERKANNTE CHIRURGEN',
   },
   ru: {
     // Procedure Detail Page - Русский
@@ -751,16 +789,15 @@ export const translations = {
     clickToViewFullCase: 'Нажмите, чтобы просмотреть полную информацию о случае',
     viewPhotoGallery: 'Посмотреть Фотогалерею',
     requestConsultation: 'Запросить Консультацию',
-    
+    comingSoon: 'Скоро Будет',
+    noCasesYet: 'В настоящее время мы готовим фотографии до/после для этой процедуры. Пожалуйста, загляните позже или свяжитесь с нами для получения дополнительной информации.',
+
     // CTA section
     readyToGetStarted: 'Готовы Начать?',
     scheduleConsultation: 'Запланируйте Вашу Консультацию',
     
     // Additional UI text
     medoraHealth: 'Medora Health',
-    centerForPlasticSurgery: 'Центр пластической хирургии',
-    overview: 'Обзор',
-    caseNumber: 'СЛУЧАЙ',
     youMayBeGoodCandidate: 'Вы можете быть хорошим кандидатом для',
     if: 'если:',
     choosingTheRightSurgeon: 'ВЫБОР ПРАВИЛЬНОГО ПЛАСТИЧЕСКОГО ХИРУРГА',
@@ -792,45 +829,44 @@ export const translations = {
     travelDescription: 'Мы приветствуем пациентов со всего мира и предоставляем всестороннюю поддержку для беспрепятственного путешествия.',
 
     // Homepage Components
-    introRenowned: 'معروف بالتميز',
-    introTitle: 'مركز ميدورا الصحي للجراحة التجميلية',
-    introDescription: 'التميز في تجديد الوجه ونحت الجسم والتحسين الجمالي.',
-    meetOurDoctors: 'تعرف على أطبائنا',
-    viewAllSurgeons: 'عرض الكل',
-    viewAllSurgeonsCount: 'جراحين',
-    
+    introRenowned: 'ПРИЗНАННЫЙ ПРЕВОСХОДСТВОМ',
+    introTitle: 'Центр Пластической Хирургии Medora Health',
+    introDescription: 'Превосходство в омоложении лица, контурировании тела и эстетическом улучшении.',
+    meetOurDoctors: 'ПОЗНАКОМЬТЕСЬ С НАШИМИ ВРАЧАМИ',
+    viewAllSurgeons: 'Посмотреть Всех',
+    viewAllSurgeonsCount: 'Хирургов',
+
     // Intro Component
-    centerForPlasticSurgery: 'مركز الجراحة التجميلية',
-    anInternational: 'وجهة جمالية',
-    aestheticDestination: 'دولية',
-    artisanSubtitle: '"فن. دقة. جمال طبيعي."',
-    introDescriptionLong: 'بفضل ما يقرب من قرن من الخبرة المشتركة، رسخ جراحو التجميل المعتمدون لدينا مكانتهم بين الأكثر تأهيلاً والأكثر حباً في المنطقة. لا يختارنا المرضى فقط لإجراء عملياتهم الجراحية - بل يختاروننا لتنفيذ تحولات تغير الحياة بمهارة وفن لا مثيل لهما.',
-    requestConsultation: 'طلب استشارة',
-    
+    centerForPlasticSurgery: 'Центр Пластической Хирургии',
+    anInternational: 'МЕЖДУНАРОДНОЕ',
+    aestheticDestination: 'ЭСТЕТИЧЕСКОЕ НАПРАВЛЕНИЕ',
+    artisanSubtitle: '"Искусство. Точность. Естественная Красота."',
+    introDescriptionLong: 'Благодаря почти столетнему совместному опыту наши сертифицированные пластические хирурги заняли свое место среди самых квалифицированных и любимых в регионе. Пациенты выбирают нас не только для проведения операций - они выбирают нас для осуществления изменяющих жизнь преобразований с непревзойденным мастерством и навыками.',
+
     // Partnership Component
-    globalStrategy: 'استراتيجية عالمية',
-    partneringWith: 'الشراكة مع المؤسسات',
-    aestheticInstitutions: 'الجمالية الرائدة في الصين',
-    worldClassServices: 'لتقديم خدمات تجميلية عالمية المستوى',
-    partnershipDescription: 'لقد أنشأنا شراكات استراتيجية طويلة الأجل مع أرقى وأكثر المؤسسات الجمالية ابتكاراً في الصين، مما يضمن أننا نقدم لعملائنا العالميين أعلى مستوى من الجراحة التجميلية وعلاجات التجميل.',
-    exceptionalExpertise: 'خبرة استثنائية',
-    expertiseDescription: 'نتعاون مع أفضل جراحي التجميل وأخصائيي التجميل في الصين لضمان أن كل علاج يلبي المعايير الدولية للسلامة والفن.',
-    globalRecognition: 'اعتراف عالمي',
-    recognitionDescription: 'تمتلك مؤسساتنا الشريكة قاعدة عملاء دولية واسعة وتم عرضها والتوصية بها من قبل وسائل الإعلام العالمية الرائدة.',
-    personalizedTreatments: 'علاجات شخصية',
-    personalizedDescription: 'نقدم خطط علاج مخصصة تلبي الاحتياجات الفردية، مما يساعدك على تحقيق أهدافك في الجمال والثقة بدقة.',
-    partnershipQuote: '"أينما كنت، نقدم أحدث التقنيات وأكثر تجربة علاج راحة لمساعدتك في تحقيق مظهرك المثالي."',
-    
+    globalStrategy: 'Глобальная Стратегия',
+    partneringWith: 'Партнерство с Ведущими',
+    aestheticInstitutions: 'Эстетическими Институтами Китая',
+    worldClassServices: 'Для Предоставления Косметических Услуг Мирового Класса',
+    partnershipDescription: 'Мы установили долгосрочные стратегические партнерства с самыми престижными и инновационными эстетическими институтами Китая, обеспечивая предоставление глобальным клиентам высочайшего уровня пластической хирургии и косметических процедур.',
+    exceptionalExpertise: 'Исключительная Экспертиза',
+    expertiseDescription: 'Мы сотрудничаем с ведущими пластическими хирургами и специалистами по красоте Китая, чтобы гарантировать, что каждая процедура соответствует международным стандартам безопасности и мастерства.',
+    globalRecognition: 'Глобальное Признание',
+    recognitionDescription: 'Наши партнерские учреждения имеют широкую международную клиентскую базу и были представлены и рекомендованы ведущими мировыми СМИ.',
+    personalizedTreatments: 'Персонализированные Процедуры',
+    personalizedDescription: 'Мы предоставляем индивидуальные планы лечения, которые отвечают индивидуальным потребностям, помогая вам достичь ваших целей в области красоты и уверенности с точностью.',
+    partnershipQuote: '"Где бы вы ни находились, мы предлагаем новейшие технологии и наиболее комфортный опыт лечения, чтобы помочь вам достичь идеального внешнего вида."',
+
     // Categories Component
-    medoraHealthProcedures: 'إجراءات ميدورا الصحية',
-    exploreFace: 'استكشف الوجه',
-    exploreBody: 'استكشف الجسم',
-    exploreNonsurgical: 'استكشف غير الجراحي',
-    
+    medoraHealthProcedures: 'Процедуры Medora Health',
+    exploreFace: 'Исследовать Лицо',
+    exploreBody: 'Исследовать Тело',
+    exploreNonsurgical: 'Исследовать Безоперационные',
+
     // TeamIntro Component
-    yiMeiCenter: 'مركز يي مي للجراحة التجميلية',
-    ourTeamIncludes: 'يضم فريقنا',
-    internationallyAcclaimed: 'جراحين معترف بهم دولياً',
+    yiMeiCenter: 'Центр Пластической Хирургии YiMei',
+    ourTeamIncludes: 'НАША КОМАНДА ВКЛЮЧАЕТ',
+    internationallyAcclaimed: 'МЕЖДУНАРОДНО ПРИЗНАННЫХ ХИРУРГОВ',
   },
   ar: {
     // Procedure Detail Page - العربية
@@ -880,16 +916,15 @@ export const translations = {
     clickToViewFullCase: 'انقر لعرض تفاصيل الحالة الكاملة',
     viewPhotoGallery: 'عرض معرض الصور',
     requestConsultation: 'طلب استشارة',
-    
+    comingSoon: 'قريبًا',
+    noCasesYet: 'نحن نعد حاليًا صور قبل وبعد لهذا الإجراء. يرجى المراجعة لاحقًا أو الاتصال بنا للحصول على مزيد من المعلومات.',
+
     // CTA section
     readyToGetStarted: 'هل أنت مستعد للبدء؟',
     scheduleConsultation: 'حدد موعد استشارتك',
     
     // Additional UI text
     medoraHealth: 'ميدورا هيلث',
-    centerForPlasticSurgery: 'مركز الجراحة التجميلية',
-    overview: 'نظرة عامة',
-    caseNumber: 'الحالة',
     youMayBeGoodCandidate: 'قد تكون مرشحًا جيدًا لـ',
     if: 'إذا:',
     choosingTheRightSurgeon: 'اختيار جراح التجميل المناسب',
@@ -921,45 +956,44 @@ export const translations = {
     travelDescription: 'نرحب بالمرضى من جميع أنحاء العالم ونقدم دعمًا شاملاً لجعل رحلتك سلسة.',
 
     // Homepage Components
-    introRenowned: 'NỔI TIẾNG VỀ SỰ XUẤT SẮC',
-    introTitle: 'Trung Tâm Phẫu Thuật Thẩm Mỹ Medora Health',
-    introDescription: 'Xuất sắc trong trẻ hóa khuôn mặt, tạo hình cơ thể và nâng cao thẩm mỹ.',
-    meetOurDoctors: 'GẶP GỠ BÁC SĨ CỦA CHÚNG TÔI',
-    viewAllSurgeons: 'Xem Tất Cả',
-    viewAllSurgeonsCount: 'Bác Sĩ Phẫu Thuật',
-    
+    introRenowned: 'معروف بالتميز',
+    introTitle: 'مركز ميدورا الصحي للجراحة التجميلية',
+    introDescription: 'التميز في تجديد الوجه ونحت الجسم والتحسين الجمالي.',
+    meetOurDoctors: 'تعرف على أطبائنا',
+    viewAllSurgeons: 'عرض الكل',
+    viewAllSurgeonsCount: 'جراحين',
+
     // Intro Component
-    centerForPlasticSurgery: 'Trung Tâm Phẫu Thuật Thẩm Mỹ',
-    anInternational: 'ĐIỂM ĐẾN THẨM MỸ',
-    aestheticDestination: 'QUỐC TẾ',
-    artisanSubtitle: '"Nghệ Thuật. Chính Xác. Vẻ Đẹp Tự Nhiên."',
-    introDescriptionLong: 'Với gần một thế kỷ kinh nghiệm kết hợp, các bác sĩ phẫu thuật thẩm mỹ được chứng nhận của chúng tôi đã củng cố vị trí của họ trong số những người có trình độ cao nhất và được yêu thích nhất trong khu vực. Bệnh nhân không chỉ chọn chúng tôi để thực hiện ca phẫu thuật của họ - họ chọn chúng tôi để thực hiện những biến đổi thay đổi cuộc sống với nghệ thuật và kỹ năng vô song.',
-    requestConsultation: 'Yêu Cầu Tư Vấn',
-    
+    centerForPlasticSurgery: 'مركز الجراحة التجميلية',
+    anInternational: 'وجهة جمالية',
+    aestheticDestination: 'دولية',
+    artisanSubtitle: '"فن. دقة. جمال طبيعي."',
+    introDescriptionLong: 'بفضل ما يقرب من قرن من الخبرة المشتركة، رسخ جراحو التجميل المعتمدون لدينا مكانتهم بين الأكثر تأهيلاً والأكثر حباً في المنطقة. لا يختارنا المرضى فقط لإجراء عملياتهم الجراحية - بل يختاروننا لتنفيذ تحولات تغير الحياة بمهارة وفن لا مثيل لهما.',
+
     // Partnership Component
-    globalStrategy: 'Chiến Lược Toàn Cầu',
-    partneringWith: 'Hợp Tác Với Các',
-    aestheticInstitutions: 'Tổ Chức Thẩm Mỹ Hàng Đầu Trung Quốc',
-    worldClassServices: 'Để Cung Cấp Dịch Vụ Thẩm Mỹ Đẳng Cấp Thế Giới',
-    partnershipDescription: 'Chúng tôi đã thiết lập quan hệ đối tác chiến lược dài hạn với các tổ chức thẩm mỹ uy tín và sáng tạo nhất của Trung Quốc, đảm bảo rằng chúng tôi cung cấp cho khách hàng toàn cầu mức độ cao nhất về phẫu thuật thẩm mỹ và điều trị làm đẹp.',
-    exceptionalExpertise: 'Chuyên Môn Xuất Sắc',
-    expertiseDescription: 'Chúng tôi hợp tác với các bác sĩ phẫu thuật thẩm mỹ hàng đầu và chuyên gia làm đẹp của Trung Quốc để đảm bảo mỗi liệu trình đáp ứng các tiêu chuẩn quốc tế về an toàn và nghệ thuật.',
-    globalRecognition: 'Công Nhận Toàn Cầu',
-    recognitionDescription: 'Các tổ chức đối tác của chúng tôi có cơ sở khách hàng quốc tế rộng lớn và đã được các phương tiện truyền thông toàn cầu hàng đầu giới thiệu và khuyến nghị.',
-    personalizedTreatments: 'Điều Trị Cá Nhân Hóa',
-    personalizedDescription: 'Chúng tôi cung cấp các kế hoạch điều trị tùy chỉnh đáp ứng nhu cầu cá nhân, giúp bạn đạt được các mục tiêu vẻ đẹp và sự tự tin với độ chính xác.',
-    partnershipQuote: '"Dù bạn ở đâu, chúng tôi đều cung cấp công nghệ mới nhất và trải nghiệm điều trị thoải mái nhất để giúp bạn đạt được vẻ ngoài lý tưởng."',
-    
+    globalStrategy: 'استراتيجية عالمية',
+    partneringWith: 'الشراكة مع المؤسسات',
+    aestheticInstitutions: 'الجمالية الرائدة في الصين',
+    worldClassServices: 'لتقديم خدمات تجميلية عالمية المستوى',
+    partnershipDescription: 'لقد أنشأنا شراكات استراتيجية طويلة الأجل مع أرقى وأكثر المؤسسات الجمالية ابتكاراً في الصين، مما يضمن أننا نقدم لعملائنا العالميين أعلى مستوى من الجراحة التجميلية وعلاجات التجميل.',
+    exceptionalExpertise: 'خبرة استثنائية',
+    expertiseDescription: 'نتعاون مع أفضل جراحي التجميل وأخصائيي التجميل في الصين لضمان أن كل علاج يلبي المعايير الدولية للسلامة والفن.',
+    globalRecognition: 'اعتراف عالمي',
+    recognitionDescription: 'تمتلك مؤسساتنا الشريكة قاعدة عملاء دولية واسعة وتم عرضها والتوصية بها من قبل وسائل الإعلام العالمية الرائدة.',
+    personalizedTreatments: 'علاجات شخصية',
+    personalizedDescription: 'نقدم خطط علاج مخصصة تلبي الاحتياجات الفردية، مما يساعدك على تحقيق أهدافك في الجمال والثقة بدقة.',
+    partnershipQuote: '"أينما كنت، نقدم أحدث التقنيات وأكثر تجربة علاج راحة لمساعدتك في تحقيق مظهرك المثالي."',
+
     // Categories Component
-    medoraHealthProcedures: 'Thủ Thuật Medora Health',
-    exploreFace: 'Khám Phá Khuôn Mặt',
-    exploreBody: 'Khám Phá Cơ Thể',
-    exploreNonsurgical: 'Khám Phá Không Phẫu Thuật',
-    
+    medoraHealthProcedures: 'إجراءات ميدورا الصحية',
+    exploreFace: 'استكشف الوجه',
+    exploreBody: 'استكشف الجسم',
+    exploreNonsurgical: 'استكشف غير الجراحي',
+
     // TeamIntro Component
-    yiMeiCenter: 'Trung Tâm Phẫu Thuật Thẩm Mỹ YiMei',
-    ourTeamIncludes: 'ĐỘI NGŨ CỦA CHÚNG TÔI BAO GỒM',
-    internationallyAcclaimed: 'CÁC BÁC SĨ PHẪU THUẬT ĐƯỢC CÔNG NHẬN QUỐC TẾ',
+    yiMeiCenter: 'مركز يي مي للجراحة التجميلية',
+    ourTeamIncludes: 'يضم فريقنا',
+    internationallyAcclaimed: 'جراحين معترف بهم دولياً',
   },
   vi: {
     // Procedure Detail Page - Tiếng Việt
@@ -1009,16 +1043,15 @@ export const translations = {
     clickToViewFullCase: 'Nhấp để xem chi tiết đầy đủ về trường hợp',
     viewPhotoGallery: 'Xem Thư viện Ảnh',
     requestConsultation: 'Yêu cầu Tư vấn',
-    
+    comingSoon: 'Sắp Ra Mắt',
+    noCasesYet: 'Chúng tôi hiện đang chuẩn bị ảnh trước/sau cho thủ thuật này. Vui lòng quay lại sau hoặc liên hệ với chúng tôi để biết thêm thông tin.',
+
     // CTA section
     readyToGetStarted: 'Sẵn sàng Bắt đầu?',
     scheduleConsultation: 'Lên lịch Tư vấn của Bạn',
     
     // Additional UI text
     medoraHealth: 'Medora Health',
-    centerForPlasticSurgery: 'Trung tâm Phẫu thuật Thẩm mỹ',
-    overview: 'Tổng quan',
-    caseNumber: 'TRƯỜNG HỢP',
     youMayBeGoodCandidate: 'Bạn có thể là ứng viên tốt cho',
     if: 'nếu:',
     choosingTheRightSurgeon: 'CHỌN BÁC SĨ PHẪU THUẬT THẨM MỸ PHÙHỢP',
@@ -1050,45 +1083,44 @@ export const translations = {
     travelDescription: 'Chúng tôi chào đón bệnh nhân từ khắp nơi trên thế giới và cung cấp hỗ trợ toàn diện để làm cho hành trình của bạn liền mạch.',
 
     // Homepage Components
-    introRenowned: 'TERKENAL UNTUK KEUNGGULAN',
-    introTitle: 'Pusat Bedah Plastik Medora Health',
-    introDescription: 'Keunggulan dalam peremajaan wajah, kontur tubuh, dan peningkatan estetika.',
-    meetOurDoctors: 'TEMUI DOKTER KAMI',
-    viewAllSurgeons: 'Lihat Semua',
-    viewAllSurgeonsCount: 'Ahli Bedah',
-    
+    introRenowned: 'NỔI TIẾNG VỀ SỰ XUẤT SẮC',
+    introTitle: 'Trung Tâm Phẫu Thuật Thẩm Mỹ Medora Health',
+    introDescription: 'Xuất sắc trong trẻ hóa khuôn mặt, tạo hình cơ thể và nâng cao thẩm mỹ.',
+    meetOurDoctors: 'GẶP GỠ BÁC SĨ CỦA CHÚNG TÔI',
+    viewAllSurgeons: 'Xem Tất Cả',
+    viewAllSurgeonsCount: 'Bác Sĩ Phẫu Thuật',
+
     // Intro Component
-    centerForPlasticSurgery: 'Pusat Bedah Plastik',
-    anInternational: 'TUJUAN ESTETIKA',
-    aestheticDestination: 'INTERNASIONAL',
-    artisanSubtitle: '"Seni. Presisi. Keindahan Alami."',
-    introDescriptionLong: 'Dengan hampir satu abad pengalaman gabungan, ahli bedah plastik bersertifikat kami telah mengukuhkan tempat mereka di antara yang paling berkualitas dan paling dicintai di wilayah ini. Pasien tidak memilih kami hanya untuk melakukan operasi mereka - mereka memilih kami untuk melakukan transformasi yang mengubah hidup dengan seni dan keterampilan yang tak tertandingi.',
-    requestConsultation: 'Minta Konsultasi',
-    
+    centerForPlasticSurgery: 'Trung Tâm Phẫu Thuật Thẩm Mỹ',
+    anInternational: 'ĐIỂM ĐẾN THẨM MỸ',
+    aestheticDestination: 'QUỐC TẾ',
+    artisanSubtitle: '"Nghệ Thuật. Chính Xác. Vẻ Đẹp Tự Nhiên."',
+    introDescriptionLong: 'Với gần một thế kỷ kinh nghiệm kết hợp, các bác sĩ phẫu thuật thẩm mỹ được chứng nhận của chúng tôi đã củng cố vị trí của họ trong số những người có trình độ cao nhất và được yêu thích nhất trong khu vực. Bệnh nhân không chỉ chọn chúng tôi để thực hiện ca phẫu thuật của họ - họ chọn chúng tôi để thực hiện những biến đổi thay đổi cuộc sống với nghệ thuật và kỹ năng vô song.',
+
     // Partnership Component
-    globalStrategy: 'Strategi Global',
-    partneringWith: 'Bermitra dengan',
-    aestheticInstitutions: 'Institusi Estetika Terkemuka China',
-    worldClassServices: 'Untuk Memberikan Layanan Kosmetik Kelas Dunia',
-    partnershipDescription: 'Kami telah menjalin kemitraan strategis jangka panjang dengan institusi estetika paling bergengsi dan inovatif di China, memastikan bahwa kami menawarkan klien global tingkat tertinggi bedah plastik dan perawatan kecantikan.',
-    exceptionalExpertise: 'Keahlian Luar Biasa',
-    expertiseDescription: 'Kami berkolaborasi dengan ahli bedah plastik terbaik dan spesialis kecantikan China untuk memastikan setiap perawatan memenuhi standar internasional untuk keamanan dan seni.',
-    globalRecognition: 'Pengakuan Global',
-    recognitionDescription: 'Institusi mitra kami memiliki basis klien internasional yang luas dan telah ditampilkan dan direkomendasikan oleh media global terkemuka.',
-    personalizedTreatments: 'Perawatan Personalisasi',
-    personalizedDescription: 'Kami menyediakan rencana perawatan yang disesuaikan yang memenuhi kebutuhan individu, membantu Anda mencapai tujuan kecantikan dan kepercayaan diri Anda dengan presisi.',
-    partnershipQuote: '"Di mana pun Anda berada, kami menawarkan teknologi terbaru dan pengalaman perawatan paling nyaman untuk membantu Anda mencapai penampilan ideal Anda."',
-    
+    globalStrategy: 'Chiến Lược Toàn Cầu',
+    partneringWith: 'Hợp Tác Với Các',
+    aestheticInstitutions: 'Tổ Chức Thẩm Mỹ Hàng Đầu Trung Quốc',
+    worldClassServices: 'Để Cung Cấp Dịch Vụ Thẩm Mỹ Đẳng Cấp Thế Giới',
+    partnershipDescription: 'Chúng tôi đã thiết lập quan hệ đối tác chiến lược dài hạn với các tổ chức thẩm mỹ uy tín và sáng tạo nhất của Trung Quốc, đảm bảo rằng chúng tôi cung cấp cho khách hàng toàn cầu mức độ cao nhất về phẫu thuật thẩm mỹ và điều trị làm đẹp.',
+    exceptionalExpertise: 'Chuyên Môn Xuất Sắc',
+    expertiseDescription: 'Chúng tôi hợp tác với các bác sĩ phẫu thuật thẩm mỹ hàng đầu và chuyên gia làm đẹp của Trung Quốc để đảm bảo mỗi liệu trình đáp ứng các tiêu chuẩn quốc tế về an toàn và nghệ thuật.',
+    globalRecognition: 'Công Nhận Toàn Cầu',
+    recognitionDescription: 'Các tổ chức đối tác của chúng tôi có cơ sở khách hàng quốc tế rộng lớn và đã được các phương tiện truyền thông toàn cầu hàng đầu giới thiệu và khuyến nghị.',
+    personalizedTreatments: 'Điều Trị Cá Nhân Hóa',
+    personalizedDescription: 'Chúng tôi cung cấp các kế hoạch điều trị tùy chỉnh đáp ứng nhu cầu cá nhân, giúp bạn đạt được các mục tiêu vẻ đẹp và sự tự tin với độ chính xác.',
+    partnershipQuote: '"Dù bạn ở đâu, chúng tôi đều cung cấp công nghệ mới nhất và trải nghiệm điều trị thoải mái nhất để giúp bạn đạt được vẻ ngoài lý tưởng."',
+
     // Categories Component
-    medoraHealthProcedures: 'Prosedur Medora Health',
-    exploreFace: 'Jelajahi Wajah',
-    exploreBody: 'Jelajahi Tubuh',
-    exploreNonsurgical: 'Jelajahi Non-Bedah',
-    
+    medoraHealthProcedures: 'Thủ Thuật Medora Health',
+    exploreFace: 'Khám Phá Khuôn Mặt',
+    exploreBody: 'Khám Phá Cơ Thể',
+    exploreNonsurgical: 'Khám Phá Không Phẫu Thuật',
+
     // TeamIntro Component
-    yiMeiCenter: 'Pusat Bedah Plastik YiMei',
-    ourTeamIncludes: 'TIM KAMI TERMASUK',
-    internationallyAcclaimed: 'AHLI BEDAH YANG DIAKUI INTERNASIONAL',
+    yiMeiCenter: 'Trung Tâm Phẫu Thuật Thẩm Mỹ YiMei',
+    ourTeamIncludes: 'ĐỘI NGŨ CỦA CHÚNG TÔI BAO GỒM',
+    internationallyAcclaimed: 'CÁC BÁC SĨ PHẪU THUẬT ĐƯỢC CÔNG NHẬN QUỐC TẾ',
   },
   id: {
     // Procedure Detail Page - Bahasa Indonesia
@@ -1138,16 +1170,15 @@ export const translations = {
     clickToViewFullCase: 'Klik untuk melihat detail kasus lengkap',
     viewPhotoGallery: 'Lihat Galeri Foto',
     requestConsultation: 'Minta Konsultasi',
-    
+    comingSoon: 'Segera Hadir',
+    noCasesYet: 'Kami sedang mempersiapkan foto sebelum/sesudah untuk prosedur ini. Silakan kembali lagi nanti atau hubungi kami untuk informasi lebih lanjut.',
+
     // CTA section
     readyToGetStarted: 'Siap untuk Memulai?',
     scheduleConsultation: 'Jadwalkan Konsultasi Anda',
     
     // Additional UI text
     medoraHealth: 'Medora Health',
-    centerForPlasticSurgery: 'Pusat Bedah Plastik',
-    overview: 'Gambaran Umum',
-    caseNumber: 'KASUS',
     youMayBeGoodCandidate: 'Anda mungkin kandidat yang baik untuk',
     if: 'jika:',
     choosingTheRightSurgeon: 'MEMILIH AHLI BEDAH PLASTIK YANG TEPAT',
@@ -1177,6 +1208,46 @@ export const translations = {
     travelTitle: 'Perjalanan ke Kami',
     travelSubtitle: 'Program Konsierj untuk Pasien Internasional',
     travelDescription: 'Kami menyambut pasien dari seluruh dunia dan memberikan dukungan komprehensif untuk membuat perjalanan Anda lancar.',
+
+    // Homepage Components
+    introRenowned: 'TERKENAL UNTUK KEUNGGULAN',
+    introTitle: 'Pusat Bedah Plastik Medora Health',
+    introDescription: 'Keunggulan dalam peremajaan wajah, kontur tubuh, dan peningkatan estetika.',
+    meetOurDoctors: 'TEMUI DOKTER KAMI',
+    viewAllSurgeons: 'Lihat Semua',
+    viewAllSurgeonsCount: 'Ahli Bedah',
+
+    // Intro Component
+    centerForPlasticSurgery: 'Pusat Bedah Plastik',
+    anInternational: 'TUJUAN ESTETIKA',
+    aestheticDestination: 'INTERNASIONAL',
+    artisanSubtitle: '"Seni. Presisi. Keindahan Alami."',
+    introDescriptionLong: 'Dengan hampir satu abad pengalaman gabungan, ahli bedah plastik bersertifikat kami telah mengukuhkan tempat mereka di antara yang paling berkualitas dan paling dicintai di wilayah ini. Pasien tidak memilih kami hanya untuk melakukan operasi mereka - mereka memilih kami untuk melakukan transformasi yang mengubah hidup dengan seni dan keterampilan yang tak tertandingi.',
+
+    // Partnership Component
+    globalStrategy: 'Strategi Global',
+    partneringWith: 'Bermitra dengan',
+    aestheticInstitutions: 'Institusi Estetika Terkemuka China',
+    worldClassServices: 'Untuk Memberikan Layanan Kosmetik Kelas Dunia',
+    partnershipDescription: 'Kami telah menjalin kemitraan strategis jangka panjang dengan institusi estetika paling bergengsi dan inovatif di China, memastikan bahwa kami menawarkan klien global tingkat tertinggi bedah plastik dan perawatan kecantikan.',
+    exceptionalExpertise: 'Keahlian Luar Biasa',
+    expertiseDescription: 'Kami berkolaborasi dengan ahli bedah plastik terbaik dan spesialis kecantikan China untuk memastikan setiap perawatan memenuhi standar internasional untuk keamanan dan seni.',
+    globalRecognition: 'Pengakuan Global',
+    recognitionDescription: 'Institusi mitra kami memiliki basis klien internasional yang luas dan telah ditampilkan dan direkomendasikan oleh media global terkemuka.',
+    personalizedTreatments: 'Perawatan Personalisasi',
+    personalizedDescription: 'Kami menyediakan rencana perawatan yang disesuaikan yang memenuhi kebutuhan individu, membantu Anda mencapai tujuan kecantikan dan kepercayaan diri Anda dengan presisi.',
+    partnershipQuote: '"Di mana pun Anda berada, kami menawarkan teknologi terbaru dan pengalaman perawatan paling nyaman untuk membantu Anda mencapai penampilan ideal Anda."',
+
+    // Categories Component
+    medoraHealthProcedures: 'Prosedur Medora Health',
+    exploreFace: 'Jelajahi Wajah',
+    exploreBody: 'Jelajahi Tubuh',
+    exploreNonsurgical: 'Jelajahi Non-Bedah',
+
+    // TeamIntro Component
+    yiMeiCenter: 'Pusat Bedah Plastik YiMei',
+    ourTeamIncludes: 'TIM KAMI TERMASUK',
+    internationallyAcclaimed: 'AHLI BEDAH YANG DIAKUI INTERNASIONAL',
   },
 } as const;
 

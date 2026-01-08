@@ -2,13 +2,44 @@ import React, { useState } from 'react';
 import { User, Search } from 'lucide-react';
 import Reputation from './Reputation';
 import Contact from './Contact';
+import { useTranslation } from '../hooks/useTranslation';
+import { useLanguage } from '../contexts/LanguageContext';
+import procedureNames from '../i18n/procedureNames.json';
 
 interface GalleryProps {
   onNavigate?: (procedure: string) => void;
 }
 
+// Type for procedure names translation
+type ProcedureNameTranslations = {
+  [key: string]: {
+    en: string;
+    zh: string;
+    es: string;
+    fr: string;
+    de: string;
+    ru: string;
+    ar: string;
+    vi: string;
+    id: string;
+  };
+};
+
+const typedProcedureNames = procedureNames as ProcedureNameTranslations;
+
 const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
+  const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState<'face' | 'body' | 'non-surgical'>('face');
+
+  // Helper function to translate procedure/category names
+  const translateLabel = (englishLabel: string): string => {
+    const translation = typedProcedureNames[englishLabel];
+    if (translation && translation[currentLanguage as keyof typeof translation]) {
+      return translation[currentLanguage as keyof typeof translation];
+    }
+    return englishLabel; // Fallback to English if no translation found
+  };
 
   const categories = {
     face: [
@@ -240,13 +271,13 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
           </div>
           
           <div className="text-[10px] md:text-xs uppercase tracking-widest text-sage-300 mb-6 font-sans">
-             <span className="hover:text-white cursor-pointer transition-colors" onClick={() => window.location.reload()}>HOME</span> 
-             <span className="mx-2">|</span> 
-             <span className="text-gold-500">PHOTO GALLERY</span>
+             <span className="hover:text-white cursor-pointer transition-colors" onClick={() => window.location.reload()}>{t('galleryHome')}</span>
+             <span className="mx-2">|</span>
+             <span className="text-gold-500">{t('galleryPhotoGallery')}</span>
           </div>
 
           <h1 className="font-serif text-5xl md:text-6xl text-white font-light tracking-wide uppercase">
-            Photo Gallery
+            {t('galleryTitle')}
           </h1>
         </div>
       </section>
@@ -257,40 +288,40 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 md:mb-0">
             {/* Category Tabs */}
             <div className="flex gap-2 w-full md:w-auto">
-              <button 
+              <button
                 onClick={() => setActiveTab('face')}
                 className={`flex-1 md:flex-initial px-6 py-3 uppercase tracking-[0.15em] text-xs font-bold transition-colors ${
-                  activeTab === 'face' 
-                    ? 'bg-navy-900 text-white' 
+                  activeTab === 'face'
+                    ? 'bg-navy-900 text-white'
                     : 'bg-sage-100 text-stone-600 hover:bg-sage-200'
                 }`}
               >
-                Face
+                {t('galleryFace')}
               </button>
-              <button 
+              <button
                 onClick={() => setActiveTab('body')}
                 className={`flex-1 md:flex-initial px-6 py-3 uppercase tracking-[0.15em] text-xs font-bold transition-colors ${
-                  activeTab === 'body' 
-                    ? 'bg-navy-900 text-white' 
+                  activeTab === 'body'
+                    ? 'bg-navy-900 text-white'
                     : 'bg-sage-100 text-stone-600 hover:bg-sage-200'
                 }`}
               >
-                Body
+                {t('galleryBody')}
               </button>
-              <button 
+              <button
                 onClick={() => setActiveTab('non-surgical')}
                 className={`flex-1 md:flex-initial px-6 py-3 uppercase tracking-[0.15em] text-xs font-bold transition-colors ${
-                  activeTab === 'non-surgical' 
-                    ? 'bg-navy-900 text-white' 
+                  activeTab === 'non-surgical'
+                    ? 'bg-navy-900 text-white'
                     : 'bg-sage-100 text-stone-600 hover:bg-sage-200'
                 }`}
               >
-                Non-Surgical
+                {t('galleryNonSurgical')}
               </button>
             </div>
 
             <div className="hidden md:flex items-center gap-2 cursor-pointer hover:text-gold-600 text-stone-500 font-bold uppercase text-xs tracking-wide transition-colors">
-              <User size={16} /> Sign In
+              <User size={16} /> {t('gallerySignIn')}
             </div>
           </div>
         </div>
@@ -310,26 +341,26 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-navy-900/10 group-hover:bg-transparent transition-colors"></div>
-                  <div className="absolute bottom-4 left-4 text-xs text-white/90 uppercase tracking-widest font-bold">MODEL</div>
+                  <div className="absolute bottom-4 left-4 text-xs text-white/90 uppercase tracking-widest font-bold">{t('galleryModel')}</div>
                 </div>
 
                 {/* Title */}
-                <h2 className="font-serif text-3xl text-navy-900 mb-6">{cat.title}</h2>
+                <h2 className="font-serif text-3xl text-navy-900 mb-6">{translateLabel(cat.title)}</h2>
 
                 {/* List */}
                 <ul className="space-y-3">
                   {cat.items.map((item, itemIdx) => (
                     <li key={itemIdx} className="flex items-start gap-3 group/item">
                       <span className="w-1.5 h-1.5 rounded-full bg-gold-500 mt-2 shrink-0 group-hover/item:scale-125 transition-transform"></span>
-                      <a 
-                        href="#" 
+                      <a
+                        href="#"
                         onClick={(e) => {
                           e.preventDefault();
                           if (onNavigate) onNavigate(item);
                         }}
                         className="text-stone-500 hover:text-gold-600 transition-colors text-lg font-light leading-tight"
                       >
-                        {item}
+                        {translateLabel(item)}
                       </a>
                     </li>
                   ))}

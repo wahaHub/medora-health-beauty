@@ -264,6 +264,16 @@
       background: #d32f2f;
     }
 
+    .btn-save-desc {
+      background: #4caf50;
+      color: white;
+      margin-top: 8px;
+    }
+
+    .btn-save-desc:hover {
+      background: #43a047;
+    }
+
     /* Masonry Grid for Case Images */
     .case-images-grid {
       display: grid;
@@ -645,11 +655,67 @@
       // R2 公开 URL 从环境配置获取（硬编码或从API获取）
       r2PublicUrl = 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev';
 
+      // 从 Supabase 加载 cases
+      await loadCasesFromSupabase();
+
       // 渲染槽位
       renderCases();
 
       // 加载已有图片
       await loadExistingImages();
+    }
+
+    // 从 Supabase 加载 cases
+    async function loadCasesFromSupabase() {
+      try {
+        const response = await authFetch(`/api/admin/cases?slug=${encodeURIComponent(currentSlug)}`);
+        const data = await response.json();
+
+        if (data.success && data.cases && data.cases.length > 0) {
+          cases = data.cases.map((c, idx) => ({
+            id: idx + 1,
+            caseNumber: c.case_number,
+            description: c.description || '',
+            providerName: c.provider_name || 'Dr. Heather Lee',
+            patientAge: c.patient_age || '',
+            patientGender: c.patient_gender || '',
+            imageCount: c.image_count || 2,
+            images: []
+          }));
+          console.log('Loaded cases from Supabase:', cases);
+        }
+      } catch (error) {
+        console.error('Error loading cases from Supabase:', error);
+      }
+    }
+
+    // 保存 case 到 Supabase
+    async function saveCaseToSupabase(caseItem) {
+      try {
+        const response = await authFetch('/api/admin/cases', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            slug: currentSlug,
+            case_number: caseItem.caseNumber,
+            description: caseItem.description || '',
+            provider_name: caseItem.providerName || 'Dr. Heather Lee',
+            patient_age: caseItem.patientAge || null,
+            patient_gender: caseItem.patientGender || null,
+            image_count: caseItem.images ? caseItem.images.length : 0,
+            sort_order: caseItem.id - 1
+          })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          console.log('Case saved to Supabase:', data.case);
+        } else {
+          console.error('Failed to save case:', data.message);
+        }
+      } catch (error) {
+        console.error('Error saving case to Supabase:', error);
+      }
     }
 
     // 渲染案例
@@ -684,9 +750,12 @@
             <div class="case-description">
               <label>Description:</label>
               <textarea
+                id="case-desc-${caseItem.id}"
                 placeholder="Enter case description (e.g., Patient age, procedure details, recovery notes...)"
-                onchange="updateCaseDescription(${caseItem.id}, this.value)"
               >${caseItem.description || ''}</textarea>
+              <button type="button" class="btn-small btn-save-desc" onclick="saveCaseDescription(${caseItem.id})">
+                Save Description
+              </button>
             </div>
             <div class="case-images-grid" id="case-${caseItem.id}-grid">
               ${renderCaseImages(caseItem)}
@@ -757,26 +826,63 @@
       return Math.floor(100000 + Math.random() * 900000).toString();
     }
 
-    // 更新案例描述
-    window.updateCaseDescription = function(caseId, description) {
+    // 更新案例描述（自动保存到 Supabase）
+    window.updateCaseDescription = async function(caseId, description) {
       const caseItem = cases.find(c => c.id === caseId);
       if (caseItem) {
         caseItem.description = description;
-        // TODO: 保存到后端/R2
-        console.log(`Case ${caseId} description updated:`, description);
+        // 保存到 Supabase
+        await saveCaseToSupabase(caseItem);
+        console.log(`Case ${caseId} description saved:`, description);
       }
     };
 
-    // 添加新案例
-    window.addNewCase = function() {
+    // 保存案例描述（通过按钮点击）
+    window.saveCaseDescription = async function(caseId) {
+      const textarea = document.getElementById(`case-desc-${caseId}`);
+      if (!textarea) {
+        alert('Error: Cannot find description field');
+        return;
+      }
+      const description = textarea.value;
+      const caseItem = cases.find(c => c.id === caseId);
+      if (caseItem) {
+        caseItem.description = description;
+        // 保存到 Supabase
+        await saveCaseToSupabase(caseItem);
+        alert('Description saved successfully!');
+        console.log(`Case ${caseId} description saved:`, description);
+      } else {
+        alert('Error: Case not found');
+      }
+    };
+
+    // 添加新案例（自动保存到 Supabase）
+    window.addNewCase = async function() {
       const newId = Math.max(...cases.map(c => c.id), 0) + 1;
-      cases.push({ id: newId, caseNumber: generateCaseNumber(), description: '', images: [] });
+      const newCase = { id: newId, caseNumber: generateCaseNumber(), description: '', images: [] };
+      cases.push(newCase);
       renderCases();
+      // 保存到 Supabase
+      await saveCaseToSupabase(newCase);
     };
 
     // 删除案例
-    window.deleteCase = function(caseId) {
+    window.deleteCase = async function(caseId) {
       if (!confirm('Are you sure you want to delete this entire case?')) return;
+
+      const caseItem = cases.find(c => c.id === caseId);
+      if (caseItem) {
+        // 从 Supabase 删除
+        try {
+          await authFetch(`/api/admin/cases?slug=${encodeURIComponent(currentSlug)}&case_number=${encodeURIComponent(caseItem.caseNumber)}`, {
+            method: 'DELETE'
+          });
+        } catch (error) {
+          console.error('Error deleting case from Supabase:', error);
+        }
+      }
+
       cases = cases.filter(c => c.id !== caseId);
       renderCases();
       // TODO: 同时删除 R2 中的图片
@@ -974,13 +1080,14 @@
             // 添加到案例图片数组
             let caseItem = cases.find(c => c.id === currentCaseId);
             if (!caseItem) {
-              caseItem = { id: currentCaseId, images: [] };
+              // 如果 case 不存在，创建完整的 case 对象
+              caseItem = { id: currentCaseId, caseNumber: generateCaseNumber(), description: '', images: [] };
               cases.push(caseItem);
             }
 
             // 获取图片尺寸
             const img = new Image();
-            img.onload = function() {
+            img.onload = async function() {
               caseItem.images.push({
                 url: data.url,
                 key: data.key,
@@ -988,6 +1095,9 @@
                 height: img.height
               });
               renderCases();
+              // 保存 case 到 Supabase（包括更新 image_count）
+              await saveCaseToSupabase(caseItem);
+              console.log('Case saved to Supabase after image upload:', caseItem.caseNumber);
             };
             img.src = data.url;
           } else {

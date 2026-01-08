@@ -14,7 +14,22 @@ interface ProcedureDetailProps {
   onCaseClick?: (id: string) => void;
 }
 
-const ProcedureDetail: React.FC<ProcedureDetailProps> = ({ 
+// Case data from Supabase
+interface ProcedureCase {
+  id: string;
+  procedure_id: string;
+  case_number: string;
+  description: string | null;
+  provider_name: string | null;
+  patient_age: string | null;
+  patient_gender: string | null;
+  image_count: number;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   onBack,
   onCaseClick
 }) => {
@@ -23,6 +38,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation();
   const [procedure, setProcedure] = useState<CompleteProcedureData | null>(null);
+  const [cases, setCases] = useState<ProcedureCase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -149,6 +165,25 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
         }
 
         setProcedure(data as CompleteProcedureData);
+
+        // Fetch cases directly from Supabase (works in both dev and production)
+        try {
+          console.log('Fetching cases for procedure_id:', data.id, 'slug:', slug);
+          const { data: casesData, error: casesError } = await supabase
+            .from('procedure_cases')
+            .select('*')
+            .eq('procedure_id', data.id)
+            .order('sort_order', { ascending: true });
+
+          if (casesError) {
+            console.error('Error fetching cases:', casesError);
+          } else {
+            console.log('Cases fetched:', casesData);
+            setCases(casesData || []);
+          }
+        } catch (casesErr) {
+          console.error('Error fetching cases:', casesErr);
+        }
       } catch (err) {
         console.error('Error fetching procedure:', err);
         setError('Failed to load procedure details');
@@ -377,70 +412,109 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                 </h2>
               </div>
               <div className="text-navy-900 font-bold text-lg hidden md:block">
-                {t('caseOf')} 7 {t('of')} 9
+                {cases.length > 0 ? `${t('caseOf')} 1 ${t('of')} ${cases.length}` : ''}
               </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-12 items-start relative">
-               <button className="hidden lg:block absolute -left-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors">
-                  <ChevronLeft size={48} strokeWidth={1.5} />
-               </button>
-               <button className="hidden lg:block absolute -right-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors">
-                  <ChevronRight size={48} strokeWidth={1.5} />
-               </button>
+            {cases.length > 0 ? (
+              /* 有案例时显示实际案例 */
+              <div className="flex flex-col lg:flex-row gap-12 items-start relative">
+                 <button className="hidden lg:block absolute -left-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors">
+                    <ChevronLeft size={48} strokeWidth={1.5} />
+                 </button>
+                 <button className="hidden lg:block absolute -right-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors">
+                    <ChevronRight size={48} strokeWidth={1.5} />
+                 </button>
 
-               <div className="lg:w-1/3 space-y-8">
-                  <h3 className="font-serif text-4xl text-navy-900">{t('caseNumber')} #1001510</h3>
-                  <div className="border-t border-stone-300 pt-4">
-                    <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">{t('proceduresPerformed')}</h4>
-                    <p className="text-gold-500 text-lg">{displayName}</p>
-                  </div>
-                  <div className="border-t border-stone-300 pt-4">
-                    <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">Provider</h4>
-                    <p className="text-stone-600">{t('provider')}: <span className="text-gold-600">Dr. Heather Lee</span></p>
-                  </div>
-                  <div className="border-t border-stone-300 pt-4">
-                    <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">{t('description')}</h4>
-                    <p className="text-stone-600 leading-relaxed font-light">
-                      {displayName} performed by Dr. Heather Lee with excellent results.
-                    </p>
-                  </div>
-               </div>
-
-               <div className="lg:w-2/3">
-                 <div className="grid grid-cols-2 gap-1" onClick={() => onCaseClick && onCaseClick('1001510')}>
-                    <div className="relative group cursor-pointer overflow-hidden aspect-[3/4]">
-                      <img
-                        src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), 1, 1) : "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop"}
-                        alt="Before"
-                        className="w-full h-full object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105"
-                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                          e.currentTarget.src = "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop";
-                        }}
-                      />
-                      <div className="absolute bottom-0 left-0 right-0 text-center py-3 uppercase tracking-widest text-xs font-bold text-white bg-black/40">{t('beforePhotos')}</div>
+                 <div className="lg:w-1/3 space-y-8">
+                    <h3 className="font-serif text-4xl text-navy-900">{t('caseNumber')} #{cases[0]?.case_number}</h3>
+                    <div className="border-t border-stone-300 pt-4">
+                      <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">{t('proceduresPerformed')}</h4>
+                      <p className="text-gold-500 text-lg">{displayName}</p>
                     </div>
-                    <div className="relative group cursor-pointer overflow-hidden aspect-[3/4]">
-                      <img
-                        src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), 1, 2) : "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop"}
-                        alt="After"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                          e.currentTarget.src = "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop";
-                        }}
-                      />
-                      <div className="absolute bottom-0 left-0 right-0 text-center py-3 uppercase tracking-widest text-xs font-bold text-white bg-black/40">{t('afterPhotos')}</div>
-                      <div className="absolute top-4 right-4 opacity-50 group-hover:opacity-100 transition-opacity">
-                        <div className="font-serif text-4xl text-white italic">M</div>
-                      </div>
+                    <div className="border-t border-stone-300 pt-4">
+                      <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">Provider</h4>
+                      <p className="text-stone-600">{t('provider')}: <span className="text-gold-600">{cases[0]?.provider_name || 'Dr. Heather Lee'}</span></p>
+                    </div>
+                    <div className="border-t border-stone-300 pt-4">
+                      <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">{t('description')}</h4>
+                      <p className="text-stone-600 leading-relaxed font-light">
+                        {cases[0]?.description || `${displayName} performed by ${cases[0]?.provider_name || 'Dr. Heather Lee'} with excellent results.`}
+                      </p>
                     </div>
                  </div>
-                 <div className="text-center mt-4 text-xs text-stone-400 font-light tracking-wide italic">{t('clickToViewFullCase')}</div>
-               </div>
-            </div>
+
+                 <div className="lg:w-2/3">
+                   <div className="grid grid-cols-2 gap-1" onClick={() => onCaseClick && onCaseClick(cases[0]?.case_number || '1')}>
+                      <div className="relative group cursor-pointer overflow-hidden aspect-[3/4]">
+                        <img
+                          src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(cases[0]?.case_number) || 1, 1) : "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop"}
+                          alt="Before"
+                          className="w-full h-full object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105"
+                          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                            e.currentTarget.src = "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop";
+                          }}
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 text-center py-3 uppercase tracking-widest text-xs font-bold text-white bg-black/40">{t('beforePhotos')}</div>
+                      </div>
+                      <div className="relative group cursor-pointer overflow-hidden aspect-[3/4]">
+                        <img
+                          src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(cases[0]?.case_number) || 1, 2) : "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop"}
+                          alt="After"
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                            e.currentTarget.src = "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop";
+                          }}
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 text-center py-3 uppercase tracking-widest text-xs font-bold text-white bg-black/40">{t('afterPhotos')}</div>
+                        <div className="absolute top-4 right-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                          <div className="font-serif text-4xl text-white italic">M</div>
+                        </div>
+                      </div>
+                   </div>
+                   <div className="text-center mt-4 text-xs text-stone-400 font-light tracking-wide italic">{t('clickToViewFullCase')}</div>
+                 </div>
+              </div>
+            ) : (
+              /* 没有案例时显示 placeholder */
+              <div className="flex flex-col lg:flex-row gap-12 items-center">
+                 <div className="lg:w-1/3 space-y-6 text-center lg:text-left">
+                    <div className="w-20 h-20 mx-auto lg:mx-0 rounded-full bg-sage-100 flex items-center justify-center">
+                      <svg className="w-10 h-10 text-sage-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-serif text-3xl text-navy-900">{t('comingSoon')}</h3>
+                    <p className="text-stone-600 leading-relaxed font-light">
+                      {t('noCasesYet')}
+                    </p>
+                 </div>
+
+                 <div className="lg:w-2/3">
+                   <div className="grid grid-cols-2 gap-1">
+                      <div className="relative overflow-hidden aspect-[3/4] bg-sage-100">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-sage-400">
+                          <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <span className="text-sm uppercase tracking-widest">{t('beforePhotos')}</span>
+                        </div>
+                      </div>
+                      <div className="relative overflow-hidden aspect-[3/4] bg-sage-100">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-sage-400">
+                          <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <span className="text-sm uppercase tracking-widest">{t('afterPhotos')}</span>
+                        </div>
+                      </div>
+                   </div>
+                 </div>
+              </div>
+            )}
 
             <div className="flex flex-col md:flex-row justify-center gap-6 mt-16">
-               <button 
+               <button
                  onClick={() => navigate('/gallery')}
                  className="bg-navy-900 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-navy-800 transition-colors text-sm"
                >

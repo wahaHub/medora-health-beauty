@@ -6,43 +6,67 @@
 export const PROCEDURE_CATEGORIES = {
   FACE: {
     id: 'face',
-    name: 'Face & Neck',
+    name: 'Face',
     icon: '👤',
     subcategories: [
+      // 1. 面部整形手术 (Facial Surgery)
       {
-        id: 'face-neck',
-        name: 'Face & Neck Procedures',
+        id: 'eye-surgery',
+        name: 'Eye Surgery',
         procedures: [
-          'Brow Lift',
-          'Temples Lift / Temporofrontal Lift',
-          'Forehead Reduction Surgery',
           'Eyelid Surgery',
-          'Facelift',
-          'Midface Lift (Mid Facelift)',
-          'Mini Facelift',
-          'Neck Lift',
-          'Deep Neck Contouring',
-          'Neck Liposuction',
-          'Platysmaplasty',
-          'Cervicoplasty',
-          'Otoplasty (Ear Pinning)',
-          'Rhinoplasty',
-          'Revision Rhinoplasty',
-          'Nose Tip Refinement',
-          'Mohs Skin Cancer Reconstruction',
         ]
       },
       {
-        id: 'contouring-implants',
-        name: 'Facial Contouring & Implants',
+        id: 'nose-surgery',
+        name: 'Nose Surgery',
+        procedures: [
+          'Rhinoplasty',
+          'Revision Rhinoplasty',
+          'Nose Tip Refinement',
+        ]
+      },
+      {
+        id: 'facelift-surgery',
+        name: 'Facelift Surgery',
+        procedures: [
+          'Facelift',
+          'Mini Facelift',
+          'Midface Lift (Mid Facelift)',
+          'Neck Lift',
+          'Deep Neck Contouring',
+          'Brow Lift',
+          'Temples Lift / Temporofrontal Lift',
+          'Forehead Reduction Surgery',
+        ]
+      },
+      {
+        id: 'facial-contouring',
+        name: 'Facial Contouring',
         procedures: [
           'Cheek Augmentation',
           'Chin Augmentation',
           'Jawline Contouring',
           'Zygomatic Arch Contouring',
-          'Facial Implants',
-          'Submalar Implants',
+        ]
+      },
+      {
+        id: 'other-facial-surgery',
+        name: 'Other Facial Surgery',
+        procedures: [
+          'Otoplasty (Ear Pinning)',
           'Buccal Fat Removal',
+        ]
+      },
+      // 2. 皮肤和注射类 (Skin & Injectables)
+      {
+        id: 'skin-tightening',
+        name: 'Skin Tightening & Resurfacing',
+        procedures: [
+          'Renuvion® Skin Tightening Treatment',
+          'Laser Liposuction',
+          'Skin Resurfacing',
+          'Microdermabrasion',
         ]
       },
       {
@@ -52,37 +76,42 @@ export const PROCEDURE_CATEGORIES = {
           'Facial Injectables',
           'BOTOX® & Neurotoxins',
           'Dermal Fillers',
-          'Lip Filler',
-          'Lip Injections',
           'Fat Dissolving Injections',
           'Fat Transfer (Facial Fat Grafting)',
           'Facial Rejuvenation with PRP',
-        ]
-      },
-      {
-        id: 'lips',
-        name: 'Lips',
-        procedures: [
+          'Lip Filler',
+          'Lip Injections',
           'Lip Augmentation',
           'Lip Lift',
         ]
       },
+      // 3. 颈部整形 (Neck Surgery)
       {
-        id: 'skin-tightening',
-        name: 'Skin Tightening & Resurfacing',
+        id: 'neck-surgery',
+        name: 'Neck Surgery',
         procedures: [
+          'Neck Liposuction',
           'Neck Tightening',
-          'Renuvion® Skin Tightening Treatment',
-          'Skin Resurfacing',
-          'Microdermabrasion',
-          'Laser Liposuction',
+          'Platysmaplasty',
+          'Cervicoplasty',
         ]
       },
+      // 4. 头发恢复 (Hair Restoration)
       {
         id: 'hair',
-        name: 'Hair',
+        name: 'Hair Restoration',
         procedures: [
           'Hair Restoration',
+        ]
+      },
+      // 5. 其他整形 (Other Procedures)
+      {
+        id: 'other-procedures',
+        name: 'Other Procedures',
+        procedures: [
+          'Mohs Skin Cancer Reconstruction',
+          'Facial Implants',
+          'Submalar Implants',
         ]
       }
     ]
