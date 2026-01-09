@@ -869,23 +869,55 @@
 
     // 删除案例
     window.deleteCase = async function(caseId) {
-      if (!confirm('Are you sure you want to delete this entire case?')) return;
+      if (!confirm('Are you sure you want to delete this entire case and all its images?')) return;
 
       const caseItem = cases.find(c => c.id === caseId);
-      if (caseItem) {
-        // 从 Supabase 删除
-        try {
-          await authFetch(`/api/admin/cases?slug=${encodeURIComponent(currentSlug)}&case_number=${encodeURIComponent(caseItem.caseNumber)}`, {
-            method: 'DELETE'
-          });
-        } catch (error) {
-          console.error('Error deleting case from Supabase:', error);
-        }
+      if (!caseItem) {
+        alert('Case not found');
+        return;
       }
 
-      cases = cases.filter(c => c.id !== caseId);
-      renderCases();
-      // TODO: 同时删除 R2 中的图片
+      try {
+        console.log('Deleting case:', caseItem.caseNumber, 'from slug:', currentSlug);
+
+        // 1. 先删除 R2 中的所有图片
+        if (caseItem.images && caseItem.images.length > 0) {
+          console.log('Deleting', caseItem.images.length, 'images from R2');
+          for (const image of caseItem.images) {
+            if (image && image.key) {
+              try {
+                await authFetch(`/api/admin/delete?key=${encodeURIComponent(image.key)}`, {
+                  method: 'DELETE'
+                });
+                console.log('Deleted image:', image.key);
+              } catch (imgError) {
+                console.error('Error deleting image:', image.key, imgError);
+              }
+            }
+          }
+        }
+
+        // 2. 从 Supabase 删除 case 记录
+        const response = await authFetch(`/api/admin/cases?slug=${encodeURIComponent(currentSlug)}&case_number=${encodeURIComponent(caseItem.caseNumber)}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+        console.log('Delete response:', data);
+
+        if (!data.success) {
+          alert('Failed to delete case from database: ' + (data.message || 'Unknown error'));
+          return;
+        }
+
+        // 3. 删除成功后从前端移除
+        cases = cases.filter(c => c.id !== caseId);
+        renderCases();
+        alert('Case and all images deleted successfully');
+      } catch (error) {
+        console.error('Error deleting case:', error);
+        alert('Error deleting case: ' + error.message);
+      }
     };
 
     // 删除案例中的某张图片
@@ -930,20 +962,39 @@
             if (type === 'hero' || type === 'benefits' || type === 'candidate') {
               updateSlotWithImage(type, img.url);
             } else if (type === 'case') {
-              // case-1-1.jpg, case-1-2.jpg
-              const caseId = parseInt(rest[0]);
+              // 文件名格式: case-{caseNumber}-{imageIndex}.jpg
+              // 例如: case-333064-1.jpg, case-333064-2.jpg
+              const caseNumber = rest[0]; // caseNumber 是字符串
               const imgIndex = parseInt(rest[1]) - 1;
 
-              let caseItem = cases.find(c => c.id === caseId);
+              // 用 caseNumber 匹配 case
+              let caseItem = cases.find(c => c.caseNumber === caseNumber);
               if (!caseItem) {
-                caseItem = { id: caseId, caseNumber: generateCaseNumber(), description: '', images: [] };
-                cases.push(caseItem);
+                // 如果找不到匹配的 case，可能是旧格式文件，尝试用数字 id 匹配
+                const numericId = parseInt(caseNumber);
+                caseItem = cases.find(c => c.id === numericId);
+
+                // 如果还找不到，创建新的 case（用于处理孤立图片）
+                if (!caseItem) {
+                  console.log('Creating orphan case for image:', filename);
+                  const newId = cases.length > 0 ? Math.max(...cases.map(c => c.id)) + 1 : 1;
+                  caseItem = {
+                    id: newId,
+                    caseNumber: caseNumber,
+                    description: '',
+                    providerName: 'Dr. Heather Lee',
+                    patientAge: '',
+                    patientGender: '',
+                    images: []
+                  };
+                  cases.push(caseItem);
+                }
               }
 
               caseItem.images[imgIndex] = {
                 url: img.url,
                 key: img.key,
-                width: 800, // TODO: 从图片元数据获取实际尺寸
+                width: 800,
                 height: 600
               };
             }
