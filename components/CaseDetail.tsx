@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Heart, User } from 'lucide-react';
 import Contact from './Contact';
-import { getProcedureCaseImage } from '../utils/imageUtils';
+import { getProcedureCaseImage, createSlug } from '../utils/imageUtils';
+import { supabase } from '../services/supabaseClient';
 
 interface CaseDetailProps {
   caseId?: string;
@@ -9,30 +11,130 @@ interface CaseDetailProps {
   onBack?: () => void;
 }
 
-const CaseDetail: React.FC<CaseDetailProps> = ({
-  caseId = "1001510",
-  procedureName = "Deep Neck Contouring",
-  onBack
-}) => {
-  // 从 R2 获取 case 图片
-  const beforeImage = getProcedureCaseImage(procedureName, 1, 1);
-  const afterImage = getProcedureCaseImage(procedureName, 1, 2);
+interface CaseData {
+  id: string;
+  procedure_id: string;
+  case_number: string;
+  description: string | null;
+  provider_name: string | null;
+  patient_age: string | null;
+  patient_gender: string | null;
+  image_count: number;
+  sort_order: number;
+}
 
-  // 备用图片
+const CaseDetail: React.FC<CaseDetailProps> = ({ onBack }) => {
+  const { procedureName: urlProcedureName, caseId: urlCaseId } = useParams<{ procedureName: string; caseId: string }>();
+  const navigate = useNavigate();
+
+  const [caseData, setCaseData] = useState<CaseData | null>(null);
+  const [allCases, setAllCases] = useState<CaseData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const procedureName = urlProcedureName ? decodeURIComponent(urlProcedureName) : 'Unknown Procedure';
+  const caseId = urlCaseId || '';
+
+  useEffect(() => {
+    async function fetchCaseData() {
+      setLoading(true);
+      try {
+        // Get procedure by slug
+        const slug = createSlug(procedureName);
+        const { data: procedure, error: procError } = await supabase
+          .from('procedures')
+          .select('id')
+          .eq('slug', slug)
+          .single();
+
+        if (procError || !procedure) {
+          console.error('Procedure not found:', procError);
+          setLoading(false);
+          return;
+        }
+
+        // Get all cases for this procedure
+        const { data: cases, error: casesError } = await supabase
+          .from('procedure_cases')
+          .select('*')
+          .eq('procedure_id', procedure.id)
+          .order('sort_order', { ascending: true });
+
+        if (casesError) {
+          console.error('Error fetching cases:', casesError);
+          setLoading(false);
+          return;
+        }
+
+        setAllCases(cases || []);
+
+        // Find the specific case
+        const currentCase = cases?.find(c => c.case_number === caseId);
+        if (currentCase) {
+          setCaseData(currentCase);
+          const idx = cases?.findIndex(c => c.case_number === caseId) || 0;
+          setCurrentIndex(idx);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (procedureName && caseId) {
+      fetchCaseData();
+    }
+  }, [procedureName, caseId]);
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      navigate(`/procedure/${encodeURIComponent(procedureName)}`);
+    }
+  };
+
+  const handlePrevCase = () => {
+    if (currentIndex > 0 && allCases.length > 0) {
+      const prevCase = allCases[currentIndex - 1];
+      navigate(`/procedure/${encodeURIComponent(procedureName)}/case/${prevCase.case_number}`);
+    }
+  };
+
+  const handleNextCase = () => {
+    if (currentIndex < allCases.length - 1 && allCases.length > 0) {
+      const nextCase = allCases[currentIndex + 1];
+      navigate(`/procedure/${encodeURIComponent(procedureName)}/case/${nextCase.case_number}`);
+    }
+  };
+
+  // Generate image URLs using caseNumber
+  const caseNumber = caseData?.case_number || caseId;
+  const imageCount = caseData?.image_count || 2;
+
+  // Get images based on caseNumber
+  const beforeImage = getProcedureCaseImage(procedureName, parseInt(caseNumber) || 1, 1);
+  const afterImage = getProcedureCaseImage(procedureName, parseInt(caseNumber) || 1, 2);
+
+  // Additional images if available
+  const image3 = imageCount >= 3 ? getProcedureCaseImage(procedureName, parseInt(caseNumber) || 1, 3) : null;
+  const image4 = imageCount >= 4 ? getProcedureCaseImage(procedureName, parseInt(caseNumber) || 1, 4) : null;
+
+  // Fallback images
   const fallbackBefore = "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop";
   const fallbackAfter = "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop";
 
-  const caseData = {
-    provider: "Dr. Vito Medora",
-    procedures: procedureName,
-    age: "25",
-    gender: "Female",
-    description: "Deep neck contouring details...",
-    images: {
-       beforeSide: beforeImage,
-       afterSide: afterImage,
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white pt-24">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-600 mx-auto mb-4"></div>
+          <p className="text-stone-500">Loading case details...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white animate-fade-in-up pt-24">
@@ -45,19 +147,19 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                  Center for Plastic Surgery
                </div>
            </div>
-           
+
            <div className="text-[10px] md:text-xs uppercase tracking-widest text-stone-400 mb-4 font-sans">
-             <span className="hover:text-white cursor-pointer transition-colors" onClick={() => window.location.reload()}>HOME</span> 
-             <span className="mx-2">|</span> 
-             <span className="hover:text-white cursor-pointer transition-colors" onClick={onBack}>PHOTO GALLERY</span> 
-             <span className="mx-2">|</span> 
-             <span className="text-stone-300">{procedureName.toUpperCase()}</span> 
-             <span className="mx-2">|</span> 
-             <span className="text-gold-500">CASE #{caseId}</span>
+             <span className="hover:text-white cursor-pointer transition-colors" onClick={() => navigate('/')}>HOME</span>
+             <span className="mx-2">|</span>
+             <span className="hover:text-white cursor-pointer transition-colors" onClick={() => navigate('/gallery')}>PHOTO GALLERY</span>
+             <span className="mx-2">|</span>
+             <span className="hover:text-white cursor-pointer transition-colors" onClick={handleBack}>{procedureName.toUpperCase()}</span>
+             <span className="mx-2">|</span>
+             <span className="text-gold-500">CASE #{caseNumber}</span>
            </div>
-           
+
            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl uppercase tracking-wide text-white font-light">
-             {procedureName} Case {caseId}
+             {procedureName} Case #{caseNumber}
            </h1>
         </div>
       </section>
@@ -66,22 +168,34 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
       <section className="border-b border-stone-200 py-4 bg-white sticky top-20 z-30 shadow-sm">
          <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm">
             <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 w-full md:w-auto">
-               <button onClick={onBack} className="text-gold-600 hover:text-navy-900 font-bold uppercase tracking-wide text-left">
+               <button onClick={handleBack} className="text-gold-600 hover:text-navy-900 font-bold uppercase tracking-wide text-left">
                  Back to Gallery Home
                </button>
-               
+
                <div className="flex justify-between md:justify-start gap-4 md:gap-8 text-stone-400 font-normal w-full md:w-auto border-t md:border-t-0 border-stone-100 pt-2 md:pt-0">
-                  <span className="flex items-center gap-1 cursor-pointer hover:text-gold-600 text-gold-600 font-bold uppercase tracking-wide transition-colors">
+                  <button
+                    onClick={handlePrevCase}
+                    disabled={currentIndex === 0}
+                    className={`flex items-center gap-1 uppercase tracking-wide transition-colors ${
+                      currentIndex === 0 ? 'text-stone-300 cursor-not-allowed' : 'cursor-pointer hover:text-gold-600 text-gold-600 font-bold'
+                    }`}
+                  >
                     <ChevronLeft size={14}/> <span className="hidden md:inline">Previous Case</span><span className="md:hidden">Prev</span>
-                  </span>
-                  
-                  <span className="cursor-pointer hover:text-gold-600 text-stone-500 uppercase tracking-wide transition-colors text-center" onClick={onBack}>
+                  </button>
+
+                  <span className="cursor-pointer hover:text-gold-600 text-stone-500 uppercase tracking-wide transition-colors text-center" onClick={handleBack}>
                     Back to {procedureName} Gallery
                   </span>
-                  
-                  <span className="flex items-center gap-1 cursor-pointer hover:text-gold-600 text-gold-600 font-bold uppercase tracking-wide transition-colors">
+
+                  <button
+                    onClick={handleNextCase}
+                    disabled={currentIndex >= allCases.length - 1}
+                    className={`flex items-center gap-1 uppercase tracking-wide transition-colors ${
+                      currentIndex >= allCases.length - 1 ? 'text-stone-300 cursor-not-allowed' : 'cursor-pointer hover:text-gold-600 text-gold-600 font-bold'
+                    }`}
+                  >
                     <span className="hidden md:inline">Next Case</span><span className="md:hidden">Next</span> <ChevronRight size={14}/>
-                  </span>
+                  </button>
                </div>
             </div>
 
@@ -101,9 +215,9 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                {/* Large Left (Before Profile) */}
                <div className="flex-1 bg-black relative group overflow-hidden min-h-[400px]">
                   <img
-                    src={caseData.images.beforeSide}
+                    src={beforeImage}
                     className="w-full h-full object-cover"
-                    alt="Before Side Profile"
+                    alt="Before"
                     onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                       e.currentTarget.src = fallbackBefore;
                     }}
@@ -114,9 +228,9 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                {/* Large Middle (After Profile) */}
                <div className="flex-1 bg-black relative group overflow-hidden min-h-[400px]">
                   <img
-                    src={caseData.images.afterSide}
+                    src={afterImage}
                     className="w-full h-full object-cover"
-                    alt="After Side Profile"
+                    alt="After"
                     onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                       e.currentTarget.src = fallbackAfter;
                     }}
@@ -128,14 +242,13 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                   </div>
                </div>
 
-               {/* Right Column (Smaller Angle Views) */}
+               {/* Right Column (Additional images or mirrored views) */}
                <div className="lg:w-1/4 flex flex-col gap-1 h-[400px] lg:h-auto">
                   <div className="flex-1 bg-black relative overflow-hidden group">
-                     {/* Flipping image to simulate a different angle/photo */}
                      <img
-                       src={caseData.images.beforeSide}
-                       className="w-full h-full object-cover scale-x-[-1]"
-                       alt="Before 45 Degree"
+                       src={image3 || beforeImage}
+                       className={`w-full h-full object-cover ${!image3 ? 'scale-x-[-1]' : ''}`}
+                       alt="Before alternate view"
                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                          e.currentTarget.src = fallbackBefore;
                        }}
@@ -144,9 +257,9 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                   </div>
                    <div className="flex-1 bg-black relative overflow-hidden group">
                      <img
-                       src={caseData.images.afterSide}
-                       className="w-full h-full object-cover scale-x-[-1]"
-                       alt="After 45 Degree"
+                       src={image4 || afterImage}
+                       className={`w-full h-full object-cover ${!image4 ? 'scale-x-[-1]' : ''}`}
+                       alt="After alternate view"
                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                          e.currentTarget.src = fallbackAfter;
                        }}
@@ -164,19 +277,19 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
                <div>
                   <h4 className="text-stone-400 font-bold text-lg mb-2">Provider</h4>
-                  <p className="text-stone-600 font-light text-lg">{caseData.provider}</p>
+                  <p className="text-stone-600 font-light text-lg">{caseData?.provider_name || 'Dr. Heather Lee'}</p>
                </div>
                <div>
                   <h4 className="text-stone-400 font-bold text-lg mb-2">Procedures Performed</h4>
-                  <p className="text-stone-600 font-light text-lg">{caseData.procedures}</p>
+                  <p className="text-stone-600 font-light text-lg">{procedureName}</p>
                </div>
                <div>
                   <h4 className="text-stone-400 font-bold text-lg mb-2">Patient Age</h4>
-                  <p className="text-stone-600 font-light text-lg">{caseData.age}</p>
+                  <p className="text-stone-600 font-light text-lg">{caseData?.patient_age || 'N/A'}</p>
                </div>
                <div>
                   <h4 className="text-stone-400 font-bold text-lg mb-2">Patient Gender</h4>
-                  <p className="text-stone-600 font-light text-lg">{caseData.gender}</p>
+                  <p className="text-stone-600 font-light text-lg">{caseData?.patient_gender || 'N/A'}</p>
                </div>
             </div>
          </div>
@@ -187,13 +300,29 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
          <div className="container mx-auto px-6 max-w-5xl">
             <h3 className="text-navy-900 font-bold text-2xl mb-6 font-serif">Case Details</h3>
             <p className="text-stone-600 font-light text-lg mb-16 leading-relaxed">
-               {procedureName.toLowerCase()}
+               {caseData?.description || `${procedureName} performed by ${caseData?.provider_name || 'Dr. Heather Lee'} with excellent results. Patient experienced optimal recovery and is highly satisfied with the outcome.`}
             </p>
 
             <div className="flex justify-between items-center text-gold-600 font-bold uppercase tracking-wide text-xs md:text-sm mb-16 border-t border-b border-stone-100 py-6">
-               <span className="flex items-center gap-2 cursor-pointer hover:text-navy-900 transition-colors"><ChevronLeft size={16}/> Previous Case</span>
-               <span className="cursor-pointer hover:text-navy-900 transition-colors hidden md:block" onClick={onBack}>Back to {procedureName} Gallery</span>
-               <span className="flex items-center gap-2 cursor-pointer hover:text-navy-900 transition-colors">Next Case <ChevronRight size={16}/></span>
+               <button
+                 onClick={handlePrevCase}
+                 disabled={currentIndex === 0}
+                 className={`flex items-center gap-2 transition-colors ${
+                   currentIndex === 0 ? 'text-stone-300 cursor-not-allowed' : 'cursor-pointer hover:text-navy-900'
+                 }`}
+               >
+                 <ChevronLeft size={16}/> Previous Case
+               </button>
+               <span className="cursor-pointer hover:text-navy-900 transition-colors hidden md:block" onClick={handleBack}>Back to {procedureName} Gallery</span>
+               <button
+                 onClick={handleNextCase}
+                 disabled={currentIndex >= allCases.length - 1}
+                 className={`flex items-center gap-2 transition-colors ${
+                   currentIndex >= allCases.length - 1 ? 'text-stone-300 cursor-not-allowed' : 'cursor-pointer hover:text-navy-900'
+                 }`}
+               >
+                 Next Case <ChevronRight size={16}/>
+               </button>
             </div>
 
             <div className="text-center">
@@ -201,7 +330,7 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                   Request a Consultation
                </button>
                <div className="mt-4">
-                 <a href="#" className="text-gold-600 hover:text-navy-900 text-sm transition-colors" onClick={onBack}>List All Photo Gallery Cases</a>
+                 <a href="#" className="text-gold-600 hover:text-navy-900 text-sm transition-colors" onClick={(e) => { e.preventDefault(); handleBack(); }}>List All Photo Gallery Cases</a>
                </div>
                <p className="text-stone-400 text-xs italic mt-8 max-w-lg mx-auto">
                   *Keep in mind that each patient is unique and your results may vary. Photos are for educational purposes.
