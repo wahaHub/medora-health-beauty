@@ -40,19 +40,33 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   const [procedure, setProcedure] = useState<CompleteProcedureData | null>(null);
   const [cases, setCases] = useState<ProcedureCase[]>([]);
   const [currentCaseIndex, setCurrentCaseIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Navigation handlers for cases
+  // Navigation handlers for cases with animation
   const handlePrevCase = () => {
-    if (currentCaseIndex > 0) {
-      setCurrentCaseIndex(currentCaseIndex - 1);
+    if (currentCaseIndex > 0 && !isAnimating) {
+      setIsAnimating(true);
+      setSlideDirection('right');
+      setTimeout(() => {
+        setCurrentCaseIndex(currentCaseIndex - 1);
+        setSlideDirection(null);
+        setIsAnimating(false);
+      }, 300);
     }
   };
 
   const handleNextCase = () => {
-    if (currentCaseIndex < cases.length - 1) {
-      setCurrentCaseIndex(currentCaseIndex + 1);
+    if (currentCaseIndex < cases.length - 1 && !isAnimating) {
+      setIsAnimating(true);
+      setSlideDirection('left');
+      setTimeout(() => {
+        setCurrentCaseIndex(currentCaseIndex + 1);
+        setSlideDirection(null);
+        setIsAnimating(false);
+      }, 300);
     }
   };
 
@@ -435,26 +449,47 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
             {cases.length > 0 && currentCase ? (
               /* 有案例时显示实际案例 */
-              <div className="flex flex-col lg:flex-row gap-12 items-start relative">
-                 {/* 左箭头 - 只有多于1个case且不是第一个时显示 */}
-                 {cases.length > 1 && currentCaseIndex > 0 && (
-                   <button
-                     onClick={handlePrevCase}
-                     className="hidden lg:block absolute -left-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors"
-                   >
-                     <ChevronLeft size={48} strokeWidth={1.5} />
-                   </button>
+              <div className="relative">
+                 {/* 箭头导航 - 始终显示在容器外部 */}
+                 {cases.length > 1 && (
+                   <div className="hidden lg:flex absolute -left-20 top-1/2 -translate-y-1/2 z-10">
+                     <button
+                       onClick={handlePrevCase}
+                       disabled={currentCaseIndex === 0 || isAnimating}
+                       className={`p-2 rounded-full transition-all duration-300 ${
+                         currentCaseIndex === 0
+                           ? 'text-stone-300 cursor-not-allowed'
+                           : 'text-gold-600 hover:text-navy-900 hover:bg-gold-100'
+                       }`}
+                     >
+                       <ChevronLeft size={48} strokeWidth={1.5} />
+                     </button>
+                   </div>
                  )}
-                 {/* 右箭头 - 只有多于1个case且不是最后一个时显示 */}
-                 {cases.length > 1 && currentCaseIndex < cases.length - 1 && (
-                   <button
-                     onClick={handleNextCase}
-                     className="hidden lg:block absolute -right-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors"
-                   >
-                     <ChevronRight size={48} strokeWidth={1.5} />
-                   </button>
+                 {cases.length > 1 && (
+                   <div className="hidden lg:flex absolute -right-20 top-1/2 -translate-y-1/2 z-10">
+                     <button
+                       onClick={handleNextCase}
+                       disabled={currentCaseIndex >= cases.length - 1 || isAnimating}
+                       className={`p-2 rounded-full transition-all duration-300 ${
+                         currentCaseIndex >= cases.length - 1
+                           ? 'text-stone-300 cursor-not-allowed'
+                           : 'text-gold-600 hover:text-navy-900 hover:bg-gold-100'
+                       }`}
+                     >
+                       <ChevronRight size={48} strokeWidth={1.5} />
+                     </button>
+                   </div>
                  )}
 
+                 {/* Case 内容区域，带滑动动画 */}
+                 <div
+                   className={`flex flex-col lg:flex-row gap-12 items-start transition-all duration-300 ease-in-out ${
+                     slideDirection === 'left' ? 'opacity-0 -translate-x-8' :
+                     slideDirection === 'right' ? 'opacity-0 translate-x-8' :
+                     'opacity-100 translate-x-0'
+                   }`}
+                 >
                  <div className="lg:w-1/3 space-y-8">
                     <h3 className="font-serif text-4xl text-navy-900">{t('caseNumber')} #{currentCase.case_number}</h3>
                     <div className="border-t border-stone-300 pt-4">
@@ -503,6 +538,40 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                    </div>
                    <div className="text-center mt-4 text-xs text-stone-400 font-light tracking-wide italic">{t('clickToViewFullCase')}</div>
                  </div>
+                 </div>
+
+                 {/* 移动端底部导航按钮 */}
+                 {cases.length > 1 && (
+                   <div className="flex lg:hidden justify-center items-center gap-6 mt-8">
+                     <button
+                       onClick={handlePrevCase}
+                       disabled={currentCaseIndex === 0 || isAnimating}
+                       className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
+                         currentCaseIndex === 0
+                           ? 'text-stone-300 cursor-not-allowed'
+                           : 'text-gold-600 hover:bg-gold-100'
+                       }`}
+                     >
+                       <ChevronLeft size={24} />
+                       <span className="text-sm font-medium">Prev</span>
+                     </button>
+                     <span className="text-stone-500 text-sm">
+                       {currentCaseIndex + 1} / {cases.length}
+                     </span>
+                     <button
+                       onClick={handleNextCase}
+                       disabled={currentCaseIndex >= cases.length - 1 || isAnimating}
+                       className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
+                         currentCaseIndex >= cases.length - 1
+                           ? 'text-stone-300 cursor-not-allowed'
+                           : 'text-gold-600 hover:bg-gold-100'
+                       }`}
+                     >
+                       <span className="text-sm font-medium">Next</span>
+                       <ChevronRight size={24} />
+                     </button>
+                   </div>
+                 )}
               </div>
             ) : (
               /* 没有案例时显示 placeholder */
