@@ -509,36 +509,27 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                  </div>
 
                  <div className="lg:w-2/3">
-                   <div className="grid grid-cols-2 gap-1" onClick={() => onCaseClick && onCaseClick(currentCase.case_number || '1')}>
-                      <div className="relative group cursor-pointer overflow-hidden aspect-[3/4] bg-sage-100">
-                        {procedureName && (
-                          <img
-                            src={getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(currentCase.case_number) || 1, 1)}
-                            alt="Before"
-                            className="w-full h-full object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105"
-                            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        )}
-                        <div className="absolute bottom-0 left-0 right-0 text-center py-3 uppercase tracking-widest text-xs font-bold text-white bg-black/40">{t('beforePhotos')}</div>
-                      </div>
-                      <div className="relative group cursor-pointer overflow-hidden aspect-[3/4] bg-sage-100">
-                        {procedureName && (
-                          <img
-                            src={getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(currentCase.case_number) || 1, 2)}
-                            alt="After"
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        )}
-                        <div className="absolute bottom-0 left-0 right-0 text-center py-3 uppercase tracking-widest text-xs font-bold text-white bg-black/40">{t('afterPhotos')}</div>
-                        <div className="absolute top-4 right-4 opacity-50 group-hover:opacity-100 transition-opacity">
-                          <div className="font-serif text-4xl text-white italic">M</div>
-                        </div>
-                      </div>
+                   <div
+                     className="relative group cursor-pointer overflow-hidden aspect-[16/9] bg-sage-100 rounded-lg shadow-lg"
+                     onClick={() => onCaseClick && onCaseClick(currentCase.case_number || '1')}
+                   >
+                     {procedureName && (
+                       <img
+                         src={getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(currentCase.case_number) || 1, 1)}
+                         alt={`Case ${currentCase.case_number}`}
+                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                         onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                           e.currentTarget.style.display = 'none';
+                         }}
+                       />
+                     )}
+                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                     <div className="absolute bottom-0 left-0 right-0 text-center py-4 uppercase tracking-widest text-xs font-bold text-white bg-black/40">
+                       {t('viewCaseDetails')}
+                     </div>
+                     <div className="absolute top-4 right-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                       <div className="font-serif text-4xl text-white italic">M</div>
+                     </div>
                    </div>
                    <div className="text-center mt-4 text-xs text-stone-400 font-light tracking-wide italic">{t('clickToViewFullCase')}</div>
                  </div>
