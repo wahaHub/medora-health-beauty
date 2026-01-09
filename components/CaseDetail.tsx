@@ -121,9 +121,7 @@ const CaseDetail: React.FC<CaseDetailProps> = ({ onBack }) => {
   const image3 = imageCount >= 3 ? getProcedureCaseImage(procedureName, parseInt(caseNumber) || 1, 3) : null;
   const image4 = imageCount >= 4 ? getProcedureCaseImage(procedureName, parseInt(caseNumber) || 1, 4) : null;
 
-  // Fallback images
-  const fallbackBefore = "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop";
-  const fallbackAfter = "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop";
+  // No fallback images - hide image if not available
 
   if (loading) {
     return (
@@ -208,66 +206,155 @@ const CaseDetail: React.FC<CaseDetailProps> = ({ onBack }) => {
          </div>
       </section>
 
-      {/* 3. Image Grid */}
+      {/* 3. Image Grid - Dynamic layout based on image count */}
       <section className="bg-stone-100 py-8 md:py-12">
          <div className="container mx-auto px-6">
-            <div className="flex flex-col lg:flex-row gap-1 h-auto lg:h-[700px]">
-               {/* Large Left (Before Profile) */}
-               <div className="flex-1 bg-black relative group overflow-hidden min-h-[400px]">
+            {/* Layout for 1 image: Single centered image */}
+            {imageCount === 1 && (
+              <div className="flex justify-center">
+                <div className="w-full max-w-2xl aspect-[3/4] bg-sage-200 relative group overflow-hidden">
+                  <img
+                    src={beforeImage}
+                    className="w-full h-full object-cover"
+                    alt="Case photo"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
+                    <div className="font-serif text-9xl text-white italic">M</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Layout for 2 images: Side by side Before/After */}
+            {imageCount === 2 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-1 max-w-5xl mx-auto">
+                <div className="aspect-[3/4] bg-sage-200 relative group overflow-hidden">
                   <img
                     src={beforeImage}
                     className="w-full h-full object-cover"
                     alt="Before"
                     onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                      e.currentTarget.src = fallbackBefore;
+                      e.currentTarget.style.display = 'none';
                     }}
                   />
                   <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-2">Before</div>
-               </div>
-
-               {/* Large Middle (After Profile) */}
-               <div className="flex-1 bg-black relative group overflow-hidden min-h-[400px]">
+                </div>
+                <div className="aspect-[3/4] bg-sage-200 relative group overflow-hidden">
                   <img
                     src={afterImage}
                     className="w-full h-full object-cover"
                     alt="After"
                     onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                      e.currentTarget.src = fallbackAfter;
+                      e.currentTarget.style.display = 'none';
                     }}
                   />
-                   <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-2">After</div>
-                  {/* Watermark */}
+                  <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-2">After</div>
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
-                     <div className="font-serif text-9xl text-white italic">M</div>
+                    <div className="font-serif text-9xl text-white italic">M</div>
                   </div>
-               </div>
+                </div>
+              </div>
+            )}
 
-               {/* Right Column (Additional images or mirrored views) */}
-               <div className="lg:w-1/4 flex flex-col gap-1 h-[400px] lg:h-auto">
-                  <div className="flex-1 bg-black relative overflow-hidden group">
-                     <img
-                       src={image3 || beforeImage}
-                       className={`w-full h-full object-cover ${!image3 ? 'scale-x-[-1]' : ''}`}
-                       alt="Before alternate view"
-                       onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                         e.currentTarget.src = fallbackBefore;
-                       }}
-                     />
-                     <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-1">Before</div>
+            {/* Layout for 3 images: 2 large + 1 small on right */}
+            {imageCount === 3 && (
+              <div className="flex flex-col lg:flex-row gap-1 h-auto lg:h-[700px]">
+                <div className="flex-1 bg-sage-200 relative group overflow-hidden min-h-[400px]">
+                  <img
+                    src={beforeImage}
+                    className="w-full h-full object-cover"
+                    alt="Before"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-2">Before</div>
+                </div>
+                <div className="flex-1 bg-sage-200 relative group overflow-hidden min-h-[400px]">
+                  <img
+                    src={afterImage}
+                    className="w-full h-full object-cover"
+                    alt="After"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-2">After</div>
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
+                    <div className="font-serif text-9xl text-white italic">M</div>
                   </div>
-                   <div className="flex-1 bg-black relative overflow-hidden group">
-                     <img
-                       src={image4 || afterImage}
-                       className={`w-full h-full object-cover ${!image4 ? 'scale-x-[-1]' : ''}`}
-                       alt="After alternate view"
-                       onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                         e.currentTarget.src = fallbackAfter;
-                       }}
-                     />
-                     <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-1">After</div>
+                </div>
+                <div className="lg:w-1/4 bg-sage-200 relative overflow-hidden group min-h-[300px] lg:min-h-0">
+                  <img
+                    src={image3 || ''}
+                    className="w-full h-full object-cover"
+                    alt="Additional view"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-1">View 3</div>
+                </div>
+              </div>
+            )}
+
+            {/* Layout for 4+ images: 2 large + 2 small stacked on right */}
+            {imageCount >= 4 && (
+              <div className="flex flex-col lg:flex-row gap-1 h-auto lg:h-[700px]">
+                <div className="flex-1 bg-sage-200 relative group overflow-hidden min-h-[400px]">
+                  <img
+                    src={beforeImage}
+                    className="w-full h-full object-cover"
+                    alt="Before"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-2">Before</div>
+                </div>
+                <div className="flex-1 bg-sage-200 relative group overflow-hidden min-h-[400px]">
+                  <img
+                    src={afterImage}
+                    className="w-full h-full object-cover"
+                    alt="After"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-2">After</div>
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
+                    <div className="font-serif text-9xl text-white italic">M</div>
                   </div>
-               </div>
-            </div>
+                </div>
+                <div className="lg:w-1/4 flex flex-col gap-1 h-[400px] lg:h-auto">
+                  <div className="flex-1 bg-sage-200 relative overflow-hidden group">
+                    <img
+                      src={image3 || ''}
+                      className="w-full h-full object-cover"
+                      alt="View 3"
+                      onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-1">View 3</div>
+                  </div>
+                  <div className="flex-1 bg-sage-200 relative overflow-hidden group">
+                    <img
+                      src={image4 || ''}
+                      className="w-full h-full object-cover"
+                      alt="View 4"
+                      onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-1">View 4</div>
+                  </div>
+                </div>
+              </div>
+            )}
          </div>
       </section>
 

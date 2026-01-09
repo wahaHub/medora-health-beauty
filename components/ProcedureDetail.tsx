@@ -510,26 +510,30 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
                  <div className="lg:w-2/3">
                    <div className="grid grid-cols-2 gap-1" onClick={() => onCaseClick && onCaseClick(currentCase.case_number || '1')}>
-                      <div className="relative group cursor-pointer overflow-hidden aspect-[3/4]">
-                        <img
-                          src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(currentCase.case_number) || 1, 1) : "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop"}
-                          alt="Before"
-                          className="w-full h-full object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105"
-                          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                            e.currentTarget.src = "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop";
-                          }}
-                        />
+                      <div className="relative group cursor-pointer overflow-hidden aspect-[3/4] bg-sage-100">
+                        {procedureName && (
+                          <img
+                            src={getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(currentCase.case_number) || 1, 1)}
+                            alt="Before"
+                            className="w-full h-full object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105"
+                            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        )}
                         <div className="absolute bottom-0 left-0 right-0 text-center py-3 uppercase tracking-widest text-xs font-bold text-white bg-black/40">{t('beforePhotos')}</div>
                       </div>
-                      <div className="relative group cursor-pointer overflow-hidden aspect-[3/4]">
-                        <img
-                          src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(currentCase.case_number) || 1, 2) : "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop"}
-                          alt="After"
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                            e.currentTarget.src = "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop";
-                          }}
-                        />
+                      <div className="relative group cursor-pointer overflow-hidden aspect-[3/4] bg-sage-100">
+                        {procedureName && (
+                          <img
+                            src={getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(currentCase.case_number) || 1, 2)}
+                            alt="After"
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        )}
                         <div className="absolute bottom-0 left-0 right-0 text-center py-3 uppercase tracking-widest text-xs font-bold text-white bg-black/40">{t('afterPhotos')}</div>
                         <div className="absolute top-4 right-4 opacity-50 group-hover:opacity-100 transition-opacity">
                           <div className="font-serif text-4xl text-white italic">M</div>
