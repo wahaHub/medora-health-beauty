@@ -1052,7 +1052,9 @@
       if (currentSection === 'case') {
         const caseItem = cases.find(c => c.id === currentCaseId);
         const imageCount = caseItem ? caseItem.images.length : 0;
-        filename = `case-${currentCaseId}-${imageCount + 1}.jpg`;
+        // 使用 caseNumber（6位数字）作为文件名，而不是临时 id
+        const caseNumber = caseItem?.caseNumber || generateCaseNumber();
+        filename = `case-${caseNumber}-${imageCount + 1}.jpg`;
       } else {
         filename = `${currentSlotType}.jpg`;
       }
