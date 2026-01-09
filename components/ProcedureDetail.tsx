@@ -39,8 +39,25 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   const { t } = useTranslation();
   const [procedure, setProcedure] = useState<CompleteProcedureData | null>(null);
   const [cases, setCases] = useState<ProcedureCase[]>([]);
+  const [currentCaseIndex, setCurrentCaseIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Navigation handlers for cases
+  const handlePrevCase = () => {
+    if (currentCaseIndex > 0) {
+      setCurrentCaseIndex(currentCaseIndex - 1);
+    }
+  };
+
+  const handleNextCase = () => {
+    if (currentCaseIndex < cases.length - 1) {
+      setCurrentCaseIndex(currentCaseIndex + 1);
+    }
+  };
+
+  // Get current case
+  const currentCase = cases[currentCaseIndex];
 
   // Create slug from procedure name (must match import script logic)
   const createSlug = (name: string) => {
@@ -412,43 +429,55 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                 </h2>
               </div>
               <div className="text-navy-900 font-bold text-lg hidden md:block">
-                {cases.length > 0 ? `${t('caseOf')} 1 ${t('of')} ${cases.length}` : ''}
+                {cases.length > 0 ? `${t('caseOf')} ${currentCaseIndex + 1} ${t('of')} ${cases.length}` : ''}
               </div>
             </div>
 
-            {cases.length > 0 ? (
+            {cases.length > 0 && currentCase ? (
               /* 有案例时显示实际案例 */
               <div className="flex flex-col lg:flex-row gap-12 items-start relative">
-                 <button className="hidden lg:block absolute -left-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors">
-                    <ChevronLeft size={48} strokeWidth={1.5} />
-                 </button>
-                 <button className="hidden lg:block absolute -right-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors">
-                    <ChevronRight size={48} strokeWidth={1.5} />
-                 </button>
+                 {/* 左箭头 - 只有多于1个case且不是第一个时显示 */}
+                 {cases.length > 1 && currentCaseIndex > 0 && (
+                   <button
+                     onClick={handlePrevCase}
+                     className="hidden lg:block absolute -left-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors"
+                   >
+                     <ChevronLeft size={48} strokeWidth={1.5} />
+                   </button>
+                 )}
+                 {/* 右箭头 - 只有多于1个case且不是最后一个时显示 */}
+                 {cases.length > 1 && currentCaseIndex < cases.length - 1 && (
+                   <button
+                     onClick={handleNextCase}
+                     className="hidden lg:block absolute -right-16 top-1/2 -translate-y-1/2 text-gold-600 hover:text-navy-900 transition-colors"
+                   >
+                     <ChevronRight size={48} strokeWidth={1.5} />
+                   </button>
+                 )}
 
                  <div className="lg:w-1/3 space-y-8">
-                    <h3 className="font-serif text-4xl text-navy-900">{t('caseNumber')} #{cases[0]?.case_number}</h3>
+                    <h3 className="font-serif text-4xl text-navy-900">{t('caseNumber')} #{currentCase.case_number}</h3>
                     <div className="border-t border-stone-300 pt-4">
                       <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">{t('proceduresPerformed')}</h4>
                       <p className="text-gold-500 text-lg">{displayName}</p>
                     </div>
                     <div className="border-t border-stone-300 pt-4">
                       <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">Provider</h4>
-                      <p className="text-stone-600">{t('provider')}: <span className="text-gold-600">{cases[0]?.provider_name || 'Dr. Heather Lee'}</span></p>
+                      <p className="text-stone-600">{t('provider')}: <span className="text-gold-600">{currentCase.provider_name || 'Dr. Heather Lee'}</span></p>
                     </div>
                     <div className="border-t border-stone-300 pt-4">
                       <h4 className="uppercase tracking-widest text-xs font-bold text-navy-900 mb-2">{t('description')}</h4>
                       <p className="text-stone-600 leading-relaxed font-light">
-                        {cases[0]?.description || `${displayName} performed by ${cases[0]?.provider_name || 'Dr. Heather Lee'} with excellent results.`}
+                        {currentCase.description || `${displayName} performed by ${currentCase.provider_name || 'Dr. Heather Lee'} with excellent results.`}
                       </p>
                     </div>
                  </div>
 
                  <div className="lg:w-2/3">
-                   <div className="grid grid-cols-2 gap-1" onClick={() => onCaseClick && onCaseClick(cases[0]?.case_number || '1')}>
+                   <div className="grid grid-cols-2 gap-1" onClick={() => onCaseClick && onCaseClick(currentCase.case_number || '1')}>
                       <div className="relative group cursor-pointer overflow-hidden aspect-[3/4]">
                         <img
-                          src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(cases[0]?.case_number) || 1, 1) : "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop"}
+                          src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(currentCase.case_number) || 1, 1) : "https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=1000&auto=format&fit=crop"}
                           alt="Before"
                           className="w-full h-full object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105"
                           onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -459,7 +488,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                       </div>
                       <div className="relative group cursor-pointer overflow-hidden aspect-[3/4]">
                         <img
-                          src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(cases[0]?.case_number) || 1, 2) : "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop"}
+                          src={procedureName ? getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(currentCase.case_number) || 1, 2) : "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1000&auto=format&fit=crop"}
                           alt="After"
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
