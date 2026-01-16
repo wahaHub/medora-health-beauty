@@ -12,7 +12,15 @@
       "Bash(git pull:*)",
       "Bash(npm install:*)",
       "Bash(npx tsc:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "Bash(python3:*)",
+      "Bash(brew install:*)",
+      "Bash(npx wrangler:*)",
+      "Bash(done)",
+      "Bash(while read f)",
+      "Bash(do mv \"$f\" \"$f%.jpeg.jpg\")",
+      "Bash(xargs -0 -I {} sh -c 'mv \"\"\"\"{}\"\"\"\" \"\"\"\"$(echo \"\"\"\"{}\"\"\"\" | sed \"\"\"\"s/.jpeg$/.jpg/\"\"\"\")\"\"\"\"')"
     ],
     "deny": [],
     "ask": []

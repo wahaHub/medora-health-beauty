@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { supabase } from '../services/supabaseClient';
@@ -7,6 +7,68 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../hooks/useTranslation';
 import procedureNames from '../i18n/procedureNames.json';
 import { getProcedureImage, getProcedureCaseImage } from '../utils/imageUtils';
+
+// Custom hook for bidirectional scroll reveal animation
+function useScrollReveal(isReady: boolean) {
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const lastScrollY = useRef(0);
+  const scrollDirection = useRef<'down' | 'up'>('down');
+
+  useEffect(() => {
+    if (!isReady) return;
+
+    // Track scroll direction
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      scrollDirection.current = currentScrollY > lastScrollY.current ? 'down' : 'up';
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    const timeoutId = setTimeout(() => {
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const el = entry.target;
+
+            if (entry.isIntersecting) {
+              // Element entering viewport - show it
+              el.classList.remove('hidden-up');
+              el.classList.add('revealed');
+            } else {
+              // Element leaving viewport
+              el.classList.remove('revealed');
+
+              // Check if element is above or below viewport
+              const rect = entry.boundingClientRect;
+              if (rect.top < 0) {
+                // Element exited from top (scrolling down)
+                el.classList.add('hidden-up');
+              } else {
+                // Element exited from bottom (scrolling up)
+                el.classList.remove('hidden-up');
+              }
+            }
+          });
+        },
+        {
+          threshold: 0.15, // Trigger when 15% visible
+          rootMargin: '-50px 0px -50px 0px'
+        }
+      );
+
+      const elements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-scale');
+      elements.forEach((el) => observerRef.current?.observe(el));
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('scroll', handleScroll);
+      observerRef.current?.disconnect();
+    };
+  }, [isReady]);
+}
 
 interface ProcedureDetailProps {
   procedureName?: string;
@@ -44,6 +106,9 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Scroll reveal animation - must be called at top level with other hooks
+  useScrollReveal(!loading && !!procedure);
 
   // Navigation handlers for cases with animation
   const handlePrevCase = () => {
@@ -270,7 +335,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   const displayName = getTranslatedName();
 
   return (
-    <div className="bg-white animate-fade-in-up">
+    <div className="bg-white animate-fade-in-up spring-scroll-container">
       {/* 1. HERO SECTION */}
       <section className="relative h-[60vh] min-h-[600px] bg-[#1a1a1a] overflow-hidden flex items-center pt-24 md:pt-32">
         <div className="container mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center h-full">
@@ -314,7 +379,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
       </section>
 
       {/* 2. OVERVIEW & PROCEDURE SNAPSHOT */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white scroll-reveal">
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row gap-16 items-start">
              <div className="lg:w-1/2">
@@ -368,11 +433,11 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
       {/* 3. BENEFITS SECTION */}
       {procedure.procedure_benefits && procedure.procedure_benefits.length > 0 && (
-        <section className="py-20 md:py-28 bg-stone-50">
+        <section className="py-20 md:py-28 bg-stone-50 scroll-reveal">
           <div className="container mx-auto px-6">
             <div className="flex flex-col lg:flex-row items-center gap-16">
               <div className="lg:w-1/2">
-                <h2 className="font-serif text-4xl text-navy-900 mb-8">{displayName} {t('benefitsDescription')}</h2>
+                <h2 className="font-serif text-4xl text-navy-900 mb-8">{t('benefitsDescription')} {displayName}</h2>
                 <ul className="space-y-4 text-stone-600 text-lg leading-relaxed font-light">
                   {procedure.procedure_benefits.map((benefit, i) => (
                     <li key={i} className="flex items-start gap-3">
@@ -399,14 +464,11 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
       {/* 4. CANDIDACY SECTION */}
       {procedure.procedure_candidacy && procedure.procedure_candidacy.length > 0 && (
-        <section className="py-20 md:py-28 bg-white">
+        <section className="py-20 md:py-28 bg-white scroll-reveal">
           <div className="container mx-auto px-6">
             <div className="flex flex-col lg:flex-row-reverse items-center gap-16">
               <div className="lg:w-1/2">
-                <h2 className="font-serif text-4xl text-navy-900 mb-8">{t('candidacyDescription')} {displayName} {t('candidacyDescriptionIf')}</h2>
-                <p className="text-stone-600 text-lg leading-relaxed font-light mb-6">
-                  {t('youMayBeGoodCandidate')} {displayName.toLowerCase()} {t('if')}
-                </p>
+                <h2 className="font-serif text-4xl text-navy-900 mb-8">{t('youMayBeGoodCandidate')} {displayName} {t('if')}</h2>
                 <ul className="space-y-4 text-stone-600 text-lg font-light">
                    {procedure.procedure_candidacy.map((item, i) => (
                       <li key={i} className="flex items-start gap-3">
@@ -432,7 +494,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
       )}
 
       {/* 5. CASE STUDY (Featured Before & After) */}
-      <section className="py-24 bg-sage-50/50">
+      <section className="py-24 bg-sage-50/50 scroll-reveal-scale">
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
             <div className="flex justify-between items-end mb-12 border-b border-stone-300 pb-4">
@@ -623,17 +685,17 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
       {/* 6. TECHNIQUES SECTION */}
       {procedure.procedure_techniques && procedure.procedure_techniques.length > 0 && (
-        <section className="py-20 md:py-28 bg-sage-50/50">
+        <section className="py-20 md:py-28 bg-sage-50/50 scroll-reveal">
           <div className="container mx-auto px-6">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-6xl mx-auto">
               <h2 className="font-serif text-4xl text-navy-900 mb-4 text-center">{t('techniquesApproaches')}</h2>
               <p className="text-stone-600 text-lg text-center mb-12 max-w-2xl mx-auto">
                 {t('techniquesDescription')}
               </p>
-              
-              <div className="space-y-8">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {procedure.procedure_techniques.map((tech, i) => (
-                  <div key={i} className="bg-white p-8 shadow-sm border border-stone-200">
+                  <div key={i} className="bg-white p-8 shadow-sm border border-stone-200 hover:shadow-md transition-shadow duration-300">
                     <h3 className="text-gold-600 font-bold text-xl mb-4">{tech.technique_name}</h3>
                     <p className="text-stone-600 leading-relaxed">{tech.description}</p>
                   </div>
@@ -646,7 +708,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
       {/* 7. THE PROCEDURE */}
       {translation?.procedure_description && (
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-white scroll-reveal">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="font-serif text-4xl text-navy-900 mb-8">{t('procedureDescription')}</h2>
@@ -662,7 +724,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
       {/* 8. RECOVERY TIMELINE */}
       {procedure.procedure_recovery_timeline && procedure.procedure_recovery_timeline.length > 0 && (
-        <section className="py-24 bg-[#f9f5f1]">
+        <section className="py-24 bg-[#f9f5f1] scroll-reveal">
            <div className="container mx-auto px-6">
               <div className="text-center mb-16">
                  <h2 className="font-serif text-4xl text-navy-900 mb-6">{t('recoveryTimeline')}</h2>
@@ -696,7 +758,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
       {/* 9. RECOVERY TIPS */}
       {procedure.procedure_recovery_tips && procedure.procedure_recovery_tips.length > 0 && (
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-white scroll-reveal">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="font-serif text-4xl text-navy-900 mb-12">{t('recoveryTips')}</h2>
@@ -717,7 +779,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
       {/* 10. COMPLEMENTARY PROCEDURES */}
       {procedure.complementary_procedures && procedure.complementary_procedures.length > 0 && (
-        <section className="py-20 bg-stone-50">
+        <section className="py-20 bg-stone-50 scroll-reveal">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="font-serif text-4xl text-navy-900 mb-4 text-center">{t('complementaryProcedures')}</h2>
@@ -740,7 +802,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
       {/* 11. RISKS & CONSIDERATIONS */}
       {procedure.procedure_risks && procedure.procedure_risks.length > 0 && (
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-white scroll-reveal">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
               <h2 className="font-serif text-4xl text-navy-900 mb-4">{t('risksConsiderations')}</h2>
@@ -762,7 +824,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
       )}
 
       {/* 12. CHOOSING THE RIGHT SURGEON */}
-      <section className="bg-[#1c1c1c] py-24 text-white">
+      <section className="bg-[#1c1c1c] py-24 text-white scroll-reveal-scale">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h4 className="text-gold-600 uppercase tracking-widest text-sm font-bold mb-4">
@@ -829,7 +891,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
       </section>
 
       {/* 13. CTA SECTION */}
-      <section className="py-20 bg-sage-50/50">
+      <section className="py-20 bg-sage-50/50 scroll-reveal">
         <div className="container mx-auto px-6 text-center">
           <h2 className="font-serif text-4xl text-navy-900 mb-6">{t('readyToGetStarted')}</h2>
           <p className="text-stone-600 text-lg mb-10 max-w-2xl mx-auto">
