@@ -113,13 +113,13 @@ const CaseDetail: React.FC<CaseDetailProps> = ({ onBack }) => {
   const caseNumber = caseData?.case_number || caseId;
   const imageCount = caseData?.image_count || 2;
 
-  // Get images based on caseNumber
-  const beforeImage = getProcedureCaseImage(procedureName, parseInt(caseNumber) || 1, 1);
-  const afterImage = getProcedureCaseImage(procedureName, parseInt(caseNumber) || 1, 2);
+  // Get images based on caseNumber (use caseNumber string directly, e.g., "140856")
+  const beforeImage = getProcedureCaseImage(procedureName, caseNumber, 1);
+  const afterImage = getProcedureCaseImage(procedureName, caseNumber, 2);
 
   // Additional images if available
-  const image3 = imageCount >= 3 ? getProcedureCaseImage(procedureName, parseInt(caseNumber) || 1, 3) : null;
-  const image4 = imageCount >= 4 ? getProcedureCaseImage(procedureName, parseInt(caseNumber) || 1, 4) : null;
+  const image3 = imageCount >= 3 ? getProcedureCaseImage(procedureName, caseNumber, 3) : null;
+  const image4 = imageCount >= 4 ? getProcedureCaseImage(procedureName, caseNumber, 4) : null;
 
   // No fallback images - hide image if not available
 

@@ -106,6 +106,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [caseImageLoaded, setCaseImageLoaded] = useState(false);
 
   // Scroll reveal animation - must be called at top level with other hooks
   useScrollReveal(!loading && !!procedure);
@@ -114,6 +115,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   const handlePrevCase = () => {
     if (currentCaseIndex > 0 && !isAnimating) {
       setIsAnimating(true);
+      setCaseImageLoaded(false); // Reset image loaded state for fade-in
       setSlideDirection('right');
       setTimeout(() => {
         setCurrentCaseIndex(currentCaseIndex - 1);
@@ -126,6 +128,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   const handleNextCase = () => {
     if (currentCaseIndex < cases.length - 1 && !isAnimating) {
       setIsAnimating(true);
+      setCaseImageLoaded(false); // Reset image loaded state for fade-in
       setSlideDirection('left');
       setTimeout(() => {
         setCurrentCaseIndex(currentCaseIndex + 1);
@@ -577,9 +580,13 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                    >
                      {procedureName && (
                        <img
-                         src={getProcedureCaseImage(decodeURIComponent(procedureName), parseInt(currentCase.case_number) || 1, 1)}
+                         key={currentCase.case_number} // Force re-render on case change
+                         src={getProcedureCaseImage(decodeURIComponent(procedureName), currentCase.case_number, 1)}
                          alt={`Case ${currentCase.case_number}`}
-                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                         className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${
+                           caseImageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+                         }`}
+                         onLoad={() => setCaseImageLoaded(true)}
                          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                            e.currentTarget.style.display = 'none';
                          }}

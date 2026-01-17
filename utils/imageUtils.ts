@@ -44,11 +44,11 @@ export function getProcedureImage(
  */
 export function getProcedureCaseImage(
   procedureName: string,
-  caseId: number,
+  caseNumber: string,
   imageIndex: number
 ): string {
   const slug = createSlug(procedureName);
-  return `${R2_PUBLIC_URL}/procedures/${slug}/case-${caseId}-${imageIndex}.jpg${CACHE_BUSTER}`;
+  return `${R2_PUBLIC_URL}/procedures/${slug}/case-${caseNumber}-${imageIndex}.jpg${CACHE_BUSTER}`;
 }
 
 /**
