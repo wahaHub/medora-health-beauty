@@ -53,8 +53,8 @@ function useScrollReveal(isReady: boolean) {
           });
         },
         {
-          threshold: 0.15, // Trigger when 15% visible
-          rootMargin: '-50px 0px -50px 0px'
+          threshold: 0.01, // Trigger almost immediately when element appears
+          rootMargin: '100px 0px 100px 0px' // Start animation 100px before element enters viewport
         }
       );
 
