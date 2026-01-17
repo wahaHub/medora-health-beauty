@@ -440,7 +440,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
           <div className="container mx-auto px-6">
             <div className="flex flex-col lg:flex-row items-center gap-16">
               <div className="lg:w-1/2">
-                <h2 className="font-serif text-4xl text-navy-900 mb-8">{t('benefitsDescription')} {displayName}</h2>
+                <h2 className="font-serif text-4xl text-navy-900 mb-8">{t('benefitsDescription')} {displayName}{t('benefitsDescriptionSuffix')}</h2>
                 <ul className="space-y-4 text-stone-600 text-lg leading-relaxed font-light">
                   {procedure.procedure_benefits.map((benefit, i) => (
                     <li key={i} className="flex items-start gap-3">

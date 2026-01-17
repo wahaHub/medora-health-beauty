@@ -212,10 +212,10 @@ const CaseDetail: React.FC<CaseDetailProps> = ({ onBack }) => {
             {/* Layout for 1 image: Single centered image */}
             {imageCount === 1 && (
               <div className="flex justify-center">
-                <div className="w-full max-w-2xl aspect-[3/4] bg-sage-200 relative group overflow-hidden">
+                <div className="w-full max-w-3xl bg-sage-200 relative group overflow-hidden">
                   <img
                     src={beforeImage}
-                    className="w-full h-full object-cover"
+                    className="w-full h-auto object-contain"
                     alt="Case photo"
                     onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                       e.currentTarget.style.display = 'none';
@@ -230,11 +230,11 @@ const CaseDetail: React.FC<CaseDetailProps> = ({ onBack }) => {
 
             {/* Layout for 2 images: Side by side Before/After */}
             {imageCount === 2 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-1 max-w-5xl mx-auto">
-                <div className="aspect-[3/4] bg-sage-200 relative group overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-1 max-w-6xl mx-auto">
+                <div className="bg-sage-200 relative group overflow-hidden">
                   <img
                     src={beforeImage}
-                    className="w-full h-full object-cover"
+                    className="w-full h-auto object-contain"
                     alt="Before"
                     onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                       e.currentTarget.style.display = 'none';
@@ -242,10 +242,10 @@ const CaseDetail: React.FC<CaseDetailProps> = ({ onBack }) => {
                   />
                   <div className="absolute bottom-4 left-0 w-full text-center text-white/80 uppercase tracking-widest text-xs font-bold bg-black/30 py-2">Before</div>
                 </div>
-                <div className="aspect-[3/4] bg-sage-200 relative group overflow-hidden">
+                <div className="bg-sage-200 relative group overflow-hidden">
                   <img
                     src={afterImage}
-                    className="w-full h-full object-cover"
+                    className="w-full h-auto object-contain"
                     alt="After"
                     onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                       e.currentTarget.style.display = 'none';

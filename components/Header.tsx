@@ -311,12 +311,17 @@ const Header: React.FC = () => {
     { name: t('navContact'), href: '#contact' },
   ];
 
-  const hasWhiteBg = isScrolled || Boolean(hoveredNav) || window.scrollY === 0;
+  // Check if on a case detail page (which has dark header section)
+  const isCaseDetailPage = location.pathname.includes('/case/');
+
+  // On case detail pages, header should be transparent at top (like procedure pages)
+  // On other pages, header is white at top
+  const hasWhiteBg = isScrolled || Boolean(hoveredNav) || (!isCaseDetailPage && window.scrollY === 0);
 
   return (
-    <header 
+    <header
       className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled || hoveredNav || window.scrollY === 0 ? 'bg-white shadow-md py-0' : 'bg-transparent py-4'
+        isScrolled || hoveredNav || (!isCaseDetailPage && window.scrollY === 0) ? 'bg-white shadow-md py-0' : 'bg-transparent py-4'
       }`}
       onMouseLeave={() => setHoveredNav(null)}
     >

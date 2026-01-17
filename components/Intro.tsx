@@ -38,14 +38,12 @@ const Intro: React.FC = () => {
 
           {/* Main Heading - Reduced from 5xl/6xl/7xl to 4xl/5xl/6xl */}
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-tight mb-6 text-white font-light tracking-wide animate-fade-in-up delay-100">
-            {t('anInternational')} <br />
-            {t('aestheticDestination')} <br />
-            <span className="font-normal border-b-2 border-gold-600">{t('introRenowned')}</span>
+            {t('heroTitle')}
           </h1>
-          
+
           {/* Subheading - Reduced from 2xl/3xl to xl/2xl */}
-          <h2 className="text-xl md:text-2xl font-serif italic text-sage-200 mb-6 font-light animate-fade-in-up delay-200">
-            {t('artisanSubtitle')}
+          <h2 className="text-lg md:text-xl font-sans text-sage-200 mb-6 font-light animate-fade-in-up delay-200 max-w-xl">
+            {t('heroSubtitle')}
           </h2>
 
           {/* Description - Reduced font size slightly */}

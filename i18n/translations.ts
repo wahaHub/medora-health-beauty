@@ -30,6 +30,7 @@ export const translations = {
     
     // Section descriptions
     benefitsDescription: 'Benefits of',
+    benefitsDescriptionSuffix: '',
     candidacyDescription: 'You may be a good candidate for',
     candidacyDescriptionIf: 'if:',
     techniquesDescription: 'Our surgeons use advanced techniques tailored to your unique needs and goals.',
@@ -151,20 +152,19 @@ export const translations = {
     viewAllSurgeonsCount: 'Surgeons',
     
     // Intro Component
-    centerForPlasticSurgery: 'Center for Plastic Surgery',
-    anInternational: 'AN INTERNATIONAL',
-    aestheticDestination: 'AESTHETIC DESTINATION',
-    artisanSubtitle: '"Artistry. Precision. Natural Beauty."',
-    introDescriptionLong: 'With nearly a century of combined experience, our board-certified plastic surgeons have cemented their places among the most qualified and best-loved in the region. Patients don\'t choose us just to perform their surgeries—they choose us to carry out life-changing transformations with unparalleled artistry and skill.',
-    
+    centerForPlasticSurgery: 'Global Aesthetic Hub',
+    heroTitle: 'Transform Your Life with World-Class Aesthetic Care',
+    heroSubtitle: 'Explore Top Medical Aesthetic Destinations Worldwide for Unmatched Quality and Affordable Prices.',
+    introDescriptionLong: 'From Europe\'s top aesthetic hubs to cutting-edge clinics in Asia and beyond, we curate a global network of trusted professionals committed to delivering life-changing results. Explore a world of beauty, expertise, and affordable luxury.',
+
     // Partnership Component
     globalStrategy: 'Global Strategy',
-    partneringWith: 'Partnering with China\'s Leading',
+    partneringWith: 'Partnering with the World\'s Leading',
     aestheticInstitutions: 'Aesthetic Institutions to Deliver',
     worldClassServices: 'World-Class Cosmetic Services',
-    partnershipDescription: 'We have established long-term strategic partnerships with China\'s most prestigious and innovative aesthetic institutions, ensuring that we offer global clients the highest level of cosmetic surgery and beauty treatments.',
+    partnershipDescription: 'We have established long-term strategic partnerships with the world\'s most prestigious and innovative aesthetic institutions, ensuring that we offer global clients the highest level of cosmetic surgery and beauty treatments.',
     exceptionalExpertise: 'Exceptional Expertise',
-    expertiseDescription: 'We collaborate with China\'s top plastic surgeons and beauty specialists to ensure each treatment meets international standards of safety and artistry.',
+    expertiseDescription: 'We collaborate with the world\'s top plastic surgeons and beauty specialists to ensure each treatment meets international standards of safety and artistry.',
     globalRecognition: 'Global Recognition',
     recognitionDescription: 'Our partner institutions have a broad international client base and have been featured and recommended by leading global media outlets.',
     personalizedTreatments: 'Personalized Treatments',
@@ -211,7 +211,8 @@ export const translations = {
     failedToLoad: '加载手术详情失败',
     
     // Section descriptions
-    benefitsDescription: '的优势',
+    benefitsDescription: '',
+    benefitsDescriptionSuffix: '的主要优势',
     candidacyDescription: '如果您符合以下条件，您可能是',
     candidacyDescriptionIf: '的理想候选人：',
     techniquesDescription: '我们的外科医生使用针对您的独特需求和目标量身定制的先进技术。',
@@ -239,11 +240,11 @@ export const translations = {
     scheduleConsultation: '预约您的咨询',
     
     // Additional UI text
-    medoraHealth: '美多拉医疗',
+    medoraHealth: 'Medora Health',
     youMayBeGoodCandidate: '如果您符合以下条件，您可能是',
     if: '的理想候选人：',
     choosingTheRightSurgeon: '选择合适的整形外科医生',
-    medoraHealthCenterFull: '美多拉医疗整形外科中心',
+    medoraHealthCenterFull: 'Medora Health 整形外科中心',
     scheduleConsultationDescription: '预约咨询以了解更多关于',
     andDiscoverHow: '的信息，发现我们如何帮助您实现美学目标。',
     risksIntro: '与任何外科手术一样，重要的是了解潜在的风险和注意事项：',
@@ -285,7 +286,7 @@ export const translations = {
     travelHome: '首页',
     travelTravel: '旅行',
     travelPeaceOfMind: '精心设计的安心体验',
-    travelPeaceOfMindDesc1: '在美多拉医疗整形外科中心，我们为外地客人提供无与伦比的礼宾级护理服务，这些客人占我们患者的30%以上。20多年来，我们成功协助规划和执行旅行安排，确保我们的州内、州外和国际患者从始至终都能获得卓越的体验。',
+    travelPeaceOfMindDesc1: '在 Medora Health 整形外科中心，我们为外地客人提供无与伦比的礼宾级护理服务，这些客人占我们患者的30%以上。20多年来，我们成功协助规划和执行旅行安排，确保我们的州内、州外和国际患者从始至终都能获得卓越的体验。',
     travelPeaceOfMindDesc2: '我们世界级的整形外科医生、知识渊博的患者顾问和技术精湛的支持人员确保无论您从哪里来，都能获得从一个电话开始并持续终生的支持和指导。',
     travelEasyAs123: '来这里做手术',
     travelEasyAs123Subtitle: '简单三步',
@@ -320,32 +321,32 @@ export const translations = {
     travelGroundTransport: '地面交通',
     travelCarRentals: '租车',
     travelReadyToStart: '准备好开始了吗？',
-    travelReadyToStartDesc: '要开始您在美多拉医疗中心改变人生的整形手术之旅，请使用我们的在线表格预约虚拟或面对面咨询，或致电 (585) 460-5468 预约。',
+    travelReadyToStartDesc: '要开始您在 Medora Health 中心改变人生的整形手术之旅，请使用我们的在线表格预约虚拟或面对面咨询，或致电 (585) 460-5468 预约。',
     travelWeCreate: '我们创造提升人生的体验®',
     travelBackToTop: '返回顶部',
 
     // Homepage Components
     introRenowned: '卓越声誉',
-    introTitle: '美多拉医疗整形外科中心',
+    introTitle: 'Medora Health 整形外科中心',
     introDescription: '面部年轻化、身体塑形和美学提升的卓越典范。',
     meetOurDoctors: '认识我们的医生',
     viewAllSurgeons: '查看全部',
     viewAllSurgeonsCount: '位医生',
     
     // Intro Component
-    anInternational: '国际',
-    aestheticDestination: '美学目的地',
-    artisanSubtitle: '"精雕细琢，诠释自然之美"',
-    introDescriptionLong: '凭借近一个世纪的综合经验，我们的委员会认证整形外科医生已经巩固了他们在该地区最合格和最受欢迎的地位。患者选择我们不仅仅是为了进行手术——他们选择我们是为了用无与伦比的艺术性和技能实现改变人生的转变。',
+    centerForPlasticSurgery: '全球医美中心',
+    heroTitle: '世界级医美服务，开启您的蜕变之旅',
+    heroSubtitle: '探索全球顶尖医美目的地，享受无与伦比的品质与实惠价格。',
+    introDescriptionLong: '从欧洲顶级医美中心到亚洲及全球前沿诊所，我们精心打造值得信赖的全球专业网络，致力于为您带来改变人生的卓越成果。探索美丽、专业与平价奢华的世界。',
 
     // Partnership Component
     globalStrategy: '全球战略',
-    partneringWith: '与中国领先的',
+    partneringWith: '与全球领先的',
     aestheticInstitutions: '美学机构合作',
     worldClassServices: '提供世界级美容服务',
-    partnershipDescription: '我们与中国最负盛名和创新的美学机构建立了长期战略合作伙伴关系，确保我们为全球客户提供最高水平的整形手术和美容治疗。',
+    partnershipDescription: '我们与全球最负盛名和创新的美学机构建立了长期战略合作伙伴关系，确保我们为全球客户提供最高水平的整形手术和美容治疗。',
     exceptionalExpertise: '卓越专业知识',
-    expertiseDescription: '我们与中国顶级整形外科医生和美容专家合作，确保每次治疗都符合国际安全和艺术标准。',
+    expertiseDescription: '我们与全球顶级整形外科医生和美容专家合作，确保每次治疗都符合国际安全和艺术标准。',
     globalRecognition: '全球认可',
     recognitionDescription: '我们的合作机构拥有广泛的国际客户群，并被全球领先媒体报道和推荐。',
     personalizedTreatments: '个性化治疗',
@@ -353,7 +354,7 @@ export const translations = {
     partnershipQuote: '"无论您身在何处，我们都提供最新技术和最舒适的治疗体验，帮助您实现理想外观。"',
     
     // Categories Component
-    medoraHealthProcedures: '美多拉医疗手术项目',
+    medoraHealthProcedures: 'Medora Health 手术项目',
     exploreFace: '探索面部项目',
     exploreBody: '探索身体项目',
     exploreNonsurgical: '探索非手术项目',
@@ -393,6 +394,7 @@ export const translations = {
     
     // Section descriptions
     benefitsDescription: 'Beneficios de',
+    benefitsDescriptionSuffix: '',
     candidacyDescription: 'Puede ser un buen candidato para',
     candidacyDescriptionIf: 'si:',
     techniquesDescription: 'Nuestros cirujanos utilizan técnicas avanzadas adaptadas a sus necesidades y objetivos únicos.',
@@ -460,19 +462,19 @@ export const translations = {
     viewAllSurgeonsCount: 'Cirujanos',
     
     // Intro Component
-    anInternational: 'UN DESTINO',
-    aestheticDestination: 'ESTÉTICO INTERNACIONAL',
-    artisanSubtitle: '"Arte. Precisión. Belleza Natural."',
-    introDescriptionLong: 'Con casi un siglo de experiencia combinada, nuestros cirujanos plásticos certificados han consolidado sus lugares entre los más calificados y queridos de la región. Los pacientes no nos eligen solo para realizar sus cirugías, nos eligen para llevar a cabo transformaciones que cambian vidas con arte y habilidad incomparables.',
+    centerForPlasticSurgery: 'Centro Estético Global',
+    heroTitle: 'Transforma Tu Vida con Atención Estética de Clase Mundial',
+    heroSubtitle: 'Explora los Mejores Destinos de Medicina Estética en Todo el Mundo para Calidad Inigualable y Precios Accesibles.',
+    introDescriptionLong: 'Desde los principales centros estéticos de Europa hasta clínicas de vanguardia en Asia y más allá, curamos una red global de profesionales de confianza comprometidos a entregar resultados que cambian vidas. Explore un mundo de belleza, experiencia y lujo asequible.',
 
     // Partnership Component
     globalStrategy: 'Estrategia Global',
     partneringWith: 'Asociándose con las Principales',
-    aestheticInstitutions: 'Instituciones Estéticas de China',
+    aestheticInstitutions: 'Instituciones Estéticas del Mundo',
     worldClassServices: 'Para Ofrecer Servicios Cosméticos de Clase Mundial',
-    partnershipDescription: 'Hemos establecido asociaciones estratégicas a largo plazo con las instituciones estéticas más prestigiosas e innovadoras de China, asegurando que ofrecemos a los clientes globales el más alto nivel de cirugía plástica y tratamientos de belleza.',
+    partnershipDescription: 'Hemos establecido asociaciones estratégicas a largo plazo con las instituciones estéticas más prestigiosas e innovadoras del mundo, asegurando que ofrecemos a los clientes globales el más alto nivel de cirugía plástica y tratamientos de belleza.',
     exceptionalExpertise: 'Experiencia Excepcional',
-    expertiseDescription: 'Colaboramos con los mejores cirujanos plásticos y especialistas en belleza de China para garantizar que cada tratamiento cumpla con los estándares internacionales de seguridad y arte.',
+    expertiseDescription: 'Colaboramos con los mejores cirujanos plásticos y especialistas en belleza del mundo para garantizar que cada tratamiento cumpla con los estándares internacionales de seguridad y arte.',
     globalRecognition: 'Reconocimiento Global',
     recognitionDescription: 'Nuestras instituciones asociadas tienen una amplia base de clientes internacionales y han sido destacadas y recomendadas por los principales medios de comunicación globales.',
     personalizedTreatments: 'Tratamientos Personalizados',
@@ -520,6 +522,7 @@ export const translations = {
     
     // Section descriptions
     benefitsDescription: 'Avantages de',
+    benefitsDescriptionSuffix: '',
     candidacyDescription: 'Vous pouvez être un bon candidat pour',
     candidacyDescriptionIf: 'si:',
     techniquesDescription: 'Nos chirurgiens utilisent des techniques avancées adaptées à vos besoins et objectifs uniques.',
@@ -587,20 +590,19 @@ export const translations = {
     viewAllSurgeonsCount: 'Chirurgiens',
 
     // Intro Component
-    centerForPlasticSurgery: 'Centre de Chirurgie Plastique',
-    anInternational: 'UNE DESTINATION',
-    aestheticDestination: 'ESTHÉTIQUE INTERNATIONALE',
-    artisanSubtitle: '"Art. Précision. Beauté Naturelle."',
-    introDescriptionLong: 'Avec près d\'un siècle d\'expérience combinée, nos chirurgiens plasticiens certifiés ont consolidé leur place parmi les plus qualifiés et les plus aimés de la région. Les patients ne nous choisissent pas seulement pour effectuer leurs chirurgies - ils nous choisissent pour réaliser des transformations qui changent la vie avec un art et une compétence inégalés.',
+    centerForPlasticSurgery: 'Centre Esthétique Mondial',
+    heroTitle: 'Transformez Votre Vie avec des Soins Esthétiques de Classe Mondiale',
+    heroSubtitle: 'Explorez les Meilleures Destinations de Médecine Esthétique dans le Monde pour une Qualité Inégalée et des Prix Abordables.',
+    introDescriptionLong: 'Des meilleurs centres esthétiques d\'Europe aux cliniques de pointe en Asie et au-delà, nous constituons un réseau mondial de professionnels de confiance engagés à offrir des résultats qui changent la vie. Explorez un monde de beauté, d\'expertise et de luxe abordable.',
 
     // Partnership Component
     globalStrategy: 'Stratégie Mondiale',
     partneringWith: 'Partenariat avec les Principales',
-    aestheticInstitutions: 'Institutions Esthétiques de Chine',
+    aestheticInstitutions: 'Institutions Esthétiques du Monde',
     worldClassServices: 'Pour Offrir des Services Cosmétiques de Classe Mondiale',
-    partnershipDescription: 'Nous avons établi des partenariats stratégiques à long terme avec les institutions esthétiques les plus prestigieuses et innovantes de Chine, garantissant que nous offrons aux clients mondiaux le plus haut niveau de chirurgie plastique et de traitements de beauté.',
+    partnershipDescription: 'Nous avons établi des partenariats stratégiques à long terme avec les institutions esthétiques les plus prestigieuses et innovantes du monde, garantissant que nous offrons aux clients mondiaux le plus haut niveau de chirurgie plastique et de traitements de beauté.',
     exceptionalExpertise: 'Expertise Exceptionnelle',
-    expertiseDescription: 'Nous collaborons avec les meilleurs chirurgiens plasticiens et spécialistes de la beauté de Chine pour garantir que chaque traitement répond aux normes internationales de sécurité et d\'art.',
+    expertiseDescription: 'Nous collaborons avec les meilleurs chirurgiens plasticiens et spécialistes de la beauté du monde pour garantir que chaque traitement répond aux normes internationales de sécurité et d\'art.',
     globalRecognition: 'Reconnaissance Mondiale',
     recognitionDescription: 'Nos institutions partenaires ont une large clientèle internationale et ont été présentées et recommandées par les principaux médias mondiaux.',
     personalizedTreatments: 'Traitements Personnalisés',
@@ -648,6 +650,7 @@ export const translations = {
     
     // Section descriptions
     benefitsDescription: 'Vorteile von',
+    benefitsDescriptionSuffix: '',
     candidacyDescription: 'Sie können ein guter Kandidat für',
     candidacyDescriptionIf: 'sein, wenn:',
     techniquesDescription: 'Unsere Chirurgen verwenden fortschrittliche Techniken, die auf Ihre individuellen Bedürfnisse und Ziele zugeschnitten sind.',
@@ -715,20 +718,19 @@ export const translations = {
     viewAllSurgeonsCount: 'Chirurgen',
 
     // Intro Component
-    centerForPlasticSurgery: 'Zentrum für Plastische Chirurgie',
-    anInternational: 'EIN INTERNATIONALES',
-    aestheticDestination: 'ÄSTHETISCHES ZIEL',
-    artisanSubtitle: '"Kunst. Präzision. Natürliche Schönheit."',
-    introDescriptionLong: 'Mit fast einem Jahrhundert kombinierter Erfahrung haben unsere zertifizierten plastischen Chirurgen ihre Plätze unter den qualifiziertesten und beliebtesten in der Region gefestigt. Patienten wählen uns nicht nur, um ihre Operationen durchzuführen - sie wählen uns, um lebensverändernde Transformationen mit unvergleichlicher Kunstfertigkeit und Geschicklichkeit durchzuführen.',
+    centerForPlasticSurgery: 'Globales Ästhetikzentrum',
+    heroTitle: 'Verwandeln Sie Ihr Leben mit Erstklassiger Ästhetischer Betreuung',
+    heroSubtitle: 'Entdecken Sie die Besten Medizinisch-Ästhetischen Destinationen Weltweit für Unübertroffene Qualität und Erschwingliche Preise.',
+    introDescriptionLong: 'Von Europas führenden Ästhetikzentren bis hin zu hochmodernen Kliniken in Asien und darüber hinaus kuratieren wir ein globales Netzwerk vertrauenswürdiger Fachleute, die sich der Erzielung lebensverändernder Ergebnisse verschrieben haben. Entdecken Sie eine Welt der Schönheit, Expertise und erschwinglichen Luxus.',
 
     // Partnership Component
     globalStrategy: 'Globale Strategie',
-    partneringWith: 'Partnerschaft mit Chinas Führenden',
+    partneringWith: 'Partnerschaft mit den Weltweit Führenden',
     aestheticInstitutions: 'Ästhetischen Institutionen',
     worldClassServices: 'Zur Bereitstellung Erstklassiger Kosmetikdienste',
-    partnershipDescription: 'Wir haben langfristige strategische Partnerschaften mit Chinas angesehensten und innovativsten ästhetischen Institutionen aufgebaut und stellen sicher, dass wir globalen Kunden das höchste Niveau an plastischer Chirurgie und Schönheitsbehandlungen bieten.',
+    partnershipDescription: 'Wir haben langfristige strategische Partnerschaften mit den weltweit angesehensten und innovativsten ästhetischen Institutionen aufgebaut und stellen sicher, dass wir globalen Kunden das höchste Niveau an plastischer Chirurgie und Schönheitsbehandlungen bieten.',
     exceptionalExpertise: 'Außergewöhnliche Expertise',
-    expertiseDescription: 'Wir arbeiten mit Chinas Top-Plastikchirurgen und Schönheitsspezialisten zusammen, um sicherzustellen, dass jede Behandlung internationalen Standards für Sicherheit und Kunstfertigkeit entspricht.',
+    expertiseDescription: 'Wir arbeiten mit den weltweit besten Plastikchirurgen und Schönheitsspezialisten zusammen, um sicherzustellen, dass jede Behandlung internationalen Standards für Sicherheit und Kunstfertigkeit entspricht.',
     globalRecognition: 'Globale Anerkennung',
     recognitionDescription: 'Unsere Partnerinstitutionen haben eine breite internationale Kundenbasis und wurden von führenden globalen Medien vorgestellt und empfohlen.',
     personalizedTreatments: 'Personalisierte Behandlungen',
@@ -776,6 +778,7 @@ export const translations = {
     
     // Section descriptions
     benefitsDescription: 'Преимущества',
+    benefitsDescriptionSuffix: '',
     candidacyDescription: 'Вы можете быть хорошим кандидатом для',
     candidacyDescriptionIf: 'если:',
     techniquesDescription: 'Наши хирурги используют передовые методы, адаптированные к вашим уникальным потребностям и целям.',
@@ -843,20 +846,19 @@ export const translations = {
     viewAllSurgeonsCount: 'Хирургов',
 
     // Intro Component
-    centerForPlasticSurgery: 'Центр Пластической Хирургии',
-    anInternational: 'МЕЖДУНАРОДНОЕ',
-    aestheticDestination: 'ЭСТЕТИЧЕСКОЕ НАПРАВЛЕНИЕ',
-    artisanSubtitle: '"Искусство. Точность. Естественная Красота."',
-    introDescriptionLong: 'Благодаря почти столетнему совместному опыту наши сертифицированные пластические хирурги заняли свое место среди самых квалифицированных и любимых в регионе. Пациенты выбирают нас не только для проведения операций - они выбирают нас для осуществления изменяющих жизнь преобразований с непревзойденным мастерством и навыками.',
+    centerForPlasticSurgery: 'Глобальный Эстетический Центр',
+    heroTitle: 'Преобразите Свою Жизнь с Эстетическим Уходом Мирового Класса',
+    heroSubtitle: 'Откройте для Себя Лучшие Медицинско-Эстетические Направления по Всему Миру для Непревзойденного Качества и Доступных Цен.',
+    introDescriptionLong: 'От ведущих эстетических центров Европы до передовых клиник в Азии и за её пределами — мы формируем глобальную сеть проверенных профессионалов, стремящихся достичь результатов, меняющих жизнь. Откройте для себя мир красоты, экспертизы и доступной роскоши.',
 
     // Partnership Component
     globalStrategy: 'Глобальная Стратегия',
     partneringWith: 'Партнерство с Ведущими',
-    aestheticInstitutions: 'Эстетическими Институтами Китая',
+    aestheticInstitutions: 'Эстетическими Институтами Мира',
     worldClassServices: 'Для Предоставления Косметических Услуг Мирового Класса',
-    partnershipDescription: 'Мы установили долгосрочные стратегические партнерства с самыми престижными и инновационными эстетическими институтами Китая, обеспечивая предоставление глобальным клиентам высочайшего уровня пластической хирургии и косметических процедур.',
+    partnershipDescription: 'Мы установили долгосрочные стратегические партнерства с самыми престижными и инновационными эстетическими институтами мира, обеспечивая предоставление глобальным клиентам высочайшего уровня пластической хирургии и косметических процедур.',
     exceptionalExpertise: 'Исключительная Экспертиза',
-    expertiseDescription: 'Мы сотрудничаем с ведущими пластическими хирургами и специалистами по красоте Китая, чтобы гарантировать, что каждая процедура соответствует международным стандартам безопасности и мастерства.',
+    expertiseDescription: 'Мы сотрудничаем с ведущими пластическими хирургами и специалистами по красоте мира, чтобы гарантировать, что каждая процедура соответствует международным стандартам безопасности и мастерства.',
     globalRecognition: 'Глобальное Признание',
     recognitionDescription: 'Наши партнерские учреждения имеют широкую международную клиентскую базу и были представлены и рекомендованы ведущими мировыми СМИ.',
     personalizedTreatments: 'Персонализированные Процедуры',
@@ -904,6 +906,7 @@ export const translations = {
     
     // Section descriptions
     benefitsDescription: 'فوائد',
+    benefitsDescriptionSuffix: '',
     candidacyDescription: 'قد تكون مرشحًا جيدًا لـ',
     candidacyDescriptionIf: 'إذا:',
     techniquesDescription: 'يستخدم جراحونا تقنيات متقدمة مصممة خصيصًا لتلبية احتياجاتك وأهدافك الفريدة.',
@@ -971,20 +974,19 @@ export const translations = {
     viewAllSurgeonsCount: 'جراحين',
 
     // Intro Component
-    centerForPlasticSurgery: 'مركز الجراحة التجميلية',
-    anInternational: 'وجهة جمالية',
-    aestheticDestination: 'دولية',
-    artisanSubtitle: '"فن. دقة. جمال طبيعي."',
-    introDescriptionLong: 'بفضل ما يقرب من قرن من الخبرة المشتركة، رسخ جراحو التجميل المعتمدون لدينا مكانتهم بين الأكثر تأهيلاً والأكثر حباً في المنطقة. لا يختارنا المرضى فقط لإجراء عملياتهم الجراحية - بل يختاروننا لتنفيذ تحولات تغير الحياة بمهارة وفن لا مثيل لهما.',
+    centerForPlasticSurgery: 'مركز التجميل العالمي',
+    heroTitle: 'حوّل حياتك مع رعاية جمالية عالمية المستوى',
+    heroSubtitle: 'اكتشف أفضل وجهات الطب التجميلي حول العالم للحصول على جودة لا مثيل لها وأسعار معقولة.',
+    introDescriptionLong: 'من أفضل مراكز التجميل في أوروبا إلى العيادات المتطورة في آسيا وما وراءها، نقوم بتنسيق شبكة عالمية من المحترفين الموثوقين الملتزمين بتقديم نتائج تغير الحياة. اكتشف عالماً من الجمال والخبرة والفخامة بأسعار معقولة.',
 
     // Partnership Component
     globalStrategy: 'استراتيجية عالمية',
     partneringWith: 'الشراكة مع المؤسسات',
-    aestheticInstitutions: 'الجمالية الرائدة في الصين',
+    aestheticInstitutions: 'الجمالية الرائدة في العالم',
     worldClassServices: 'لتقديم خدمات تجميلية عالمية المستوى',
-    partnershipDescription: 'لقد أنشأنا شراكات استراتيجية طويلة الأجل مع أرقى وأكثر المؤسسات الجمالية ابتكاراً في الصين، مما يضمن أننا نقدم لعملائنا العالميين أعلى مستوى من الجراحة التجميلية وعلاجات التجميل.',
+    partnershipDescription: 'لقد أنشأنا شراكات استراتيجية طويلة الأجل مع أرقى وأكثر المؤسسات الجمالية ابتكاراً في العالم، مما يضمن أننا نقدم لعملائنا العالميين أعلى مستوى من الجراحة التجميلية وعلاجات التجميل.',
     exceptionalExpertise: 'خبرة استثنائية',
-    expertiseDescription: 'نتعاون مع أفضل جراحي التجميل وأخصائيي التجميل في الصين لضمان أن كل علاج يلبي المعايير الدولية للسلامة والفن.',
+    expertiseDescription: 'نتعاون مع أفضل جراحي التجميل وأخصائيي التجميل في العالم لضمان أن كل علاج يلبي المعايير الدولية للسلامة والفن.',
     globalRecognition: 'اعتراف عالمي',
     recognitionDescription: 'تمتلك مؤسساتنا الشريكة قاعدة عملاء دولية واسعة وتم عرضها والتوصية بها من قبل وسائل الإعلام العالمية الرائدة.',
     personalizedTreatments: 'علاجات شخصية',
@@ -1032,6 +1034,7 @@ export const translations = {
     
     // Section descriptions
     benefitsDescription: 'Lợi ích của',
+    benefitsDescriptionSuffix: '',
     candidacyDescription: 'Bạn có thể là ứng viên tốt cho',
     candidacyDescriptionIf: 'nếu:',
     techniquesDescription: 'Các bác sĩ phẫu thuật của chúng tôi sử dụng các kỹ thuật tiên tiến được điều chỉnh theo nhu cầu và mục tiêu độc đáo của bạn.',
@@ -1099,20 +1102,19 @@ export const translations = {
     viewAllSurgeonsCount: 'Bác Sĩ Phẫu Thuật',
 
     // Intro Component
-    centerForPlasticSurgery: 'Trung Tâm Phẫu Thuật Thẩm Mỹ',
-    anInternational: 'ĐIỂM ĐẾN THẨM MỸ',
-    aestheticDestination: 'QUỐC TẾ',
-    artisanSubtitle: '"Nghệ Thuật. Chính Xác. Vẻ Đẹp Tự Nhiên."',
-    introDescriptionLong: 'Với gần một thế kỷ kinh nghiệm kết hợp, các bác sĩ phẫu thuật thẩm mỹ được chứng nhận của chúng tôi đã củng cố vị trí của họ trong số những người có trình độ cao nhất và được yêu thích nhất trong khu vực. Bệnh nhân không chỉ chọn chúng tôi để thực hiện ca phẫu thuật của họ - họ chọn chúng tôi để thực hiện những biến đổi thay đổi cuộc sống với nghệ thuật và kỹ năng vô song.',
+    centerForPlasticSurgery: 'Trung Tâm Thẩm Mỹ Toàn Cầu',
+    heroTitle: 'Biến Đổi Cuộc Sống Của Bạn Với Dịch Vụ Thẩm Mỹ Đẳng Cấp Thế Giới',
+    heroSubtitle: 'Khám Phá Các Điểm Đến Y Tế Thẩm Mỹ Hàng Đầu Trên Toàn Thế Giới Với Chất Lượng Vượt Trội và Giá Cả Phải Chăng.',
+    introDescriptionLong: 'Từ các trung tâm thẩm mỹ hàng đầu châu Âu đến các phòng khám tiên tiến ở châu Á và hơn thế nữa, chúng tôi xây dựng mạng lưới toàn cầu các chuyên gia đáng tin cậy cam kết mang lại kết quả thay đổi cuộc sống. Khám phá thế giới của vẻ đẹp, chuyên môn và sự sang trọng với giá cả phải chăng.',
 
     // Partnership Component
     globalStrategy: 'Chiến Lược Toàn Cầu',
     partneringWith: 'Hợp Tác Với Các',
-    aestheticInstitutions: 'Tổ Chức Thẩm Mỹ Hàng Đầu Trung Quốc',
+    aestheticInstitutions: 'Tổ Chức Thẩm Mỹ Hàng Đầu Thế Giới',
     worldClassServices: 'Để Cung Cấp Dịch Vụ Thẩm Mỹ Đẳng Cấp Thế Giới',
-    partnershipDescription: 'Chúng tôi đã thiết lập quan hệ đối tác chiến lược dài hạn với các tổ chức thẩm mỹ uy tín và sáng tạo nhất của Trung Quốc, đảm bảo rằng chúng tôi cung cấp cho khách hàng toàn cầu mức độ cao nhất về phẫu thuật thẩm mỹ và điều trị làm đẹp.',
+    partnershipDescription: 'Chúng tôi đã thiết lập quan hệ đối tác chiến lược dài hạn với các tổ chức thẩm mỹ uy tín và sáng tạo nhất thế giới, đảm bảo rằng chúng tôi cung cấp cho khách hàng toàn cầu mức độ cao nhất về phẫu thuật thẩm mỹ và điều trị làm đẹp.',
     exceptionalExpertise: 'Chuyên Môn Xuất Sắc',
-    expertiseDescription: 'Chúng tôi hợp tác với các bác sĩ phẫu thuật thẩm mỹ hàng đầu và chuyên gia làm đẹp của Trung Quốc để đảm bảo mỗi liệu trình đáp ứng các tiêu chuẩn quốc tế về an toàn và nghệ thuật.',
+    expertiseDescription: 'Chúng tôi hợp tác với các bác sĩ phẫu thuật thẩm mỹ hàng đầu và chuyên gia làm đẹp thế giới để đảm bảo mỗi liệu trình đáp ứng các tiêu chuẩn quốc tế về an toàn và nghệ thuật.',
     globalRecognition: 'Công Nhận Toàn Cầu',
     recognitionDescription: 'Các tổ chức đối tác của chúng tôi có cơ sở khách hàng quốc tế rộng lớn và đã được các phương tiện truyền thông toàn cầu hàng đầu giới thiệu và khuyến nghị.',
     personalizedTreatments: 'Điều Trị Cá Nhân Hóa',
@@ -1160,6 +1162,7 @@ export const translations = {
     
     // Section descriptions
     benefitsDescription: 'Manfaat dari',
+    benefitsDescriptionSuffix: '',
     candidacyDescription: 'Anda mungkin kandidat yang baik untuk',
     candidacyDescriptionIf: 'jika:',
     techniquesDescription: 'Ahli bedah kami menggunakan teknik canggih yang disesuaikan dengan kebutuhan dan tujuan unik Anda.',
@@ -1227,20 +1230,19 @@ export const translations = {
     viewAllSurgeonsCount: 'Ahli Bedah',
 
     // Intro Component
-    centerForPlasticSurgery: 'Pusat Bedah Plastik',
-    anInternational: 'TUJUAN ESTETIKA',
-    aestheticDestination: 'INTERNASIONAL',
-    artisanSubtitle: '"Seni. Presisi. Keindahan Alami."',
-    introDescriptionLong: 'Dengan hampir satu abad pengalaman gabungan, ahli bedah plastik bersertifikat kami telah mengukuhkan tempat mereka di antara yang paling berkualitas dan paling dicintai di wilayah ini. Pasien tidak memilih kami hanya untuk melakukan operasi mereka - mereka memilih kami untuk melakukan transformasi yang mengubah hidup dengan seni dan keterampilan yang tak tertandingi.',
+    centerForPlasticSurgery: 'Pusat Estetika Global',
+    heroTitle: 'Ubah Hidup Anda dengan Perawatan Estetika Kelas Dunia',
+    heroSubtitle: 'Jelajahi Destinasi Medis Estetika Terbaik di Seluruh Dunia untuk Kualitas Tak Tertandingi dan Harga Terjangkau.',
+    introDescriptionLong: 'Dari pusat estetika terbaik Eropa hingga klinik mutakhir di Asia dan sekitarnya, kami mengkurasi jaringan global profesional terpercaya yang berkomitmen memberikan hasil yang mengubah hidup. Jelajahi dunia kecantikan, keahlian, dan kemewahan terjangkau.',
 
     // Partnership Component
     globalStrategy: 'Strategi Global',
     partneringWith: 'Bermitra dengan',
-    aestheticInstitutions: 'Institusi Estetika Terkemuka China',
+    aestheticInstitutions: 'Institusi Estetika Terkemuka Dunia',
     worldClassServices: 'Untuk Memberikan Layanan Kosmetik Kelas Dunia',
-    partnershipDescription: 'Kami telah menjalin kemitraan strategis jangka panjang dengan institusi estetika paling bergengsi dan inovatif di China, memastikan bahwa kami menawarkan klien global tingkat tertinggi bedah plastik dan perawatan kecantikan.',
+    partnershipDescription: 'Kami telah menjalin kemitraan strategis jangka panjang dengan institusi estetika paling bergengsi dan inovatif di dunia, memastikan bahwa kami menawarkan klien global tingkat tertinggi bedah plastik dan perawatan kecantikan.',
     exceptionalExpertise: 'Keahlian Luar Biasa',
-    expertiseDescription: 'Kami berkolaborasi dengan ahli bedah plastik terbaik dan spesialis kecantikan China untuk memastikan setiap perawatan memenuhi standar internasional untuk keamanan dan seni.',
+    expertiseDescription: 'Kami berkolaborasi dengan ahli bedah plastik terbaik dan spesialis kecantikan dunia untuk memastikan setiap perawatan memenuhi standar internasional untuk keamanan dan seni.',
     globalRecognition: 'Pengakuan Global',
     recognitionDescription: 'Institusi mitra kami memiliki basis klien internasional yang luas dan telah ditampilkan dan direkomendasikan oleh media global terkemuka.',
     personalizedTreatments: 'Perawatan Personalisasi',
