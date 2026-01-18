@@ -762,6 +762,8 @@
     }
 
     // ==================== Gallery 页面 ====================
+    let galleryActiveTab = 'face';
+
     function renderGallery() {
       return `
         <div class="breadcrumb">
@@ -769,19 +771,80 @@
         </div>
 
         <div class="page-header">
-          <h1>🖼️ Gallery - Face Subcategories</h1>
-          <p>Face分类的子分类缩略图 (6张)</p>
+          <h1>🖼️ Gallery Subcategories</h1>
+          <p>管理Gallery页面三个分类的子分类缩略图</p>
         </div>
 
-        <div class="image-slots">
-          ${renderImageSlot('gallery-face-neck', 'Face & Neck')}
-          ${renderImageSlot('gallery-facial-contouring-implants', 'Facial Contouring & Implants')}
-          ${renderImageSlot('gallery-injectables-regenerative', 'Injectables & Regenerative')}
-          ${renderImageSlot('gallery-lips', 'Lips')}
-          ${renderImageSlot('gallery-skin-tightening-resurfacing', 'Skin Tightening & Resurfacing')}
-          ${renderImageSlot('gallery-hair', 'Hair')}
+        <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+          <button class="btn-primary gallery-tab ${galleryActiveTab === 'face' ? '' : 'btn-secondary'}"
+                  onclick="switchGalleryTab('face')"
+                  style="${galleryActiveTab === 'face' ? '' : 'background: #e0e0e0; color: #666;'}">
+            👤 Face (6张)
+          </button>
+          <button class="btn-primary gallery-tab ${galleryActiveTab === 'body' ? '' : 'btn-secondary'}"
+                  onclick="switchGalleryTab('body')"
+                  style="${galleryActiveTab === 'body' ? '' : 'background: #e0e0e0; color: #666;'}">
+            🏃 Body (7张)
+          </button>
+          <button class="btn-primary gallery-tab ${galleryActiveTab === 'non-surgical' ? '' : 'btn-secondary'}"
+                  onclick="switchGalleryTab('non-surgical')"
+                  style="${galleryActiveTab === 'non-surgical' ? '' : 'background: #e0e0e0; color: #666;'}">
+            💉 Non-Surgical (7张)
+          </button>
+        </div>
+
+        <div id="gallery-content">
+          ${renderGalleryContent(galleryActiveTab)}
         </div>
       `;
+    }
+
+    function renderGalleryContent(tab) {
+      if (tab === 'face') {
+        return `
+          <h3 style="margin-bottom: 15px; color: #667eea;">👤 Face Subcategories</h3>
+          <div class="image-slots">
+            ${renderImageSlot('gallery-face-neck', 'Face & Neck')}
+            ${renderImageSlot('gallery-facial-contouring-implants', 'Facial Contouring & Implants')}
+            ${renderImageSlot('gallery-injectables-regenerative', 'Injectables & Regenerative')}
+            ${renderImageSlot('gallery-lips', 'Lips')}
+            ${renderImageSlot('gallery-skin-tightening-resurfacing', 'Skin Tightening & Resurfacing')}
+            ${renderImageSlot('gallery-hair', 'Hair')}
+          </div>
+        `;
+      } else if (tab === 'body') {
+        return `
+          <h3 style="margin-bottom: 15px; color: #667eea;">🏃 Body Subcategories</h3>
+          <div class="image-slots">
+            ${renderImageSlot('gallery-core-body-contouring', 'Core Body Contouring')}
+            ${renderImageSlot('gallery-arms-legs-back', 'Arms / Legs / Back')}
+            ${renderImageSlot('gallery-after-weight-loss', 'After Weight Loss / Body Lifts')}
+            ${renderImageSlot('gallery-breast-chest', 'Breast / Chest')}
+            ${renderImageSlot('gallery-buttocks', 'Buttocks')}
+            ${renderImageSlot('gallery-intimate', 'Intimate')}
+            ${renderImageSlot('gallery-cellulite', 'Cellulite')}
+          </div>
+        `;
+      } else if (tab === 'non-surgical') {
+        return `
+          <h3 style="margin-bottom: 15px; color: #667eea;">💉 Non-Surgical Subcategories</h3>
+          <div class="image-slots">
+            ${renderImageSlot('gallery-injectables-ns', 'Injectables')}
+            ${renderImageSlot('gallery-cellulite-ns', 'Cellulite')}
+            ${renderImageSlot('gallery-skin-tightening-ns', 'Skin Tightening')}
+            ${renderImageSlot('gallery-resurfacing', 'Resurfacing / Skin Renewal')}
+            ${renderImageSlot('gallery-laser-treatments', 'Light / Laser-Based Treatments')}
+            ${renderImageSlot('gallery-hair-removal', 'Hair Removal')}
+            ${renderImageSlot('gallery-collagen', 'Collagen / Regenerative')}
+          </div>
+        `;
+      }
+      return '';
+    }
+
+    function switchGalleryTab(tab) {
+      galleryActiveTab = tab;
+      loadPage('gallery');
     }
 
     // ==================== Travel (Reviews) 页面 ====================

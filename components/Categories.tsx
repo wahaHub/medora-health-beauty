@@ -19,11 +19,11 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
   const isDark = theme === 'dark';
   
   // Define colors
-  const textColor = isDark ? 'text-white' : 'text-navy-900';
-  const subTitleColor = isDark ? 'text-gold-400' : 'text-stone-500';
-  const descColor = isDark ? 'text-sage-100' : 'text-stone-600';
-  const linkColor = isDark ? 'text-gold-300 hover:text-white' : 'text-gold-600 hover:text-navy-900';
-  const lineColor = isDark ? 'bg-gold-500' : 'bg-navy-900';
+  const textColor = isDark ? 'text-white' : 'text-white';
+  const subTitleColor = isDark ? 'text-gold-400' : 'text-white';
+  const descColor = isDark ? 'text-sage-100' : 'text-white';
+  const linkColor = isDark ? 'text-gold-300 hover:text-white' : 'text-white hover:text-gold-200';
+  const lineColor = isDark ? 'bg-gold-500' : 'bg-white';
   
   // IMPROVED Gradient Logic
   // 1. We use w-full (full width) instead of w-3/4 to prevent gaps.
@@ -32,11 +32,11 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
   
   const gradientClass = align === 'left'
     ? (isDark
-        ? 'bg-gradient-to-r from-[#0f201b]/40 from-20% via-[#0f201b]/20 via-50% to-transparent'
-        : 'bg-gradient-to-r from-[#f4f7f5]/40 from-20% via-[#f4f7f5]/20 via-50% to-transparent')
+        ? 'bg-gradient-to-r from-[#0f201b]/30 from-15% via-[#0f201b]/15 via-40% to-transparent'
+        : 'bg-gradient-to-r from-[#f4f7f5]/30 from-15% via-[#f4f7f5]/15 via-40% to-transparent')
     : (isDark
-        ? 'bg-gradient-to-l from-[#0f201b]/40 from-20% via-[#0f201b]/20 via-50% to-transparent'
-        : 'bg-gradient-to-l from-[#f4f7f5]/40 from-20% via-[#f4f7f5]/20 via-50% to-transparent');
+        ? 'bg-gradient-to-l from-[#0f201b]/30 from-15% via-[#0f201b]/15 via-40% to-transparent'
+        : 'bg-gradient-to-l from-[#f4f7f5]/30 from-15% via-[#f4f7f5]/15 via-40% to-transparent');
 
   // Text Alignment Logic
   // We constrain the text width and margin to ensure it sits perfectly inside the solid part of the gradient.
@@ -51,24 +51,37 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
 
   return (
     <div id={id} className="relative min-h-[700px] md:h-screen max-h-[900px] flex items-center overflow-hidden">
-      {/* 1. Background Image Layer */}
+      {/* 1. Background Image/Video Layer */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={image}
-          alt={title}
-          className={`w-full h-full object-cover transition-transform duration-[2000ms] ease-out ${
-             align === 'left' ? 'object-[80%_center]' : 'object-[20%_center]'
-          }`}
-          onError={(e) => {
-            // Fallback images if R2 loading fails
-            const fallbacks: Record<string, string> = {
-              'face': 'https://images.unsplash.com/photo-1510526786859-99a38f8f267c?q=80&w=2070&auto=format&fit=crop',
-              'body': 'https://images.unsplash.com/photo-1609121855913-9a3d4f40f3c5?q=80&w=1974&auto=format&fit=crop',
-              'nonsurgical': 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1964&auto=format&fit=crop'
-            };
-            e.currentTarget.src = fallbacks[id] || fallbacks['face'];
-          }}
-        />
+        {id === 'face' ? (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className={`w-full h-full object-cover ${
+              align === 'left' ? 'object-[80%_center]' : 'object-[20%_center]'
+            }`}
+          >
+            <source src="https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/face.mp4" type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src={image}
+            alt={title}
+            className={`w-full h-full object-cover transition-transform duration-[2000ms] ease-out ${
+              align === 'left' ? 'object-[80%_center]' : 'object-[20%_center]'
+            }`}
+            onError={(e) => {
+              // Fallback images if R2 loading fails
+              const fallbacks: Record<string, string> = {
+                'body': 'https://images.unsplash.com/photo-1609121855913-9a3d4f40f3c5?q=80&w=1974&auto=format&fit=crop',
+                'nonsurgical': 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1964&auto=format&fit=crop'
+              };
+              e.currentTarget.src = fallbacks[id] || fallbacks['body'];
+            }}
+          />
+        )}
       </div>
 
       {/* 2. Gradient Overlay Layer - NOW FULL WIDTH */}
@@ -161,8 +174,8 @@ const Categories: React.FC = () => {
       description: t('categoryNonsurgicalDescription'),
       items: [t('categoryNonsurgicalItem1'), t('categoryNonsurgicalItem2'), t('categoryNonsurgicalItem3'), t('categoryNonsurgicalItem4')],
       image: nonSurgicalImage,
-      theme: 'dark', // Dark Forest Gradient
-      align: 'right'
+      theme: 'warm', // Dark Forest Gradient
+      align: 'left'
     }
   ];
 

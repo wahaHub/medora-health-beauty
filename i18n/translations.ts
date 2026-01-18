@@ -262,7 +262,7 @@ export const translations = {
     finalResults: '最终效果',
     overview: '概述',
     procedureDescription: '手术过程',
-    keyBenefits: '主要优势',
+    keyBenefits: '好处',
     idealCandidates: '理想候选人',
     techniquesApproaches: '技术与方法',
     recoveryTimeline: '恢复时间线',
@@ -281,7 +281,7 @@ export const translations = {
     
     // Section descriptions
     benefitsDescription: '',
-    benefitsDescriptionSuffix: '的主要优势',
+    benefitsDescriptionSuffix: '的好处',
     candidacyDescription: '如果您符合以下条件，您可能是',
     candidacyDescriptionIf: '的理想候选人：',
     techniquesDescription: '我们的外科医生使用针对您的独特需求和目标量身定制的先进技术。',
