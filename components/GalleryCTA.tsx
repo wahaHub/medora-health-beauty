@@ -1,13 +1,19 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { getHomepageImage } from '../utils/imageUtils';
+import { useTranslation } from '../hooks/useTranslation';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface GalleryCTAProps {
   onNavigate?: (page: string) => void;
 }
 
 const GalleryCTA: React.FC<GalleryCTAProps> = ({ onNavigate }) => {
+  const { t } = useTranslation();
   const galleryImage = getHomepageImage('gallery');
+
+  // Enable scroll reveal animations
+  useScrollReveal(true);
 
   const handleGalleryClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -33,20 +39,20 @@ const GalleryCTA: React.FC<GalleryCTAProps> = ({ onNavigate }) => {
       
       {/* Floating White Content Box */}
       <div className="absolute bottom-0 right-0 w-full md:w-auto md:bottom-12 md:right-12 lg:bottom-20 lg:right-20">
-        <div className="bg-white p-10 md:p-16 lg:px-24 lg:py-20 shadow-2xl max-w-xl mx-auto md:mx-0">
+        <div className="bg-white p-10 md:p-16 lg:px-24 lg:py-20 shadow-2xl max-w-xl mx-auto md:mx-0 scroll-reveal-scale">
           <div className="flex flex-col items-center text-center">
             <h4 className="text-gold-600 uppercase tracking-[0.25em] text-xs md:text-sm font-bold mb-5">
-              Envision a New You
+              {t('galleryEnvision')}
             </h4>
             <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl text-navy-900 mb-8 tracking-wide">
-              GALLERY
+              {t('navGallery')}
             </h2>
-            <a 
-              href="#" 
+            <a
+              href="#"
               onClick={handleGalleryClick}
               className="inline-flex items-center text-navy-900 hover:text-gold-600 transition-colors font-bold tracking-wide uppercase text-xs md:text-sm group/link"
             >
-              Explore Our Photo Gallery 
+              {t('galleryExplore')}
               <ChevronRight size={16} className="ml-2 transition-transform duration-300 group-hover/link:translate-x-1" />
             </a>
           </div>

@@ -1,0 +1,14 @@
+/* Scroll Reveal Animations - Position-based (no time transitions) */
+/* Opacity and transform are controlled by JavaScript based on scroll position */
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(80px);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  will-change: opacity, transform;
+}

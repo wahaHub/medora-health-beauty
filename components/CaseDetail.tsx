@@ -135,25 +135,25 @@ const CaseDetail: React.FC<CaseDetailProps> = ({ onBack }) => {
   }
 
   return (
-    <div className="bg-white animate-fade-in-up pt-24">
-      {/* 1. Dark Header Section */}
-      <section className="bg-[#2a2624] text-white py-12 md:py-16">
+    <div className="bg-white animate-fade-in-up">
+      {/* 1. Dark Header Section - extends to top like ProcedureDetail */}
+      <section className="relative min-h-[400px] bg-[#1a1a1a] overflow-hidden flex items-end pt-24 md:pt-32 pb-12 md:pb-16">
         <div className="container mx-auto px-6">
-           <div className="mb-12">
-              <div className="font-serif text-4xl italic tracking-wide">Medora Health</div>
-               <div className="text-xs uppercase tracking-[0.2em] font-light border-t border-white/30 pt-1 mt-1 inline-block">
+           <div className="mb-8 opacity-90">
+              <div className="font-serif text-3xl italic tracking-wide text-white">Medora Health</div>
+               <div className="text-xs uppercase tracking-[0.2em] font-light border-t border-white/30 pt-1 mt-1 inline-block text-white">
                  Center for Plastic Surgery
                </div>
            </div>
 
-           <div className="text-[10px] md:text-xs uppercase tracking-widest text-stone-400 mb-4 font-sans">
-             <span className="hover:text-white cursor-pointer transition-colors" onClick={() => navigate('/')}>HOME</span>
-             <span className="mx-2">|</span>
-             <span className="hover:text-white cursor-pointer transition-colors" onClick={() => navigate('/gallery')}>PHOTO GALLERY</span>
-             <span className="mx-2">|</span>
-             <span className="hover:text-white cursor-pointer transition-colors" onClick={handleBack}>{procedureName.toUpperCase()}</span>
-             <span className="mx-2">|</span>
-             <span className="text-gold-500">CASE #{caseNumber}</span>
+           <div className="text-[10px] md:text-xs uppercase tracking-widest text-gold-400 mb-4 flex gap-2">
+             <span className="cursor-pointer hover:text-white" onClick={() => navigate('/')}>HOME</span>
+             <span>|</span>
+             <span className="cursor-pointer hover:text-white" onClick={() => navigate('/gallery')}>PHOTO GALLERY</span>
+             <span>|</span>
+             <span className="cursor-pointer hover:text-white" onClick={handleBack}>{procedureName.toUpperCase()}</span>
+             <span>|</span>
+             <span className="text-white">CASE #{caseNumber}</span>
            </div>
 
            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl uppercase tracking-wide text-white font-light">

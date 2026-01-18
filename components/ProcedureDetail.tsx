@@ -1,74 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { supabase } from '../services/supabaseClient';
 import type { CompleteProcedureData } from '../services/supabaseClient';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../hooks/useTranslation';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 import procedureNames from '../i18n/procedureNames.json';
 import { getProcedureImage, getProcedureCaseImage } from '../utils/imageUtils';
-
-// Custom hook for bidirectional scroll reveal animation
-function useScrollReveal(isReady: boolean) {
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const lastScrollY = useRef(0);
-  const scrollDirection = useRef<'down' | 'up'>('down');
-
-  useEffect(() => {
-    if (!isReady) return;
-
-    // Track scroll direction
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      scrollDirection.current = currentScrollY > lastScrollY.current ? 'down' : 'up';
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    const timeoutId = setTimeout(() => {
-      observerRef.current = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            const el = entry.target;
-
-            if (entry.isIntersecting) {
-              // Element entering viewport - show it
-              el.classList.remove('hidden-up');
-              el.classList.add('revealed');
-            } else {
-              // Element leaving viewport
-              el.classList.remove('revealed');
-
-              // Check if element is above or below viewport
-              const rect = entry.boundingClientRect;
-              if (rect.top < 0) {
-                // Element exited from top (scrolling down)
-                el.classList.add('hidden-up');
-              } else {
-                // Element exited from bottom (scrolling up)
-                el.classList.remove('hidden-up');
-              }
-            }
-          });
-        },
-        {
-          threshold: 0.01, // Trigger almost immediately when element appears
-          rootMargin: '100px 0px 100px 0px' // Start animation 100px before element enters viewport
-        }
-      );
-
-      const elements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-scale');
-      elements.forEach((el) => observerRef.current?.observe(el));
-    }, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener('scroll', handleScroll);
-      observerRef.current?.disconnect();
-    };
-  }, [isReady]);
-}
 
 interface ProcedureDetailProps {
   procedureName?: string;

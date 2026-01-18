@@ -1,7 +1,11 @@
 import React from 'react';
 import { ArrowRight, Mic2, Award, Users, Heart } from 'lucide-react';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const SurgeonProfile: React.FC = () => {
+  // Enable scroll reveal animations
+  useScrollReveal(true);
+
   return (
     <div className="bg-white animate-fade-in-up">
       {/* 1. HERO SECTION - Green Gradient */}
@@ -30,14 +34,14 @@ const SurgeonProfile: React.FC = () => {
               Home <span className="mx-2 text-white/40">|</span> About <span className="mx-2 text-white/40">|</span> Our Surgeons <span className="mx-2 text-white/40">|</span> Dr. Vito Medora
             </div>
 
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white uppercase tracking-wide font-light mb-4 leading-tight">
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white uppercase tracking-wide font-light mb-4 leading-tight scroll-reveal">
               Dr. Vito Medora
             </h1>
-            <p className="text-sage-100 text-sm md:text-base uppercase tracking-[0.2em] mb-8 font-light border-l-2 border-gold-500 pl-4">
+            <p className="text-sage-100 text-sm md:text-base uppercase tracking-[0.2em] mb-8 font-light border-l-2 border-gold-500 pl-4 scroll-reveal">
               Double Board-Certified Facial Plastic Surgeon
             </p>
-            
-            <p className="text-sage-200 text-lg leading-relaxed mb-10 max-w-lg font-light">
+
+            <p className="text-sage-200 text-lg leading-relaxed mb-10 max-w-lg font-light scroll-reveal">
               Founder of the Medora Health Center, pioneer of the deep plane facelift, and recognized nationally and internationally as a leader in modern facial plastic surgery.
             </p>
 
@@ -53,7 +57,7 @@ const SurgeonProfile: React.FC = () => {
         <div className="container mx-auto px-6">
            <div className="flex flex-col lg:flex-row gap-16 items-center">
              <div className="lg:w-1/2">
-                <h2 className="font-serif text-4xl md:text-5xl text-navy-900 mb-8 leading-tight">
+                <h2 className="font-serif text-4xl md:text-5xl text-navy-900 mb-8 leading-tight scroll-reveal">
                   Internationally Recognized Facial Plastic Surgery Expertise
                 </h2>
                 <div className="space-y-6 text-stone-600 text-lg leading-relaxed font-light">
@@ -65,11 +69,11 @@ const SurgeonProfile: React.FC = () => {
                   </p>
                 </div>
              </div>
-             <div className="lg:w-1/2 relative group">
+             <div className="lg:w-1/2 relative group scroll-reveal">
                 <div className="relative overflow-hidden">
-                  <img 
-                    src="https://images.unsplash.com/photo-1544531696-b85360980593?q=80&w=2069&auto=format&fit=crop" 
-                    alt="Dr. Medora Speaking" 
+                  <img
+                    src="https://images.unsplash.com/photo-1544531696-b85360980593?q=80&w=2069&auto=format&fit=crop"
+                    alt="Dr. Medora Speaking"
                     className="w-full h-auto shadow-xl"
                   />
                 </div>
@@ -87,13 +91,13 @@ const SurgeonProfile: React.FC = () => {
       {/* 3. STATS - Light Sage Background */}
       <section className="py-20 bg-sage-50">
         <div className="container mx-auto px-6 text-center">
-           <h2 className="font-serif text-4xl md:text-5xl text-navy-900 mb-6">Expertise Refined Through Experience</h2>
+           <h2 className="font-serif text-4xl md:text-5xl text-navy-900 mb-6 scroll-reveal">Expertise Refined Through Experience</h2>
            <p className="text-stone-500 text-lg mb-16 max-w-2xl mx-auto font-light">
              Dr. Medora's expertise in facial plastic surgery comes from decades of focused experience. He has performed:
            </p>
 
            <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-              <div className="bg-white p-12 shadow-sm hover:shadow-md transition-shadow border border-sage-100">
+              <div className="bg-white p-12 shadow-sm hover:shadow-md transition-shadow border border-sage-100 scroll-reveal">
                 <div className="flex justify-center mb-6 text-navy-900">
                   {/* Custom Facelift Icon SVG */}
                   <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
@@ -106,7 +110,7 @@ const SurgeonProfile: React.FC = () => {
                 <div className="text-gold-600 font-bold uppercase tracking-widest text-sm">Facelifts</div>
               </div>
 
-              <div className="bg-white p-12 shadow-sm hover:shadow-md transition-shadow border border-sage-100">
+              <div className="bg-white p-12 shadow-sm hover:shadow-md transition-shadow border border-sage-100 scroll-reveal">
                 <div className="flex justify-center mb-6 text-navy-900">
                    {/* Custom Rhinoplasty Icon SVG */}
                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
@@ -162,7 +166,7 @@ const SurgeonProfile: React.FC = () => {
 
                {/* Right Column - Info */}
                <div className="lg:w-1/2">
-                  <div className="mb-12">
+                  <div className="mb-12 scroll-reveal">
                      <h2 className="font-serif text-3xl text-navy-900 mb-6 border-b border-gold-200 pb-4">
                         Professional Society Leadership Positions
                      </h2>
@@ -186,7 +190,7 @@ const SurgeonProfile: React.FC = () => {
                      </ul>
                   </div>
 
-                  <div className="mb-12">
+                  <div className="mb-12 scroll-reveal">
                      <h2 className="font-serif text-3xl text-navy-900 mb-6 border-b border-gold-200 pb-4">
                         Board Certifications
                      </h2>

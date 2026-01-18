@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Award, GraduationCap, Clock, MapPin } from 'lucide-react';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface Surgeon {
   id: number;
@@ -98,6 +99,9 @@ const AllSurgeons: React.FC = () => {
   const navigate = useNavigate();
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("All");
 
+  // Enable scroll reveal animations
+  useScrollReveal(true);
+
   // 提取所有独特的专业领域
   const allSpecialties = ["All", ...new Set(surgeons.flatMap(s => s.specialty))];
 
@@ -122,16 +126,16 @@ const AllSurgeons: React.FC = () => {
               </span>
             </div>
             
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight">
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight scroll-reveal">
               Meet Our Surgical Team
             </h1>
             
-            <p className="text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto scroll-reveal">
               Board-certified plastic surgeons dedicated to delivering exceptional results with the highest standards of care and artistry.
             </p>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 max-w-4xl mx-auto scroll-reveal">
               <div className="text-center">
                 <div className="text-4xl font-bold text-gold-400 mb-2">{surgeons.length}+</div>
                 <div className="text-sm uppercase tracking-wider text-gray-400">Expert Surgeons</div>
@@ -179,9 +183,9 @@ const AllSurgeons: React.FC = () => {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredSurgeons.map((surgeon) => (
-              <div 
+              <div
                 key={surgeon.id}
-                className="group bg-white border border-gray-200 hover:border-gold-400 transition-all duration-300 hover:shadow-xl overflow-hidden"
+                className="group bg-white border border-gray-200 hover:border-gold-400 transition-all duration-300 hover:shadow-xl overflow-hidden scroll-reveal"
               >
                 {/* Image */}
                 <div className="relative h-80 overflow-hidden bg-gray-100">
@@ -271,7 +275,7 @@ const AllSurgeons: React.FC = () => {
       {/* CTA Section */}
       <section className="bg-gray-50 py-20">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="font-serif text-4xl text-navy-900 mb-6">
+          <h2 className="font-serif text-4xl text-navy-900 mb-6 scroll-reveal">
             Ready to Meet Your Surgeon?
           </h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-8">

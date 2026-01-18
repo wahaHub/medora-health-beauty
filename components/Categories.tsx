@@ -128,6 +128,7 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
 };
 
 const Categories: React.FC = () => {
+  const { t } = useTranslation();
   const faceImage = getHomepageImage('face');
   const bodyImage = getHomepageImage('body');
   const nonSurgicalImage = getHomepageImage('non-surgical');
@@ -135,30 +136,30 @@ const Categories: React.FC = () => {
   const categories: CategoryProps[] = [
     {
       id: "face",
-      title: "Face",
-      subtitle: "Personalized Facial Rejuvenation",
-      description: "Designed around the unique facial anatomy of different ethnicities and your individual structure. Deep-plane lifting, eyelid refinement, and precision rhinoplasty—crafted for balance, harmony, and natural-looking results.",
-      items: ["Facelift (面部提升)", "Eyelid Surgery (眼部整形)", "Rhinoplasty (综合隆鼻)", "Deep Neck Contouring (颈部塑形)"],
+      title: t('categoryFace'),
+      subtitle: t('categoryFaceSubtitle'),
+      description: t('categoryFaceDescription'),
+      items: [t('categoryFaceItem1'), t('categoryFaceItem2'), t('categoryFaceItem3'), t('categoryFaceItem4')],
       image: faceImage,
       theme: 'warm', // Light Sage Gradient
       align: 'left'
     },
     {
       id: "body",
-      title: "Body",
-      subtitle: "Love your silhouette. Own your confidence.",
-      description: "Tailored contouring and restoration—designed to refine shape, improve tone, and bring back a firmer, more youthful silhouette.",
-      items: ["Tummy Tuck (腹壁整形)", "Liposuction (吸脂塑形)", "Mommy Makeover (产后修复)", "Body Contouring (身体塑形)"],
+      title: t('categoryBody'),
+      subtitle: t('categoryBodySubtitle'),
+      description: t('categoryBodyDescription'),
+      items: [t('categoryBodyItem1'), t('categoryBodyItem2'), t('categoryBodyItem3'), t('categoryBodyItem4')],
       image: bodyImage,
       theme: 'warm', // Light Sage Gradient
       align: 'right'
     },
     {
       id: "nonsurgical",
-      title: "Nonsurgical",
-      subtitle: "A refined look—no surgery required",
-      description: "Clinically guided, individually tailored rejuvenation for balanced features, smoother lines, and healthier-looking skin.",
-      items: ["BOTOX® Cosmetic (肉毒素)", "Dermal Fillers (玻尿酸填充)", "Lip Injections (丰唇)", "Skin Rejuvenation (皮肤管理)"],
+      title: t('categoryNonsurgical'),
+      subtitle: t('categoryNonsurgicalSubtitle'),
+      description: t('categoryNonsurgicalDescription'),
+      items: [t('categoryNonsurgicalItem1'), t('categoryNonsurgicalItem2'), t('categoryNonsurgicalItem3'), t('categoryNonsurgicalItem4')],
       image: nonSurgicalImage,
       theme: 'dark', // Dark Forest Gradient
       align: 'right'

@@ -1,26 +1,32 @@
 import React from 'react';
 import { Star, ChevronRight } from 'lucide-react';
+import { useTranslation } from '../hooks/useTranslation';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const Reputation: React.FC = () => {
+  const { t } = useTranslation();
+
+  // Enable scroll reveal animations
+  useScrollReveal(true);
   const gridReviews = [
     {
-      text: "I recently had the pleasure of working with Dr. Ashley Amalfi. I had originally gone in last year for...",
-      author: "Christina Ohrenstein",
+      textKey: 'reputationReview1Text' as const,
+      authorKey: 'reputationReview1Author' as const,
       date: "Dec 09, 2025"
     },
     {
-      text: "I just saw dr. Peter krasniak for some injectables in my face!!!! This is my first time meeting Dr....",
-      author: "Michele Czapnik",
+      textKey: 'reputationReview2Text' as const,
+      authorKey: 'reputationReview2Author' as const,
       date: "Oct 27, 2025"
     },
     {
-      text: "Beyond happy with Dr. Quatela’s work. My only regret is not doing it sooner!",
-      author: "jhanna white",
+      textKey: 'reputationReview3Text' as const,
+      authorKey: 'reputationReview3Author' as const,
       date: "Sep 16, 2025"
     },
     {
-      text: "Beyond meticulous and Professional in every way",
-      author: "Gary Palumbo",
+      textKey: 'reputationReview4Text' as const,
+      authorKey: 'reputationReview4Author' as const,
       date: "Sep 04, 2025"
     }
   ];
@@ -37,18 +43,18 @@ const Reputation: React.FC = () => {
   return (
       <section className="py-24 bg-white border-t border-stone-100">
           <div className="container mx-auto px-6">
-              <h2 className="text-center font-serif text-3xl md:text-4xl text-navy-900 mb-16 uppercase tracking-wide">
-                  A REPUTATION BUILT ON RESULTS
+              <h2 className="text-center font-serif text-3xl md:text-4xl text-navy-900 mb-16 uppercase tracking-wide scroll-reveal">
+                  {t('reputationTitle')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                   {gridReviews.map((review, idx) => (
-                      <div key={idx} className="bg-[#f9f5f1] p-8 flex flex-col h-full min-h-[340px]">
+                      <div key={idx} className="bg-[#f9f5f1] p-8 flex flex-col h-full min-h-[340px] scroll-reveal">
                           <div className="flex-grow mb-6">
                               <p className="text-stone-600 font-light leading-relaxed text-lg mb-6">
-                                 {review.text}
+                                 {t(review.textKey)}
                               </p>
-                              <h4 className="text-navy-900 font-bold text-lg mb-1">{review.author}</h4>
-                              <p className="text-stone-500 text-sm">Review from Google</p>
+                              <h4 className="text-navy-900 font-bold text-lg mb-1">{t(review.authorKey)}</h4>
+                              <p className="text-stone-500 text-sm">{t('reputationReviewFrom')}</p>
                           </div>
                           <div className="flex items-center gap-4 mt-auto pt-6 border-t border-stone-200/50">
                               <GoogleIcon />
@@ -58,7 +64,7 @@ const Reputation: React.FC = () => {
                                       {[1,2,3,4,5].map(i => <Star key={i} size={14} className="fill-gold-500 text-gold-500" />)}
                                    </div>
                                    <div className="text-[10px] text-stone-500 font-bold leading-tight">
-                                      Source: Google <br/>
+                                      {t('reputationSource')} <br/>
                                       {review.date}
                                    </div>
                               </div>
@@ -68,7 +74,7 @@ const Reputation: React.FC = () => {
               </div>
               <div className="text-center mt-16">
                   <a href="#" className="text-navy-900 font-bold hover:text-gold-600 uppercase tracking-widest text-sm inline-flex items-center gap-2 transition-colors">
-                      Read More Featured Reviews <ChevronRight size={16} />
+                      {t('reputationReadMore')} <ChevronRight size={16} />
                   </a>
               </div>
           </div>

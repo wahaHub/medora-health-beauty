@@ -1,7 +1,14 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
+import { useTranslation } from '../hooks/useTranslation';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const Contact: React.FC = () => {
+  const { t } = useTranslation();
+
+  // Enable scroll reveal animations
+  useScrollReveal(true);
+
   return (
     <section id="contact" className="relative py-24 bg-forest-gradient text-white">
       {/* Map Background Pattern */}
@@ -16,36 +23,36 @@ const Contact: React.FC = () => {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="font-serif text-5xl md:text-7xl mb-6 tracking-wide text-white">CONTACT</h2>
+          <h2 className="font-serif text-5xl md:text-7xl mb-6 tracking-wide text-white scroll-reveal">{t('contactTitle')}</h2>
           <div className="text-lg md:text-xl font-light text-sage-100 space-y-2 font-sans">
-            <p>No. 88 Jianguo Road, Chaoyang District, Beijing</p>
-            <p>China Central Place, Tower 1, 28th Floor</p>
-            <p className="pt-2 font-semibold text-white">Phone: 400-888-8888</p>
+            <p>{t('contactAddress1')}</p>
+            <p>{t('contactAddress2')}</p>
+            <p className="pt-2 font-semibold text-white">{t('contactPhone')}</p>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <p className="text-xs text-sage-300 mb-2 font-sans">* Required Fields</p>
+        <div className="max-w-4xl mx-auto scroll-reveal">
+          <p className="text-xs text-sage-300 mb-2 font-sans">{t('contactRequired')}</p>
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input required type="text" placeholder="First Name*" className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
-              <input required type="text" placeholder="Last Name*" className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
+              <input required type="text" placeholder={t('contactFirstName')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
+              <input required type="text" placeholder={t('contactLastName')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input required type="email" placeholder="Email*" className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
-              <input required type="tel" placeholder="Phone*" className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
+              <input required type="email" placeholder={t('contactEmail')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
+              <input required type="tel" placeholder={t('contactPhoneField')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input required type="text" placeholder="Zip Code*" className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
+              <input required type="text" placeholder={t('contactZipCode')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
               <div className="relative">
                 <select required className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 appearance-none rounded-none cursor-pointer placeholder-sage-300">
-                  <option value="" disabled selected className="text-navy-900">Procedure Interest*</option>
-                  <option value="face" className="text-navy-900">Facial Contouring</option>
-                  <option value="breast" className="text-navy-900">Breast Surgery</option>
-                  <option value="body" className="text-navy-900">Body Contouring</option>
-                  <option value="nonsurgical" className="text-navy-900">Non-Surgical</option>
+                  <option value="" disabled selected className="text-navy-900">{t('contactProcedureInterest')}</option>
+                  <option value="face" className="text-navy-900">{t('contactFacialContouring')}</option>
+                  <option value="breast" className="text-navy-900">{t('contactBreastSurgery')}</option>
+                  <option value="body" className="text-navy-900">{t('contactBodyContouring')}</option>
+                  <option value="nonsurgical" className="text-navy-900">{t('contactNonSurgical')}</option>
                 </select>
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-sage-300 pointer-events-none" size={20} />
               </div>
@@ -53,23 +60,23 @@ const Contact: React.FC = () => {
 
             <div className="relative">
                 <select className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 appearance-none rounded-none cursor-pointer">
-                  <option value="" disabled selected className="text-navy-900">Preferred Provider*</option>
+                  <option value="" disabled selected className="text-navy-900">{t('contactPreferredProvider')}</option>
                   <option value="dr-zhang" className="text-navy-900">Dr. Zhang Yimei</option>
                   <option value="dr-chen" className="text-navy-900">Dr. Michael Chen</option>
-                  <option value="any" className="text-navy-900">First Available</option>
+                  <option value="any" className="text-navy-900">{t('contactFirstAvailable')}</option>
                 </select>
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-sage-300 pointer-events-none" size={20} />
             </div>
 
-            <textarea 
+            <textarea
               rows={6}
-              placeholder="How can we help?" 
+              placeholder={t('contactHowCanWeHelp')}
               className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all resize-none placeholder-sage-300"
             ></textarea>
 
             <div className="pt-8 text-center">
               <button type="submit" className="bg-gold-500 text-white px-12 py-4 uppercase tracking-[0.2em] text-sm font-bold hover:bg-gold-600 transition-all duration-300 hover:scale-105 shadow-lg shadow-gold-500/20">
-                Submit Request
+                {t('contactSubmit')}
               </button>
             </div>
           </form>

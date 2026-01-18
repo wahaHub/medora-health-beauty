@@ -1,8 +1,10 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { getHomepageImage } from '../utils/imageUtils';
+import { useTranslation } from '../hooks/useTranslation';
 
 const TravelProgram: React.FC = () => {
+  const { t } = useTranslation();
   const conciergeImage = getHomepageImage('concierge');
 
   return (
@@ -18,18 +20,16 @@ const TravelProgram: React.FC = () => {
 
         <div className="relative z-10 max-w-xl mx-auto lg:mx-0">
           <h4 className="text-gold-500 uppercase tracking-widest text-sm font-bold mb-4">
-            International Destination
+            {t('travelInternationalDestination')}
           </h4>
           <h2 className="font-serif text-4xl md:text-5xl text-white mb-8 leading-tight">
-            CONCIERGE PROGRAM FOR <br/> INTERNATIONAL PATIENTS
+            {t('travelConciergeProgram')}
           </h2>
           <p className="text-gray-300 text-lg leading-relaxed mb-8">
-            Through decades of experience serving international clients, we have developed a streamlined travel program for our out-of-town patients.
-            Our proximity to an international airport, private AAAHC-accredited surgery center, discreet onsite and offsite accommodations,
-            and concierge offerings ensure your experience with us will be uncomplicated and rewarding.
+            {t('travelConciergeDescription')}
           </p>
           <a href="#" className="inline-flex items-center text-white hover:text-gold-500 transition-colors font-bold tracking-wide border-b border-transparent hover:border-gold-500 pb-1">
-            Learn About Our Travel Program <ChevronRight size={16} className="ml-2" />
+            {t('travelLearnMore')} <ChevronRight size={16} className="ml-2" />
           </a>
         </div>
       </div>

@@ -42,6 +42,7 @@ const Header: React.FC = () => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAtTop, setIsAtTop] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
 
@@ -57,7 +58,10 @@ const Header: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+      setIsAtTop(window.scrollY <= 20);
     };
+    // Check initial state
+    setIsAtTop(window.scrollY <= 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -311,17 +315,19 @@ const Header: React.FC = () => {
     { name: t('navContact'), href: '#contact' },
   ];
 
-  // Check if on a case detail page (which has dark header section)
+  // Check if on a case detail page or procedure page (which have dark header sections)
   const isCaseDetailPage = location.pathname.includes('/case/');
+  const isProcedurePage = location.pathname.includes('/procedure/');
+  const hasDarkHero = isCaseDetailPage || isProcedurePage;
 
-  // On case detail pages, header should be transparent at top (like procedure pages)
-  // On other pages, header is white at top
-  const hasWhiteBg = isScrolled || Boolean(hoveredNav) || (!isCaseDetailPage && window.scrollY === 0);
+  // On pages with dark hero sections, header should be transparent at top
+  // On home page and other pages, header is white at top
+  const hasWhiteBg = isScrolled || Boolean(hoveredNav) || (!hasDarkHero && isAtTop);
 
   return (
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled || hoveredNav || (!isCaseDetailPage && window.scrollY === 0) ? 'bg-white shadow-md py-0' : 'bg-transparent py-4'
+        hasWhiteBg ? 'bg-white shadow-md py-0' : 'bg-transparent py-4'
       }`}
       onMouseLeave={() => setHoveredNav(null)}
     >
