@@ -3,7 +3,16 @@
  * 根据 R2_IMAGE_PATHS.md 规范访问 Cloudflare R2 图片
  */
 
-const R2_PUBLIC_URL = import.meta.env.VITE_R2_PUBLIC_URL || 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev';
+// Prefer custom domain if configured, then fall back to the R2 public URL.
+const R2_BASE_URL =
+  import.meta.env.VITE_R2_CUSTOM_DOMAIN ||
+  import.meta.env.VITE_R2_PUBLIC_URL ||
+  'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev';
+
+// Debug: Log the R2 base URL configuration
+console.log('🖼️ [imageUtils] R2_BASE_URL:', R2_BASE_URL);
+console.log('🖼️ [imageUtils] VITE_R2_CUSTOM_DOMAIN:', import.meta.env.VITE_R2_CUSTOM_DOMAIN);
+console.log('🖼️ [imageUtils] VITE_R2_PUBLIC_URL:', import.meta.env.VITE_R2_PUBLIC_URL);
 
 // 缓存破坏：每小时更新一次（平衡缓存效率和内容新鲜度）
 const CACHE_BUSTER = `?v=${Math.floor(Date.now() / 3600000)}`;
@@ -25,7 +34,9 @@ export function createSlug(name: string): string {
 export function getHomepageImage(
   type: 'hero' | 'face' | 'body' | 'non-surgical' | 'concierge' | 'gallery'
 ): string {
-  return `${R2_PUBLIC_URL}/homepage/${type}.jpg${CACHE_BUSTER}`;
+  const url = `${R2_BASE_URL}/homepage/${type}.jpg${CACHE_BUSTER}`;
+  console.log(`🖼️ [getHomepageImage] ${type} ->`, url);
+  return url;
 }
 
 /**
@@ -36,7 +47,7 @@ export function getProcedureImage(
   type: 'hero' | 'benefits' | 'candidate'
 ): string {
   const slug = createSlug(procedureName);
-  return `${R2_PUBLIC_URL}/procedures/${slug}/${type}.jpg${CACHE_BUSTER}`;
+  return `${R2_BASE_URL}/procedures/${slug}/${type}.jpg${CACHE_BUSTER}`;
 }
 
 /**
@@ -48,7 +59,7 @@ export function getProcedureCaseImage(
   imageIndex: number
 ): string {
   const slug = createSlug(procedureName);
-  return `${R2_PUBLIC_URL}/procedures/${slug}/case-${caseNumber}-${imageIndex}.jpg${CACHE_BUSTER}`;
+  return `${R2_BASE_URL}/procedures/${slug}/case-${caseNumber}-${imageIndex}.jpg${CACHE_BUSTER}`;
 }
 
 /**
@@ -57,14 +68,16 @@ export function getProcedureCaseImage(
 export function getGallerySubcategoryImage(
   subcategory: 'face-neck' | 'facial-contouring-implants' | 'injectables-regenerative' | 'lips' | 'skin-tightening-resurfacing' | 'hair'
 ): string {
-  return `${R2_PUBLIC_URL}/gallery/${subcategory}.jpg${CACHE_BUSTER}`;
+  const url = `${R2_BASE_URL}/gallery/${subcategory}.jpg${CACHE_BUSTER}`;
+  console.log(`🖼️ [getGallerySubcategoryImage] ${subcategory} ->`, url);
+  return url;
 }
 
 /**
  * 获取 Reviews 步骤图片 URL
  */
 export function getReviewsStepImage(step: 1 | 2 | 3): string {
-  return `${R2_PUBLIC_URL}/reviews/step-${step}.jpg${CACHE_BUSTER}`;
+  return `${R2_BASE_URL}/reviews/step-${step}.jpg${CACHE_BUSTER}`;
 }
 
 /**
