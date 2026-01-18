@@ -31,12 +31,12 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
   //    before it starts fading out.
   
   const gradientClass = align === 'left'
-    ? (isDark 
-        ? 'bg-gradient-to-r from-[#0f201b] from-30% via-[#0f201b]/95 via-60% to-transparent' 
-        : 'bg-gradient-to-r from-[#f4f7f5] from-30% via-[#f4f7f5]/95 via-60% to-transparent')
-    : (isDark 
-        ? 'bg-gradient-to-l from-[#0f201b] from-30% via-[#0f201b]/95 via-60% to-transparent' 
-        : 'bg-gradient-to-l from-[#f4f7f5] from-30% via-[#f4f7f5]/95 via-60% to-transparent');
+    ? (isDark
+        ? 'bg-gradient-to-r from-[#0f201b]/40 from-20% via-[#0f201b]/20 via-50% to-transparent'
+        : 'bg-gradient-to-r from-[#f4f7f5]/40 from-20% via-[#f4f7f5]/20 via-50% to-transparent')
+    : (isDark
+        ? 'bg-gradient-to-l from-[#0f201b]/40 from-20% via-[#0f201b]/20 via-50% to-transparent'
+        : 'bg-gradient-to-l from-[#f4f7f5]/40 from-20% via-[#f4f7f5]/20 via-50% to-transparent');
 
   // Text Alignment Logic
   // We constrain the text width and margin to ensure it sits perfectly inside the solid part of the gradient.

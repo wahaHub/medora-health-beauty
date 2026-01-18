@@ -40,3 +40,6 @@ crash.*.log
 
 # Admin Console
 admin/uploads/
+
+# Generated images
+generated_procedure_hero_images/

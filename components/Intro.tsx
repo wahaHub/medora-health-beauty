@@ -8,17 +8,17 @@ const Intro: React.FC = () => {
 
   return (
     <section className="relative h-screen min-h-[700px] flex items-center overflow-hidden">
-      {/* Background Image - Luxury/Team Vibe */}
+      {/* Background Video - Luxury/Team Vibe */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={heroImage}
-          alt="Medora Health Team and Interior"
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
           className="w-full h-full object-cover object-center"
-          onError={(e) => {
-            // Fallback 到 Unsplash 图片如果 R2 图片加载失败
-            e.currentTarget.src = "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop";
-          }}
-        />
+        >
+          <source src="https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/hero.mp4" type="video/mp4" />
+        </video>
       </div>
 
       {/* Gradient Overlay - Deep Forest Green to Transparent (Left to Right) */}
