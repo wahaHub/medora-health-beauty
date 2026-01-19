@@ -65,6 +65,18 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
           >
             <source src="https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/face.mp4" type="video/mp4" />
           </video>
+        ) : id === 'body' ? (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className={`w-full h-full object-cover ${
+              align === 'left' ? 'object-[80%_center]' : 'object-[20%_center]'
+            }`}
+          >
+            <source src="https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/body.mp4" type="video/mp4" />
+          </video>
         ) : (
           <img
             src={image}
@@ -75,10 +87,9 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
             onError={(e) => {
               // Fallback images if R2 loading fails
               const fallbacks: Record<string, string> = {
-                'body': 'https://images.unsplash.com/photo-1609121855913-9a3d4f40f3c5?q=80&w=1974&auto=format&fit=crop',
                 'nonsurgical': 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1964&auto=format&fit=crop'
               };
-              e.currentTarget.src = fallbacks[id] || fallbacks['body'];
+              e.currentTarget.src = fallbacks[id] || fallbacks['nonsurgical'];
             }}
           />
         )}

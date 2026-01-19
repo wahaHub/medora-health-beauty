@@ -32,42 +32,24 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState<'face' | 'body' | 'non-surgical'>('face');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Prefer backend (R2) images; fall back to the previous Unsplash images if missing.
-  const getCategoryCoverImage = (tab: 'face' | 'body' | 'non-surgical', title: string, fallback: string) => {
-    console.log(`🎨 [Gallery] getCategoryCoverImage called: tab="${tab}", title="${title}"`);
-    try {
-      // Face tab has dedicated subcategory covers in R2
-      if (tab === 'face') {
-        const map: Record<string, Parameters<typeof getGallerySubcategoryImage>[0]> = {
-          'Face & Neck': 'face-neck',
-          'Facial Contouring & Implants': 'facial-contouring-implants',
-          'Injectables & Regenerative': 'injectables-regenerative',
-          'Lips': 'lips',
-          'Skin Tightening & Resurfacing': 'skin-tightening-resurfacing',
-          'Hair': 'hair',
-        };
-        const key = map[title];
-        if (key) {
-          const result = { src: getGallerySubcategoryImage(key), fallback };
-          console.log(`🎨 [Gallery] Returning R2 image for "${title}":`, result);
-          return result;
-        }
-      }
+  // Get R2 gallery images with fallback
+  const getGalleryCategoryImage = (category: 'face' | 'body' | 'non-surgical', filename: string, fallback: string) => {
+    const R2_BASE_URL = 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev';
+    const CACHE_BUSTER = `?v=${Math.floor(Date.now() / 3600000)}`;
+    const src = `${R2_BASE_URL}/gallery/${category}/${filename}${CACHE_BUSTER}`;
+    console.log(`🎨 [Gallery] getGalleryCategoryImage: category="${category}", filename="${filename}", src="${src}"`);
+    return { src, fallback };
+  };
 
-      // Body / non-surgical: use category-wide backend covers (until per-subcategory covers exist)
-      if (tab === 'body') {
-        const result = { src: getHomepageImage('body'), fallback };
-        console.log(`🎨 [Gallery] Returning homepage image for body:`, result);
-        return result;
-      }
-      const result = { src: getHomepageImage('non-surgical'), fallback };
-      console.log(`🎨 [Gallery] Returning homepage image for non-surgical:`, result);
-      return result;
-    } catch (error) {
-      console.error(`❌ [Gallery] Error in getCategoryCoverImage:`, error);
-      return { src: fallback, fallback };
-    }
+  // Handle tab switching with loading state
+  const handleTabChange = (tab: 'face' | 'body' | 'non-surgical') => {
+    if (tab === activeTab) return;
+    setIsLoading(true);
+    setActiveTab(tab);
+    // Reset loading after a brief moment to allow images to start loading
+    setTimeout(() => setIsLoading(false), 300);
   };
 
   // Helper function to translate procedure/category names
@@ -83,7 +65,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
     face: [
       {
         title: "Face & Neck",
-        image: getCategoryCoverImage('face', 'Face & Neck', "https://images.unsplash.com/photo-1510526786859-99a38f8f267c?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('face', 'face-neck.jpg', "https://images.unsplash.com/photo-1510526786859-99a38f8f267c?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Brow Lift",
           "Temples Lift / Temporofrontal Lift",
@@ -106,7 +88,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "Facial Contouring & Implants",
-        image: getCategoryCoverImage('face', 'Facial Contouring & Implants', "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('face', 'facial-contouring-implants.jpg', "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Cheek Augmentation",
           "Chin Augmentation",
@@ -119,7 +101,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "Injectables & Regenerative",
-        image: getCategoryCoverImage('face', 'Injectables & Regenerative', "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('face', 'injectables-regenerative.jpg', "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Facial Injectables",
           "BOTOX® & Neurotoxins",
@@ -133,7 +115,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "Lips",
-        image: getCategoryCoverImage('face', 'Lips', "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('face', 'lips.jpg', "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Lip Augmentation",
           "Lip Lift"
@@ -141,7 +123,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "Skin Tightening & Resurfacing",
-        image: getCategoryCoverImage('face', 'Skin Tightening & Resurfacing', "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('face', 'skin-tightening-resurfacing.jpg', "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Neck Tightening",
           "Renuvion® Skin Tightening Treatment",
@@ -152,7 +134,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "Hair",
-        image: getCategoryCoverImage('face', 'Hair', "https://images.unsplash.com/photo-1620216733221-d706598375e0?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('face', 'hair.jpg', "https://images.unsplash.com/photo-1620216733221-d706598375e0?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Hair Restoration"
         ]
@@ -161,7 +143,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
     body: [
       {
         title: "Core Body Contouring",
-        image: getCategoryCoverImage('body', 'Core Body Contouring', "https://images.unsplash.com/photo-1609121855913-9a3d4f40f3c5?q=80&w=1974&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('body', 'core-body-contouring.jpg', "https://images.unsplash.com/photo-1609121855913-9a3d4f40f3c5?q=80&w=1974&auto=format&fit=crop"),
         items: [
           "Liposuction",
           "Tummy Tuck",
@@ -173,7 +155,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "Arms / Legs / Back",
-        image: getCategoryCoverImage('body', 'Arms / Legs / Back', "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('body', 'arms-legs-back.jpg', "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Arm Lift",
           "Thigh Lift",
@@ -182,7 +164,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "After Weight Loss / Body Lifts",
-        image: getCategoryCoverImage('body', 'After Weight Loss / Body Lifts', "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('body', 'after-weight-loss-body-lifts.jpg', "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Body Contouring After Weight Loss",
           "Lower Body Lift / 360 Body Lift",
@@ -193,7 +175,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "Breast / Chest",
-        image: getCategoryCoverImage('body', 'Breast / Chest', "https://images.unsplash.com/photo-1605763240004-7e93b172d754?q=80&w=1887&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('body', 'breast-chest.jpg', "https://images.unsplash.com/photo-1605763240004-7e93b172d754?q=80&w=1887&auto=format&fit=crop"),
         items: [
           "Breast Augmentation",
           "Breast Lift",
@@ -204,7 +186,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "Buttocks",
-        image: getCategoryCoverImage('body', 'Buttocks', "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('body', 'buttocks.jpg', "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Brazilian Butt Lift",
           "Buttock Lift"
@@ -212,14 +194,14 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "Intimate",
-        image: getCategoryCoverImage('body', 'Intimate', "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('body', 'intimate.jpg', "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Labiaplasty"
         ]
       },
       {
         title: "Cellulite",
-        image: getCategoryCoverImage('body', 'Cellulite', "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('body', 'cellulite.jpg', "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Avéli® Cellulite Treatment"
         ]
@@ -228,7 +210,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
     "non-surgical": [
       {
         title: "Injectables",
-        image: getCategoryCoverImage('non-surgical', 'Injectables', "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('non-surgical', 'injectables.jpg', "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "BOTOX® Cosmetic",
           "BOTOX® & Neurotoxins",
@@ -239,21 +221,21 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "Cellulite",
-        image: getCategoryCoverImage('non-surgical', 'Cellulite', "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('non-surgical', 'cellulite.jpg', "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Avéli® Cellulite Treatment"
         ]
       },
       {
         title: "Skin Tightening",
-        image: getCategoryCoverImage('non-surgical', 'Skin Tightening', "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('non-surgical', 'skin-tightening.jpg', "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Non-surgical Skin Tightening"
         ]
       },
       {
         title: "Resurfacing / Skin Renewal",
-        image: getCategoryCoverImage('non-surgical', 'Resurfacing / Skin Renewal', "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('non-surgical', 'resurfacing-skin-renewal.jpg', "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Chemical Peels",
           "Skin Resurfacing",
@@ -263,25 +245,16 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       },
       {
         title: "Light / Laser-Based Skin Treatments",
-        image: getCategoryCoverImage('non-surgical', 'Light / Laser-Based Skin Treatments', "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('non-surgical', 'light-laser-based-skin-treatments.jpg', "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "IPL / Photofacial"
         ]
       },
       {
         title: "Hair Removal",
-        image: getCategoryCoverImage('non-surgical', 'Hair Removal', "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=2070&auto=format&fit=crop"),
+        image: getGalleryCategoryImage('non-surgical', 'hair-removal.jpg', "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=2070&auto=format&fit=crop"),
         items: [
           "Laser Hair Removal"
-        ]
-      },
-      {
-        title: "Collagen / Regenerative",
-        image: getCategoryCoverImage('non-surgical', 'Collagen / Regenerative', "https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?q=80&w=2070&auto=format&fit=crop"),
-        items: [
-          "Collagen Stimulators",
-          "Microneedling",
-          "PRP / PRF"
         ]
       }
     ]
@@ -327,7 +300,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             {/* Category Tabs */}
             <div className="flex gap-2 w-full md:w-auto">
               <button
-                onClick={() => setActiveTab('face')}
+                onClick={() => handleTabChange('face')}
                 className={`flex-1 md:flex-initial px-6 py-3 uppercase tracking-[0.15em] text-xs font-bold transition-colors ${
                   activeTab === 'face'
                     ? 'bg-navy-900 text-white'
@@ -337,7 +310,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                 {t('galleryFace')}
               </button>
               <button
-                onClick={() => setActiveTab('body')}
+                onClick={() => handleTabChange('body')}
                 className={`flex-1 md:flex-initial px-6 py-3 uppercase tracking-[0.15em] text-xs font-bold transition-colors ${
                   activeTab === 'body'
                     ? 'bg-navy-900 text-white'
@@ -347,7 +320,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                 {t('galleryBody')}
               </button>
               <button
-                onClick={() => setActiveTab('non-surgical')}
+                onClick={() => handleTabChange('non-surgical')}
                 className={`flex-1 md:flex-initial px-6 py-3 uppercase tracking-[0.15em] text-xs font-bold transition-colors ${
                   activeTab === 'non-surgical'
                     ? 'bg-navy-900 text-white'
@@ -368,6 +341,14 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       {/* 3. Categories Grid */}
       <section className="py-16 md:py-24 bg-sage-50">
         <div className="container mx-auto px-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-32">
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-sage-300 border-t-navy-900 mb-4"></div>
+                <p className="text-stone-500 text-lg font-light">Loading images...</p>
+              </div>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {currentCategories.map((cat, idx) => (
               <div key={idx} className="flex flex-col">
@@ -418,6 +399,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 
