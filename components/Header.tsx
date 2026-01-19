@@ -36,6 +36,15 @@ type ProcedureNameTranslations = {
 
 const typedProcedureNames = procedureNames as ProcedureNameTranslations;
 
+interface Surgeon {
+  surgeon_id: string;
+  name: string;
+  title: string;
+  specialties: string[];
+  experience_years: number;
+  image_url: string | null;
+}
+
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,6 +54,8 @@ const Header: React.FC = () => {
   const [isAtTop, setIsAtTop] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
+  const [surgeons, setSurgeons] = useState<Surgeon[]>([]);
+  const [surgeonsLoading, setSurgeonsLoading] = useState(true);
 
   // Helper function to translate procedure/menu item names
   const translateLabel = (englishLabel: string): string => {
@@ -54,6 +65,37 @@ const Header: React.FC = () => {
     }
     return englishLabel; // Fallback to English if no translation found
   };
+
+  // Fetch surgeons data
+  useEffect(() => {
+    const fetchSurgeons = async () => {
+      try {
+        setSurgeonsLoading(true);
+        const response = await fetch('https://www.medorabeauty.com/api/surgeons');
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data) {
+            // Get unique surgeons from all specialties
+            const allSurgeons = Object.values(result.data.surgeonsBySpecialty).flat() as Surgeon[];
+            const uniqueSurgeons = allSurgeons.filter((surgeon: Surgeon, index: number, self: Surgeon[]) =>
+              index === self.findIndex((s: Surgeon) => s.surgeon_id === surgeon.surgeon_id)
+            );
+            // Sort by name and take first 8 surgeons
+            const sortedSurgeons = uniqueSurgeons
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .slice(0, 8);
+            setSurgeons(sortedSurgeons);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch surgeons:', error);
+      } finally {
+        setSurgeonsLoading(false);
+      }
+    };
+
+    fetchSurgeons();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -115,19 +157,28 @@ const Header: React.FC = () => {
     }
   };
 
+  // Dynamic surgeon menu items
+  const surgeonMenuItems: SubMenuItem[] = surgeonsLoading
+    ? [
+        { label: 'Our Surgeons', isHeader: true },
+        { label: 'Loading...', isSub: true }
+      ]
+    : [
+        { label: 'Our Surgeons', isHeader: true },
+        ...surgeons.map((surgeon: Surgeon) => ({
+          label: surgeon.name,
+          isSub: true,
+          href: `/surgeon/${surgeon.surgeon_id}`
+        })),
+        { label: 'View All Surgeons →', isSub: false, href: '/surgeons' }
+      ];
+
   const navItems: NavItem[] = [
-    { 
-      name: t('navAbout'), 
+    {
+      name: t('navAbout'),
       href: '#about',
       columns: [
-        [
-          { label: 'Our Surgeons', isHeader: true },
-          { label: 'Dr. Zhang Yimei', isSub: true },
-          { label: 'Dr. Michael Chen', isSub: true },
-          { label: 'Dr. Liu Wei', isSub: true },
-          { label: 'Dr. Emily Zhao', isSub: true },
-          { label: 'Dr. David Wang', isSub: true }
-        ],
+        surgeonMenuItems,
         [
           { label: 'Our Team' },
           { label: 'Patient Reviews' },
