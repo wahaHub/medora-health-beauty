@@ -34,7 +34,9 @@ export function createSlug(name: string): string {
 export function getHomepageImage(
   type: 'hero' | 'face' | 'body' | 'non-surgical' | 'concierge' | 'gallery'
 ): string {
-  const url = `${R2_BASE_URL}/homepage/${type}.jpg${CACHE_BUSTER}`;
+  // Special case: concierge uses uppercase filename
+  const filename = type === 'concierge' ? 'CONCIERGE.jpg' : `${type}.jpg`;
+  const url = `${R2_BASE_URL}/homepage/${filename}${CACHE_BUSTER}`;
   console.log(`🖼️ [getHomepageImage] ${type} ->`, url);
   return url;
 }

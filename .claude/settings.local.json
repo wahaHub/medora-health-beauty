@@ -23,7 +23,11 @@
       "Bash(xargs -0 -I {} sh -c 'mv \"\"\"\"{}\"\"\"\" \"\"\"\"$(echo \"\"\"\"{}\"\"\"\" | sed \"\"\"\"s/.jpeg$/.jpg/\"\"\"\")\"\"\"\"')",
       "Bash(cat:*)",
       "Bash(AWS_ACCESS_KEY_ID=3565610e31be5f511828a7a5d8fd8f4a AWS_SECRET_ACCESS_KEY=5d821662f042b6f28d19ea8baf606f92e2f578efbaaba0d00f09e0dc14e6c44c aws s3 ls s3://medora-images/procedures/deep-neck-contouring/ --endpoint-url https://82cdbf36c265c0d9e4b4e1c6100c26d7.r2.cloudflarestorage.com)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(grep:*)",
+      "Bash(export SUPABASE_URL='https://yamlikuqgmqiiqeaqzaz.supabase.co')",
+      "Bash(export:*)",
+      "Bash(ping:*)"
     ],
     "deny": [],
     "ask": []
