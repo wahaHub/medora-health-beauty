@@ -28,7 +28,7 @@ const TravelProgram: React.FC = () => {
           <p className="text-gray-300 text-lg leading-relaxed mb-8">
             {t('travelConciergeDescription')}
           </p>
-          <a href="#" className="inline-flex items-center text-white hover:text-gold-500 transition-colors font-bold tracking-wide border-b border-transparent hover:border-gold-500 pb-1">
+          <a href="/travel" className="inline-flex items-center text-white hover:text-gold-500 transition-colors font-bold tracking-wide border-b border-transparent hover:border-gold-500 pb-1">
             {t('travelLearnMore')} <ChevronRight size={16} className="ml-2" />
           </a>
         </div>

@@ -77,6 +77,18 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
           >
             <source src="https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/body.mp4" type="video/mp4" />
           </video>
+        ) : id === 'nonsurgical' ? (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className={`w-full h-full object-cover ${
+              align === 'left' ? 'object-[80%_center]' : 'object-[20%_center]'
+            }`}
+          >
+            <source src="https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/non-surgical.mp4" type="video/mp4" />
+          </video>
         ) : (
           <img
             src={image}
@@ -193,7 +205,19 @@ const Categories: React.FC = () => {
   return (
     <section className="flex flex-col">
       {categories.map((cat, index) => (
-        <CategorySection key={index} {...cat} />
+        <React.Fragment key={index}>
+          <CategorySection {...cat} />
+          {/* Subtle divider between sections - elegant gold line */}
+          {index < categories.length - 1 && (
+            <div className="relative h-16 bg-gradient-to-b from-transparent via-sage-50 to-transparent">
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2">
+                <div className="container mx-auto px-6">
+                  <div className="h-px bg-gradient-to-r from-transparent via-gold-400/30 to-transparent"></div>
+                </div>
+              </div>
+            </div>
+          )}
+        </React.Fragment>
       ))}
     </section>
   );
