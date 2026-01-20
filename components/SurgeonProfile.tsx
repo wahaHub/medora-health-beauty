@@ -32,8 +32,8 @@ const SurgeonProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Enable scroll reveal animations
-  useScrollReveal(true);
+  // Enable scroll reveal animations - only after data is loaded
+  useScrollReveal(!loading && surgeon !== null);
 
   // Placeholder images
   const placeholderHeroImage = "https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=2670&auto=format&fit=crop";
