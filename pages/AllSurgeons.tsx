@@ -32,8 +32,8 @@ const AllSurgeons: React.FC = () => {
     totalSurgeons: number;
   } | null>(null);
 
-  // Enable scroll reveal animations
-  useScrollReveal(true);
+  // Enable scroll reveal animations - only after data is loaded
+  useScrollReveal(!loading && surgeonsData !== null);
 
   // Fetch surgeons data from API
   useEffect(() => {

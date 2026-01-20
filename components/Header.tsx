@@ -114,6 +114,13 @@ const Header: React.FC = () => {
     setHoveredNav(null);
 
     // Handle different navigation cases
+    // If href is a direct path (starts with /), navigate directly
+    if (href && href.startsWith('/')) {
+      navigate(href);
+      window.scrollTo(0, 0);
+      return;
+    }
+
     // Check href first (language-independent), then fallback to pageName for backwards compatibility
     if (href === '#gallery' || pageName === 'GALLERY' || pageName === 'gallery') {
       navigate('/gallery');
@@ -477,7 +484,7 @@ const Header: React.FC = () => {
                           ) : (
                             <a
                               href={item.href || "#"}
-                              onClick={(e) => handleLinkClick(e, item.label, true)}
+                              onClick={(e) => handleLinkClick(e, item.label, true, item.href)}
                               className={`block transition-colors hover:text-gold-500 ${
                                 item.isSub
                                   ? 'pl-4 text-sage-300 text-sm flex items-center'
@@ -520,7 +527,7 @@ const Header: React.FC = () => {
                         <div
                           key={idx}
                           className={`text-stone-600 text-sm ${item.isSub ? 'pl-4' : ''}`}
-                          onClick={(e) => handleLinkClick(e, item.label, true)}
+                          onClick={(e) => handleLinkClick(e, item.label, true, item.href)}
                         >
                           {translateLabel(item.label)}
                         </div>
