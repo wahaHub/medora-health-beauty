@@ -109,8 +109,10 @@ const SurgeonProfile: React.FC = () => {
     );
   }
 
-  // Calculate total procedures
-  const totalProcedures = Object.values(surgeon.procedures_count).reduce((sum, count) => sum + count, 0);
+  // Calculate total procedures (with safe fallback)
+  const totalProcedures = surgeon.procedures_count
+    ? Object.values(surgeon.procedures_count).reduce((sum, count) => sum + count, 0)
+    : 0;
 
   return (
     <div className="bg-white animate-fade-in-up">
@@ -128,51 +130,137 @@ const SurgeonProfile: React.FC = () => {
 
         {/* Content */}
         <div className="container mx-auto px-6 relative z-20 pt-20">
-          <div className="max-w-2xl">
-            <div className="mb-8">
-              <div className="font-serif text-3xl italic tracking-wide text-white">Medora Health</div>
-              <div className="text-xs uppercase tracking-[0.2em] font-light text-sage-200 border-t border-sage-200/30 pt-1 mt-1 inline-block">
-                Center for Plastic Surgery
-              </div>
+          <div className="flex flex-col lg:flex-row-reverse gap-8 items-start">
+            {/* Left Sidebar - Stats & Certifications */}
+            <div className="w-full lg:w-80 shrink-0 space-y-6 lg:order-first">
+              {/* Surgical Volume Highlights */}
+              {surgeon.procedures_count && Object.keys(surgeon.procedures_count).length > 0 && (
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 scroll-reveal">
+                  <h3 className="text-gold-400 uppercase tracking-[0.2em] text-xs font-bold mb-4">
+                    Surgical Volume Highlights
+                  </h3>
+                  <div className="space-y-4">
+                    {Object.entries(surgeon.procedures_count).map(([procedure, count]) => {
+                      const maxCount = Math.max(...Object.values(surgeon.procedures_count));
+                      const percentage = (count / maxCount) * 100;
+                      return (
+                        <div key={procedure}>
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="text-white text-sm capitalize">
+                              {procedure.replace(/_/g, ' ')}
+                            </span>
+                            <span className="text-gold-400 font-bold text-sm">{count}</span>
+                          </div>
+                          <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
+                            <div
+                              className="bg-gold-400 h-full transition-all duration-500"
+                              style={{ width: `${percentage}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Board Certifications */}
+              {surgeon.certifications && surgeon.certifications.length > 0 && (
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 scroll-reveal">
+                  <h3 className="text-gold-400 uppercase tracking-[0.2em] text-xs font-bold mb-4">
+                    Board Certifications
+                  </h3>
+                  <div className="space-y-3">
+                    {surgeon.certifications.map((cert, idx) => (
+                      <div key={idx} className="flex items-start gap-3">
+                        <div className="shrink-0 w-5 h-5 rounded-full bg-gold-400 flex items-center justify-center mt-0.5">
+                          <svg
+                            className="w-3 h-3 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={3}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        </div>
+                        <span className="text-white text-sm leading-relaxed">{cert}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Breadcrumb */}
-            <button
-              onClick={() => navigate('/surgeons')}
-              className="text-[10px] md:text-xs uppercase tracking-widest text-gold-500 mb-4 font-sans hover:text-gold-400 transition-colors flex items-center gap-2"
-            >
-              <ArrowLeft size={14} />
-              <span>Home <span className="mx-2 text-white/40">|</span> About <span className="mx-2 text-white/40">|</span> Our Surgeons <span className="mx-2 text-white/40">|</span> {surgeon.name}</span>
-            </button>
-
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white uppercase tracking-wide font-light mb-4 leading-tight scroll-reveal">
-              {surgeon.name}
-            </h1>
-            <p className="text-sage-100 text-sm md:text-base uppercase tracking-[0.2em] mb-8 font-light border-l-2 border-gold-500 pl-4 scroll-reveal">
-              {surgeon.title}
-            </p>
-
-            <p className="text-sage-200 text-lg leading-relaxed mb-10 max-w-lg font-light scroll-reveal">
-              {surgeon.bio.intro}
-            </p>
-
-            <div className="flex flex-wrap gap-4 mb-10">
-              <div className="flex items-center gap-2 text-sage-200">
-                <Calendar size={18} />
-                <span>{surgeon.experience_years}+ Years Experience</span>
+            {/* Right Content - Main Info */}
+            <div className="flex-1">
+              <div className="mb-8">
+                <div className="font-serif text-3xl italic tracking-wide text-white">Medora Health</div>
+                <div className="text-xs uppercase tracking-[0.2em] font-light text-sage-200 border-t border-sage-200/30 pt-1 mt-1 inline-block">
+                  Center for Plastic Surgery
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-sage-200">
-                <Award size={18} />
-                <span>{surgeon.specialties.length} Specialties</span>
+
+              {/* Breadcrumb */}
+              <div className="text-[10px] md:text-xs uppercase tracking-widest mb-4 font-sans">
+                <button
+                  onClick={() => navigate('/')}
+                  className="text-gold-500 hover:text-gold-400 transition-colors"
+                >
+                  Home
+                </button>
+                <span className="mx-2 text-white/40">|</span>
+                <button
+                  onClick={() => navigate('/surgeons')}
+                  className="text-gold-500 hover:text-gold-400 transition-colors"
+                >
+                  About
+                </button>
+                <span className="mx-2 text-white/40">|</span>
+                <button
+                  onClick={() => navigate('/surgeons')}
+                  className="text-gold-500 hover:text-gold-400 transition-colors"
+                >
+                  Our Surgeons
+                </button>
+                <span className="mx-2 text-white/40">|</span>
+                <span className="text-white">{surgeon.name}</span>
               </div>
+
+              <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white uppercase tracking-wide font-light mb-4 leading-tight scroll-reveal">
+                {surgeon.name}
+              </h1>
+
+              <p className="text-sage-100 text-base md:text-lg mb-8 font-light scroll-reveal">
+                {surgeon.title}
+              </p>
+
+              <p className="text-sage-200 text-lg leading-relaxed mb-10 max-w-lg font-light scroll-reveal">
+                {surgeon.bio.intro}
+              </p>
+
+              <div className="flex flex-wrap gap-4 mb-10">
+                <div className="flex items-center gap-2 text-sage-200">
+                  <Calendar size={18} />
+                  <span>{surgeon.experience_years}+ Years Experience</span>
+                </div>
+                <div className="flex items-center gap-2 text-sage-200">
+                  <Award size={18} />
+                  <span>{surgeon.specialties.length} Specialties</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => navigate('/contact')}
+                className="bg-[#8b5e3c] text-white px-8 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-[#6d4a2f] transition-colors"
+              >
+                Request A Consultation
+              </button>
             </div>
-
-            <button
-              onClick={() => navigate('/contact')}
-              className="bg-[#8b5e3c] text-white px-8 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-[#6d4a2f] transition-colors"
-            >
-              Request A Consultation
-            </button>
           </div>
         </div>
       </section>
