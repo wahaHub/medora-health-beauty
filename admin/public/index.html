@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medora Admin Console</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    /* ==================== 顶部导航栏 ==================== */
+    .top-nav {
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 0 30px;
+      height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    .top-nav .logo {
+      font-size: 20px;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .top-nav .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .top-nav button {
+      padding: 8px 16px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    /* ==================== 侧边栏 ==================== */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 60px;
+      width: 250px;
+      height: calc(100vh - 60px);
+      background: white;
+      border-right: 1px solid #e0e0e0;
+      overflow-y: auto;
+      padding: 20px 0;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 5px;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      padding: 12px 25px;
+      color: #666;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+
+    .sidebar-menu a:hover {
+      background: #f5f7fa;
+      color: #667eea;
+    }
+
+    .sidebar-menu a.active {
+      background: #e8f0ff;
+      color: #667eea;
+      font-weight: 500;
+      border-right: 3px solid #667eea;
+    }
+
+    .sidebar-menu .icon {
+      margin-right: 10px;
+      font-size: 18px;
+    }
+
+    .sidebar-section {
+      padding: 15px 25px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ==================== 主内容区 ==================== */
+    .main-content {
+      margin-left: 250px;
+      margin-top: 60px;
+      padding: 30px;
+      min-height: calc(100vh - 60px);
+    }
+
+    .page-header {
+      margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .page-header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    /* ==================== 内容卡片 ==================== */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .content-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+
+    .content-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+    }
+
+    .content-card h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .content-card .stats {
+      display: flex;
+      gap: 20px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #f0f0f0;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .content-card .stats span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ==================== 图片槽位 ==================== */
+    .image-slots {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .image-slot {
+      aspect-ratio: 1;
+      border: 2px dashed #ddd;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      background: #fafafa;
+    }
+
+    .image-slot:hover {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .image-slot.filled {
+      border-style: solid;
+      border-color: #4caf50;
+      padding: 0;
+    }
+
+    .image-slot.filled img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-slot .label {
+      font-size: 12px;
+      color: #999;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .image-slot .icon {
+      font-size: 32px;
+      color: #ccc;
+    }
+
+    .image-slot .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .image-slot:hover .overlay {
+      opacity: 1;
+    }
+
+    .image-slot .overlay button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      color: white;
+    }
+
+    .btn-view {
+      background: #2196f3;
+    }
+
+    .btn-replace {
+      background: #ff9800;
+    }
+
+    .btn-delete {
+      background: #f44336;
+    }
+
+    /* ==================== 加载状态 ==================== */
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: #999;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px;
+      color: #999;
+    }
+
+    .empty-state .icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.3;
+    }
+
+    /* ==================== 通知 ==================== */
+    .notification {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      padding: 16px 24px;
+      background: #4caf50;
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: none;
+      z-index: 2000;
+      animation: slideIn 0.3s;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    .notification.show {
+      display: block;
+    }
+
+    .notification.error {
+      background: #f44336;
+    }
+
+    .notification.info {
+      background: #2196F3;
+    }
+
+    /* ==================== 面包屑 ==================== */
+    .breadcrumb {
+      display: flex;
+      gap: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      color: #666;
+    }
+
+    .breadcrumb a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    /* ==================== 按钮 ==================== */
+    .btn-primary {
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-1px);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航栏 -->
+  <div class="top-nav">
+    <div class="logo">🏥 Medora Admin Console</div>
+    <div class="user-menu">
+      <span>👤 admin</span>
+      <button onclick="logout()">退出登录</button>
+    </div>
+  </div>
+
+  <!-- 侧边栏 -->
+  <nav class="sidebar">
+    <ul class="sidebar-menu">
+      <li><a href="#dashboard" class="active"><span class="icon">📊</span>Dashboard</a></li>
+      
+      <div class="sidebar-section">内容管理</div>
+      <li><a href="#homepage"><span class="icon">🏠</span>Homepage</a></li>
+      <li><a href="#surgeons"><span class="icon">👨‍⚕️</span>Surgeons</a></li>
+      <li><a href="#procedures"><span class="icon">💉</span>Procedures</a></li>
+      <li><a href="#gallery"><span class="icon">🖼️</span>Gallery</a></li>
+      <li><a href="#travel"><span class="icon">✈️</span>Travel</a></li>
+      
+      <div class="sidebar-section">其他</div>
+      <li><a href="#other"><span class="icon">📄</span>Other Pages</a></li>
+      <li><a href="#settings"><span class="icon">⚙️</span>Settings</a></li>
+    </ul>
+  </nav>
+
+  <!-- 主内容区 -->
+  <div class="main-content">
+    <div id="content-area">
+      <!-- 动态内容将在这里加载 -->
+      <div class="loading">加载中...</div>
+    </div>
+  </div>
+
+  <!-- 通知 -->
+  <div id="notification" class="notification"></div>
+
+  <!-- 隐藏的文件输入 -->
+  <input type="file" id="fileInput" accept="image/*" style="display: none;">
+
+  <script>
+    // ==================== 全局变量 ====================
+    let currentPage = 'dashboard';
+    let supabaseData = {
+      surgeons: [],
+      procedures: [],
+    };
+
+    // Supabase 配置（从环境变量或配置文件读取）
+    const SUPABASE_URL = 'https://yamlikuqgmqiiqeaqzaz.supabase.co';
+    const SUPABASE_KEY = 'YOUR_KEY'; // 需要配置
+
+    // ==================== 初始化 ====================
+    document.addEventListener('DOMContentLoaded', async () => {
+      setupNavigation();
+      await loadSupabaseData();
+      loadPage('dashboard');
+    });
+
+    // ==================== 导航设置 ====================
+    function setupNavigation() {
+      const links = document.querySelectorAll('.sidebar-menu a');
+      links.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const page = link.getAttribute('href').substring(1);
+          
+          // 更新激活状态
+          links.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+          
+          // 加载页面
+          loadPage(page);
+        });
+      });
+
+      // 处理浏览器后退/前进
+      window.addEventListener('hashchange', () => {
+        const page = window.location.hash.substring(1) || 'dashboard';
+        loadPage(page);
+      });
+    }
+
+    // ==================== 加载 Supabase 数据 ====================
+    async function loadSupabaseData() {
+      try {
+        // 加载医生列表
+        const surgeonsRes = await fetch('/admin/api/surgeons');
+        if (surgeonsRes.ok) {
+          const data = await surgeonsRes.json();
+          supabaseData.surgeons = data.surgeons || [];
+        }
+
+        // 加载手术项目列表
+        const proceduresRes = await fetch('/admin/api/procedures');
+        if (proceduresRes.ok) {
+          const data = await proceduresRes.json();
+          supabaseData.procedures = data.procedures || [];
+        }
+      } catch (error) {
+        console.error('加载数据失败:', error);
+      }
+    }
+
+    // ==================== 页面加载 ====================
+    async function loadPage(page) {
+      currentPage = page;
+      const contentArea = document.getElementById('content-area');
+
+      switch(page) {
+        case 'dashboard':
+          contentArea.innerHTML = renderDashboard();
+          break;
+        case 'homepage':
+          contentArea.innerHTML = renderHomepage();
+          await loadImagesForPage('homepage');
+          break;
+        case 'surgeons':
+          contentArea.innerHTML = renderSurgeons();
+          break;
+        case 'procedures':
+          contentArea.innerHTML = renderProcedures();
+          break;
+        case 'gallery':
+          contentArea.innerHTML = renderGallery();
+          await loadImagesForPage('gallery');
+          break;
+        case 'travel':
+          contentArea.innerHTML = renderTravel();
+          await loadImagesForPage('reviews');
+          break;
+        case 'other':
+          contentArea.innerHTML = renderOther();
+          break;
+        case 'settings':
+          contentArea.innerHTML = renderSettings();
+          break;
+        default:
+          contentArea.innerHTML = '<div class="empty-state"><h2>页面不存在</h2></div>';
+      }
+    }
+
+    /**
+     * 加载指定路径前缀的所有图片
+     */
+    async function loadImagesForPage(prefix) {
+      console.log('🔍 [loadImagesForPage] 开始加载图片:', { prefix });
+
+      try {
+        const apiUrl = `/admin/api/images?prefix=${prefix}/`;
+        console.log('📡 [loadImagesForPage] 请求 API:', apiUrl);
+
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        console.log('📥 [loadImagesForPage] API 响应:', data);
+
+        if (data.success && data.images) {
+          console.log(`✅ [loadImagesForPage] 成功获取 ${data.images.length} 张图片`);
+
+          data.images.forEach((img, index) => {
+            const parts = img.key.split('/');
+            const filename = parts[parts.length - 1];
+            const filenameWithoutExt = filename.replace(/\.(jpg|png|webp)$/, '');
+
+            // 构建 key：prefix-filename
+            const key = `${prefix}-${filenameWithoutExt}`;
+
+            console.log(`🔄 [loadImagesForPage] 图片 ${index + 1}:`, {
+              originalKey: img.key,
+              filename,
+              filenameWithoutExt,
+              constructedKey: key,
+              url: img.url
+            });
+
+            // 更新页面上对应的图片槽位
+            updateImageSlot(key, img.url);
+          });
+        } else {
+          console.warn('⚠️ [loadImagesForPage] 没有找到图片或请求失败');
+        }
+      } catch (error) {
+        console.error('❌ [loadImagesForPage] 加载图片失败:', error);
+      }
+    }
+
+    /**
+     * 更新图片槽位显示
+     */
+    function updateImageSlot(key, imageUrl) {
+      console.log('🔍 [updateImageSlot] 尝试更新槽位:', { key, imageUrl });
+
+      // Debug: 列出页面上所有槽位
+      const allSlots = document.querySelectorAll('.image-slot');
+      console.log('📋 [updateImageSlot] 页面上所有槽位:', Array.from(allSlots).map(s => ({
+        dataKey: s.getAttribute('data-key'),
+        hasDataKey: s.hasAttribute('data-key'),
+        outerHTML: s.outerHTML.substring(0, 100)
+      })));
+
+      const slot = document.querySelector(`[data-key="${key}"]`);
+      if (!slot) {
+        console.error('⚠️ [updateImageSlot] 未找到槽位元素:', key);
+        console.error('   期望的 key:', key);
+        console.error('   查询选择器:', `[data-key="${key}"]`);
+        return;
+      }
+
+      const label = slot.querySelector('.label')?.textContent || key;
+      console.log('✅ [updateImageSlot] 找到槽位，准备更新:', { key, label, imageUrl });
+
+      slot.outerHTML = `
+        <div class="image-slot filled" data-key="${key}">
+          <img src="${imageUrl}" alt="${label}"
+               onload="console.log('✅ [IMG] 图片加载成功:', '${key}', '${imageUrl}')"
+               onerror="console.error('❌ [IMG] 图片加载失败:', '${key}', '${imageUrl}')">
+          <div class="overlay">
+            <button type="button" class="btn-view" onclick="viewImage('${imageUrl}')">查看</button>
+            <button type="button" class="btn-replace" onclick="uploadImage('${key}')">替换</button>
+            <button type="button" class="btn-delete" onclick="deleteImage('${key}')">删除</button>
+          </div>
+        </div>
+      `;
+
+      console.log('✅ [updateImageSlot] 槽位HTML已更新');
+    }
+
+    // ==================== Dashboard 页面 ====================
+    function renderDashboard() {
+      return `
+        <div class="page-header">
+          <h1>📊 Dashboard</h1>
+          <p>内容管理总览</p>
+        </div>
+
+        <div class="content-grid">
+          <div class="content-card" onclick="loadPage('homepage')">
+            <h3>🏠 Homepage</h3>
+            <p>首页图片管理</p>
+            <div class="stats">
+              <span>📷 5 个图片位</span>
+            </div>
+          </div>
+
+          <div class="content-card" onclick="loadPage('surgeons')">
+            <h3>👨‍⚕️ Surgeons</h3>
+            <p>医生照片管理</p>
+            <div class="stats">
+              <span>👥 ${supabaseData.surgeons.length} 位医生</span>
+            </div>
+          </div>
+
+          <div class="content-card" onclick="loadPage('procedures')">
+            <h3>💉 Procedures</h3>
+            <p>手术项目图片</p>
+            <div class="stats">
+              <span>💉 ${supabaseData.procedures.length} 个项目</span>
+            </div>
+          </div>
+
+          <div class="content-card" onclick="loadPage('gallery')">
+            <h3>🖼️ Gallery</h3>
+            <p>图库图片管理</p>
+            <div class="stats">
+              <span>📁 3 个分类</span>
+            </div>
+          </div>
+
+          <div class="content-card" onclick="loadPage('travel')">
+            <h3>✈️ Travel</h3>
+            <p>旅游页面图片</p>
+            <div class="stats">
+              <span>🌍 多张图片</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==================== Homepage 页面 ====================
+    function renderHomepage() {
+      return `
+        <div class="breadcrumb">
+          <a href="#dashboard">Dashboard</a> / <span>Homepage</span>
+        </div>
+
+        <div class="page-header">
+          <h1>🏠 Homepage Images</h1>
+          <p>管理首页的所有图片 (6张)</p>
+        </div>
+
+        <div class="image-slots">
+          ${renderImageSlot('homepage-hero', 'Hero')}
+          ${renderImageSlot('homepage-face', 'Face')}
+          ${renderImageSlot('homepage-body', 'Body')}
+          ${renderImageSlot('homepage-non-surgical', 'Non-Surgical')}
+          ${renderImageSlot('homepage-concierge', 'Concierge Program')}
+          ${renderImageSlot('homepage-gallery', 'Gallery')}
+        </div>
+      `;
+    }
+
+    // ==================== Surgeons 页面 ====================
+    function renderSurgeons() {
+      // 重定向到专门的 Surgeons Manager 页面
+      window.location.href = '/admin/surgeons-manager.html';
+      return '';
+    }
+
+    // ==================== Procedures 页面 ====================
+    function renderProcedures() {
+      // 重定向到专门的 Procedures Manager 页面
+      window.location.href = '/admin/procedures-manager.html';
+      return '';
+    }
+
+    // ==================== Gallery 页面 ====================
+    function renderGallery() {
+      return `
+        <div class="breadcrumb">
+          <a href="#dashboard">Dashboard</a> / <span>Gallery</span>
+        </div>
+
+        <div class="page-header">
+          <h1>🖼️ Gallery - Face Subcategories</h1>
+          <p>Face分类的子分类缩略图 (6张)</p>
+        </div>
+
+        <div class="image-slots">
+          ${renderImageSlot('gallery-face-neck', 'Face & Neck')}
+          ${renderImageSlot('gallery-facial-contouring-implants', 'Facial Contouring & Implants')}
+          ${renderImageSlot('gallery-injectables-regenerative', 'Injectables & Regenerative')}
+          ${renderImageSlot('gallery-lips', 'Lips')}
+          ${renderImageSlot('gallery-skin-tightening-resurfacing', 'Skin Tightening & Resurfacing')}
+          ${renderImageSlot('gallery-hair', 'Hair')}
+        </div>
+      `;
+    }
+
+    // ==================== Travel (Reviews) 页面 ====================
+    function renderTravel() {
+      return `
+        <div class="breadcrumb">
+          <a href="#dashboard">Dashboard</a> / <span>Reviews</span>
+        </div>
+
+        <div class="page-header">
+          <h1>⭐ Reviews Page - Process Steps</h1>
+          <p>评价页面的流程步骤图 (3张)</p>
+        </div>
+
+        <div class="image-slots">
+          ${renderImageSlot('reviews-step-1', 'Step 1')}
+          ${renderImageSlot('reviews-step-2', 'Step 2')}
+          ${renderImageSlot('reviews-step-3', 'Step 3')}
+        </div>
+      `;
+    }
+
+    // ==================== Other 页面 ====================
+    function renderOther() {
+      return `
+        <div class="page-header">
+          <h1>📄 Other Pages</h1>
+          <p>其他页面（开发中）</p>
+        </div>
+        <div class="empty-state">
+          <div class="icon">🚧</div>
+          <p>功能开发中...</p>
+        </div>
+      `;
+    }
+
+    // ==================== Settings 页面 ====================
+    function renderSettings() {
+      return `
+        <div class="page-header">
+          <h1>⚙️ Settings</h1>
+          <p>系统设置</p>
+        </div>
+        <div class="empty-state">
+          <div class="icon">⚙️</div>
+          <p>设置页面开发中...</p>
+        </div>
+      `;
+    }
+
+    // ==================== 渲染图片槽位 ====================
+    function renderImageSlot(key, label, imageUrl = null) {
+      if (imageUrl) {
+        console.log('🎨 [renderImageSlot] 渲染已填充槽位:', { key, label, imageUrl });
+        return `
+          <div class="image-slot filled" data-key="${key}">
+            <img src="${imageUrl}" alt="${label}"
+                 onload="console.log('✅ [IMG] 图片加载成功:', '${key}', '${imageUrl}')"
+                 onerror="console.error('❌ [IMG] 图片加载失败:', '${key}', '${imageUrl}')">
+            <div class="overlay">
+              <button type="button" class="btn-view" onclick="viewImage('${imageUrl}')">查看</button>
+              <button type="button" class="btn-replace" onclick="uploadImage('${key}')">替换</button>
+              <button type="button" class="btn-delete" onclick="deleteImage('${key}')">删除</button>
+            </div>
+          </div>
+        `;
+      } else {
+        console.log('🎨 [renderImageSlot] 渲染空槽位:', { key, label });
+        return `
+          <div class="image-slot" data-key="${key}" onclick="uploadImage('${key}')">
+            <div class="icon">📷</div>
+            <div class="label">${label}</div>
+          </div>
+        `;
+      }
+    }
+
+    // ==================== 工具函数 ====================
+    function showNotification(message, type = 'success') {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = `notification ${type} show`;
+      setTimeout(() => notification.classList.remove('show'), 3000);
+    }
+
+    async function logout() {
+      await fetch('/admin/api/logout', { method: 'POST' });
+      window.location.href = '/admin/login';
+    }
+
+    function uploadImage(key) {
+      // 创建文件输入
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // 解析 key 来确定路径和文件名
+        const { path, filename } = parseImageKey(key);
+
+        console.log('📤 [uploadImage] 开始上传:', {
+          key,
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type,
+          parsedPath: path,
+          parsedFilename: filename,
+          fullR2Key: `${path}/${filename}`
+        });
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('path', path);
+        formData.append('filename', filename);
+
+        try {
+          showNotification('上传中...', 'info');
+
+          const response = await fetch('/admin/api/upload', {
+            method: 'POST',
+            body: formData
+          });
+
+          const data = await response.json();
+
+          console.log('📥 [uploadImage] 上传响应:', data);
+
+          if (data.success) {
+            console.log('✅ [uploadImage] 上传成功!', {
+              url: data.url,
+              key: data.key,
+              size: data.size
+            });
+
+            showNotification('上传成功！', 'success');
+
+            // 重新加载当前页面内容
+            console.log('🔄 [uploadImage] 准备重新加载页面...');
+            setTimeout(() => {
+              const hash = window.location.hash.slice(1) || 'dashboard';
+              console.log('🔄 [uploadImage] 重新加载页面:', hash);
+              loadPage(hash);
+            }, 500);
+          } else {
+            console.error('❌ [uploadImage] 上传失败:', data.message);
+            showNotification('上传失败: ' + data.message, 'error');
+          }
+        } catch (error) {
+          console.error('❌ [uploadImage] 上传错误:', error);
+          showNotification('上传失败: ' + error.message, 'error');
+        }
+      };
+
+      input.click();
+    }
+
+    function viewImage(url) {
+      window.open(url, '_blank');
+    }
+
+    async function deleteImage(key) {
+      if (!confirm('确定要删除这张图片吗？')) return;
+
+      const { path, filename } = parseImageKey(key);
+      const fullKey = `${path}/${filename}`;
+
+      try {
+        const response = await fetch(`/admin/api/images/${encodeURIComponent(fullKey)}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          showNotification('删除成功！', 'success');
+          // 重新加载当前页面内容
+          setTimeout(() => {
+            const hash = window.location.hash.slice(1) || 'dashboard';
+            loadPage(hash);
+          }, 500);
+        } else {
+          showNotification('删除失败: ' + data.message, 'error');
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        showNotification('删除失败: ' + error.message, 'error');
+      }
+    }
+
+    /**
+     * 解析 image key，返回 path 和 filename
+     * 例如：
+     * - 'homepage-hero' -> { path: 'homepage', filename: 'hero.jpg' }
+     * - 'gallery-face-neck' -> { path: 'gallery', filename: 'face-neck.jpg' }
+     * - 'reviews-step-1' -> { path: 'reviews', filename: 'step-1.jpg' }
+     */
+    function parseImageKey(key) {
+      // Homepage: homepage-{name}
+      if (key.startsWith('homepage-')) {
+        const name = key.replace('homepage-', '');
+        return { path: 'homepage', filename: `${name}.jpg` };
+      }
+
+      // Gallery: gallery-{subcategory}
+      if (key.startsWith('gallery-')) {
+        const subcategory = key.replace('gallery-', '');
+        return { path: 'gallery', filename: `${subcategory}.jpg` };
+      }
+
+      // Reviews: reviews-step-{number}
+      if (key.startsWith('reviews-')) {
+        const stepPart = key.replace('reviews-', '');
+        return { path: 'reviews', filename: `${stepPart}.jpg` };
+      }
+
+      // 默认情况
+      return { path: '', filename: `${key}.jpg` };
+    }
+
+    function loadSurgeonDetail(id, name) {
+      console.log('Load surgeon detail:', id, name);
+      // TODO: 加载医生详情页
+      showNotification(`医生详情页开发中: ${name}`, 'error');
+    }
+
+    function loadProcedureDetail(id, name) {
+      console.log('Load procedure detail:', id, name);
+      // TODO: 加载手术项目详情页
+      showNotification(`手术项目详情页开发中: ${name}`, 'error');
+    }
+
+    function loadGalleryCategory(category) {
+      console.log('Load gallery category:', category);
+      // TODO: 加载图库分类详情
+      showNotification(`图库分类详情页开发中: ${category}`, 'error');
+    }
+  </script>
+</body>
+</html>
+
