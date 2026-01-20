@@ -137,6 +137,10 @@
     <a href="/admin/dashboard-new.html">← Back to Dashboard</a>
   </div>
 
+  <div id="readOnlyWarning" class="hidden" style="background: #fff3cd; color: #856404; padding: 15px; margin: 20px; border-radius: 6px; border: 1px solid #ffc107;">
+    ⚠️ <strong>Read-Only Mode</strong>: Photo upload is only available on localhost. To upload photos, run the admin server locally.
+  </div>
+
   <table>
     <thead>
       <tr>
@@ -171,10 +175,31 @@
       }
     });
 
+    // 检测环境：localhost 使用 admin server，线上使用 Vercel API
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const API_BASE = isLocalhost ? '/admin/api' : '/api';
+
+    // 显示只读警告（如果不是 localhost）
+    if (!isLocalhost) {
+      document.getElementById('readOnlyWarning').classList.remove('hidden');
+    }
+
     async function loadSurgeons() {
       try {
-        const res = await fetch('/admin/api/surgeons-full');
+        console.log('🔍 Environment:', isLocalhost ? 'Localhost' : 'Production');
+        console.log('🔍 Loading surgeons from:', `${API_BASE}/surgeons-full`);
+        const res = await fetch(`${API_BASE}/surgeons-full`);
+        console.log('📡 Response status:', res.status, res.statusText);
+
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('❌ Response error:', text);
+          throw new Error(`HTTP ${res.status}: ${text}`);
+        }
+
         const data = await res.json();
+        console.log('✅ Loaded surgeons:', data.surgeons?.length || 0);
+
         if (data.success) {
           surgeons = data.surgeons;
           renderTable();
@@ -182,7 +207,8 @@
           showNotification('Failed to load: ' + data.message, true);
         }
       } catch (err) {
-        showNotification('Error loading surgeons', true);
+        console.error('❌ Load surgeons error:', err);
+        showNotification('Error loading surgeons: ' + err.message, true);
       }
     }
 
@@ -221,6 +247,10 @@
     }
 
     function triggerUpload(surgeonId, slot) {
+      if (!isLocalhost) {
+        showNotification('Upload is only available on localhost', true);
+        return;
+      }
       currentUpload = { surgeonId, slot };
       document.getElementById('fileInput').click();
     }
@@ -254,6 +284,10 @@
     }
 
     async function deleteImage(surgeonId, slot) {
+      if (!isLocalhost) {
+        showNotification('Delete is only available on localhost', true);
+        return;
+      }
       if (!confirm('Delete this image?')) return;
       showLoading(true);
       try {
