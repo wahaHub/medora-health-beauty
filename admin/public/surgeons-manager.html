@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Surgeons Manager - Medora Admin</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    .header h1 { font-size: 24px; color: #333; }
+    .header a { color: #667eea; text-decoration: none; }
+
+    table {
+      width: 100%;
+      background: white;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background: #667eea;
+      color: white;
+      font-weight: 500;
+    }
+    tr:hover { background: #f9f9f9; }
+
+    .surgeon-name {
+      font-weight: 600;
+      color: #333;
+    }
+    .surgeon-title {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .image-cell {
+      width: 150px;
+    }
+    .image-slot {
+      width: 120px;
+      height: 80px;
+      background: #f0f0f0;
+      border: 2px dashed #ccc;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .image-slot:hover { border-color: #667eea; background: #f5f7ff; }
+    .image-slot.has-image { border-style: solid; border-color: #4CAF50; }
+    .image-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+    }
+    .image-slot .placeholder {
+      font-size: 24px;
+      color: #ccc;
+    }
+    .image-slot .delete-btn {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 20px;
+      height: 20px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      font-size: 12px;
+    }
+    .image-slot:hover .delete-btn { display: block; }
+
+    .loading {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #f0f0f0;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background: #4CAF50;
+      color: white;
+      border-radius: 6px;
+      z-index: 2000;
+    }
+    .notification.error { background: #f44336; }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Surgeons Photo Manager</h1>
+    <a href="/admin/dashboard-new.html">← Back to Dashboard</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Surgeon</th>
+        <th class="image-cell">Hero Photo</th>
+        <th class="image-cell">Certification</th>
+        <th class="image-cell">With Patients</th>
+      </tr>
+    </thead>
+    <tbody id="surgeonsList">
+      <tr><td colspan="4" style="text-align:center;padding:40px;">Loading surgeons...</td></tr>
+    </tbody>
+  </table>
+
+  <div class="loading hidden" id="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <input type="file" id="fileInput" class="hidden" accept="image/*">
+
+  <script>
+    let surgeons = [];
+    let currentUpload = null;
+
+    document.addEventListener('DOMContentLoaded', loadSurgeons);
+
+    document.getElementById('fileInput').addEventListener('change', async (e) => {
+      if (e.target.files.length > 0 && currentUpload) {
+        await uploadImage(e.target.files[0], currentUpload.surgeonId, currentUpload.slot);
+        e.target.value = '';
+        currentUpload = null;
+      }
+    });
+
+    async function loadSurgeons() {
+      try {
+        const res = await fetch('/admin/api/surgeons-full');
+        const data = await res.json();
+        if (data.success) {
+          surgeons = data.surgeons;
+          renderTable();
+        } else {
+          showNotification('Failed to load: ' + data.message, true);
+        }
+      } catch (err) {
+        showNotification('Error loading surgeons', true);
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('surgeonsList');
+      tbody.innerHTML = surgeons.map(s => {
+        const images = s.images || {};
+        return `
+          <tr>
+            <td>
+              <div class="surgeon-name">${s.name}</div>
+              <div class="surgeon-title">${s.title || ''}</div>
+            </td>
+            <td class="image-cell">${renderSlot(s.surgeon_id, 'hero', images.hero)}</td>
+            <td class="image-cell">${renderSlot(s.surgeon_id, 'certification', images.certification)}</td>
+            <td class="image-cell">${renderSlot(s.surgeon_id, 'with_patients', images.with_patients)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderSlot(surgeonId, slot, url) {
+      if (url) {
+        return `
+          <div class="image-slot has-image" onclick="triggerUpload('${surgeonId}', '${slot}')">
+            <img src="${url}" alt="${slot}">
+            <button class="delete-btn" onclick="event.stopPropagation(); deleteImage('${surgeonId}', '${slot}')">×</button>
+          </div>
+        `;
+      }
+      return `
+        <div class="image-slot" onclick="triggerUpload('${surgeonId}', '${slot}')">
+          <span class="placeholder">+</span>
+        </div>
+      `;
+    }
+
+    function triggerUpload(surgeonId, slot) {
+      currentUpload = { surgeonId, slot };
+      document.getElementById('fileInput').click();
+    }
+
+    async function uploadImage(file, surgeonId, slot) {
+      showLoading(true);
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('path', `surgeons/${surgeonId}`);
+        formData.append('filename', `${slot}.jpg`);
+
+        const res = await fetch('/admin/api/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (data.success) {
+          await fetch('/admin/api/surgeons/update-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ surgeonId, slotType: slot, imageUrl: data.url })
+          });
+          showNotification('Uploaded!');
+          await loadSurgeons();
+        } else {
+          showNotification('Upload failed', true);
+        }
+      } catch (err) {
+        showNotification('Error: ' + err.message, true);
+      }
+      showLoading(false);
+    }
+
+    async function deleteImage(surgeonId, slot) {
+      if (!confirm('Delete this image?')) return;
+      showLoading(true);
+      try {
+        await fetch(`/admin/api/images/surgeons/${surgeonId}/${slot}.jpg`, { method: 'DELETE' });
+        await fetch('/admin/api/surgeons/update-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ surgeonId, slotType: slot, imageUrl: null })
+        });
+        showNotification('Deleted!');
+        await loadSurgeons();
+      } catch (err) {
+        showNotification('Error', true);
+      }
+      showLoading(false);
+    }
+
+    function showLoading(show) {
+      document.getElementById('loading').classList.toggle('hidden', !show);
+    }
+
+    function showNotification(msg, isError) {
+      const div = document.createElement('div');
+      div.className = 'notification' + (isError ? ' error' : '');
+      div.textContent = msg;
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 2000);
+    }
+  </script>
+</body>
+</html>

@@ -30,7 +30,7 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.ADMIN_PORT || 5000;
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Medora2024!';
 const SESSION_SECRET = process.env.SESSION_SECRET || 'medora-admin-secret-key-change-me';
 
 const R2_CONFIG = {
@@ -304,9 +304,102 @@ app.get('/admin/api/procedures', requireAuth, async (req, res) => {
   }
 });
 
+// 获取完整医生列表（包含图片信息）
+app.get('/admin/api/surgeons-full', requireAuth, async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.json({ success: false, message: 'Supabase not configured', surgeons: [] });
+    }
+
+    const { data, error } = await supabase
+      .from('surgeons')
+      .select('*')
+      .order('name');
+
+    if (error) throw error;
+
+    // 为每个医生构建图片对象
+    const surgeons = (data || []).map(surgeon => {
+      // 从 images JSONB 字段获取，或从 image_url 回退
+      const images = surgeon.images || {};
+
+      // 如果没有 images 字段但有 image_url，将其作为 hero 图片
+      if (!images.hero && surgeon.image_url) {
+        images.hero = surgeon.image_url;
+      }
+
+      return {
+        ...surgeon,
+        images
+      };
+    });
+
+    res.json({ success: true, surgeons });
+  } catch (error) {
+    console.error('Error fetching surgeons:', error);
+    res.json({ success: false, message: error.message, surgeons: [] });
+  }
+});
+
+// 更新医生图片
+app.post('/admin/api/surgeons/update-image', requireAuth, async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({ success: false, message: 'Supabase not configured' });
+    }
+
+    const { surgeonId, slotType, imageUrl } = req.body;
+
+    if (!surgeonId || !slotType) {
+      return res.status(400).json({ success: false, message: 'surgeonId and slotType are required' });
+    }
+
+    // 首先获取当前医生的 images 字段
+    const { data: surgeon, error: fetchError } = await supabase
+      .from('surgeons')
+      .select('images, image_url')
+      .eq('surgeon_id', surgeonId)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    // 更新 images 对象
+    const currentImages = surgeon.images || {};
+    if (imageUrl) {
+      currentImages[slotType] = imageUrl;
+    } else {
+      delete currentImages[slotType];
+    }
+
+    // 构建更新对象
+    const updateData = {
+      images: currentImages,
+      updated_at: new Date().toISOString()
+    };
+
+    // 如果是 hero 图片，同时更新 image_url 字段（保持向后兼容）
+    if (slotType === 'hero') {
+      updateData.image_url = imageUrl || null;
+    }
+
+    // 更新数据库
+    const { error: updateError } = await supabase
+      .from('surgeons')
+      .update(updateData)
+      .eq('surgeon_id', surgeonId);
+
+    if (updateError) throw updateError;
+
+    res.json({ success: true, message: 'Image updated successfully' });
+  } catch (error) {
+    console.error('Error updating surgeon image:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // 健康检查
 app.get('/admin/api/health', (req, res) => {
-  res.json({ 
+  res.json({
     status: 'ok',
     authenticated: !!req.session.authenticated,
     bucket: R2_CONFIG.bucketName,

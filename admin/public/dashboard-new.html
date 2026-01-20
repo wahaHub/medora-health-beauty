@@ -673,47 +673,9 @@
 
     // ==================== Surgeons 页面 ====================
     function renderSurgeons() {
-      if (supabaseData.surgeons.length === 0) {
-        return `
-          <div class="page-header">
-            <h1>👨‍⚕️ Surgeons</h1>
-            <p>医生照片管理</p>
-          </div>
-          <div class="empty-state">
-            <div class="icon">👨‍⚕️</div>
-            <p>暂无医生数据</p>
-            <p style="margin-top: 10px; font-size: 12px;">请先在 Supabase 中添加医生数据</p>
-          </div>
-        `;
-      }
-
-      let html = `
-        <div class="breadcrumb">
-          <a href="#dashboard">Dashboard</a> / <span>Surgeons</span>
-        </div>
-
-        <div class="page-header">
-          <h1>👨‍⚕️ Surgeons</h1>
-          <p>管理每位医生的照片（点击医生查看详情）</p>
-        </div>
-
-        <div class="content-grid">
-      `;
-
-      supabaseData.surgeons.forEach(surgeon => {
-        html += `
-          <div class="content-card" onclick="loadSurgeonDetail('${surgeon.id}', '${surgeon.name}')">
-            <h3>${surgeon.name}</h3>
-            <p>${surgeon.title || '医生'}</p>
-            <div class="stats">
-              <span>📷 ${surgeon.imageCount || 0} 张照片</span>
-            </div>
-          </div>
-        `;
-      });
-
-      html += `</div>`;
-      return html;
+      // 重定向到专门的 Surgeons Manager 页面
+      window.location.href = '/admin/surgeons-manager.html';
+      return '';
     }
 
     // ==================== Procedures 页面 ====================

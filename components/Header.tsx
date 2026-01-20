@@ -80,10 +80,9 @@ const Header: React.FC = () => {
             const uniqueSurgeons = allSurgeons.filter((surgeon: Surgeon, index: number, self: Surgeon[]) =>
               index === self.findIndex((s: Surgeon) => s.surgeon_id === surgeon.surgeon_id)
             );
-            // Sort by name and take first 8 surgeons
+            // Sort by name and show all surgeons
             const sortedSurgeons = uniqueSurgeons
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .slice(0, 8);
+              .sort((a, b) => a.name.localeCompare(b.name));
             setSurgeons(sortedSurgeons);
           }
         }
@@ -164,20 +163,30 @@ const Header: React.FC = () => {
     }
   };
 
-  // Dynamic surgeon menu items
-  const surgeonMenuItems: SubMenuItem[] = surgeonsLoading
-    ? [
-        { label: 'Our Surgeons', isHeader: true },
-        { label: 'Loading...', isSub: true }
-      ]
+  // Dynamic surgeon menu items - split into multiple columns
+  const surgeonItems = surgeons.map((surgeon: Surgeon) => ({
+    label: surgeon.name,
+    isSub: true,
+    href: `/surgeon/${surgeon.surgeon_id}`
+  }));
+
+  // Split surgeons into 3 columns (roughly equal distribution)
+  const itemsPerColumn = Math.ceil(surgeonItems.length / 3);
+  const surgeonColumn1: SubMenuItem[] = surgeonsLoading
+    ? [{ label: 'Our Doctors', isHeader: true }, { label: 'Loading...', isSub: true }]
     : [
-        { label: 'Our Surgeons', isHeader: true },
-        ...surgeons.map((surgeon: Surgeon) => ({
-          label: surgeon.name,
-          isSub: true,
-          href: `/surgeon/${surgeon.surgeon_id}`
-        })),
-        { label: 'View All Surgeons →', isSub: false, href: '/surgeons' }
+        { label: 'Our Doctors', isHeader: true },
+        ...surgeonItems.slice(0, itemsPerColumn)
+      ];
+  const surgeonColumn2: SubMenuItem[] = surgeonsLoading
+    ? []
+    : surgeonItems.slice(itemsPerColumn, itemsPerColumn * 2);
+  const surgeonColumn3: SubMenuItem[] = surgeonsLoading
+    ? []
+    : [
+        ...surgeonItems.slice(itemsPerColumn * 2),
+        { label: 'View All Doctors →', isSub: false, href: '/surgeons' },
+        { label: 'Patient Reviews', isSub: false, href: '/reviews' }
       ];
 
   const navItems: NavItem[] = [
@@ -185,19 +194,9 @@ const Header: React.FC = () => {
       name: t('navAbout'),
       href: '#about',
       columns: [
-        surgeonMenuItems,
-        [
-          { label: 'Our Team' },
-          { label: 'Patient Reviews' },
-          { label: 'Selected Reviews' },
-          { label: 'The YiMei Center' }
-        ],
-        [
-          { label: 'The Surgery Center' },
-          { label: 'YiMei Charity Foundation' },
-          { label: 'News & Events' },
-          { label: 'Careers at YiMei' }
-        ]
+        surgeonColumn1,
+        surgeonColumn2,
+        surgeonColumn3
       ]
     },
     {
