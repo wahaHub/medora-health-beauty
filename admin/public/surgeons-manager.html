@@ -137,10 +137,6 @@
     <a href="/admin/dashboard-new.html">← Back to Dashboard</a>
   </div>
 
-  <div id="readOnlyWarning" class="hidden" style="background: #fff3cd; color: #856404; padding: 15px; margin: 20px; border-radius: 6px; border: 1px solid #ffc107;">
-    ⚠️ <strong>Read-Only Mode</strong>: Photo upload is only available on localhost. To upload photos, run the admin server locally.
-  </div>
-
   <table>
     <thead>
       <tr>
@@ -178,11 +174,6 @@
     // 检测环境：localhost 使用 admin server，线上使用 Vercel API
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const API_BASE = isLocalhost ? '/admin/api' : '/api';
-
-    // 显示只读警告（如果不是 localhost）
-    if (!isLocalhost) {
-      document.getElementById('readOnlyWarning').classList.remove('hidden');
-    }
 
     async function loadSurgeons() {
       try {
