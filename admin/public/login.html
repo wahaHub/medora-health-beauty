@@ -178,8 +178,12 @@
         });
         
         const data = await response.json();
-        
+
         if (data.success) {
+          // 保存 token 到 localStorage（用于 Vercel 生产环境）
+          if (data.token) {
+            localStorage.setItem('admin_token', data.token);
+          }
           window.location.href = '/admin';
         } else {
           errorDiv.textContent = '❌ ' + (data.message || '登录失败，请检查用户名和密码');

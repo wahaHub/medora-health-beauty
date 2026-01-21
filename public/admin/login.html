@@ -22,9 +22,9 @@
 
     .login-container {
       background: white;
-      padding: 40px;
-      border-radius: 16px;
+      border-radius: 20px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 50px;
       width: 100%;
       max-width: 400px;
     }
@@ -35,9 +35,9 @@
     }
 
     .logo h1 {
+      color: #667eea;
       font-size: 28px;
-      color: #333;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .logo p {
@@ -46,65 +46,68 @@
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
 
-    .form-group label {
+    label {
       display: block;
       margin-bottom: 8px;
-      font-weight: 500;
       color: #333;
+      font-weight: 500;
+      font-size: 14px;
     }
 
-    .form-group input {
+    input {
       width: 100%;
-      padding: 14px 16px;
+      padding: 12px 15px;
       border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 16px;
-      transition: border-color 0.2s;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s;
     }
 
-    .form-group input:focus {
+    input:focus {
       outline: none;
       border-color: #667eea;
     }
 
-    .login-btn {
+    button {
       width: 100%;
       padding: 14px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s;
     }
 
-    .login-btn:hover {
+    button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
 
-    .login-btn:disabled {
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-      transform: none;
     }
 
-    .error-msg {
-      background: #ffe6e6;
-      color: #c00;
+    .error {
+      background: #fee;
+      color: #c33;
       padding: 12px;
       border-radius: 8px;
       margin-bottom: 20px;
-      display: none;
       font-size: 14px;
+      display: none;
     }
 
-    .error-msg.show {
+    .error.show {
       display: block;
     }
   </style>
@@ -112,67 +115,83 @@
 <body>
   <div class="login-container">
     <div class="logo">
-      <h1>🏥 Medora Admin</h1>
-      <p>图片管理后台</p>
+      <h1>🔐 Admin Console</h1>
+      <p>Medora Health 图片管理系统</p>
     </div>
 
-    <div id="errorMsg" class="error-msg"></div>
+    <div id="error" class="error"></div>
 
     <form id="loginForm">
       <div class="form-group">
         <label for="username">用户名</label>
-        <input type="text" id="username" name="username" required autocomplete="username">
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          placeholder="请输入用户名"
+          required
+          autocomplete="username"
+        >
       </div>
 
       <div class="form-group">
         <label for="password">密码</label>
-        <input type="password" id="password" name="password" required autocomplete="current-password">
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          placeholder="请输入密码"
+          required
+          autocomplete="current-password"
+        >
       </div>
 
-      <button type="submit" class="login-btn" id="loginBtn">登录</button>
+      <button type="submit" id="loginBtn">登录</button>
     </form>
   </div>
 
   <script>
-    // 检查是否已登录
-    const token = localStorage.getItem('adminToken');
-    if (token) {
-      window.location.href = '/admin/';
-    }
+    const form = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorDiv = document.getElementById('error');
 
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
+      
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
-      const loginBtn = document.getElementById('loginBtn');
-      const errorMsg = document.getElementById('errorMsg');
-
+      
+      // 隐藏错误
+      errorDiv.classList.remove('show');
+      
+      // 禁用按钮
       loginBtn.disabled = true;
       loginBtn.textContent = '登录中...';
-      errorMsg.classList.remove('show');
-
+      
       try {
-        const response = await fetch('/api/admin/login', {
+        const response = await fetch('/admin/api/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ username, password }),
         });
-
+        
         const data = await response.json();
 
         if (data.success) {
-          localStorage.setItem('adminToken', data.token);
-          window.location.href = '/admin/';
+          // 保存 token 到 localStorage（用于 Vercel 生产环境）
+          if (data.token) {
+            localStorage.setItem('admin_token', data.token);
+          }
+          window.location.href = '/admin';
         } else {
-          errorMsg.textContent = data.message || '登录失败';
-          errorMsg.classList.add('show');
+          errorDiv.textContent = '❌ ' + (data.message || '登录失败，请检查用户名和密码');
+          errorDiv.classList.add('show');
         }
       } catch (error) {
-        errorMsg.textContent = '网络错误，请重试';
-        errorMsg.classList.add('show');
+        errorDiv.textContent = '❌ 网络错误，请稍后重试';
+        errorDiv.classList.add('show');
       } finally {
         loginBtn.disabled = false;
         loginBtn.textContent = '登录';
@@ -181,3 +200,4 @@
   </script>
 </body>
 </html>
+
