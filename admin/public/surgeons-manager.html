@@ -157,9 +157,15 @@
 
   <input type="file" id="fileInput" class="hidden" accept="image/*">
 
-  <script>
+  <script type="module">
+    import { getAllSurgeons } from './surgeons-data.js';
+
     let surgeons = [];
     let currentUpload = null;
+
+    // 检测环境：localhost 使用 admin server，线上使用 Vercel API
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const API_BASE = isLocalhost ? '/admin/api' : '/api';
 
     document.addEventListener('DOMContentLoaded', loadSurgeons);
 
@@ -171,32 +177,12 @@
       }
     });
 
-    // 检测环境：localhost 使用 admin server，线上使用 Vercel API
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const API_BASE = isLocalhost ? '/admin/api' : '/api';
-
-    async function loadSurgeons() {
+    function loadSurgeons() {
       try {
-        console.log('🔍 Environment:', isLocalhost ? 'Localhost' : 'Production');
-        console.log('🔍 Loading surgeons from:', `${API_BASE}/surgeons-full`);
-        const res = await fetch(`${API_BASE}/surgeons-full`);
-        console.log('📡 Response status:', res.status, res.statusText);
-
-        if (!res.ok) {
-          const text = await res.text();
-          console.error('❌ Response error:', text);
-          throw new Error(`HTTP ${res.status}: ${text}`);
-        }
-
-        const data = await res.json();
-        console.log('✅ Loaded surgeons:', data.surgeons?.length || 0);
-
-        if (data.success) {
-          surgeons = data.surgeons;
-          renderTable();
-        } else {
-          showNotification('Failed to load: ' + data.message, true);
-        }
+        console.log('🔍 Loading surgeons from static data');
+        surgeons = getAllSurgeons();
+        console.log('✅ Loaded surgeons:', surgeons.length);
+        renderTable();
       } catch (err) {
         console.error('❌ Load surgeons error:', err);
         showNotification('Error loading surgeons: ' + err.message, true);
@@ -237,14 +223,30 @@
       `;
     }
 
-    function triggerUpload(surgeonId, slot) {
-      if (!isLocalhost) {
-        showNotification('Upload is only available on localhost', true);
-        return;
-      }
+    // 暴露函数到全局作用域，供 onclick 使用
+    window.triggerUpload = function(surgeonId, slot) {
       currentUpload = { surgeonId, slot };
       document.getElementById('fileInput').click();
-    }
+    };
+
+    window.deleteImage = async function(surgeonId, slot) {
+      if (!confirm('Delete this image?')) return;
+      showLoading(true);
+      try {
+        const key = `surgeons/${surgeonId}/${slot}.jpg`;
+        await fetch(`${API_BASE}/admin/images/${encodeURIComponent(key)}`, { method: 'DELETE' });
+        await fetch(`${API_BASE}/update-surgeon-image`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ surgeonId, slot, imageUrl: null })
+        });
+        showNotification('Deleted!');
+        loadSurgeons();
+      } catch (err) {
+        showNotification('Error', true);
+      }
+      showLoading(false);
+    };
 
     async function uploadImage(file, surgeonId, slot) {
       showLoading(true);
@@ -264,32 +266,12 @@
             body: JSON.stringify({ surgeonId, slot, imageUrl: data.url })
           });
           showNotification('Uploaded!');
-          await loadSurgeons();
+          loadSurgeons();
         } else {
           showNotification('Upload failed', true);
         }
       } catch (err) {
         showNotification('Error: ' + err.message, true);
-      }
-      showLoading(false);
-    }
-
-    async function deleteImage(surgeonId, slot) {
-      if (!confirm('Delete this image?')) return;
-      showLoading(true);
-      try {
-        const key = `surgeons/${surgeonId}/${slot}.jpg`;
-        // 对于 localhost 使用 /admin/api，生产环境这个路径会被重写到 /api/admin
-        await fetch(`${API_BASE}/admin/images/${encodeURIComponent(key)}`, { method: 'DELETE' });
-        await fetch(`${API_BASE}/update-surgeon-image`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ surgeonId, slot, imageUrl: null })
-        });
-        showNotification('Deleted!');
-        await loadSurgeons();
-      } catch (err) {
-        showNotification('Error', true);
       }
       showLoading(false);
     }
