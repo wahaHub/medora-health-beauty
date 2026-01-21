@@ -26,15 +26,31 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 获取所有医生信息，包括 images JSONB 字段
-    const { data: surgeons, error } = await supabase
+    // 先尝试查询包含 images 字段
+    let { data: surgeons, error } = await supabase
       .from('surgeons')
       .select('id, surgeon_id, name, title, experience_years, image_url, specialties, images')
       .order('name', { ascending: true });
 
+    // 如果查询失败（可能是因为 images 字段不存在），尝试不查询 images 字段
     if (error) {
-      console.error('Supabase error:', error);
-      throw error;
+      console.log('⚠️ First query failed, trying without images field:', error.message);
+      const fallbackQuery = await supabase
+        .from('surgeons')
+        .select('id, surgeon_id, name, title, experience_years, image_url, specialties')
+        .order('name', { ascending: true });
+
+      surgeons = fallbackQuery.data;
+      error = fallbackQuery.error;
+
+      // 如果还是失败，抛出错误
+      if (error) {
+        console.error('❌ Supabase error:', error);
+        throw error;
+      }
+
+      // 为每个 surgeon 添加空的 images 对象
+      surgeons = surgeons.map(s => ({ ...s, images: {} }));
     }
 
     return res.status(200).json({
@@ -43,10 +59,11 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Get surgeons-full error:', error);
+    console.error('❌ Get surgeons-full error:', error);
     return res.status(500).json({
       success: false,
-      message: error.message || 'Internal server error'
+      message: error.message || 'Internal server error',
+      error: error.toString()
     });
   }
 }

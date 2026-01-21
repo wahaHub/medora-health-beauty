@@ -254,14 +254,14 @@
         formData.append('path', `surgeons/${surgeonId}`);
         formData.append('filename', `${slot}.jpg`);
 
-        const res = await fetch('/admin/api/upload', { method: 'POST', body: formData });
+        const res = await fetch(`${API_BASE}/upload`, { method: 'POST', body: formData });
         const data = await res.json();
 
         if (data.success) {
-          await fetch('/admin/api/surgeons/update-image', {
+          await fetch(`${API_BASE}/update-surgeon-image`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ surgeonId, slotType: slot, imageUrl: data.url })
+            body: JSON.stringify({ surgeonId, slot, imageUrl: data.url })
           });
           showNotification('Uploaded!');
           await loadSurgeons();
@@ -275,18 +275,16 @@
     }
 
     async function deleteImage(surgeonId, slot) {
-      if (!isLocalhost) {
-        showNotification('Delete is only available on localhost', true);
-        return;
-      }
       if (!confirm('Delete this image?')) return;
       showLoading(true);
       try {
-        await fetch(`/admin/api/images/surgeons/${surgeonId}/${slot}.jpg`, { method: 'DELETE' });
-        await fetch('/admin/api/surgeons/update-image', {
+        const key = `surgeons/${surgeonId}/${slot}.jpg`;
+        // 对于 localhost 使用 /admin/api，生产环境这个路径会被重写到 /api/admin
+        await fetch(`${API_BASE}/admin/images/${encodeURIComponent(key)}`, { method: 'DELETE' });
+        await fetch(`${API_BASE}/update-surgeon-image`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ surgeonId, slotType: slot, imageUrl: null })
+          body: JSON.stringify({ surgeonId, slot, imageUrl: null })
         });
         showNotification('Deleted!');
         await loadSurgeons();
