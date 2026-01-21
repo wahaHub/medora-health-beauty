@@ -163,10 +163,6 @@
     let surgeons = [];
     let currentUpload = null;
 
-    // 检测环境：localhost 使用 admin server，线上使用 Vercel API
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const API_BASE = isLocalhost ? '/admin/api' : '/api';
-
     document.addEventListener('DOMContentLoaded', loadSurgeons);
 
     document.getElementById('fileInput').addEventListener('change', async (e) => {
@@ -187,7 +183,7 @@
         // 尝试从数据库获取 images 数据并合并
         try {
           console.log('🔍 Fetching images from database...');
-          const res = await fetch(`${API_BASE}/surgeons-full`);
+          const res = await fetch('/admin/api/surgeons-full');
           if (res.ok) {
             const data = await res.json();
             if (data.success && data.surgeons) {
@@ -260,13 +256,10 @@
       try {
         const key = `surgeons/${surgeonId}/${slot}.jpg`;
         // 删除 R2 上的图片
-        const deleteUrl = isLocalhost
-          ? `/admin/api/images/${encodeURIComponent(key)}`
-          : `/api/admin/images/${encodeURIComponent(key)}`;
-        await fetch(deleteUrl, { method: 'DELETE' });
+        await fetch(`/admin/api/images/${encodeURIComponent(key)}`, { method: 'DELETE' });
 
         // 更新数据库
-        await fetch(`${API_BASE}/update-surgeon-image`, {
+        await fetch('/admin/api/update-surgeon-image', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ surgeonId, slot, imageUrl: null })
@@ -287,11 +280,11 @@
         formData.append('path', `surgeons/${surgeonId}`);
         formData.append('filename', `${slot}.jpg`);
 
-        const res = await fetch(`${API_BASE}/upload`, { method: 'POST', body: formData });
+        const res = await fetch('/admin/api/upload', { method: 'POST', body: formData });
         const data = await res.json();
 
         if (data.success) {
-          await fetch(`${API_BASE}/update-surgeon-image`, {
+          await fetch('/admin/api/update-surgeon-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ surgeonId, slot, imageUrl: data.url })
