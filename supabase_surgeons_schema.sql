@@ -66,3 +66,10 @@ FROM surgeons
 WHERE experience_years > 15
 ORDER BY experience_years DESC;
 */
+
+
+ALTER TABLE surgeons
+ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '{}'::jsonb;
+
+-- Add comment to explain the column
+COMMENT ON COLUMN surgeons.images IS 'JSONB object containing surgeon photos: hero (main profile photo), certification (certificates/awards), with_patients (photos with patients)';
