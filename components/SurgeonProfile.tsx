@@ -110,7 +110,7 @@ const SurgeonProfile: React.FC = () => {
           .replace(/\s+/g, '-')
           .toLowerCase();
 
-        const response = await fetch(`https://www.medorabeauty.com/api/surgeon-detail?surgeon_id=${surgeonId}`);
+        const response = await fetch(`https://www.medorabeauty.com/api/surgeon-detail?surgeon_id=${surgeonId}&lang=${currentLanguage}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch surgeon details');
@@ -132,7 +132,7 @@ const SurgeonProfile: React.FC = () => {
     };
 
     fetchSurgeonDetail();
-  }, [surgeonName]);
+  }, [surgeonName, currentLanguage]);
 
   // Loading state
   if (loading) {
