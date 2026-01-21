@@ -3,14 +3,2062 @@
  * 静态医生数据，用于 admin 页面管理
  */
 
-import surgeonsData from './surgeons-data.json' assert { type: 'json' };
+const SURGEONS_DATA = [
+  {
+    "name": "Dr. Min Zhang",
+    "title": "Board-Certified Facial Plastic Surgeon",
+    "specialties": [
+      "Deep Plane Facelift",
+      "Rhinoplasty",
+      "Eyelid Surgery"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Peking Union Medical College",
+      "Residency - Otolaryngology–Head & Neck Surgery, NewYork-Presbyterian Hospital",
+      "Fellowship - Facial Plastic and Reconstructive Surgery"
+    ],
+    "certifications": [
+      "American Board of Facial Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)"
+    ],
+    "experience_years": 20,
+    "procedures_count": {
+      "facelifts": 600,
+      "rhinoplasty": 500,
+      "eyelid_surgery": 800
+    },
+    "bio": {
+      "intro": "Dr. Min Zhang is a board-certified facial plastic surgeon with 20 years of experience focused on deep plane facelifts, rhinoplasty, and eyelid surgery. Known for meticulous technique and natural-looking results, he combines rigorous surgical training with an artist’s eye for facial balance. Patients value his calm bedside manner, clear communication, and commitment to safe, evidence-based care.",
+      "expertise": "In facial rejuvenation, Dr. Zhang specializes in advanced deep plane facelift techniques that address the SMAS and retaining ligaments to rejuvenate the midface, jawline, and neck as a unified aesthetic unit. He tailors vectoring and tissue release to each patient’s anatomy, often integrating platysmaplasty, selective fat grafting, and short-scar approaches to enhance definition while maintaining soft, authentic expression. Preoperative 3D imaging and standardized photography inform his planning, and refined closure methods are used to keep incisions discreet.\n\nIn rhinoplasty, he is skilled in both structural and preservation approaches, prioritizing function and form in equal measure. He uses septal and auricular cartilage grafting, nuanced dorsal refinement, and careful tip support to achieve durable, balanced outcomes—with particular expertise in Asian rhinoplasty where alar base width, dorsal height, and tip projection require culturally sensitive planning. His eyelid surgery spans upper blepharoplasty with crease design for Asian and non-Asian eyelids, lower blepharoplasty with fat preservation/repositioning, and ptosis repair to brighten the eyes without over-resection.",
+      "philosophy": "Dr. Zhang believes the best aesthetic surgery is precise, personalized, and respectful of each patient’s unique identity. He practices a “less-but-better” approach—favoring structural longevity, tissue preservation, and harmony over trends—so patients look refreshed, not operated on. Safety is paramount, and every plan is grounded in data, detailed imaging, and comprehensive medical screening.\n\nFrom the first consultation onward, he invests time to understand goals, educate on options, and set realistic expectations. He guides patients through streamlined recovery protocols and remains closely involved in follow-up, building long-term partnerships to ensure results mature gracefully over time.",
+      "achievements": [
+        "Performed 1,900+ facial aesthetic procedures with consistently high patient-reported satisfaction",
+        "Invited lecturer at international aesthetic surgery meetings on deep plane facelift techniques and Asian rhinoplasty",
+        "Published peer-reviewed work and co-authored a textbook chapter on contemporary eyelid surgery and crease design"
+      ]
+    },
+    "image_prompt": "Professional headshot of an East Asian male facial plastic surgeon in his late 40s to early 50s, named Min Zhang. He wears a crisp white lab coat over a light blue dress shirt and a navy tie; neatly groomed short black hair with subtle gray at the temples; clean-shaven. Three-quarter pose with relaxed, lightly crossed arms, gentle confident smile, warm and approachable eyes. Background: modern medical office or clinic with glass accents, framed certificates, and soft neutral tones; shallow depth of field to keep the background tastefully blurred. Lighting: soft, even key light at 45 degrees with subtle rim light, natural color balance, high-resolution (85mm lens look, f/2.8). The image should convey professionalism, trustworthiness, and friendliness.",
+    "id": "min-zhang"
+  },
+  {
+    "name": "Dr. Wei Chen",
+    "title": "Board-Certified Plastic Surgeon, Facial Rejuvenation Specialist",
+    "specialties": [
+      "Facelift",
+      "Brow Lift",
+      "Neck Lift"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Stanford University School of Medicine",
+      "Residency - Massachusetts General Hospital, Plastic and Reconstructive Surgery",
+      "Fellowship - Facial Plastic and Reconstructive Surgery"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "American Board of Facial Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)"
+    ],
+    "experience_years": 15,
+    "procedures_count": {
+      "facelifts": 450,
+      "rhinoplasty": 375,
+      "eyelid_surgery": 600
+    },
+    "bio": {
+      "intro": "Dr. Wei Chen is a board-certified plastic surgeon with 15 years of dedicated experience in facial rejuvenation. Known for her meticulous technique and natural-looking results, she specializes in advanced facelift, brow lift, and neck lift procedures tailored to each patient’s anatomy and goals.",
+      "expertise": "Dr. Chen’s surgical approach integrates deep-plane and SMAS facelifting techniques to restore youthful contours while preserving facial expression and identity. She pairs endoscopic brow lifting with selective fat grafting and platysmaplasty to harmonize the upper, midface, and neck in a single, balanced plan. Her short-scar strategies and refined incision placement aim to minimize visibility and support confident, elegant outcomes.\n\nBeyond the operating room, Dr. Chen employs comprehensive perioperative protocols that include detailed 3D photo analysis, evidence-based anesthesia and recovery pathways, and proactive scar management. She often complements surgery with regenerative and energy-based modalities when appropriate, optimizing skin quality and enhancing longevity of results.",
+      "philosophy": "Dr. Chen believes that the most beautiful rejuvenation is subtle, proportionate, and uniquely personal. She listens closely to understand each patient’s priorities, then designs a conservative, stepwise plan that prioritizes safety and authenticity over trends.\n\nHer practice is grounded in transparency, education, and attentive follow-up. From the first consultation through recovery, she and her team provide clear guidance, responsive communication, and supportive care to ensure a comfortable, confident experience.",
+      "achievements": [
+        "Invited speaker on deep-plane facelift and neck contouring at regional ISAPS educational programs",
+        "Published on facial rejuvenation outcomes and scar optimization in peer-reviewed aesthetic surgery journals",
+        "Serves as a clinical instructor mentoring residents and fellows in contemporary facelift and brow lift techniques"
+      ]
+    },
+    "image_prompt": "Professional portrait of an East Asian female plastic surgeon in her mid-40s with an approachable, confident demeanor. She wears a crisp white lab coat over a light neutral blouse, minimal jewelry, and natural makeup. Pose: three-quarter view, relaxed shoulders, hands gently clasped at waist, soft friendly smile, direct eye contact. Background: modern, bright aesthetic clinic with clean lines, subtle medical equipment out of focus, neutral tones. Lighting: soft, diffused key light with gentle fill for even skin tone, subtle rim light to separate from background. Style: high-resolution, editorial-quality healthcare portrait that conveys trust, expertise, and warmth.",
+    "id": "wei-chen"
+  },
+  {
+    "name": "Dr. Li Wang",
+    "title": "Facial Plastic Surgeon, Rhinoplasty & Nasal Surgery Specialist",
+    "specialties": [
+      "Revision Rhinoplasty",
+      "Nose Tip Refinement",
+      "Rhinoplasty"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Shanghai Jiao Tong University School of Medicine",
+      "Residency - Department of Plastic and Reconstructive Surgery, Shanghai Ninth People's Hospital",
+      "Fellowship - Advanced Rhinoplasty & Nasal Reconstruction, Seoul National University Hospital"
+    ],
+    "certifications": [
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 18,
+    "procedures_count": {
+      "facelifts": 480,
+      "rhinoplasty": 1750,
+      "eyelid_surgery": 1020
+    },
+    "bio": {
+      "intro": "Dr. Li Wang is a facial plastic surgeon with 18 years of dedicated experience in rhinoplasty and nasal surgery. Known for his meticulous approach and natural, balanced results, he is particularly sought after for complex revision cases and refined tip work.",
+      "expertise": "Dr. Wang’s practice focuses on structural and preservation rhinoplasty techniques that enhance the nose while safeguarding long-term support and breathing. He is proficient in both open and closed approaches, using advanced suture techniques for tip definition, autologous cartilage grafting (septal, conchal, or rib) for durable framework, and precise osteotomies with ultrasonic piezo technology to minimize trauma and bruising. His nuanced understanding of Asian nasal anatomy—such as thicker skin, softer cartilage, and lower dorsal profiles—allows him to achieve elegant augmentation and definition without an overdone look.\n\nIn revision rhinoplasty, Dr. Wang emphasizes restoration of structural integrity and harmony. He employs detailed preoperative analysis, including standardized photography and digital morphing to align surgical planning with patient goals. Functional concerns are addressed concurrently, with careful attention to septal deviations, valve collapse, and turbinate issues so that aesthetic refinement never comes at the expense of airway quality.",
+      "philosophy": "Dr. Wang believes the most beautiful rhinoplasty is one you don’t notice—it simply fits the face. He prioritizes proportion, soft-tissue handling, and long-term stability, guiding patients toward realistic expectations through clear communication and collaborative planning. Safety and transparency inform every decision, from implant choice to graft sourcing and postoperative care.\n\nHe maintains a calm, supportive environment and follows patients closely throughout recovery, tailoring aftercare to optimize swelling control and scar maturation. His goal is to deliver outcomes that feel authentic to each patient’s features, personality, and cultural aesthetic preferences.",
+      "achievements": [
+        "Invited faculty and speaker at ISAPS and regional rhinoplasty masterclasses on revision strategies and tip support.",
+        "Published peer-reviewed articles on Asian rhinoplasty, nasal tip refinement, and functional-aesthetic integration.",
+        "Early adopter of ultrasonic rhinoplasty techniques with documented reductions in bruising and recovery time."
+      ]
+    },
+    "image_prompt": "Professional portrait of an East Asian male surgeon in his late 40s, wearing a crisp white medical coat over a light blue dress shirt and navy tie, standing in a modern clinic setting with soft neutral tones, glass accents, and subtle medical equipment blurred in the background. Half-length composition, relaxed posture with hands gently clasped or arms comfortably at his sides, slight confident smile, warm and approachable expression. Clean, well-groomed hair, minimal accessories. Soft, diffused daylight with a gentle key light for even skin tones, high-resolution detail, shallow depth of field (85mm lens look), natural color grading. The overall impression should be professional, trustworthy, and friendly.",
+    "id": "li-wang"
+  },
+  {
+    "name": "Dr. Yue Liu",
+    "title": "Board-Certified Plastic Surgeon",
+    "specialties": [
+      "Eyelid Surgery",
+      "Brow Lift",
+      "Temples Lift"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Fudan University Shanghai Medical College",
+      "Residency - Shanghai Ninth People’s Hospital (Plastic and Reconstructive Surgery)",
+      "Fellowship - Oculoplastic and Facial Aesthetic Surgery"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 12,
+    "procedures_count": {
+      "facelifts": 360,
+      "rhinoplasty": 300,
+      "eyelid_surgery": 480
+    },
+    "bio": {
+      "intro": "Dr. Yue Liu is a board-certified plastic surgeon specializing in eyelid and brow rejuvenation, with 12 years of dedicated experience. Known for natural, balanced results, she blends meticulous surgical technique with a deep understanding of periorbital anatomy to refresh the eyes while preserving each patient’s unique character.",
+      "expertise": "Dr. Liu’s core expertise spans upper and lower blepharoplasty, ptosis repair, Asian double-eyelid design, canthopexy/canthoplasty, and nuanced revision eyelid surgery. She employs precise crease planning, conservative fat repositioning, and tissue-sparing methods to minimize swelling and scarring while optimizing both form and function. Her approach is informed by detailed preoperative analysis of eyelid-globe relationships, brow dynamics, and skin quality.\n\nIn brow and temple rejuvenation, Dr. Liu is skilled in endoscopic brow lift, lateral/temporal (temples) lift, and tailored hybrid techniques that subtly elevate and stabilize the upper face. By addressing the forehead-brow-temple vectors together, she restores harmony to the upper third of the face with hidden incisions and advanced fixation strategies. When appropriate, she integrates minimally invasive treatments such as neuromodulators, energy-based skin tightening, and selective fat grafting to enhance longevity and refinement.\n\nHer practice emphasizes comprehensive planning with high-resolution photography, dynamic video assessment, and digital simulation to align surgical design with patient goals. Dr. Liu’s gentle tissue handling, meticulous hemostasis, and enhanced recovery protocols support faster recovery and predictably elegant outcomes.",
+      "philosophy": "Dr. Liu believes that the most beautiful results are those that look effortless and feel authentic. She is committed to preserving eyelid function and individual ethnic identity while creating a refreshed, rested appearance. Every plan is personalized, pairing evidence-based techniques with a conservative aesthetic to avoid overcorrection.\n\nPatients value her calm, communicative style and clear education throughout the process—from thoughtful consultation and transparent risk discussion to attentive aftercare. Safety, precision, and long-term satisfaction guide every decision she makes.",
+      "achievements": [
+        "Published peer-reviewed research on Asian eyelid crease design and outcomes of endoscopic brow/temporal lifting",
+        "Invited speaker and course instructor at ISAPS and CSPS workshops on periorbital rejuvenation",
+        "Led a quality-improvement initiative that reduced postoperative swelling and recovery time through atraumatic technique and enhanced recovery protocols"
+      ]
+    },
+    "image_prompt": "Create a professional portrait of Dr. Yue Liu, a female East Asian plastic surgeon in her late 30s to early 40s. She is wearing a crisp white lab coat over a light pastel blouse, minimal jewelry, and subtle professional makeup; hair neatly tied in a low bun. Three-quarter length, standing with a relaxed, upright posture and gently crossed arms, making warm, confident eye contact with a friendly, approachable smile. Background: modern, bright medical environment (clean consultation room or clinic corridor) with softly blurred shelves and medical displays. Lighting: soft, diffused key light with gentle rim light, natural color balance, high-resolution detail; shallow depth of field as if shot on an 85mm lens at f/2.0. Overall mood: professional, trustworthy, and calm; no surgical tools visible; include a discreet ID badge reading “Dr. Yue Liu — Plastic Surgeon.”",
+    "id": "yue-liu"
+  },
+  {
+    "name": "Dr. Xin Zhou",
+    "title": "Board-Certified Facial Plastic Surgeon",
+    "specialties": [
+      "Chin Augmentation",
+      "Cheek Augmentation",
+      "Jawline Contouring"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Shanghai Jiao Tong University School of Medicine",
+      "Residency - Department of Plastic and Reconstructive Surgery, Ninth People's Hospital, Shanghai Jiao Tong University",
+      "Fellowship - Craniofacial & Aesthetic Facial Contouring, Seoul National University Hospital"
+    ],
+    "certifications": [
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 16,
+    "procedures_count": {
+      "facelifts": 480,
+      "rhinoplasty": 400,
+      "eyelid_surgery": 640
+    },
+    "bio": {
+      "intro": "Dr. Xin Zhou is a facial contouring specialist with 16 years of surgical experience, recognized for creating balanced, natural-looking profiles. His practice focuses on precision chin and cheek augmentation and refined jawline contouring, blending craniofacial principles with aesthetic artistry.",
+      "expertise": "Dr. Zhou’s approach begins with meticulous facial analysis and 3D simulation to align surgical planning with each patient’s goals. He is adept at chin augmentation using either custom alloplastic implants or sliding genioplasty when skeletal repositioning is indicated, choosing vector, width, and projection to harmonize the lower third while protecting the mental nerve and occlusal function. For cheek augmentation, he tailors malar or submalar support through porous polyethylene/silicone implants or structural fat grafting, frequently combining midface suspension to restore light reflex and contour.\n\nIn jawline contouring, Dr. Zhou addresses mandibular angle definition, chin-jawline continuity, and cervicomental transition through implant-based augmentation, conservative angle reduction, or osteoplasty, often pairing techniques to achieve crisp yet natural definition. He emphasizes nerve-sparing dissection, precise pocket creation, and layered closure to minimize edema and optimize longevity, supported by enhanced recovery and swelling-control protocols.\n\nA proponent of patient-specific solutions, he employs CAD/CAM design for custom implants when indicated, and utilizes low-profile fixation to stabilize results while preserving soft-tissue dynamics. His outcomes prioritize proportion, symmetry, and durability, with a clear preference for subtle refinements over overcorrection.",
+      "philosophy": "Dr. Zhou believes the best facial contouring looks effortless and respects individual identity. He practices shared decision-making, providing clear education, visual planning tools, and honest risk–benefit discussions so patients can make confident, informed choices.\n\nSafety underpins his care: strict sterility, evidence-based perioperative protocols, and attentive follow-up. He aims for results that age gracefully, favoring conservative changes that enhance structure while maintaining softness and expression.",
+      "achievements": [
+        "Pioneered a CAD/CAM patient-specific chin-jawline implant workflow integrated into everyday practice.",
+        "Invited speaker at ISAPS and Asian Association of Plastic Surgeons meetings on facial implant safety and aesthetic planning.",
+        "Published peer-reviewed articles on 3D planning, custom facial implants, and genioplasty outcomes."
+      ]
+    },
+    "image_prompt": "Professional portrait of an East Asian male facial plastic surgeon in his early 40s, wearing a crisp white lab coat over a light blue dress shirt with a subtle tie. He stands three-quarter turned toward the camera with relaxed shoulders and hands gently clasped, offering a warm, confident smile and direct eye contact. Clear, well-groomed hair, clean-shaven, neat appearance. Background: modern, bright clinic corridor with frosted glass and soft architectural lines, shallow depth of field to keep the environment recognizable yet unobtrusive. Lighting: soft, diffused key light with gentle rim light to define the jawline, natural skin tones, catchlights in the eyes. Composition: head-and-shoulders, centered, shot on an 85mm lens, high-resolution, editorial quality, professional, trustworthy, approachable.",
+    "id": "xin-zhou"
+  },
+  {
+    "name": "Dr. Jing Wu",
+    "title": "Consultant Plastic Surgeon, Neck & Jawline Surgery Specialist",
+    "specialties": [
+      "Deep Neck Contouring",
+      "Neck Liposuction",
+      "Platysmaplasty"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Shanghai Jiao Tong University School of Medicine",
+      "Residency - Shanghai Ninth People’s Hospital, Department of Plastic & Reconstructive Surgery",
+      "Fellowship - Facial Plastic & Reconstructive Surgery (Neck & Jawline)"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 14,
+    "procedures_count": {
+      "facelifts": 420,
+      "rhinoplasty": 350,
+      "eyelid_surgery": 560
+    },
+    "bio": {
+      "intro": "Dr. Jing Wu is a dedicated plastic surgeon with 14 years of experience focused on refining the neck and jawline. She is known for producing elegant, natural profiles through precise, anatomy-led techniques and a meticulous approach to safety.",
+      "expertise": "Dr. Wu’s practice centers on advanced deep neck contouring, addressing both superficial and subplatysmal compartments to restore a crisp cervicomental angle. When indicated, she performs selective subplatysmal sculpting and targeted digastric muscle and deep fat refinement, complemented by energy-assisted lipolysis for uniform skin retraction. Her neck liposuction protocols favor microcannulas, tumescent anesthesia, and ultrasound-guided planning to protect vital structures and optimize symmetry.\n\nIn platysmaplasty, Dr. Wu employs individualized midline plication and lateral corset techniques to correct banding and redefine the mandibular border. She is experienced with revision necks, heavier necks, and challenging anatomy, integrating adjuncts such as limited skin redraping, precision fat grafting to the prejowl sulcus, and non-invasive adjunctive tightening when appropriate. Preoperative digital morphing and structured photographic analysis support shared decision-making and outcome predictability.",
+      "philosophy": "Dr. Wu believes that a refined neck and jawline should enhance, not alter, a patient’s identity. She prioritizes conservative, tissue-preserving maneuvers and thorough assessment of skin elasticity, fat distribution, platysma behavior, and hyoid position to tailor a plan that balances definition with longevity.\n\nHer commitment to patient safety includes comprehensive counseling, clear expectation setting, and evidence-based perioperative pathways. Dr. Wu personally guides patients through recovery and long-term maintenance, emphasizing durable, natural results with minimal downtime.",
+      "achievements": [
+        "Published peer-reviewed work on algorithmic planning for deep neck contouring and platysmaplasty",
+        "Invited speaker and workshop faculty on neck and jawline surgery at regional aesthetic and plastic surgery meetings",
+        "Developed a standardized neck assessment protocol adopted in her clinic to enhance outcome consistency and patient satisfaction"
+      ]
+    },
+    "image_prompt": "Professional portrait photo of an East Asian female plastic surgeon, age 40–45, wearing a crisp white lab coat over a navy blouse, neatly tied hair, subtle natural makeup, and a calm, friendly smile. Pose: three-quarter view, relaxed posture with hands gently folded or lightly crossed. Setting: modern medical clinic background with clean lines, soft neutral tones, and subtle depth-of-field bokeh. Lighting: soft diffused key light with gentle rim light to define facial contours; high-resolution, 85mm portrait style, color-balanced. Expression and mood: confident, approachable, and trustworthy.",
+    "id": "jing-wu"
+  },
+  {
+    "name": "Dr. Mei Lin",
+    "title": "Facial Plastic Surgeon, Specialist in Facial Implants & Contouring",
+    "specialties": [
+      "Facial Implants",
+      "Submalar Implants",
+      "Zygomatic Arch Contouring"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Shanghai Jiao Tong University School of Medicine",
+      "Residency - Shanghai Ninth People's Hospital, Plastic & Reconstructive Surgery",
+      "Fellowship - Craniofacial & Aesthetic Surgery (Facial Implants & Skeletal Contouring)"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 19,
+    "procedures_count": {
+      "facelifts": 570,
+      "rhinoplasty": 475,
+      "eyelid_surgery": 760
+    },
+    "bio": {
+      "intro": "Dr. Mei Lin is a facial plastic surgeon with 19 years of experience focused on facial implants and skeletal contouring. He is recognized for delivering balanced, natural-looking enhancements that respect each patient’s unique facial architecture. His practice is sought after for advanced submalar augmentation and precise zygomatic arch refinement.",
+      "expertise": "Dr. Lin’s core expertise includes custom facial implants—particularly submalar and malar augmentation—and zygomatic arch contouring to refine cheek width and midface definition. He utilizes high-resolution 3D CT planning with CAD/CAM design to create patient-specific implants in biocompatible materials such as porous polyethylene and medical-grade silicone, selecting fixation techniques that optimize stability and symmetry. Whenever possible, he employs intraoral and endoscopic approaches to minimize visible scarring and postoperative downtime.\n\nWith a special focus on submalar augmentation, Dr. Lin restores midface support and youthful contour without overfilling the cheek apex. His technique emphasizes vector-oriented pocket dissection, precise implant seating, and controlled soft-tissue redraping, often integrating adjunctive procedures such as midface lift, buccal fat refinement, and microfat grafting for seamless transitions. He is equally experienced in complex revision cases and in correcting congenital or post-traumatic asymmetries, using custom templates and surgical navigation when indicated.\n\nFor zygomatic arch contouring, Dr. Lin tailors reduction, reshaping, or augmentation to harmonize frontal, oblique, and profile views. He prioritizes nerve-sparing exposure, stable fixation, and meticulous occlusal and orbital assessments. His perioperative protocols—covering implant selection, antibiotic stewardship, and swelling control—are designed to enhance safety, predictability, and long-term satisfaction.",
+      "philosophy": "Dr. Lin believes that enduring beauty comes from structural balance and subtle refinement, not excess. He partners closely with patients, using digital morphing and 3D model reviews to set realistic goals and co-create a surgical plan that preserves ethnic identity and personal character.\n\nSafety and trust are central to his care. From comprehensive risk counseling to meticulous postoperative follow-up, he maintains a transparent, evidence-based approach supported by a multidisciplinary team, ensuring each patient’s journey is comfortable, informed, and results-driven.",
+      "achievements": [
+        "Published peer-reviewed work on patient-specific submalar implants and zygomatic arch contouring, contributing protocols for improved midface harmony and implant stability.",
+        "Invited speaker and course faculty at international aesthetic meetings (including ISAPS and regional Asian forums) on 3D planning and facial skeletal aesthetics.",
+        "Developed a standardized 3D planning and intraoral fixation workflow in his practice that reduced implant revisions and sensory disturbances while improving symmetry outcomes."
+      ]
+    },
+    "image_prompt": "Professional portrait of a mid-40s East Asian male facial plastic surgeon, wearing a crisp white lab coat over a light blue dress shirt and charcoal tie; half-length, slightly angled stance with relaxed, confident posture and a warm, approachable smile. Clean-shaven, neatly styled black hair, clear complexion. Background: modern, bright clinic environment with softly blurred surgical lights and glass panels, subtle medical imaging screens in the distance. Lighting: soft diffused key light with gentle rim light, natural color balance, high-resolution, shallow depth of field (50mm lens look). Aesthetic: trustworthy, professional, and friendly; no text or logos; realistic photographic style.",
+    "id": "mei-lin"
+  },
+  {
+    "name": "Dr. Han Zhao",
+    "title": "Board-Certified Plastic Surgeon",
+    "specialties": [
+      "Liposuction",
+      "Tummy Tuck (Abdominoplasty)",
+      "Mommy Makeover"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Shanghai Jiao Tong University School of Medicine",
+      "Residency - Ninth People's Hospital, Shanghai Jiao Tong University",
+      "Fellowship - Aesthetic Body Contouring"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 17,
+    "procedures_count": {
+      "facelifts": 510,
+      "rhinoplasty": 425,
+      "eyelid_surgery": 680
+    },
+    "bio": {
+      "intro": "Dr. Han Zhao is a board-certified plastic surgeon with 17 years of dedicated experience in advanced body contouring. Known for her meticulous technique and natural, balanced results, she is sought after for comprehensive liposuction, abdominoplasty, and individualized mommy makeover plans.",
+      "expertise": "Dr. Zhao’s clinical focus centers on high-definition liposuction and lipo 360, using energy-assisted and power-assisted modalities to refine the waistline, flanks, back, and thighs with smooth transitions. She often integrates strategic autologous fat grafting to enhance curves and restore proportion, emphasizing small, well-concealed access points and careful contour blending for a soft, feminine silhouette. Her preoperative process includes detailed anatomical mapping and 3D assessment to align outcomes with each patient’s lifestyle and goals.\n\nIn abdominoplasty, Dr. Zhao is experienced with rectus diastasis repair, tailored umbilical design, and progressive-tension, low-incision techniques that support a drainless approach when appropriate. For mommy makeovers, she structures safe, efficient surgical plans—sequencing procedures thoughtfully, prioritizing VTE prophylaxis and enhanced recovery pathways—while providing comprehensive scar-care protocols (silicone therapy, taping, and laser options) to optimize the final aesthetic.",
+      "philosophy": "Dr. Zhao believes body contouring should celebrate individual anatomy, not overwrite it. She blends surgical precision with artistic judgment, emphasizing proportion, posture, and long-term aesthetics over aggressive over-resection. Patients can expect transparent counseling, realistic goal-setting, and a supportive, step-by-step journey from consultation through recovery.\n\nSafety and comfort guide every decision. Dr. Zhao follows evidence-based dosing for tumescent techniques, meticulous hemostasis, and multimodal analgesia to minimize downtime. Her warm, attentive bedside manner and detailed aftercare empower patients to heal confidently and enjoy durable, natural-looking results.",
+      "achievements": [
+        "Invited speaker and workshop faculty at ISAPS regional programs on drainless abdominoplasty and high-definition liposuction.",
+        "Lead author of a peer-reviewed outcomes study on lipoabdominoplasty in postpartum patients, demonstrating reduced seroma rates with progressive-tension techniques.",
+        "Developed and implemented an Enhanced Recovery After Surgery pathway for body-contouring patients, improving time to mobilization and reducing opioid use at her practice."
+      ]
+    },
+    "image_prompt": "Professional portrait of an East Asian female plastic surgeon in her mid-40s, wearing a crisp white lab coat over a light pastel blouse; minimal jewelry, neat low bun, subtle natural makeup; gentle, confident smile. Pose: three-quarter, hands lightly clasped at waist. Background: modern aesthetic surgery consultation room with clean lines, soft neutral tones, glass accents, and an exam chair; subtle medical diplomas on the wall. Lighting: soft, diffused key light from camera left with gentle fill, even skin tones, no harsh shadows. Camera: 85mm lens, f/2.8, shallow depth of field, full-frame. Color-balanced, high-resolution, editorial quality. Mood: professional, trustworthy, and approachable.",
+    "id": "han-zhao"
+  },
+  {
+    "name": "Ying Sun",
+    "title": "Board-Certified Plastic Surgeon, Post-Weight Loss Body Contouring Specialist",
+    "specialties": [
+      "Body Contouring After Weight Loss",
+      "Lower Body Lift",
+      "Panniculectomy"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Fudan University Shanghai Medical College",
+      "Residency - University of California, San Diego Medical Center (Plastic Surgery)",
+      "Fellowship - Body Contouring After Massive Weight Loss, University of Pittsburgh Medical Center"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)"
+    ],
+    "experience_years": 22,
+    "procedures_count": {
+      "facelifts": 660,
+      "rhinoplasty": 550,
+      "eyelid_surgery": 880
+    },
+    "bio": {
+      "intro": "Ying Sun, MD, is a board-certified plastic surgeon with 22 years of experience focused on body contouring after significant weight loss. Recognized for meticulous technique and a warm, patient-centered approach, he helps patients restore comfort, function, and balanced proportions after their weight-loss journey.",
+      "expertise": "Dr. Sun specializes in comprehensive post-weight-loss transformations, including circumferential lower body lifts (belt lipectomy), extended abdominoplasty with panniculectomy, and staged contouring of the arms, thighs, back, and chest. He is known for precise scar planning, layered closure, and progressive tension sutures to reduce seromas and optimize scar quality. When appropriate, he combines lipoabdominoplasty and 360° contouring to harmonize the waist, flanks, and hips while preserving lymphatic integrity.\n\nSafety and predictability guide every plan. Dr. Sun employs evidence-based venous thromboembolism risk stratification, multimodal pain control, and enhanced recovery protocols to minimize downtime. He collaborates closely with bariatric teams and, when needed, general surgeons for concurrent hernia repair, ensuring both functional and aesthetic goals are met. Detailed preoperative marking, nutrition optimization, and realistic staging enable durable, natural-looking results.\n\nBeyond technique, Dr. Sun’s follow-up care emphasizes swelling management, scar maturation, and return-to-activity timelines tailored to each patient’s lifestyle. His photography and 3D planning workflows help patients visualize outcomes and understand trade-offs, fostering confidence and informed decision-making.",
+      "philosophy": "Dr. Sun believes post-weight-loss body contouring is both restorative and deeply personal. He listens closely to each patient’s priorities—comfort in clothing, skin irritation relief, athletic performance, or silhouette refinement—and crafts a plan that balances safety, proportion, and longevity. Clear education about incisions, recovery, and staged sequencing ensures patients move forward with realistic expectations and peace of mind.\n\nAbove all, he is committed to compassionate care: protecting patient safety, honoring the hard work behind weight loss, and delivering results that feel authentic to the patient’s body and goals.",
+      "achievements": [
+        "Developed an enhanced recovery pathway for body lift and panniculectomy patients that reduced length of stay and improved early mobility in his practice.",
+        "Invited speaker at international meetings on post-bariatric body contouring, sharing protocols for 360° lower trunk reshaping and seroma reduction strategies.",
+        "Lead author on peer‑reviewed analyses examining outcomes and quality of life after panniculectomy in massive weight-loss patients."
+      ]
+    },
+    "image_prompt": "Professional portrait of an East Asian male plastic surgeon in his late 40s to early 50s, East Asian facial features, neatly groomed hair, wearing a crisp white lab coat over a light blue dress shirt and navy tie. Pose: relaxed, arms gently crossed, slight warm smile conveying trust and confidence. Background: modern medical clinic corridor or consultation room with soft natural light, subtle bokeh, and clean, contemporary design. Lighting: soft key light with gentle fill and subtle rim light for separation; color-balanced, high resolution. Composition: head-and-shoulders, 85mm lens look, shallow depth of field. Mood: professional, approachable, and reassuring.",
+    "id": "ying-sun"
+  },
+  {
+    "name": "Dr. Jun Yang",
+    "title": "Board-Certified Plastic Surgeon, Extremity Contouring Specialist",
+    "specialties": [
+      "Arm Lift (Brachioplasty)",
+      "Thigh Lift",
+      "Bra Line Back Lift"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Peking University Health Science Center",
+      "Residency - Shanghai Ninth People's Hospital, Department of Plastic & Reconstructive Surgery",
+      "Fellowship - Body Contouring & Post-Weight-Loss Surgery, University of Texas Southwestern Medical Center"
+    ],
+    "certifications": [
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 13,
+    "procedures_count": {
+      "facelifts": 390,
+      "rhinoplasty": 325,
+      "eyelid_surgery": 520
+    },
+    "bio": {
+      "intro": "Dr. Jun Yang is a board-certified plastic surgeon with 13 years of experience, recognized for her refined expertise in extremity contouring. She is known for advanced arm, thigh, and bra line back lift procedures that prioritize balanced proportions, discreet scars, and long-term comfort.",
+      "expertise": "Dr. Yang’s practice is centered on comprehensive extremity contouring, especially for patients following weight fluctuations or significant weight loss. She integrates precise liposculpture with skin redraping to create smooth transitions at the shoulder, axilla, and lateral chest for arm lifts, and along the groin crease and inner thigh for thigh lifts. Her bra line back lift technique focuses on carefully concealed incisions along the natural brassiere line, achieving a firmer upper back silhouette with minimal visibility in day-to-day wear.\n\nCombining ultrasound mapping, meticulous lymphatic preservation, and progressive-tension closure, Dr. Yang reduces drain use and lowers the risk of seroma and contour irregularities. She applies Enhanced Recovery After Surgery (ERAS) principles—multimodal, opioid-sparing analgesia; early mobilization; and thoughtful DVT prophylaxis—to shorten recovery time while maintaining optimal safety. Her planning includes 3D surface imaging, individualized scar-placement strategies for diverse body types, and collaborative aftercare with physical therapy to restore mobility and confidence.",
+      "philosophy": "Dr. Yang believes every contouring plan should be individualized, data-driven, and honest about trade-offs. She provides clear visual simulations, discusses scar trajectories in detail, and balances ambition with safety to deliver results that look natural in motion—not just in photos.\n\nHer care model emphasizes empathy, education, and shared decision-making. From the first consult through long-term follow-up, she is committed to transparent communication, meticulous technique, and outcomes that enhance both aesthetics and function.",
+      "achievements": [
+        "Implemented a drainless, progressive-tension closure protocol for arm lifts that significantly reduced seroma rates and improved patient comfort.",
+        "Published on thigh lift scar placement optimization and lymphatic-sparing strategies in peer-reviewed aesthetic surgery journals.",
+        "Invited faculty at international body-contouring symposia (ISAPS and regional meetings) to teach advanced extremity contouring techniques."
+      ]
+    },
+    "image_prompt": "Professional portrait of an East Asian female plastic surgeon in her late 30s to early 40s (Asian/East Asian appearance), wearing a crisp white lab coat embroidered with 'Dr. Jun Yang, Plastic Surgeon'. Three-quarter pose, relaxed posture with a gentle, confident smile, holding a slim tablet at chest level. Clean hair neatly tied back, minimal natural makeup. Background: modern, bright medical clinic with soft depth-of-field (subtle operating lights, glass partitions, and clinic signage blurred). Lighting: soft, diffused key light with gentle fill, natural daylight tones for a trustworthy, approachable look. Color palette: cool whites and light neutrals. Overall mood: professional, kind, attentive, and highly competent.",
+    "id": "jun-yang"
+  },
+  {
+    "name": "Dr. Hua Xu",
+    "title": "Consultant Plastic Surgeon (Breast Surgery Specialist)",
+    "specialties": [
+      "Breast Augmentation",
+      "Breast Lift",
+      "Breast Reduction"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Fudan University Shanghai Medical College",
+      "Residency - Department of Plastic and Reconstructive Surgery, Shanghai Ninth People’s Hospital",
+      "Fellowship - Aesthetic and Breast Surgery"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 16,
+    "procedures_count": {
+      "facelifts": 480,
+      "rhinoplasty": 400,
+      "eyelid_surgery": 640
+    },
+    "bio": {
+      "intro": "Dr. Hua Xu is a dedicated plastic surgeon with 16 years of focused experience in aesthetic and reconstructive breast surgery. Known for natural, balanced outcomes and meticulous attention to scar quality, she is recognized by patients and peers for her thoughtful planning and calm, compassionate care.",
+      "expertise": "Dr. Xu’s clinical expertise spans the full spectrum of breast procedures, including dual-plane and subfascial augmentation, short-scar vertical mastopexy, and superomedial pedicle breast reduction tailored to body proportion and tissue characteristics. She has particular interest in mastopexy-augmentation for patients with deflation or mild ptosis, using individualized incision patterns (lollipop vs. anchor) to optimize lift, projection, and scar placement.\n\nShe employs advanced preoperative analysis and 3D simulation to guide implant selection and soft‑tissue planning, with special consideration for the chest wall and soft-tissue envelope common in East Asian anatomies. Her intraoperative protocols emphasize precision hemostasis, no‑touch implant handling, and pocket control to reduce capsular contracture and asymmetry. Dr. Xu also integrates fat grafting for upper pole contour refinement and offers oncoplastic balancing techniques for patients post-lumpectomy.",
+      "philosophy": "Patient safety and informed choice are at the heart of Dr. Xu’s practice. She believes every surgical plan should reflect a patient’s unique goals, lifestyle, and anatomy, and she takes time to educate each person about options, trade‑offs, and long‑term maintenance.\n\nHer care model prioritizes comfort and continuity: comprehensive preoperative counseling, enhanced recovery pathways, and attentive follow‑up. Dr. Xu’s goal is to achieve results that look and feel authentically you—beautiful in motion, balanced in proportion, and sustainable over time.",
+      "achievements": [
+        "Invited speaker at international aesthetic surgery meetings on mastopexy‑augmentation and scar-minimizing techniques",
+        "Lead author and contributor to peer‑reviewed publications on implant selection and outcomes in East Asian patients",
+        "Implemented 3D imaging and enhanced recovery protocols that improved patient satisfaction and decreased postoperative nausea rates"
+      ]
+    },
+    "image_prompt": "Professional portrait of a female East Asian plastic surgeon in her early 40s, Asian/East Asian appearance, wearing a crisp white medical coat over a light blouse, minimal natural makeup, neatly styled hair in a low bun, subtle stud earrings. Three-quarter length pose, relaxed shoulders, hands gently clasped at waist or lightly crossed, warm confident smile, direct but soft eye contact. Background: modern, well-lit medical clinic with soft neutral tones, subtle surgical suite elements out of focus, certificates and tasteful décor faintly visible. Lighting: bright, clean, softbox key light with gentle fill, slight rim light to separate from background; shallow depth of field for a premium, trustworthy look. High-resolution, editorial-quality, professional headshot style, friendly and credible, no dramatic shadows, color-balanced and true-to-life.",
+    "id": "hua-xu"
+  },
+  {
+    "name": "Dr. Qing Ma",
+    "title": "Plastic and Reconstructive Surgeon; Breast Revision & Reconstruction Specialist",
+    "specialties": [
+      "Breast Implant Removal",
+      "Breast Revision",
+      "Gynecomastia Surgery"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Accredited Medical School (China)",
+      "Residency - Integrated Plastic Surgery, tertiary teaching hospital",
+      "Fellowship - Microsurgical Breast Reconstruction & Aesthetic Breast Surgery"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 20,
+    "procedures_count": {
+      "facelifts": 600,
+      "rhinoplasty": 500,
+      "eyelid_surgery": 800
+    },
+    "bio": {
+      "intro": "Dr. Qing Ma is a plastic and reconstructive surgeon with two decades of focused experience in complex breast revision and reconstruction. He is sought after for thoughtful breast implant removal, challenging revision cases, and refined gynecomastia surgery that prioritize natural contour, symmetry, and long-term wellness.",
+      "expertise": "Dr. Ma’s practice centers on corrective breast surgery, with particular expertise in implant removal strategies (including partial or total capsulectomy when indicated), pocket reconstruction, and soft‑tissue refinement to restore harmony after prior operations. He is adept at addressing capsular contracture, malposition, rippling, and animation deformities, using tailored approaches such as internal support techniques, fat grafting for contour and coverage, and careful scar planning to optimize shape while minimizing visible marks.\n\nIn gynecomastia surgery, Dr. Ma combines precision liposculpture with targeted gland excision through discreet access points to achieve a natural, masculine chest. He emphasizes meticulous hemostasis, predictable skin retraction, and postoperative protocols that support comfort, rapid recovery, and durable results. Across procedures, his technique is defined by careful preoperative analysis, conservative tissue handling, and evidence‑informed decision-making that balances aesthetics with structural integrity.\n\nDr. Ma uses a stepwise planning process—photographic assessment, individualized measurements, and transparent discussion of options—to align surgical plans with each patient’s anatomy and priorities. He integrates technologies such as ultrasound assessment and 3D simulation where helpful, and maintains a strong focus on safety, including thoughtful anesthesia choices and enhanced recovery pathways.",
+      "philosophy": "Dr. Ma believes that excellent outcomes begin with listening. He practices shared decision‑making, offering clear guidance on risks, benefits, and realistic expectations so patients feel informed and empowered. Whether removing implants for personal preference or medical reasons, his priority is long‑term health, comfort, and a result that feels authentically “you.”\n\nHe is committed to privacy, dignity, and continuity of care. From the first consultation through follow‑up, patients can expect a calm, respectful environment, meticulous attention to detail, and steady support tailored to their recovery and lifestyle.",
+      "achievements": [
+        "Developed an evidence‑informed counseling pathway for patients considering breast implant removal and revision, improving clarity around options and recovery.",
+        "Regularly invited to share best practices in breast revision techniques and gynecomastia surgery at regional and international educational forums.",
+        "Contributor to clinical discussions on soft‑tissue support, pocket management, and fat grafting in complex breast reconstruction."
+      ]
+    },
+    "image_prompt": "Create a professional portrait of an East Asian male plastic surgeon in his late 40s to early 50s, identified as Dr. Qing Ma. He has a calm, confident demeanor, neatly groomed short black hair, and a friendly, approachable expression with a gentle smile. He is wearing a crisp white lab coat over a light dress shirt and tie, with a subtle name badge reading “Dr. Qing Ma.” Pose: three‑quarter torso, standing with relaxed posture and hands lightly clasped at waist level, facing the camera. Background: modern, softly blurred clinical setting with clean lines, natural light, and cool neutral tones. Lighting: soft, balanced, high‑key studio lighting with slight rim light to separate from background; natural skin tones, minimal retouching. Style: high‑resolution, editorial‑quality, professional medical headshot that conveys trust, expertise, and warmth.",
+    "id": "qing-ma"
+  },
+  {
+    "name": "Dr. Fang Zheng",
+    "title": "Board-Certified Plastic Surgeon",
+    "specialties": [
+      "Brazilian Butt Lift (BBL)",
+      "Buttock Lift",
+      "Mons Pubis Lift"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Peking Union Medical College",
+      "Residency - Shanghai Ninth People’s Hospital, Department of Plastic and Reconstructive Surgery",
+      "Fellowship - Aesthetic & Body Contouring"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 14,
+    "procedures_count": {
+      "facelifts": 420,
+      "rhinoplasty": 350,
+      "eyelid_surgery": 560
+    },
+    "bio": {
+      "intro": "Dr. Fang Zheng is a board-certified plastic surgeon with 14 years of dedicated experience in buttocks and lower body contouring. Known for natural, proportionate results and a meticulous, safety-first approach, she is trusted by patients seeking refined silhouettes and harmonious body balance.",
+      "expertise": "Dr. Zheng specializes in advanced gluteal aesthetics, including Brazilian Butt Lift, buttock lift, and comprehensive lower trunk contouring. She employs ultrasound-guided, subcutaneous-only fat grafting and micro-droplet techniques to enhance safety and longevity, while using strategic 360° liposculpture to refine the waist-to-hip ratio and correct hip dips. Her approach integrates low-pressure harvesting, precise cannula selection, and careful vector planning to create soft transitions and durable shape with minimized trauma.\n\nIn post-weight-loss and post-pregnancy patients, Dr. Zheng performs buttock lifts, outer thigh lifts, and mons pubis lifts with an emphasis on scar concealment and function. She often utilizes progressive-tension suturing, drainless techniques when appropriate, and tailored skin-redraping to optimize contour and comfort. Preoperative 3D imaging, detailed marking, and customized garment protocols complete her comprehensive, data-informed workflow.",
+      "philosophy": "Patient safety and transparent communication are at the heart of Dr. Zheng’s practice. She provides candid consultations that prioritize realistic goals, body harmony, and long-term well-being, with careful preoperative optimization and thorough education on recovery.\n\nHer philosophy blends artistry with evidence-based technique: every plan is individualized, respecting the patient’s anatomy, lifestyle, and preferences. From the first visit to long-term follow-up, she fosters a supportive, respectful environment where patients feel heard and empowered.",
+      "achievements": [
+        "Early adopter and instructor of ultrasound-guided gluteal fat grafting protocols aligned with international safety guidelines.",
+        "Invited speaker at regional and international aesthetic surgery meetings on lower body contouring strategy and BBL safety.",
+        "Lead author of a published enhanced-recovery pathway for lower body contouring improving patient comfort and outcomes."
+      ]
+    },
+    "image_prompt": "Create a professional portrait of an East Asian female plastic surgeon, age 35–45, wearing a crisp white medical coat over a light blouse. She has neat, natural makeup and hair tied back in a low bun, minimal jewelry, and a warm, confident smile. Pose her in a three-quarter view with relaxed crossed arms or hands lightly clasped, conveying approachability and authority. Background: modern, well-lit medical setting with subtle surgical or consultation room elements and soft bokeh. Lighting: clean, soft key light with gentle fill, balanced color temperature, and natural highlights on the face. Overall mood: trustworthy, skilled, and friendly—ideal for a premium aesthetic surgery clinic profile photo.",
+    "id": "fang-zheng"
+  },
+  {
+    "name": "Dr. Lan Huang",
+    "title": "Consultant Plastic, Reconstructive, and Aesthetic Surgeon",
+    "specialties": [
+      "Labiaplasty",
+      "Intimate Rejuvenation",
+      "Scar Revision"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Shanghai Jiao Tong University School of Medicine",
+      "Residency - Queen Mary Hospital, The University of Hong Kong",
+      "Fellowship - Aesthetic Genital and Reconstructive Surgery"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 11,
+    "procedures_count": {
+      "facelifts": 330,
+      "rhinoplasty": 275,
+      "eyelid_surgery": 440
+    },
+    "bio": {
+      "intro": "Dr. Lan Huang is a consultant plastic, reconstructive, and aesthetic surgeon with 11 years of dedicated experience in intimate and reconstructive surgery. Her practice is recognized for meticulous technique, discretion, and compassionate care. She focuses on labiaplasty, intimate rejuvenation, and complex scar revision, delivering results that restore both comfort and confidence.",
+      "expertise": "In labiaplasty, Dr. Huang employs a highly individualized approach—selecting wedge, edge, or hybrid techniques based on anatomy, tissue quality, and patient goals. She emphasizes nerve-sparing dissection, refined contouring, and careful suture planning to preserve sensation while improving symmetry and comfort. Her protocols integrate preoperative counseling, precise markings, and atraumatic handling to minimize swelling and expedite recovery for athletes, postpartum patients, and those with functional concerns.\n\nHer intimate rejuvenation work combines evidence-based energy therapies (fractional laser, radiofrequency) with biologic and structural support (autologous fat grafting, PRP) to enhance tissue quality, hydration, and tone. In reconstructive and aesthetic scar management, she blends surgical revision (e.g., Z‑plasty and geometric broken-line techniques) with multimodal therapies—fractional laser, silicone therapy, steroid or 5‑FU microinjections, and RF microneedling—to optimize texture and pigmentation. She is particularly experienced in protocols tailored for Asian skin, prioritizing pigment-safe settings and staged treatments.",
+      "philosophy": "Dr. Huang practices trauma-informed, privacy-first care. She believes intimate surgery requires trust, clarity, and shared decision-making. Every consultation includes a thorough discussion of benefits, risks, alternatives, and realistic outcomes, supported by visual aids and personalized recovery plans.\n\nSafety and comfort guide every step: from conservative planning and meticulous hemostasis to enhanced recovery pathways focused on swelling control, pain minimization, and scar optimization. She remains closely involved through follow-up, ensuring long-term functional and aesthetic success.",
+      "achievements": [
+        "Invited speaker at ISAPS and Asian Association of Plastic Surgeons symposia on aesthetic genital surgery and scar revision.",
+        "Published peer-reviewed articles on labiaplasty outcomes and pigment-safe scar management in Asian skin.",
+        "Developed an enhanced recovery and comfort pathway for intimate surgery adopted across her clinic."
+      ]
+    },
+    "image_prompt": "Professional head-and-shoulders portrait of an East Asian female plastic surgeon in her late 30s to early 40s, wearing a crisp white lab coat over a light pastel blouse; neat shoulder-length black hair, subtle natural makeup, soft and confident smile, arms gently crossed. Background: modern, bright medical clinic with neutral tones, glass and wood accents, softly blurred certificates and consultation room elements. Lighting: soft natural key light with gentle fill, clean color balance; shot on an 85mm lens with shallow depth of field, high-resolution editorial style. Mood: professional, trustworthy, and warmly approachable.",
+    "id": "lan-huang"
+  },
+  {
+    "name": "Dr. Bo Li",
+    "title": "Plastic Surgeon & Aesthetic Physician (Non-Surgical Focus)",
+    "specialties": [
+      "BOTOX & Neurotoxins",
+      "Dermal Fillers",
+      "Lip Injections"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Shanghai Jiao Tong University School of Medicine",
+      "Residency - Shanghai Ninth People's Hospital (Plastic & Reconstructive Surgery)",
+      "Fellowship - Non-Surgical Facial Aesthetics"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 10,
+    "procedures_count": {
+      "facelifts": 120,
+      "rhinoplasty": 90,
+      "eyelid_surgery": 180
+    },
+    "bio": {
+      "intro": "Dr. Bo Li is a fellowship-trained aesthetic physician and plastic surgeon who specializes in non-surgical facial rejuvenation. With a decade of experience, she is recognized for delivering refined, natural-looking results through injectables with an unwavering emphasis on safety.",
+      "expertise": "Dr. Li’s practice centers on precision neuromodulator treatments and advanced dermal filler techniques for full-face harmonization. She employs anatomy-guided planning, micro-dosing strategies, and a strict safety protocol to optimize outcomes while minimizing downtime. Her approach to lip injections blends proportion, profile balance, and dental show analysis to create elegant, soft, and stable results that age gracefully.\n\nShe is adept in both needle and microcannula methods, selecting the technique based on tissue quality, vascular mapping, and desired effect. Dr. Li frequently integrates ultrasound-assisted assessment for high‑risk zones, and is known for subtle, effective corrections such as masseter contouring, lip eversion, chin and jawline definition, and tear trough refinement. Her patients value her meticulous touch, gentle technique, and thoughtful treatment sequencing that prioritizes facial balance over isolated features.\n\nBridging surgical training with non-surgical expertise, Dr. Li brings a comprehensive understanding of facial layers, vectors, and aging mechanics to every plan. Although her current focus is non-surgical, her surgical background informs her ability to advise when surgery may better serve long-term goals, ensuring patients receive the right treatment at the right time.",
+      "philosophy": "Dr. Li practices a ‘less is more’ philosophy—favoring conservative dosing, gradual enhancements, and transparent follow-ups to safeguard facial identity. Every plan is individualized, often staged over several visits to achieve durable, natural results with maximal safety.\n\nShe is deeply committed to patient education and informed consent, cultural and ethnic sensitivity in aesthetic ideals, and evidence-based techniques. Her goal is to enhance confidence through subtle improvements that look refreshed, never overdone.",
+      "achievements": [
+        "Served as a regional trainer for injectables, mentoring clinicians on anatomy-first, complication-aware techniques and microcannula best practices.",
+        "Developed clinic safety protocols, including ultrasound risk-zone assessment and hyaluronidase readiness, contributing to a complication rate under 0.5% across thousands of injections.",
+        "Invited speaker at international aesthetic meetings on lip design, masseter reduction, and full-face harmonization with neuromodulators and fillers."
+      ]
+    },
+    "image_prompt": "Professional portrait of an East Asian female physician in her late 30s to early 40s, wearing a crisp white lab coat over a light blouse, subtle natural makeup, neat low bun hairstyle, minimal jewelry. She stands three-quarter length with relaxed, gently crossed arms, warm and confident smile, direct eye contact. Background: modern, bright aesthetic clinic with clean lines, frosted glass, and soft neutral tones. Lighting: soft, diffused key light with gentle fill, slight vignette, shallow depth of field (50mm portrait look). Mood: trustworthy, approachable, highly professional.",
+    "id": "bo-li"
+  },
+  {
+    "name": "Dr. Rui Zhang",
+    "title": "Board-Certified Plastic Surgeon, Regenerative & Injectable Medicine Specialist",
+    "specialties": [
+      "Fat Transfer",
+      "PRP/PRF",
+      "Facial Rejuvenation with PRP"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Shanghai Jiao Tong University School of Medicine",
+      "Residency - NewYork-Presbyterian Hospital/Weill Cornell Medical Center, Plastic Surgery",
+      "Fellowship - Aesthetic & Regenerative Medicine (PRP/PRF & Fat Grafting)"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)"
+    ],
+    "experience_years": 12,
+    "procedures_count": {
+      "facelifts": 360,
+      "rhinoplasty": 300,
+      "eyelid_surgery": 480
+    },
+    "bio": {
+      "intro": "Dr. Rui Zhang is a board-certified plastic surgeon with 12 years of experience at the intersection of aesthetic surgery and regenerative medicine. Recognized for his meticulous technique and calm, reassuring manner, he has built a reputation for natural, long-lasting facial rejuvenation using advanced PRP/PRF protocols and precision fat transfer.",
+      "expertise": "Dr. Zhang specializes in autologous fat transfer—ranging from structural fat grafting to micro- and nanofat techniques—to restore volume, refine contours, and improve skin quality. He pairs these methods with platelet-rich plasma and platelet-rich fibrin prepared under standardized, evidence-based protocols to enhance graft viability and stimulate collagen remodeling. For delicate areas such as the periorbital region and tear troughs, he employs cannula-based, low-pressure microdroplet placement with ultrasound mapping to elevate safety and consistency.\n\nIn non-surgical facial rejuvenation, Dr. Zhang develops layered treatment plans that integrate PRP/PRF with neuromodulators, biostimulators, and skin health strategies for comprehensive results. His practice emphasizes minimally invasive downtime, refined texture improvement, and harmonized, age-appropriate outcomes. Patients value his detailed preoperative analysis, 3D photography, and conservative, stepwise approach that prioritizes facial balance over overcorrection.\n\nHaving completed high-volume training in facial aesthetic surgery, Dr. Zhang maintains strong surgical judgment while focusing his current practice on regenerative and injectable solutions. This blended background allows him to recommend the least invasive option that can reliably achieve the patient’s goals.",
+      "philosophy": "Dr. Zhang believes the most beautiful results come from enhancing, not changing, a patient’s unique anatomy. He designs individualized plans that combine data-driven protocols with an artist’s eye—favoring incremental improvements, careful plane selection, and rigorous safety checks to achieve subtle, durable transformations.\n\nEvery consultation centers on education and trust. Dr. Zhang is committed to transparent communication, clear expectation setting, and long-term maintenance strategies, ensuring each patient feels informed, comfortable, and cared for at every step.",
+      "achievements": [
+        "Developed a standardized PRF-plus-microfat protocol for under-eye rejuvenation, improving texture and reducing downtime.",
+        "Lead author and contributor to peer-reviewed publications on platelet concentrates and fat grafting for facial rejuvenation.",
+        "Regular invited speaker and hands-on instructor on cannula-based fat transfer and PRP/PRF techniques at international aesthetic meetings."
+      ]
+    },
+    "image_prompt": "Create a professional portrait of an East Asian male physician in his late 30s to early 40s, with neat short black hair and a friendly, confident demeanor. He is wearing a crisp white lab coat over a light blue dress shirt with a subtle tie, standing slightly angled to camera with relaxed posture and hands gently folded or one hand in pocket. Expression is warm, approachable, and trustworthy with a slight smile and direct eye contact. Background is a modern, softly blurred clinical setting (bright, contemporary aesthetic clinic with clean lines, glass, and neutral tones). Lighting is soft, natural key light from the front-left with gentle fill, minimal shadows, and high-resolution clarity; shallow depth of field (85mm portrait look), natural color grading, no heavy retouching. Overall mood: expert, precise, and welcoming.",
+    "id": "rui-zhang"
+  },
+  {
+    "name": "Dr. Xia Chen",
+    "title": "Board-Certified Plastic Surgeon, Laser & Skin Resurfacing Specialist",
+    "specialties": [
+      "Laser Skin Resurfacing",
+      "Chemical Peels",
+      "Microdermabrasion"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - David Geffen School of Medicine at UCLA",
+      "Residency - Integrated Plastic Surgery, Stanford University Medical Center",
+      "Fellowship - Aesthetic & Laser Surgery"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)"
+    ],
+    "experience_years": 9,
+    "procedures_count": {
+      "facelifts": 270,
+      "rhinoplasty": 225,
+      "eyelid_surgery": 360
+    },
+    "bio": {
+      "intro": "Dr. Xia Chen is a board-certified plastic surgeon specializing in advanced laser and skin resurfacing techniques. With nine years of clinical experience, she is recognized for delivering refined, natural-looking rejuvenation with a strong emphasis on safety and individualized care.",
+      "expertise": "Dr. Chen’s practice focuses on fractional CO2 and Er:YAG laser resurfacing, picosecond and non-ablative lasers, and combination protocols for acne scarring, photodamage, fine lines, and uneven texture. She integrates chemical peels (superficial to medium depth) and medical-grade microdermabrasion to optimize collagen remodeling and skin clarity while minimizing downtime. Her treatment plans are tailored to each patient’s skin type, goals, and lifestyle, supported by meticulous pre- and post-procedure care.\n\nKnown for her nuanced management of ethnic and sensitive skin, Dr. Chen applies evidence-based settings and staged resurfacing for Fitzpatrick I–VI to reduce risks such as post-inflammatory hyperpigmentation. She combines energy-based resurfacing with micronutrient skincare, strategic sun protection, and—when appropriate—adjunctive injectables for harmonious facial balance. Comfort-first anesthesia protocols and clear recovery guidance help patients return to daily life confidently.\n\nBeyond facial rejuvenation, Dr. Chen addresses neck and décolletage texture, perioral wrinkles, and surgical scar refinement. She emphasizes measurable outcomes—tracking pore size, pigmentation indices, and texture metrics—to demonstrate progress and fine-tune maintenance regimens.",
+      "philosophy": "Dr. Chen believes great skin results from precise technique, respect for the skin barrier, and collaborative care. She communicates transparently about expected outcomes, downtime, and maintenance, ensuring patients feel informed and empowered at every step.\n\nHer approach prioritizes subtle, natural enhancements that preserve individual character. She is committed to rigorous safety standards, ongoing education, and technology stewardship—adopting new devices only when they are supported by strong clinical evidence.",
+      "achievements": [
+        "Published peer-reviewed articles on fractional laser parameters and post-resurfacing pigmentation management across Fitzpatrick skin types.",
+        "Developed a staged combination protocol (non-ablative laser + medium-depth peel) that reduced downtime by approximately 20% while maintaining efficacy in a clinic-based outcomes review.",
+        "Frequently invited speaker at regional and international aesthetic meetings on safe resurfacing in darker skin tones and advanced scar remodeling."
+      ]
+    },
+    "image_prompt": "Professional portrait of an East Asian female doctor in her mid-30s, wearing a tailored white lab coat over a soft blue blouse, minimal jewelry, neatly styled shoulder-length hair. Three-quarter pose with relaxed, gently crossed arms, warm confident smile, direct eye contact. Background: modern laser and dermatology suite with softly blurred equipment and clean architectural lines. Lighting: bright, soft, and even (high-key), natural skin tones, subtle catchlights in the eyes. Photographed with an 85mm lens, shallow depth of field, neutral color grading. The image should convey trustworthiness, approachability, and expertise.",
+    "id": "xia-chen"
+  },
+  {
+    "name": "Dr. Feng Wang",
+    "title": "Aesthetic Plastic Surgeon",
+    "specialties": [
+      "Renuvion Skin Tightening",
+      "Laser Liposuction",
+      "Avéli Cellulite Treatment"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Shanghai Jiao Tong University School of Medicine",
+      "Residency - Ninth People's Hospital, Shanghai Jiao Tong University School of Medicine (Plastic & Reconstructive Surgery)",
+      "Fellowship - Aesthetic Body Contouring & Energy-Based Skin Tightening"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 13,
+    "procedures_count": {
+      "facelifts": 390,
+      "rhinoplasty": 325,
+      "eyelid_surgery": 520
+    },
+    "bio": {
+      "intro": "Feng Wang, MD, is an aesthetic plastic surgeon specializing in skin tightening and body contouring. With 13 years of experience, he is known for precise, technology-forward care and consistently natural, balanced results.",
+      "expertise": "Dr. Wang focuses on energy-assisted tissue contraction and minimally invasive body contouring. He combines high-definition laser liposuction with Renuvion plasma tightening to address both adiposity and dermal laxity in a single, carefully staged session. His protocols emphasize tumescent anesthesia, multi-plane cannula work, and temperature-controlled energy delivery to maximize contraction while protecting surrounding structures.\n\nFor cellulite, Dr. Wang employs the Avéli device to release septa with targeted precision, followed by strategic contouring and post-procedure modulation to smooth contour transitions. He integrates ultrasound mapping, 3D photography, and rigorous pre-operative assessment to individualize plans for the abdomen, flanks, arms, thighs, and submental area, achieving refined definition with minimal downtime.",
+      "philosophy": "Dr. Wang believes advanced technology should serve a conservative, patient-first aesthetic. He prioritizes proportion, tissue integrity, and long-term skin quality over short-term volume reduction. Every treatment plan is co-created with the patient, aligning goals, anatomy, and recovery expectations.\n\nSafety is paramount: he follows evidence-based dosing limits, maintains strict sterile technique, and stages combination procedures when appropriate. Clear communication, thoughtful aftercare, and accessible follow-up help patients recover confidently and enjoy durable, natural-looking outcomes.",
+      "achievements": [
+        "Early adopter of Renuvion for comprehensive skin tightening with published outcomes on combined laser lipo–plasma protocols",
+        "Invited trainer for Avéli cellulite release workshops and hands-on proctorships",
+        "Presenter at international aesthetic meetings (ISAPS) on energy-based body contouring safety and temperature monitoring"
+      ]
+    },
+    "image_prompt": "Professional portrait of an East Asian male plastic surgeon (age 38-45) named Feng Wang, wearing a crisp white lab coat over a light blue dress shirt and subtle tie. Pose: relaxed three-quarter stance with arms gently crossed, slight confident smile, direct eye contact. Appearance: neat short black hair, well-groomed, clear skin, no facial hair, East Asian facial features. Setting: modern, bright aesthetic clinic with clean lines, glass and soft neutral tones; blurred background of treatment room and medical equipment. Lighting: soft natural daylight mixed with diffused studio key light, even illumination with gentle catchlights in the eyes. Style: high-resolution, professional, trustworthy and friendly, shallow depth of field, 85mm lens look, neutral color grading.",
+    "id": "feng-wang"
+  },
+  {
+    "name": "Dr. Hong Liu",
+    "title": "Plastic Surgeon & Laser and Light-Based Treatment Specialist",
+    "specialties": [
+      "IPL/Photofacial",
+      "Laser Hair Removal",
+      "Skin Tightening"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Fudan University Shanghai Medical College",
+      "Residency - Department of Plastic & Reconstructive Surgery, Peking Union Medical College Hospital",
+      "Fellowship - Laser and Energy-Based Aesthetic Medicine"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 8,
+    "procedures_count": {
+      "facelifts": 240,
+      "rhinoplasty": 200,
+      "eyelid_surgery": 320
+    },
+    "bio": {
+      "intro": "Dr. Hong Liu is a plastic surgeon focused on light-based aesthetic medicine with eight years of clinical experience. She is known for precise, evidence-driven use of IPL, medical lasers, and energy devices to deliver natural improvements while prioritizing skin safety. Her patients value her calm, attentive manner and meticulous treatment planning.",
+      "expertise": "Dr. Liu’s IPL/Photofacial practice centers on customized parameter mapping to target vascular and pigment concerns with accuracy. She tailors filters, pulse trains, and fluence to the indication—such as telangiectasia, rosacea, or sun-induced dyspigmentation—while building in pre- and post-care to protect the skin barrier and reduce the risk of post-inflammatory hyperpigmentation, particularly in Fitzpatrick III–V skin types. When treating mixed pigment conditions, she sequences IPL with gentle topical regimens and schedules conservative test spots to ensure predictable responses. \n\nIn laser hair removal, Dr. Liu selects wavelength based on hair caliber and skin tone—favoring alexandrite or diode platforms for lighter phototypes and long-pulsed Nd:YAG for deeper skin tones. She adjusts spot size, pulse duration, and density to match the follicular growth cycle, incorporates advanced contact or air cooling, and emphasizes pre-shave preparation and spacing sessions for durable reduction with minimal downtime. \n\nFor non-surgical skin tightening, she employs near-infrared and non-ablative fractional platforms to stimulate collagen remodeling of the lower face, jawline, and neck. Protocols are titrated to clinical endpoints such as uniform erythema while safeguarding sensitive zones. Dr. Liu often integrates staged combination therapies and maintenance plans to improve texture, firmness, and luminosity over time, always with eye protection, test spots, and documented safety checkpoints.",
+      "philosophy": "Dr. Liu believes the best aesthetic outcomes are subtle, progressive, and tailored to each person’s skin biology and lifestyle. She partners closely with patients to set clear goals, explain options and alternatives, and craft phased treatment plans that respect recovery time and budget. \n\nHer practice is grounded in transparency, conservative dosing, and rigorous safety—screening for contraindications, counseling on sun behavior and skincare, and favoring consistent, long-term skin health over quick fixes. She is committed to delivering results that look refreshed and authentic, never overtreated.",
+      "achievements": [
+        "Invited speaker on safe IPL parameters and combination light-based protocols for Asian and darker skin tones at regional and international aesthetic meetings.",
+        "Authored peer-reviewed articles and clinical guidelines on optimizing IPL for vascular and pigmentary conditions while minimizing PIH risk.",
+        "Lead investigator in a prospective evaluation of a next-generation IPL handpiece with enhanced cooling, informing protocol updates adopted by multiple clinics."
+      ]
+    },
+    "image_prompt": "Professional portrait of an East Asian female physician in her late 30s, Dr. Hong Liu, wearing a crisp white lab coat over a light pastel blouse; neat low bun, subtle natural makeup, warm and approachable smile. Three-quarter pose, holding a tablet at chest level, relaxed posture. Background: modern, bright aesthetic/laser treatment suite with softly blurred devices and clean neutral tones. Lighting: soft key light with gentle fill and a faint rim light to define the silhouette; clear catchlights in the eyes; color-balanced, natural skin tones. Shot on an 85mm lens, shallow depth of field, high-resolution editorial style. Overall mood: professional, trustworthy, and friendly.",
+    "id": "hong-liu"
+  },
+  {
+    "name": "Dr. Yu Zhou",
+    "title": "Plastic and Reconstructive Surgeon, Lip & Perioral Aesthetics Specialist",
+    "specialties": [
+      "Lip Augmentation",
+      "Lip Lift",
+      "Lip Filler"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Peking Union Medical College",
+      "Residency - Department of Plastic and Reconstructive Surgery, Shanghai Ninth People's Hospital",
+      "Fellowship - Aesthetic and Perioral Surgery"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Chinese Society of Plastic Surgery (CSPS)",
+      "Asian Association of Plastic Surgeons"
+    ],
+    "experience_years": 11,
+    "procedures_count": {
+      "facelifts": 330,
+      "rhinoplasty": 275,
+      "eyelid_surgery": 440
+    },
+    "bio": {
+      "intro": "Dr. Yu Zhou is a plastic and reconstructive surgeon with 11 years of focused experience in lip and perioral aesthetics. She is known for natural-looking, balanced results that enhance facial harmony while preserving each patient’s unique expression.",
+      "expertise": "Dr. Zhou’s practice centers on advanced lip augmentation, refined lip lift techniques, and precision hyaluronic acid filler treatments tailored to the vermilion border, Cupid’s bow, and philtral columns. She employs methodical facial analysis—assessing dental show, smile dynamics, and nasolabial-chin relationships—to design bespoke plans that respect ideal lip-to-face proportions. Her approach includes modified bullhorn and corner lip lifts, structural lip shaping, and combination therapies for perioral rejuvenation, including fine-line treatment and subtle volume restoration.\n\nCommitted to safety and detail, Dr. Zhou integrates ultrasound guidance for filler placement when appropriate, uses cannula-based techniques to reduce bruising, and applies meticulous vascular mapping and aspiration protocols. She prioritizes long-term quality of outcomes, favoring conservative enhancements, staged treatments, and evidence-based product selection to ensure soft, stable, and elegant results.",
+      "philosophy": "Dr. Zhou believes that the best lip results are seamless—refining form and proportion without calling attention to the procedure. She partners closely with patients through a thoughtful consultation process, shared decision-making, and thorough education on options, recovery, and maintenance.\n\nHer care model emphasizes safety, transparency, and continuity: detailed pre-procedure planning, gentle technique, and attentive follow-up that supports comfort and durability. Every plan is individualized to harmonize with facial anatomy, lifestyle, and aesthetic goals.",
+      "achievements": [
+        "Invited speaker on contemporary lip lift planning and perioral rejuvenation at regional and international aesthetic meetings",
+        "Published peer-reviewed work on anatomy-guided lip augmentation and complication management",
+        "Developed a clinic protocol integrating ultrasound assessment and cannula techniques to reduce downtime and bruising in lip filler procedures"
+      ]
+    },
+    "image_prompt": "Photorealistic professional portrait of Dr. Yu Zhou, a 35–40-year-old East Asian female plastic surgeon. She wears a crisp white lab coat over a navy blouse, minimal jewelry (small stud earrings), and natural, polished makeup. Hair neatly tied in a low bun. Half-length composition with relaxed posture, arms gently crossed, warm and confident smile, direct eye contact. Background: bright, modern medical clinic with soft, out-of-focus elements (clean cabinetry, subtle surgical lighting). Lighting: soft window key light with gentle fill, even skin tones, no harsh shadows. Color palette clean and professional, shallow depth of field (85mm lens, f/2.8) to keep focus on her face. The image should convey trust, competence, and approachability.",
+    "id": "yu-zhou"
+  },
+  {
+    "name": "Dr. Michael Anderson",
+    "title": "Board-Certified Facial Plastic Surgeon, Hair Restoration Specialist",
+    "specialties": [
+      "Hair Restoration",
+      "Follicular Unit Transplantation (FUT)",
+      "Scalp Micropigmentation (SMP)"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of Iowa Carver College of Medicine",
+      "Residency - Otolaryngology–Head & Neck Surgery, University of Iowa Hospitals & Clinics",
+      "Fellowship - Facial Plastic & Hair Restoration Surgery"
+    ],
+    "certifications": [
+      "American Board of Facial Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)"
+    ],
+    "experience_years": 15,
+    "procedures_count": {
+      "facelifts": 450,
+      "rhinoplasty": 375,
+      "eyelid_surgery": 600
+    },
+    "bio": {
+      "intro": "Dr. Michael Anderson is a hair restoration surgeon with 15 years of experience dedicated to creating natural, age-appropriate results. Known for his meticulous technique and empathetic bedside manner, he has earned the trust of patients seeking discreet, lasting solutions for hair loss.",
+      "expertise": "Dr. Anderson specializes in advanced Follicular Unit Transplantation (FUT) with microscopic graft dissection and refined donor management to maximize density while preserving future options. He is skilled in trichophytic closure to minimize linear scarring and designs custom hairlines that respect each patient’s facial proportions, hair characteristics, and projected patterns of loss.\n\nComplementing surgical restoration, Dr. Anderson offers scalp micropigmentation (SMP) to enhance the visual impression of fullness, camouflage donor scars, and blend hairlines for ultra-natural transitions. He frequently develops phased treatment plans that may combine FUT with SMP for optimal coverage, faster aesthetic payoff, and long-term sustainability.\n\nHis practice also addresses complex cases, including repair of pluggy or outdated grafts, scar camouflage after surgery or trauma, and restoration for female pattern hair loss, eyebrows, and beards—all within a safety-first framework and a discreet, patient-centered setting.",
+      "philosophy": "Dr. Anderson believes the best results are invisible—noticed as confidence, not as a procedure. He prioritizes careful diagnosis, honest expectation-setting, and conservative donor harvesting to protect long-term outcomes. Every plan balances today’s goals with tomorrow’s needs.\n\nHe approaches care as a partnership: education-first consultations, transparent discussions about graft allocation and maintenance, and clear follow-up support. His commitment is to deliver results that look effortless in any light, from conversational distance to close-up.",
+      "achievements": [
+        "Invited speaker at international meetings on hairline design, FUT donor management, and SMP integration.",
+        "Authored peer-reviewed publications and a textbook chapter on contemporary hair restoration techniques.",
+        "Developed a standardized protocol combining FUT with SMP to optimize density and minimize visible scarring in suitable candidates."
+      ]
+    },
+    "image_prompt": "Professional head-and-shoulders portrait of a Caucasian male doctor in his early-to-mid 40s, wearing a crisp white lab coat over a light blue dress shirt with a navy tie. He is standing in a modern medical clinic environment with soft, clean architectural lines and subtle clinical equipment in the background, shot with an 85mm lens, shallow depth of field, soft diffused key light from the front-left, and natural color grading. Pose is three-quarter angle with relaxed shoulders and hands lightly clasped, making direct eye contact; expression is warm, confident, and approachable. Grooming includes neatly styled short brown hair and light stubble; overall image should convey trustworthiness, competence, and friendliness, high-resolution, professional editorial style.",
+    "id": "michael-anderson"
+  },
+  {
+    "name": "Dr. Sarah Thompson",
+    "title": "Board-Certified Plastic and Reconstructive Surgeon",
+    "specialties": [
+      "Mohs Skin Cancer Reconstruction",
+      "Scar Reduction & Revision",
+      "Facial Trauma"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - Johns Hopkins University School of Medicine",
+      "Residency - Massachusetts General Hospital",
+      "Fellowship - Microvascular & Mohs Reconstruction"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "American Board of Facial Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)"
+    ],
+    "experience_years": 25,
+    "procedures_count": {
+      "facelifts": 750,
+      "rhinoplasty": 625,
+      "eyelid_surgery": 1000
+    },
+    "bio": {
+      "intro": "Dr. Sarah Thompson is a board-certified plastic and reconstructive surgeon with 25 years of experience, widely recognized for meticulous Mohs skin cancer reconstruction and advanced scar revision. He is trusted by dermatologists and oncologic surgeons for restoring form and function with natural, enduring results. His calm, collaborative approach has earned him a reputation for excellence in complex facial trauma care.",
+      "expertise": "Dr. Thompson’s core focus is post‑Mohs facial reconstruction, where he tailors techniques to the unique geometry of each defect to optimize color, contour, and texture match. He is highly experienced with local and regional flaps (including bilobed, nasolabial, and paramedian forehead flaps), skin grafts, and cartilage framework restoration for nasal, eyelid, and lip reconstruction. When appropriate, he employs staged approaches under local anesthesia to minimize downtime while preserving critical functional landmarks.\n\nIn scar reduction and revision, he integrates surgical precision with a structured, multimodal protocol. His armamentarium includes refined incision planning along relaxed skin tension lines, Z‑plasty and W‑plasty for contracture and contour interruption, fractional CO2 and pulsed‑dye lasers for texture and redness, silicone therapy, and selective corticosteroid or 5‑FU injections for hypertrophic scars. He emphasizes evidence‑based sequencing and meticulous aftercare to achieve durable, discreet outcomes.\n\nFor facial trauma, Dr. Thompson manages orbital, zygomatic, nasal, and soft‑tissue injuries with anatomic restoration and minimal‑incision access. He uses preoperative 3‑D imaging and intraoperative navigation when needed, rigid fixation for skeletal stability, and layered closure to re‑establish symmetry, function, and expression while carefully concealing incisions.",
+      "philosophy": "Dr. Thompson believes reconstructive excellence is the fusion of surgical accuracy, restraint, and empathy. He is committed to delivering results that look natural in motion as well as at rest, prioritizing function while thoughtfully enhancing form. Safety and longevity guide every decision, from conservative planning to attentive follow‑up.\n\nHe partners closely with patients and referring dermatologists, offering transparent discussions, personalized drawings and imaging, and clear recovery plans. His practice emphasizes proactive scar optimization and comprehensive education so patients feel informed, supported, and confident at every step.",
+      "achievements": [
+        "Lead author of peer‑reviewed guidance on post‑Mohs nasal reconstruction techniques and staging strategies.",
+        "Invited faculty and workshop instructor at national plastic and facial reconstructive surgery meetings.",
+        "Developed a clinic-wide scar optimization pathway that measurably reduced revision rates and improved patient-reported outcomes."
+      ]
+    },
+    "image_prompt": "Professional portrait of a male Caucasian plastic and reconstructive surgeon in his early to mid‑50s, labeled as “Dr. Sarah Thompson.” He wears a crisp white lab coat over a light blue dress shirt with a navy tie, subtle name badge visible, neatly groomed short hair, light stubble, and warm, confident expression. Three‑quarter pose, shoulders angled slightly, hands gently clasped at waist level. Background: modern, softly blurred clinical setting with clean lines, daylight from large windows, and subtle surgical/dermatology equipment hints. Lighting: soft key light with gentle fill and slight rim light for separation; natural color balance; high‑resolution, editorial quality. Composition should convey trustworthiness, precision, and approachability; no harsh shadows; neutral, calming color palette.",
+    "id": "sarah-thompson"
+  },
+  {
+    "name": "Dr. David Rodriguez",
+    "title": "Facial Plastic Surgeon, Ear & Facial Features Specialist",
+    "specialties": [
+      "Otoplasty",
+      "Ear Pinning",
+      "Buccal Fat Removal"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of Miami Miller School of Medicine",
+      "Residency - Otolaryngology–Head & Neck Surgery, NewYork-Presbyterian/Columbia",
+      "Fellowship - Facial Plastic & Reconstructive Surgery"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 14,
+    "procedures_count": {
+      "facelifts": 420,
+      "rhinoplasty": 350,
+      "eyelid_surgery": 560
+    },
+    "bio": {
+      "intro": "Dr. David Rodriguez is a facial plastic surgeon with 14 years of experience focused on the aesthetics and function of the ears and facial contours. Known for natural-looking results and meticulous technique, he guides patients with clarity and warmth from consultation through recovery. This profile is a fictional sample created for content purposes; credentials and affiliations are illustrative.",
+      "expertise": "Dr. Rodriguez specializes in otoplasty and ear pinning, addressing prominent, asymmetric, or post-traumatic ear concerns with cartilage-sparing techniques that preserve natural landmarks and contour. His preoperative planning emphasizes precise projection and symmetry analysis, often using standardized photography and digital morphing to align surgical goals with patient expectations. He also performs earlobe repair and contour refinements following gauge removal or injury, prioritizing inconspicuous scars and long-term durability.\n\nIn facial contouring, Dr. Rodriguez offers buccal fat removal with a conservative, anatomy-driven approach designed to refine cheek definition while protecting facial nerve branches and Stensen’s duct. He tailors fat reduction to each patient’s facial thickness, bite dynamics, and aging trajectory, often combining intraoral techniques with masseter modulation or submalar support to balance midface structure. Across procedures, he follows evidence-based protocols for anesthesia, hemostasis, and rapid-recovery care to minimize swelling and downtime.",
+      "philosophy": "Dr. Rodriguez believes the best aesthetic outcomes are subtle, stable, and harmonized with a patient’s unique features. He takes time to listen, educates patients on trade-offs and long-term changes, and favors techniques that safeguard function while enhancing form. Safety and transparency guide every decision, from candid candidacy assessments to thoughtfully staged treatment plans.\n\nHis patient-first approach is supported by clear communication in both English and Spanish, detailed preoperative planning, and attentive postoperative follow-up, ensuring patients feel informed, comfortable, and cared for at every step.",
+      "achievements": [
+        "Presented cartilage-sparing otoplasty and earlobe reconstruction strategies at national and international aesthetic surgery meetings.",
+        "Co-authored peer-reviewed articles on midface contouring and buccal fat reduction technique selection.",
+        "Led patient education initiatives on ear deformity correction and safe facial contouring, improving informed consent and satisfaction metrics."
+      ]
+    },
+    "image_prompt": "Create a professional portrait of a Caucasian male facial plastic surgeon, age 40–45, named David Rodriguez. He is wearing a crisp white lab coat over a light blue dress shirt with a subtle slate tie; clean grooming, short dark hair with light stubble, and a calm, confident demeanor. Pose: three-quarter view, arms relaxed at his sides, slight forward lean, gentle smile conveying trust and approachability. Background: modern, bright medical clinic with soft neutral tones, glass accents, and blurred equipment/shelving for depth. Lighting: soft, natural daylight from the side with gentle fill to minimize shadows, high-resolution, shallow depth of field (85mm portrait look), color grading clean and true-to-life. Overall mood: professional, trustworthy, and welcoming.",
+    "id": "david-rodriguez"
+  },
+  {
+    "name": "Dr. Emily Parker",
+    "title": "Board-Certified Plastic Surgeon, Regenerative Aesthetics Specialist",
+    "specialties": [
+      "Collagen Stimulators",
+      "Microneedling",
+      "PRP/PRF"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - Stanford University School of Medicine",
+      "Residency - NewYork-Presbyterian Hospital/Weill Cornell Medical Center (Plastic Surgery)",
+      "Fellowship - Aesthetic & Regenerative Facial Surgery"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 10,
+    "procedures_count": {
+      "facelifts": 300,
+      "rhinoplasty": 250,
+      "eyelid_surgery": 400
+    },
+    "bio": {
+      "intro": "Dr. Emily Parker is a board-certified plastic surgeon with a dedicated focus on collagen and regenerative treatments that restore structure, improve skin quality, and deliver naturally refreshed results. With a decade of surgical and non-surgical experience, she is known for meticulous technique, evidence-based protocols, and a warm, communicative bedside manner.",
+      "expertise": "Dr. Parker’s clinical focus centers on collagen stimulators (such as poly-L-lactic acid and calcium hydroxylapatite), advanced microneedling, and PRP/PRF bio-stimulation to enhance tissue quality from within. She customizes treatment plans using precise dosing, anatomical mapping, and staged protocols that prioritize gradual, long-lasting improvements in elasticity, tone, and contour.\n\nShe frequently integrates regenerative therapies with surgical care—optimizing skin quality before facelifts and eyelid surgery, and supporting recovery with platelet-rich fibrin for improved texture and vitality. Her approach emphasizes combination therapy: synchronized microneedling with PRF, collagen stimulators for structural support, and medical-grade skincare to maintain outcomes. Safety is paramount; she follows ultrasound-guided techniques when indicated, uses cannula-based injections for high-risk zones, and adheres to rigorous sterile protocols.",
+      "philosophy": "Dr. Parker believes the most beautiful results look effortless. She favors subtle, progressive enhancements that respect facial character while improving skin health and resilience. Every plan begins with a comprehensive consultation—listening to goals, reviewing lifestyle factors, and educating patients on realistic timelines and maintenance.\n\nHer care model is collaborative and transparent, with detailed pre- and post-procedure guidance and structured follow-up. She is committed to patient comfort, natural-looking outcomes, and long-term skin longevity rather than quick fixes.",
+      "achievements": [
+        "Developed a staged collagen-stimulation protocol integrating PRF that reduced downtime while optimizing texture and elasticity in eligible patients.",
+        "Invited speaker at national aesthetic meetings on safe, anatomy-based approaches to biostimulatory fillers and PRF-assisted skin rejuvenation.",
+        "Authored peer-reviewed articles and clinical guidelines on combination regenerative treatments for facial aging and skin quality."
+      ]
+    },
+    "image_prompt": "Professional studio-quality head-and-shoulders portrait of a Caucasian female doctor in her late 30s to early 40s, wearing a crisp white lab coat over a light blouse, subtle natural makeup, neat shoulder-length hair. Pose: three-quarter angle with relaxed shoulders, gentle confident smile, hands softly folded or one hand lightly at the waist. Background: modern, bright aesthetic clinic with soft-focus treatment room elements (clean cabinetry, aesthetic devices), neutral tones. Lighting: soft, even key light with slight rim light to create depth, clean color balance, high resolution. Mood: trustworthy, approachable, and refined. Photography style: contemporary medical branding, 50mm lens look, shallow depth of field, minimal distractions.",
+    "id": "emily-parker"
+  },
+  {
+    "name": "Dr. James Mitchell",
+    "title": "Board-Certified Plastic Surgeon and Medical Director, Medical Weight Loss & Body Sculpting",
+    "specialties": [
+      "Weight Loss Injections",
+      "Fat Dissolving Injections",
+      "Body Contouring"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of California, San Diego School of Medicine",
+      "Residency - LAC+USC Medical Center (Plastic & Reconstructive Surgery)",
+      "Fellowship - Aesthetic & Body Contouring, University of Texas Southwestern Medical Center"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 12,
+    "procedures_count": {
+      "facelifts": 360,
+      "rhinoplasty": 300,
+      "eyelid_surgery": 480
+    },
+    "bio": {
+      "intro": "Dr. James Mitchell is a board-certified plastic surgeon with 12 years of experience focused on medical weight loss and advanced body contouring. Known for compassionate, evidence-based care, he blends non-surgical and surgical techniques to help patients achieve natural, balanced, and sustainable results.",
+      "expertise": "Dr. Mitchell specializes in comprehensive medical weight loss programs built around clinically indicated weight-loss injections, nutrition coaching, and behavior planning. He utilizes GLP‑1–based therapies when appropriate, tailoring dosing and monitoring protocols to each patient’s metabolic profile and goals. His approach emphasizes safety, realistic expectations, and close follow-up to support long-term adherence and maintenance.\n\nIn body sculpting, Dr. Mitchell is skilled in fat-dissolving injections for precise submental and small-area contouring, and he integrates advanced technologies to refine skin tone and silhouette. For patients requiring a surgical complement, he coordinates care to stage body contouring procedures at the right time in their weight-loss journey. He also maintains a strong background in facial rejuvenation, including eyelid surgery and facelifts, allowing for harmonized results from face to body when desired.",
+      "philosophy": "Dr. Mitchell believes the best outcomes come from individualized planning and honest communication. He partners with patients to set achievable milestones, prioritizes safety at every step, and uses data-driven protocols to guide treatment decisions. His goal is to help patients feel confident and healthy—not just immediately after treatment, but for the long term.\n\nHe fosters a supportive, collaborative environment, working closely with nutritionists, primary care providers, and fitness specialists. By aligning medical therapy, lifestyle coaching, and aesthetic precision, he aims to deliver results that look natural and fit each person’s life.",
+      "achievements": [
+        "Developed a multidisciplinary medical weight-loss pathway integrating injection therapy with staged body contouring, improving patient continuity and satisfaction",
+        "Authored peer-reviewed publications and book chapters on combination strategies for weight management and aesthetic contouring",
+        "Regularly invited to present protocol-based safety and outcome optimization for body sculpting at regional and national meetings"
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian male doctor, age 40–45, named James Mitchell. Clean-cut appearance with short neatly styled brown hair, light stubble, and friendly blue eyes. Wearing a crisp white lab coat over a light blue dress shirt with a navy tie, ID badge visible. Pose: three-quarter view, relaxed posture with hands lightly clasped at waist, warm confident smile. Setting: modern medical clinic with soft, out-of-focus background elements (sleek reception desk, frosted glass, subtle medical equipment). Lighting: soft key light with gentle fill, natural color balance, subtle catchlights in the eyes, shallow depth of field. Overall mood: professional, trustworthy, and approachable, suitable for a high-end aesthetic and medical weight-loss practice.",
+    "id": "james-mitchell"
+  },
+  {
+    "name": "Dr. Jennifer Coleman",
+    "title": "Board-Certified Plastic Surgeon",
+    "specialties": [
+      "Forehead Reduction Surgery",
+      "Brow Lift",
+      "Temples Lift"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of Michigan Medical School",
+      "Residency - NYU Langone Health",
+      "Fellowship - Facial Plastic & Reconstructive Surgery (Upper Face & Hairline Aesthetics)"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 13,
+    "procedures_count": {
+      "facelifts": 390,
+      "rhinoplasty": 325,
+      "eyelid_surgery": 520
+    },
+    "bio": {
+      "intro": "Dr. Jennifer Coleman is a board-certified plastic surgeon specializing in forehead and upper-face procedures, including hairline-lowering (forehead reduction), endoscopic brow lift, and temporal lift. With 13 years of focused experience, she is known for natural, balanced results and meticulous scar camouflage.",
+      "expertise": "Dr. Coleman’s practice centers on forehead reduction surgery and advanced brow and temple lifting techniques tailored to each patient’s hairline, bone contour, and brow dynamics. She employs trichophytic hairline incisions for superior scar concealment and carefully protects the supraorbital and supratrochlear nerves to preserve sensation. When appropriate, she integrates endoscopic approaches to minimize incisions while achieving durable elevation and an elegant, rejuvenated upper third.\n\nIn brow and temporal lifting, Dr. Coleman releases key retaining ligaments and secures tissue to the deep temporal fascia for long-lasting support, balancing lateral and medial vectors to avoid overcorrection. She frequently combines upper-face procedures with complementary eyelid refinements or subtle fat contouring to harmonize the forehead, brow, and periorbital area. Her planning process includes photographic analysis, hairline mapping, and precise vector assessment to ensure proportional, age-appropriate outcomes.\n\nA strong advocate of evidence-based surgery, she uses modern fixation methods and advanced anesthesia and recovery protocols to reduce swelling and downtime while prioritizing patient comfort and safety.",
+      "philosophy": "Dr. Coleman believes that the best upper-face rejuvenation enhances a patient’s own features rather than changing them. She emphasizes clear communication, realistic goal-setting, and transparent discussion of benefits, risks, and recovery so that every patient feels informed and supported.\n\nHer care is comprehensive—from detailed preoperative planning through attentive follow-up—focusing on natural aesthetics, hidden incisions, and long-term stability. She treats each case with the same diligence and empathy she would offer a family member.",
+      "achievements": [
+        "Recognized for refining trichophytic hairline techniques to improve scar camouflage in hairline-lowering surgery",
+        "Authored and co-authored peer-reviewed publications on brow and temporal lifting strategies and upper-face analysis",
+        "Regularly invited to teach at professional workshops on endoscopic brow lifting and forehead reduction planning"
+      ]
+    },
+    "image_prompt": "Professional portrait of a female Caucasian plastic surgeon in her early 40s, named Dr. Jennifer Coleman. She wears a crisp white lab coat over a light blouse, minimal elegant jewelry, and subtle natural makeup. Pose: three-quarter view, arms gently crossed or hands relaxed at waist, confident yet warm smile, direct eye contact. Background: modern, bright clinic with soft-focus elements (glass, clean lines, neutral tones). Lighting: soft natural daylight with gentle key light and subtle fill for a clean, trustworthy look; shallow depth of field (85mm portrait style). Overall impression: professional, approachable, detail-oriented, and trustworthy.",
+    "id": "jennifer-coleman"
+  },
+  {
+    "name": "Dr. Robert Harrison",
+    "title": "Board-Certified Plastic Surgeon",
+    "specialties": [
+      "Midface Lift",
+      "Cheek Augmentation",
+      "Submalar Implants"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - Northwestern University Feinberg School of Medicine",
+      "Residency - Plastic & Reconstructive Surgery, Mount Sinai Hospital, New York",
+      "Fellowship - Facial Aesthetic & Reconstructive Surgery, Manhattan Eye, Ear & Throat Hospital (MEETH)"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "American Board of Facial Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)"
+    ],
+    "experience_years": 17,
+    "procedures_count": {
+      "facelifts": 510,
+      "rhinoplasty": 425,
+      "eyelid_surgery": 680
+    },
+    "bio": {
+      "intro": "Dr. Robert Harrison is a board-certified plastic surgeon with 17 years of focused experience in midface and cheek rejuvenation. He is known for delivering natural, structure-supporting results through advanced midface lifts, refined cheek augmentation, and precise submalar implant techniques.",
+      "expertise": "Dr. Harrison’s expertise centers on deep-plane and vertical vector midface lifting to reposition descended midfacial tissues, restore malar projection, and soften nasolabial folds while preserving the patient’s unique character. He commonly combines endoscopic releases of the orbicularis retaining ligament and zygomatic ligaments with limited incisions to achieve durable elevation and a smooth lid–cheek junction with quicker recovery.\n\nIn cheek augmentation, he tailors solutions that range from structural fat grafting to malar and submalar implants. Using 3D imaging and meticulous preoperative analysis, he balances skeletal support and soft-tissue volume, often employing low-profile, custom-contoured submalar implants secured with titanium micro-fixation to prevent migration and maintain symmetry. When appropriate, he integrates subtle fat grafting to refine transitions and improve skin quality.\n\nHis practice emphasizes precision planning, nerve-sparing dissection, and evidence-based perioperative care to minimize swelling and downtime. Patients appreciate his clear communication, digital morphing for expectation alignment, and a comprehensive follow-up protocol designed to protect results over the long term.",
+      "philosophy": "Dr. Harrison believes that midface rejuvenation should restore youthful support rather than simply add volume. He prioritizes harmony, proportion, and function—favoring conservative, structure-first strategies that age gracefully and look authentic in motion and in different lighting.\n\nEvery plan is individualized. From the first consultation through recovery, he focuses on education, safety, and comfort, working collaboratively with each patient to choose the least invasive approach that can reliably deliver their goals.",
+      "achievements": [
+        "Invited speaker and course faculty on midface lift and submalar augmentation at national and international aesthetic surgery meetings.",
+        "Published author and peer reviewer on topics including deep-plane midface techniques and patient-specific implant planning.",
+        "Developed an enhanced recovery protocol for midface surgery that has reduced average swelling and time-to-social-downtime in his practice."
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian male plastic surgeon in his late 40s, named Dr. Robert Harrison. Clean white medical coat over a light blue dress shirt with a navy tie; subtle, confident smile; warm, approachable expression; neatly groomed short brown hair, clean-shaven; standing three-quarter pose with hands gently clasped at waist. Background: modern, bright aesthetic clinic with soft natural daylight, glass and neutral-toned walls, subtle medical equipment out of focus. Lighting: soft, even key light with gentle fill, minimal shadows; high-resolution, crisp details. Composition: mid-chest to head framing, eye level, shallow depth of field (50mm, f/2.8) with tasteful bokeh. Overall look: professional, trustworthy, friendly.",
+    "id": "robert-harrison"
+  },
+  {
+    "name": "Dr. Lisa Bennett",
+    "title": "Board-Certified Plastic Surgeon, Specialist in Mini & Quick-Recovery Procedures",
+    "specialties": [
+      "Mini Facelift",
+      "Neck Tightening",
+      "Fat Transfer"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of California, San Diego School of Medicine",
+      "Residency - UCLA Medical Center, Plastic & Reconstructive Surgery",
+      "Fellowship - Aesthetic & Facial Plastic Surgery, Manhattan Eye, Ear & Throat Hospital (MEETH)"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)"
+    ],
+    "experience_years": 11,
+    "procedures_count": {
+      "facelifts": 330,
+      "rhinoplasty": 275,
+      "eyelid_surgery": 440
+    },
+    "bio": {
+      "intro": "Dr. Lisa Bennett is a board-certified plastic surgeon with 11 years of experience, renowned for natural-looking facial rejuvenation with minimal downtime. She focuses on mini facelift, neck tightening, and precision fat transfer, combining meticulous technique with evidence-based recovery pathways to help patients return to daily life sooner.",
+      "expertise": "Dr. Bennett’s mini facelift approach emphasizes targeted SMAS tightening through short, well-concealed incisions to refine the jawline and midface while preserving authentic facial expression. For the neck, she employs platysma plication and selective submental contouring to address banding and laxity, frequently under local anesthesia with light sedation for suitable candidates to reduce nausea, bruising, and recovery time.\n\nHer fat transfer technique uses micro-fat and nanofat processing to restore volume to the midface, temples, and jawline with soft, even contours. She leverages careful preoperative analysis, atraumatic cannulas, and layered placement to optimize graft take and longevity, and may pair structural fat grafting with energy-assisted skin tightening when appropriate.\n\nAcross procedures, Dr. Bennett integrates an ERAS-inspired quick-recovery protocol: multimodal, non-opioid analgesia; meticulous hemostasis; early guided mobility; and a streamlined aftercare plan that includes scar optimization, lymphatic support, and telehealth check-ins. Her results are characterized by refined definition, balanced proportions, and a fresh—not operated—look.",
+      "philosophy": "Dr. Bennett believes aesthetic surgery should enhance identity rather than change it. She prioritizes honest conversation, clear expectations, and conservative, anatomy-respecting techniques that age gracefully over time.\n\nEvery treatment plan is individualized, with safety as the foundation. From precise surgical planning to attentive follow-up, she partners with each patient to achieve elegant, natural results with the least disruption to daily life.",
+      "achievements": [
+        "Invited faculty for ISAPS educational programs on limited-incision facelift and quick-recovery strategies",
+        "Lead author of a peer-reviewed study on enhanced recovery pathways for office-based facial rejuvenation",
+        "Developed a clinic-wide quick-recovery protocol associated with reduced bruising, earlier return to activities, and high patient satisfaction"
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian female plastic surgeon in her late 30s to early 40s, wearing a crisp white lab coat over a navy blouse. Shoulder-length light brown hair neatly styled, subtle natural makeup, soft confident smile, three-quarter pose with relaxed arms gently crossed, direct eye contact. Background: modern, bright medical clinic consultation room with clean lines, neutral tones, softly blurred diplomas and shelves. Lighting: soft diffused daylight with balanced studio key and rim light for flattering skin tones and minimal shadows. High-resolution realistic head-and-shoulders composition, shallow depth of field, trustworthy, warm, and approachable atmosphere.",
+    "id": "lisa-bennett"
+  },
+  {
+    "name": "Dr. William Foster",
+    "title": "Board-Certified Plastic Surgeon, Comprehensive Body Lift Specialist",
+    "specialties": [
+      "360 Body Lift",
+      "Upper Body Lift",
+      "Lower Body Lift"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - Northwestern University Feinberg School of Medicine",
+      "Residency - NYU Langone Health, Plastic Surgery",
+      "Fellowship - Body Contouring & Post-Bariatric Surgery, University of Texas Southwestern Medical Center"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 21,
+    "procedures_count": {
+      "facelifts": 630,
+      "rhinoplasty": 525,
+      "eyelid_surgery": 840
+    },
+    "bio": {
+      "intro": "Dr. William Foster is a board-certified plastic surgeon with 21 years of experience, renowned for comprehensive body lift surgery and advanced post-weight-loss body contouring. He is known for natural, balanced results, meticulous scar placement, and a calm, compassionate bedside manner.",
+      "expertise": "Dr. Foster’s practice focuses on 360 body lift, upper body lift, and lower body lift procedures that restore harmony after significant weight loss. He integrates circumferential belt lipectomy, lipoabdominoplasty, bra line back lift, flank and lateral chest contouring, and selective arm and thigh reshaping to refine the torso in three dimensions. His planning emphasizes proportion, posture, and silhouette—blending targeted liposuction and strategic fat grafting to achieve smooth transitions and long-lasting definition.\n\nCommitted to safety and precision, Dr. Foster utilizes vector-based fascial suspension, progressive-tension and quilting sutures, and drainless techniques when appropriate to minimize seromas and improve comfort. His Enhanced Recovery protocols include multimodal analgesia, optimized VTE prophylaxis, careful staging to limit operative time and blood loss, and structured nutrition and hemoglobin optimization—supporting faster ambulation and a smoother recovery.",
+      "philosophy": "Dr. Foster believes transformative body contouring is a partnership built on safety, clarity, and trust. He takes time to understand each patient’s goals, reviews incision placement and scar care in detail, and sets realistic expectations with digital imaging and visual guides.\n\nFrom first consultation through long-term follow-up, he provides attentive, accessible care. Every plan is tailored to balance aesthetic refinement with durable functional benefits—prioritizing natural proportions, discreet scars, and confidence-boosting results.",
+      "achievements": [
+        "Published peer-reviewed outcomes on circumferential body lift and scar management after massive weight loss",
+        "Developed an ERAS-based body contouring pathway that reduced postoperative nausea and accelerated return to mobility",
+        "Invited speaker and course instructor on body lift techniques at national and international meetings (ASPS/ISAPS)"
+      ]
+    },
+    "image_prompt": "Professional portrait of Dr. William Foster, a Caucasian male plastic surgeon in his late 40s to early 50s; short brown hair with subtle gray at the temples, clean-shaven or neatly trimmed light stubble, clear complexion. Wearing a crisp white lab coat with name badge over a light blue dress shirt and navy tie. Pose: three-quarter view, relaxed posture with hands gently clasped or arms lightly crossed; warm, confident, approachable smile with direct eye contact. Background: modern, high-end medical clinic or surgical center corridor with soft bokeh, glass and steel accents, uncluttered and bright. Lighting: soft natural window light blended with diffused studio key, even skin tones, gentle catchlights; color-balanced, high dynamic range. Composition: waist-up framing, shallow depth of field, 85mm lens look, high-resolution; mood: trustworthy, expert, friendly, and professional.",
+    "id": "william-foster"
+  },
+  {
+    "name": "Dr. Amanda Brooks",
+    "title": "Board-Certified Plastic Surgeon, Neck Surgery & Rejuvenation Specialist",
+    "specialties": [
+      "Neck Lift",
+      "Cervicoplasty",
+      "Platysmaplasty"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - Stanford University School of Medicine",
+      "Residency - NYU Langone Health, Plastic Surgery",
+      "Fellowship - Facial Plastic & Reconstructive Surgery (Neck Rejuvenation Focus)"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "American Board of Facial Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)"
+    ],
+    "experience_years": 15,
+    "procedures_count": {
+      "facelifts": 450,
+      "rhinoplasty": 375,
+      "eyelid_surgery": 600
+    },
+    "bio": {
+      "intro": "Dr. Amanda Brooks is a board-certified plastic surgeon with 15 years of experience dedicated to neck surgery and rejuvenation. Known for creating refined, natural necklines and a crisp cervicomental angle, she is frequently sought for complex primary and revision cases. Patients value her meticulous technique, calm bedside manner, and transparent communication.",
+      "expertise": "Dr. Brooks focuses on the full spectrum of neck rejuvenation, including modern neck lift techniques, cervicoplasty for precise skin redraping, and platysmaplasty with medial and lateral plication to restore a youthful contour. Her approach is anatomically informed, addressing subplatysmal fat, prominent digastric bellies, and submandibular gland camouflage when indicated to achieve lasting definition without an over-operated look. Incisions are carefully concealed around the ear and within the submental crease to balance access and scar discreetness.\n\nShe is skilled in both primary and revision surgery, combining open and limited-access methods—often through a short-scar or hybrid approach—for patients requiring targeted refinement. When appropriate, she integrates adjunctive technologies such as RF-assisted contouring and micro-needling RF for skin quality, guided by ultrasound-based assessment and 3D imaging for surgical planning. Her perioperative pathway emphasizes safety and comfort, including customized anesthesia options, selective drainless protocols, and evidence-based VTE prophylaxis.\n\nPostoperative care is structured around enhanced recovery principles: multimodal, largely non-opioid pain control; early mobilization; lymphatic therapy; and individualized scar care using silicone therapy and energy-based modalities. This comprehensive, stepwise method supports predictable outcomes and a smoother return to normal activities.",
+      "philosophy": "Dr. Brooks believes the most beautiful results are harmonious and understated. She aims to rejuvenate rather than change, restoring the neck’s natural architecture to complement the jawline and lower face. Shared decision-making, honest expectation-setting, and photography-based planning are central to her consultations.\n\nShe is committed to safety-first care, meticulous technique, and continuous follow-up. From the first visit through long-term maintenance, her patients receive a clear plan tailored to anatomy, lifestyle, and goals—delivered with empathy and discretion.",
+      "achievements": [
+        "Invited faculty at national aesthetic meetings to teach advanced platysmaplasty and deep-neck contouring techniques",
+        "Published outcomes and technical pearls on neck rejuvenation in peer-reviewed aesthetic surgery journals",
+        "Developed an enhanced-recovery protocol for neck lift patients adopted by regional practices"
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian female surgeon in her early 40s, named Amanda Brooks, wearing a pristine white lab coat over a light pastel blouse; subtle, natural makeup; shoulder-length soft brown hair neatly styled; minimal jewelry. Pose: relaxed, three-quarter angle with gentle arms-crossed stance, warm and confident smile, direct eye contact. Background: modern, bright aesthetic clinic environment with soft bokeh—clean lines, glass and white accents, framed certificates subtly visible. Lighting: soft, diffused daylight with a clean key light and slight fill, natural color grading, high-resolution, 50mm lens look. Mood: professional, trustworthy, approachable.",
+    "id": "amanda-brooks"
+  },
+  {
+    "name": "Dr. Christopher Hayes",
+    "title": "Board-Certified Facial Plastic Surgeon and Advanced Rhinoplasty Specialist",
+    "specialties": [
+      "Ethnic Rhinoplasty",
+      "Functional Rhinoplasty",
+      "Nasal Reconstruction"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - Northwestern University Feinberg School of Medicine",
+      "Residency - Otolaryngology–Head and Neck Surgery, NYU Langone Health",
+      "Fellowship - Facial Plastic and Reconstructive Surgery (AAFPRS-accredited)"
+    ],
+    "certifications": [
+      "American Board of Facial Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 19,
+    "procedures_count": {
+      "facelifts": 570,
+      "rhinoplasty": 475,
+      "eyelid_surgery": 760
+    },
+    "bio": {
+      "intro": "Dr. Christopher Hayes is a board-certified facial plastic surgeon with 19 years of experience dedicated to advanced rhinoplasty. She is widely recognized for her nuanced work in ethnic rhinoplasty, functional airway surgery, and complex nasal reconstruction—uniting facial harmony with durable breathing function.",
+      "expertise": "Her practice spans primary and revision rhinoplasty with an emphasis on structure-preserving techniques and long-term stability. She skillfully employs both open and closed approaches, ultrasonic (piezo) instrumentation for precise osteoplasty, and tailored cartilage grafting (septal, auricular, or costal) to refine form while reinforcing the nasal framework. In functional procedures, she addresses internal and external nasal valve collapse using spreader and alar batten grafts, performs turbinate reduction when indicated, and frequently combines septoplasty to restore airflow.\n\nWith deep experience in ethnic rhinoplasty, Dr. Hayes customizes operative plans to honor each patient's heritage and skin characteristics, avoiding over-resection and prioritizing dorsal preservation, reliable tip support, and subtle contour changes that harmonize with overall facial proportions. She is equally adept in post-traumatic and oncologic nasal reconstruction, employing layered reconstruction, local flaps, and staged techniques to rebuild both contour and function.\n\nPreoperatively, she integrates high-resolution photography and 3D imaging/morphing to align expectations and educate patients. Her perioperative protocols emphasize gentle tissue handling, meticulous hemostasis, and evidence-based recovery pathways to minimize downtime and enhance predictability.",
+      "philosophy": "Dr. Hayes believes the best rhinoplasty looks natural, preserves identity, and breathes well. She practices shared decision-making with comprehensive consultations, transparent discussion of risks and benefits, and conservative, anatomy-respecting techniques designed for lasting results.\n\nHer care model centers on safety, empathy, and continuity. From thorough preoperative planning to attentive long-term follow-up and scar optimization, she is committed to ensuring patients feel informed, supported, and confident throughout their journey.",
+      "achievements": [
+        "Invited faculty and live demonstrator at international rhinoplasty courses on preservation and functional techniques",
+        "Lead author and contributor to peer-reviewed publications and textbook chapters on ethnic rhinoplasty and nasal valve repair",
+        "Developed a standardized protocol for optimizing outcomes in thick-skin rhinoplasty, improving predictability and postoperative refinement"
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian female facial plastic surgeon in her late 40s, wearing a crisp white lab coat over a light blouse, subtle makeup, neatly styled shoulder-length hair tucked behind the ears. Pose at a slight three-quarter angle with relaxed posture, hands gently clasped at waist or holding a tablet, warm and confident smile, direct but approachable eye contact. Background: modern, well-lit medical environment with soft-focus surgical clinic elements (glass partitions, clean cabinetry, neutral tones). Lighting: soft key light with gentle fill and mild rim light to separate from background; natural, even illumination for a trustworthy, friendly look. Wardrobe details: embroidered name badge reading “Dr. Christopher Hayes – Facial Plastic Surgeon.” Overall mood: polished, professional, compassionate, and reliable; shallow depth of field with high-resolution clarity.",
+    "id": "christopher-hayes"
+  },
+  {
+    "name": "Dr. Michelle Turner",
+    "title": "Board-Certified Plastic and Craniofacial Surgeon",
+    "specialties": [
+      "Facial Feminization",
+      "Forehead Contouring",
+      "Jaw Feminization"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of Michigan Medical School",
+      "Residency - NYU Langone Health (Integrated Plastic Surgery)",
+      "Fellowship - Craniofacial and Facial Gender-Affirming Surgery"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 16,
+    "procedures_count": {
+      "facelifts": 480,
+      "rhinoplasty": 400,
+      "eyelid_surgery": 640
+    },
+    "bio": {
+      "intro": "Dr. Michelle Turner is a board-certified plastic and craniofacial surgeon with 16 years of experience focused on facial feminization surgery. Renowned for precise skeletal contouring and natural soft-tissue refinement, he is recognized for compassionate, affirming care and consistently harmonious results. Patients travel nationally and internationally for his individualized planning and outcome reliability.",
+      "expertise": "Dr. Turner provides comprehensive facial feminization surgery, including forehead reconstruction with frontal sinus setback and orbital rim contouring, hairline advancement and brow lift (often endoscopic), rhinoplasty harmonization, mandibular angle reduction and contouring, sliding genioplasty, and tracheal shave—with vigilant attention to airway safety, nerve preservation, and scalp vascularity. He leverages high-resolution CT imaging, 3D virtual surgical planning, and patient-specific cutting guides or implants to enhance precision, symmetry, and operative efficiency while reducing downtime.\n\nIn jaw feminization, he favors piezoelectric osteoplasty for smoother cuts and reduced thermal injury, optimizes gonial angle and chin proportions with V-line contouring when indicated, and integrates soft-tissue refinement—fat grafting, temporal augmentation, and ligament release—to complement bony changes for stable, natural results. His expertise in revision FFS includes meticulous scar modulation, staged strategies for complex deformities, and a measured approach to achieve improvement with minimal additional morbidity.",
+      "philosophy": "Dr. Turner’s care philosophy centers on safety, authenticity, and partnership. Every plan begins with attentive listening, digital morphing to align expectations, and a transparent discussion of risks, benefits, and alternatives. He maintains a trauma-informed, LGBTQ+-affirming environment, emphasizes low-morbidity techniques and enhanced recovery protocols, and provides long-term follow-up to safeguard lasting, natural-looking outcomes and patient well-being.",
+      "achievements": [
+        "Developed a standardized 3D virtual planning protocol for forehead and jaw feminization adopted by multiple centers and presented at ISAPS meetings.",
+        "Published more than 25 peer-reviewed papers and book chapters on craniofacial contouring and gender-affirming facial surgery.",
+        "Invited international faculty for aesthetic and craniofacial symposia and leads a multidisciplinary facial feminization program."
+      ]
+    },
+    "image_prompt": "Professional head-and-shoulders portrait of a Caucasian male surgeon in his mid-40s, named Dr. Michelle Turner, wearing a crisp white lab coat over a light blue dress shirt and a navy tie. Modern, clean medical environment with glass panels and a softly blurred clinic corridor in the background. Warm, approachable smile with direct eye contact; neatly groomed short brown hair, clean-shaven, minimal accessories. Confident yet relaxed posture, hands lightly clasped at waist or arms at sides. Soft key light from the front-left with subtle rim lighting, daylight-balanced color temperature; high-resolution, 85mm lens look with shallow depth of field. Overall mood: professional, trustworthy, and friendly.",
+    "id": "michelle-turner"
+  },
+  {
+    "name": "Dr. Daniel Cooper",
+    "title": "Board-Certified Plastic Surgeon; Scar Revision & Skin Surgery Specialist",
+    "specialties": [
+      "Scar Revision",
+      "Keloid Treatment",
+      "Skin Lesion Removal"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of California, San Francisco (UCSF) School of Medicine",
+      "Residency - NewYork-Presbyterian/Weill Cornell, Department of Plastic & Reconstructive Surgery",
+      "Fellowship - Advanced Scar Management & Aesthetic Surgery"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 14,
+    "procedures_count": {
+      "facelifts": 420,
+      "rhinoplasty": 350,
+      "eyelid_surgery": 560
+    },
+    "bio": {
+      "intro": "Dr. Daniel Cooper is a board-certified plastic surgeon with 14 years of dedicated experience in scar revision and skin surgery. Known for a meticulous aesthetic eye and compassionate, data-driven care, she is sought after for complex scar cases and keloid management, particularly in cosmetically sensitive areas of the face and neck.",
+      "expertise": "Dr. Cooper focuses on both the functional and aesthetic restoration of the skin, leveraging a multimodal approach to scar revision that may include Z-plasty and W-plasty techniques, geometric broken-line closures, serial excision, and fat grafting to restore contour and texture. She complements surgical precision with advanced laser platforms for blending and remodeling (such as fractional resurfacing and vascular lasers), as well as microneedling and medical-grade skincare to optimize long-term outcomes. In keloid and hypertrophic scar treatment, Dr. Cooper tailors staged care plans that combine thoughtful excision with adjuvant therapies when appropriate, including intralesional injections and pressure/silicone therapy; for recurrent or high-risk keloids, she coordinates adjunctive modalities such as superficial radiation in select cases. Her approach is especially attentive to diverse skin types, carefully adjusting techniques and energy settings to reduce pigmentary change and minimize recurrence. In skin lesion removal, she emphasizes oncologic safety and cosmetic harmony, frequently collaborating with dermatologists and Mohs surgeons to achieve clear margins with refined reconstructive closures on the face, eyelids, ears, lips, and hands.",
+      "philosophy": "Every scar tells a story, and Dr. Cooper believes the surgeon’s role is to help patients feel comfortable in their skin again. She spends time understanding each patient’s goals, educates on realistic expectations and the biology of scar maturation, and creates stepwise, minimally invasive-to-surgical plans that prioritize safety, subtlety, and durability. Her practice is built on continuity of care—close follow-up, attentive scar care coaching, and compassionate support throughout recovery—so patients feel informed and empowered at every step.",
+      "achievements": [
+        "Published peer‑reviewed articles on keloid recurrence reduction and laser-assisted scar remodeling.",
+        "Invited speaker at international aesthetic surgery meetings, including ISAPS sessions on challenging facial scars.",
+        "Led a multidisciplinary scar clinic initiative integrating surgery, laser therapy, and adjuvant treatments to improve patient-reported outcomes."
+      ]
+    },
+    "image_prompt": "Professional portrait of a female Caucasian plastic surgeon in her early-to-mid 40s named Dr. Daniel Cooper. She wears a crisp white lab coat over a navy blouse, minimal jewelry, and natural makeup; hair neatly tied back in a low bun. Pose: three-quarter view, standing with relaxed, confident posture, hands gently clasped at waist level; warm, approachable smile and attentive eye contact. Background: modern, bright clinical setting with soft-focus surgical consult room elements and clean architectural lines. Lighting: soft, directional, daylight-balanced (≈5500K) with gentle fill to avoid harsh shadows; high-resolution, 85mm lens look with shallow depth of field and subtle vignette for a trustworthy, refined aesthetic. Overall mood: professional, friendly, and highly competent.",
+    "id": "daniel-cooper"
+  },
+  {
+    "name": "Dr. Rachel Morgan",
+    "title": "Board-Certified Plastic Surgeon",
+    "specialties": [
+      "Facial Fat Grafting",
+      "Structural Fat Grafting",
+      "Autologous Fat Transfer"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of Michigan Medical School",
+      "Residency - NewYork-Presbyterian Hospital, Department of Plastic and Reconstructive Surgery",
+      "Fellowship - Aesthetic Plastic Surgery & Fat Grafting"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 18,
+    "procedures_count": {
+      "facelifts": 540,
+      "rhinoplasty": 450,
+      "eyelid_surgery": 720
+    },
+    "bio": {
+      "intro": "Dr. Rachel Morgan is a board-certified plastic surgeon with 18 years of focused experience in facial and structural fat grafting. Known for natural-looking outcomes and meticulous technique, he has built a reputation for safely restoring facial harmony and youthful contours with autologous fat transfer.",
+      "expertise": "Dr. Morgan’s practice centers on advanced fat harvesting, purification, and micro-droplet placement strategies that prioritize graft viability and long-term stability. He employs low-pressure aspiration, closed-circuit processing, and layered structural fat grafting to build durable support while refining superficial contours with microfat and nanofat. His individualized volumetric mapping integrates 3D facial analysis to optimize balance across the midface, temples, periorbital region, and jawline.\n\nA proponent of data-driven refinements, he tailors cannula selection, particle size, and vector-based placement to each patient’s anatomy and aesthetic goals. He frequently combines structural fat grafting with complementary facial procedures when appropriate, guiding patients through staged plans that emphasize safety, proportion, and predictable recovery.\n\nIn revision and complex cases, Dr. Morgan utilizes conservative, incremental augmentation to correct asymmetry and contour irregularities, focusing on the interplay between deep structural support and superficial finesse for a naturally expressive result.",
+      "philosophy": "Dr. Morgan believes that the best outcomes come from listening deeply, planning thoughtfully, and operating conservatively. He prioritizes patient education, transparent expectations, and meticulous technique to achieve subtle, enduring enhancements rather than overcorrection.\n\nEvery treatment plan is grounded in safety and evidence-based protocols, from sterile handling and low-trauma harvesting to precise, layered placement. He is committed to long-term follow-up and collaborative care to ensure results evolve harmoniously with each patient’s features over time.",
+      "achievements": [
+        "Authored and co-authored numerous peer-reviewed publications on fat processing, graft viability, and layered structural placement strategies",
+        "Regular invited speaker and course instructor on facial fat grafting techniques at international aesthetic surgery meetings",
+        "Developed standardized intraoperative protocols for closed-system harvest and purification designed to enhance graft survival and consistency"
+      ]
+    },
+    "image_prompt": "Professional studio-quality head-and-shoulders portrait of a 45-50-year-old Caucasian male plastic surgeon named Dr. Rachel Morgan, wearing a crisp white lab coat over a light blue dress shirt with a subtle tie. Three-quarter pose with relaxed posture, gentle confident smile, direct eye contact. Clean-shaven or neatly trimmed facial hair, well-groomed hair. Background: modern, softly blurred clinical setting with glass and light wood accents, subtle equipment and wall art, bright yet calming ambiance. Lighting: soft, even key light with slight rim light to define contours, natural color balance, no harsh shadows. Composition conveys professionalism, trustworthiness, and warmth.",
+    "id": "rachel-morgan"
+  },
+  {
+    "name": "Dr. Matthew Sullivan",
+    "title": "Board-Certified Plastic Surgeon, Pediatric Craniofacial Specialist",
+    "specialties": [
+      "Cleft Lip and Palate",
+      "Pediatric Burns",
+      "Congenital Deformities"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - North River University School of Medicine",
+      "Residency - St. Gabriel Medical Center, Department of Plastic and Reconstructive Surgery",
+      "Fellowship - Pediatric Craniofacial Surgery"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "Royal College of Surgeons"
+    ],
+    "experience_years": 21,
+    "procedures_count": {
+      "facelifts": 630,
+      "rhinoplasty": 525,
+      "eyelid_surgery": 840
+    },
+    "bio": {
+      "intro": "Dr. Matthew Sullivan is a board-certified plastic surgeon with 21 years of experience dedicated to pediatric plastic and craniofacial care. She is widely recognized for her meticulous surgical technique, collaborative approach, and compassionate bedside manner with children and their families.",
+      "expertise": "Dr. Sullivan’s core expertise encompasses comprehensive care for cleft lip and palate, including staged repairs, secondary revisions, alveolar bone grafting, and velopharyngeal insufficiency management. She incorporates virtual surgical planning, precise muscle reconstruction, and speech-focused strategies to optimize both function and aesthetics. Her congenital deformities practice spans craniosynostosis, ear anomalies (including microtia reconstruction), and complex facial asymmetries, emphasizing growth-friendly techniques and long-term outcome tracking.\n\nIn pediatric burn surgery, Dr. Sullivan leads multidisciplinary rehabilitation pathways that combine acute management with scar modulation, laser therapy, and reconstructive strategies aimed at restoring mobility and confidence. She is adept in microsurgical reconstruction, tissue expansion, and distraction osteogenesis, allowing tailored solutions for complex defects while minimizing donor-site morbidity and visible scarring.",
+      "philosophy": "Dr. Sullivan believes every child deserves safe, thoughtful, and individualized care that supports normal growth, function, and self-esteem. She emphasizes clear communication, family education, and shared decision-making, ensuring that parents understand each step of the treatment journey.\n\nHer practice is grounded in evidence-based protocols and gentle, child-centered perioperative care. From the first consultation through long-term follow-up, she partners closely with pediatricians, speech therapists, orthodontists, and child-life specialists to deliver coordinated, age-appropriate care with enduring results.",
+      "achievements": [
+        "Developed a cleft palate repair protocol that reduced postoperative fistula rates and improved early speech outcomes across a multidisciplinary program.",
+        "Established a pediatric burn reconstructive pathway integrating laser therapy and occupational therapy to enhance scar quality and range of motion.",
+        "Authored multiple peer-reviewed publications on cleft revision strategies and presented invited lectures on growth-sensitive craniofacial reconstruction."
+      ]
+    },
+    "image_prompt": "Create a professional portrait of a female Caucasian pediatric plastic surgeon in her early 50s named Dr. Matthew Sullivan. She wears a crisp white lab coat over a light pastel blouse, subtle professional makeup, and simple stud earrings. Pose: three-quarter length, standing with relaxed, gently crossed arms, facing the camera with a warm, confident smile and approachable eye contact. Background: modern pediatric hospital clinic with soft, neutral tones and a clean, contemporary design (blurred), subtle child-friendly elements without clutter. Lighting: soft diffused key light with gentle fill, slight rim light to separate from background; high-resolution, natural color balance; shallow depth of field (85mm lens look). Overall mood: trustworthy, compassionate, highly competent; include visible name badge reading “Dr. M. Sullivan — Pediatric Plastic Surgeon.”",
+    "id": "matthew-sullivan"
+  },
+  {
+    "name": "Dr. Jessica Richardson",
+    "title": "Board-Certified Plastic Surgeon, Hand & Upper Extremity Specialist",
+    "specialties": [
+      "Hand Surgery",
+      "Wrist Reconstruction",
+      "Nerve Repair"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of Michigan Medical School",
+      "Residency - Plastic & Reconstructive Surgery, Johns Hopkins Hospital",
+      "Fellowship - Hand & Upper Extremity Surgery, Mayo Clinic"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 23,
+    "procedures_count": {
+      "facelifts": 140,
+      "rhinoplasty": 110,
+      "eyelid_surgery": 260
+    },
+    "bio": {
+      "intro": "Dr. Jessica Richardson is a board-certified plastic surgeon with 23 years of experience focused on hand and upper extremity surgery. He is widely regarded for meticulous microsurgical technique, particularly in complex wrist reconstruction and peripheral nerve repair. Patients and colleagues value his calm judgment, steady hands, and consistently excellent outcomes.",
+      "expertise": "Dr. Richardson’s practice centers on restoring function and relieving pain in the hand, wrist, and forearm. He performs advanced nerve reconstruction—including nerve grafts, conduits, and targeted nerve transfers—for traumatic and compressive neuropathies, as well as revision surgery for painful neuromas. His wrist work spans ligament reconstruction (SL/LT), arthroscopy for TFCC and cartilage injuries, corrective osteotomies, and salvage procedures tailored to preserve motion and strength.\n\nCombining microsurgery with evidence-based rehabilitation, he partners closely with certified hand therapists to accelerate recovery and optimize dexterity. He employs ultrasound for dynamic nerve assessment, WALANT and enhanced-recovery protocols to improve comfort and safety, and 3D planning to refine surgical precision. His approach balances the fine aesthetic details of the hand—scar placement, tendon gliding, and contour—with durable, functional repair.\n\nDr. Richardson is also experienced in aesthetic procedures of the face and eyelids, bringing the same microsurgical precision to delicate soft-tissue work. This cross-disciplinary skill set informs his scar-minimizing techniques and meticulous soft-tissue handling across all procedures.",
+      "philosophy": "His philosophy is simple: form serves function. He believes the best hand surgery returns confidence and capability—whether grasping, typing, or playing an instrument—while keeping scars discreet and recovery efficient. He emphasizes clear education, shared decision-making, and personalized treatment plans aligned with each patient’s goals and lifestyle.\n\nSafety and transparency guide every step of care. From conservative treatment to operative solutions, Dr. Richardson prioritizes minimally invasive options when appropriate, detailed preoperative planning, and structured rehabilitation to deliver reliable, lasting results.",
+      "achievements": [
+        "Developed and published a standardized nerve coaptation protocol that reduced reoperation rates and improved time-to-sensibility in digital nerve repair.",
+        "Invited speaker on wrist ligament reconstruction and peripheral nerve surgery at national hand and microsurgery meetings; lead author on multiple peer‑reviewed studies.",
+        "Mentor and visiting faculty for hand and microsurgery fellows; has performed over 1,500 complex hand and wrist procedures with benchmark safety outcomes."
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian male surgeon in his early 50s, named Dr. Jessica Richardson. He wears a crisp white lab coat over a light blue dress shirt with a navy tie, clean-shaven with neatly groomed hair, subtle surgical loupes resting around his neck. Three-quarter view, relaxed posture with hands gently clasped, warm and confident smile, direct eye contact. Background: modern, well-lit hand and upper extremity clinic with soft-focus elements (exam chair, anatomical hand models, frosted glass). Lighting: soft key light with gentle fill and a subtle rim light for separation; natural color grading; high-resolution, shallow depth of field. Overall look: professional, trustworthy, and approachable.",
+    "id": "jessica-richardson"
+  },
+  {
+    "name": "Dr. Joseph Reynolds",
+    "title": "Board-Certified Plastic and Reconstructive Surgeon, Microsurgery Specialist",
+    "specialties": [
+      "Microsurgical Reconstruction",
+      "Free Flap Surgery",
+      "Lymphedema Treatment"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - Northwestern University Feinberg School of Medicine",
+      "Residency - UCLA Medical Center, Integrated Plastic Surgery",
+      "Fellowship - Reconstructive Microsurgery & Lymphedema, MD Anderson Cancer Center"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "European Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)"
+    ],
+    "experience_years": 20,
+    "procedures_count": {
+      "facelifts": 600,
+      "rhinoplasty": 500,
+      "eyelid_surgery": 800
+    },
+    "bio": {
+      "intro": "Dr. Joseph Reynolds is a board-certified plastic and reconstructive surgeon with 20 years of experience focused on complex microsurgical reconstruction, free flap surgery, and advanced lymphedema treatment. She is known for meticulous technique, compassionate care, and consistently strong functional and aesthetic outcomes. Patients and peers trust her for handling the most challenging oncologic and trauma-related reconstructions.",
+      "expertise": "Dr. Reynolds specializes in perforator-based free flaps for breast, head and neck, and extremity reconstruction, including DIEP, PAP, SGAP/IGAP, and ALT flaps. She routinely performs nerve coaptation for sensory restoration, supermicrosurgical lymphatic procedures (LVA and VLNT), and complex limb salvage with precise arterial and venous anastomoses under high magnification. Her preoperative planning integrates CTA/MRA perforator mapping, ICG lymphography, and high-resolution ultrasound to optimize flap design and reduce donor-site morbidity.\n\nA leader in lymphedema surgery, she offers a comprehensive algorithm that pairs physiologic procedures (LVA, VLNT) with targeted debulking or liposuction when indicated, coordinated closely with certified lymphedema therapists for long-term compression and rehabilitation. She has also refined enhanced recovery pathways for free flap patients, decreasing operative time and length of stay without compromising safety.\n\nWhile her practice is reconstruction-focused, Dr. Reynolds applies the same micro-precision to aesthetic refinements, including scar revision, fat grafting, and facial rejuvenation procedures. This blend of reconstructive rigor and aesthetic sensibility helps patients achieve natural contours, durable results, and restored confidence.",
+      "philosophy": "Dr. Reynolds believes that every reconstructive plan should be as individual as the patient’s story. She emphasizes clear communication, shared decision-making, and evidence-based care—balancing form and function to deliver results that look natural, feel comfortable, and last. From the first consultation through long-term follow-up, she prioritizes safety, transparency about options and outcomes, and compassionate support for patients and their families.\n\nHer practice is multidisciplinary by design, bringing together oncology, orthopedics, ENT, radiology, and rehabilitation to streamline care. She is committed to continuous improvement through outcomes tracking, patient education, and innovation in microsurgical technique.",
+      "achievements": [
+        "Developed an Enhanced Recovery After Surgery (ERAS) pathway for free flap breast reconstruction, reducing average length of stay by over 30% while maintaining low complication rates.",
+        "Published peer-reviewed research and a book chapter on perforator flap selection and lymphedema surgery algorithms; invited speaker at national and international reconstructive conferences.",
+        "Founded a comprehensive lymphedema program integrating LVA/VLNT with therapy, achieving clinically meaningful limb-volume reduction and symptom relief in appropriately selected patients."
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian female plastic and reconstructive surgeon in her late 40s, wearing a crisp white lab coat over a light blue blouse; minimal jewelry; neatly pulled-back hair. Pose: three-quarter view, standing with relaxed, confident posture, gentle friendly smile, direct eye contact. Background: modern medical environment with softly blurred operating microscope and clinical elements, clean and contemporary. Lighting: soft, diffused key light with subtle rim light, natural skin tones, shallow depth of field, high-resolution. Mood: trustworthy, calm, highly competent, and approachable. Photorealistic, editorial-quality image.",
+    "id": "joseph-reynolds"
+  },
+  {
+    "name": "Dr. Lauren Peterson",
+    "title": "Board-Certified Facial Plastic and Reconstructive Surgeon",
+    "specialties": [
+      "Facial Asymmetry",
+      "Hemifacial Microsomia",
+      "Jaw Alignment"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of Michigan Medical School",
+      "Residency - Plastic and Reconstructive Surgery, NewYork-Presbyterian Hospital/Weill Cornell Medical Center",
+      "Fellowship - Craniofacial & Orthognathic Surgery, UT Southwestern Medical Center"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "American Board of Facial Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)"
+    ],
+    "experience_years": 17,
+    "procedures_count": {
+      "facelifts": 510,
+      "rhinoplasty": 425,
+      "eyelid_surgery": 680
+    },
+    "bio": {
+      "intro": "Dr. Lauren Peterson is a board-certified facial plastic and reconstructive surgeon with 17 years of focused experience in correcting facial asymmetry. Recognized for delivering balanced, natural-looking outcomes, he blends meticulous planning with advanced surgical techniques to restore harmony and confidence for patients with congenital, developmental, and post-traumatic asymmetry.",
+      "expertise": "Dr. Peterson specializes in comprehensive correction of facial asymmetry using 3D imaging, virtual surgical planning (VSP), and patient-specific guides and implants. His surgical repertoire includes orthognathic jaw realignment, genioplasty, zygomatic and mandibular contouring, septorhinoplasty to re-establish the midline, and SMAS-based facelift and necklift techniques to recalibrate soft-tissue vectors. He frequently integrates autologous fat grafting, periorbital rejuvenation, and precise soft-tissue balancing to refine symmetry in a single-stage or staged approach.\n\nIn hemifacial microsomia, Dr. Peterson collaborates closely with orthodontics and restorative dentistry to coordinate occlusion-driven planning. He employs distraction osteogenesis when appropriate, custom mandibular implants for volume and projection restoration, and targeted soft-tissue augmentation to improve contour and function. For nuanced or secondary asymmetries, he utilizes selective chemodenervation, filler camouflage, and minimally invasive adjustments to fine-tune results while preserving a patient’s unique features.",
+      "philosophy": "Dr. Peterson’s philosophy is to pursue harmony rather than forced perfection—prioritizing function, proportion, and long-term stability. Every plan begins with comprehensive diagnostics, including 3D facial analysis and bite assessment, followed by open, collaborative goal-setting so patients understand options, trade-offs, and recovery.\n\nSafety and transparency anchor his care. He emphasizes conservative tissue handling, evidence-based protocols, and attentive follow-up, ensuring outcomes that age gracefully and reflect the patient’s identity.",
+      "achievements": [
+        "Pioneered a virtual surgical planning protocol for facial asymmetry that reduced operative time and revision rates in multidisciplinary cases.",
+        "Published and presented on patient-specific craniofacial implants and asymmetric jaw correction at national and international meetings.",
+        "Established a dedicated facial asymmetry program integrating orthodontics, oral surgery, and facial plastic surgery for streamlined, outcomes-driven care."
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian male facial plastic and reconstructive surgeon in his late 40s, named Dr. Lauren Peterson. Clean-shaven, short neatly styled light-brown hair, calm blue eyes. Wearing a crisp white lab coat over a light blue dress shirt with a navy tie. Three-quarter torso pose with relaxed, confident posture and a warm, reassuring smile; hands gently folded or lightly resting at waist. Background: modern medical clinic setting with soft-focus treatment room elements and natural daylight from large windows. Lighting: soft, even key light with gentle rim light for depth; neutral, true-to-life color. High-resolution, 85mm lens look, shallow depth of field (f/2.8). Overall mood: professional, trustworthy, approachable.",
+    "id": "lauren-peterson"
+  },
+  {
+    "name": "Dr. Andrew Marshall",
+    "title": "Board-Certified Plastic Surgeon",
+    "specialties": [
+      "Advanced Lip Fillers",
+      "Lip Lift Techniques",
+      "Perioral Rejuvenation"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of California, San Diego School of Medicine",
+      "Residency - UCLA Medical Center (Plastic & Reconstructive Surgery)",
+      "Fellowship - Facial Plastic & Aesthetic Surgery (Perioral/Lip Rejuvenation)"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "American Board of Facial Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)"
+    ],
+    "experience_years": 9,
+    "procedures_count": {
+      "facelifts": 270,
+      "rhinoplasty": 225,
+      "eyelid_surgery": 360
+    },
+    "bio": {
+      "intro": "Dr. Andrew Marshall is a board-certified plastic surgeon dedicated to lip enhancement and perioral rejuvenation. With 9 years of focused experience, she is recognized for delivering refined, natural results that enhance facial harmony. Patients value her calm, attentive manner and her precise, evidence-based approach.",
+      "expertise": "Dr. Marshall’s lip enhancement practice spans advanced hyaluronic acid filler techniques, surgical lip lifts, and comprehensive perioral rejuvenation. She tailors product selection by rheology for structure versus softness, and employs a combination of cannula and micro-needle methods for precise shaping of the vermilion border, philtral columns, and Cupid’s bow. Her layered micro-deposition strategy minimizes trauma and swelling while optimizing definition and longevity. \n\nIn surgical lip lifting, Dr. Marshall specializes in subnasal (\"bullhorn\") and corner lip lifts, using meticulous measurements and vector planning to refine tooth show, shorten excessive cutaneous lip length, and restore youthful proportions. She integrates adjunct modalities such as fractional laser resurfacing for “barcode” lines, neuromodulators for perioral muscle balance, and selective fat micrografting for durable soft-tissue support. \n\nA strong advocate for safety and predictability, she utilizes vascular-mapping principles and ultrasound guidance when indicated to reduce the risk of intravascular events, and maintains comprehensive hyaluronidase protocols and emergency preparedness. Digital simulation and standardized photographic analysis help align expectations and guide nuanced treatment planning. Her outcomes emphasize symmetry, texture improvement, and natural movement—\"your lips, at their best.\"",
+      "philosophy": "Dr. Marshall believes the most beautiful results are subtle, balanced, and true to a patient’s unique features. She prioritizes conservative dosing, proportion over volume, and meticulous technique to achieve enhancements that look effortless in real life and on camera. \n\nEvery treatment begins with an in-depth consultation focusing on goals, lifestyle, and long-term maintenance. She is committed to transparent education, shared decision-making, and diligent follow-up care, creating a supportive experience that emphasizes comfort, safety, and lasting satisfaction.",
+      "achievements": [
+        "Performed 1,000+ lip-focused procedures with a documented emphasis on vascular safety and natural outcomes.",
+        "Invited speaker on perioral rejuvenation and ultrasound-guided lip augmentation at international aesthetic surgery meetings.",
+        "Published peer-reviewed articles and technique notes on lip lift planning and filler rheology in leading aesthetic journals."
+      ]
+    },
+    "image_prompt": "Create a professional portrait of a Caucasian female plastic surgeon in her late 30s to early 40s, named Dr. Andrew Marshall. She wears a crisp white medical coat over a light blouse, minimal jewelry, and subtle natural makeup. Pose: relaxed three-quarter stance with gentle, confident smile; hands softly crossed at the waist or holding a tablet. Setting: modern, bright aesthetic clinic reception or consultation room with clean lines, soft neutral tones, and subtle medical decor. Lighting: soft, flattering key light with natural daylight fill, minimal shadows, high-resolution clarity. Style: realistic, editorial-quality 85mm portrait, shallow depth of field, skin tones true-to-life, conveying trustworthiness, warmth, and professionalism.",
+    "id": "andrew-marshall"
+  },
+  {
+    "name": "Dr. Nicole Sanders",
+    "title": "Board-Certified Facial Plastic Surgeon, Non-Surgical Facial Contouring Specialist",
+    "specialties": [
+      "Non-Surgical Nose Job",
+      "Liquid Facelift",
+      "Thread Lifts"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - Northwestern University Feinberg School of Medicine",
+      "Residency - Otolaryngology–Head & Neck Surgery, NewYork-Presbyterian Hospital/Weill Cornell Medical Center",
+      "Fellowship - Facial Plastic & Reconstructive Surgery (focus on non-surgical facial rejuvenation)"
+    ],
+    "certifications": [
+      "American Board of Facial Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 11,
+    "procedures_count": {
+      "facelifts": 330,
+      "rhinoplasty": 275,
+      "eyelid_surgery": 440
+    },
+    "bio": {
+      "intro": "Dr. Nicole Sanders is a board-certified facial plastic surgeon with 11 years of experience dedicated to advanced, non-surgical facial contouring. Known for his meticulous, anatomy-first approach, he delivers refined, natural-looking results in non-surgical rhinoplasty, liquid facelifts, and thread lifts.",
+      "expertise": "Dr. Sanders specializes in non-surgical nose reshaping using high-precision microcannula techniques, ultrasound guidance when appropriate, and carefully selected hyaluronic acid fillers to camouflage dorsal irregularities, refine the radix, and improve tip definition—all while prioritizing vascular safety. He emphasizes conservative dosing and stepwise plans, often trialing reversible options for first-time patients to ensure comfort and confidence.\n\nHis liquid facelift approach blends HA and biostimulatory fillers to restore volume, lift key vectors, and refine contours of the midface, jawline, and temples. He pairs injectables with neuromodulators and evidence-based skin therapies to enhance skin quality, relying on individualized mapping, 3D facial analysis, and rheology-informed product selection for stable, elegant outcomes.\n\nFor thread lifts, Dr. Sanders employs PDO and PLLA threads with vector-based planning to achieve subtle elevation of the cheeks, brow, and lower face. He integrates threads with fillers or energy-based modalities when indicated, achieving a balanced, harmonious refresh with minimal downtime.",
+      "philosophy": "Dr. Sanders believes in subtlety over excess—elevating a patient’s unique features rather than changing how they look. His consultations are transparent and collaborative, with clear education on benefits, limits, and aftercare so patients feel informed and in control of their aesthetic journey.\n\nSafety is the foundation of his practice. He follows strict, evidence-based protocols, uses advanced anatomy navigation, and favors staged treatments to reduce risk and optimize predictability. His goal is to build long-term partnerships focused on natural results that age gracefully.",
+      "achievements": [
+        "Pioneered a clinic-wide, ultrasound-guided filler safety protocol for high-risk facial zones",
+        "Invited speaker and live demonstrator at international ISAPS/WSAPS workshops on liquid facelift and thread lift techniques",
+        "Authored peer-reviewed articles on non-surgical rhinoplasty safety and filler rheology-driven product selection"
+      ]
+    },
+    "image_prompt": "Create a professional, trustworthy portrait of a male doctor in his late 30s to early 40s, Caucasian appearance, named Dr. Nicole Sanders. He wears a crisp white lab coat over a light blue dress shirt with a subtle tie, neat short hair, light stubble, and a warm, approachable smile. Pose him in a three-quarter, mid-chest framing with relaxed posture and hands loosely folded or at his sides. Background: a modern aesthetic clinic setting with soft, out-of-focus elements (treatment chair, clean cabinetry, subtle medical instruments), bright and airy. Lighting: soft key light with gentle fill, natural daylight accents, clean color balance. Style: high-resolution, editorial-quality photograph, shallow depth of field (bokeh), 35–50mm lens perspective. Overall mood: professional, confident, friendly, and highly credible.",
+    "id": "nicole-sanders"
+  },
+  {
+    "name": "Dr. Brandon Hughes",
+    "title": "Board-Certified Plastic Surgeon",
+    "specialties": [
+      "CoolSculpting",
+      "Body Contouring",
+      "Non-Invasive Fat Reduction"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - Stanford University School of Medicine",
+      "Residency - University of California, San Francisco (UCSF), Plastic & Reconstructive Surgery",
+      "Fellowship - Aesthetic & Body Contouring, UT Southwestern Medical Center"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 15,
+    "procedures_count": {
+      "facelifts": 450,
+      "rhinoplasty": 375,
+      "eyelid_surgery": 600
+    },
+    "bio": {
+      "intro": "Dr. Brandon Hughes is a board-certified plastic surgeon specializing in advanced body sculpting and non-invasive fat reduction. With 15 years of experience, she is known for meticulous planning, natural-looking results, and an empathetic bedside manner that keeps patients informed and at ease.",
+      "expertise": "Dr. Hughes focuses on comprehensive body contouring, from precision CoolSculpting protocols to combination plans that integrate non-invasive fat reduction with skin tightening and muscle toning when appropriate. She leverages 3D imaging, detailed body mapping, and evidence-based treatment parameters to tailor each plan to a patient’s anatomy, lifestyle, and goals.\n\nAs an early adopter of next-generation cryolipolysis, Dr. Hughes has refined protocols that optimize outcomes while minimizing downtime. Her approach emphasizes careful candidate selection, layered treatment cycles, and post-procedure monitoring to enhance comfort and consistency. She is equally adept at surgical-contouring planning, allowing her to advise patients honestly on when a non-invasive approach will deliver the desired result and when a surgical pathway may be more effective.",
+      "philosophy": "Her philosophy is grounded in safety, transparency, and natural harmony. Dr. Hughes believes the best body-contouring outcomes come from aligning clinical science with a patient’s definition of beauty, always prioritizing proportionality and long-term tissue health.\n\nShe invests time in education—walking patients through expected timelines, realistic outcomes, and maintenance strategies—so every decision is collaborative. From consultation to follow-up, her team fosters a welcoming, judgment-free environment built on trust and attentive care.",
+      "achievements": [
+        "Developed clinic protocols for cryolipolysis that improved patient-reported satisfaction scores and reduced retreatment rates.",
+        "Invited presenter on non-invasive body contouring strategies at leading aesthetic conferences.",
+        "Authored peer-reviewed articles and clinical guides on optimizing CoolSculpting outcomes and patient selection."
+      ]
+    },
+    "image_prompt": "Professional portrait of a female, mid-40s Caucasian plastic surgeon named Dr. Brandon Hughes; wearing a crisp white lab coat over a navy blouse, minimal jewelry, natural makeup, shoulder-length light brown hair neatly styled. Three-quarter pose with relaxed, confident posture and a warm, approachable smile; arms gently folded or hands lightly clasped. Background: modern, softly lit medical clinic with subtle bokeh, clean white and light-gray tones, glass and stainless-steel accents, framed certificates slightly out of focus. Lighting: soft, even, high-key studio lighting with gentle rim light to separate subject from background. Mood: professional, trustworthy, friendly. Shot on a full-frame camera, 85mm portrait lens, shallow depth of field.",
+    "id": "brandon-hughes"
+  },
+  {
+    "name": "Dr. Stephanie Powell",
+    "title": "Board-Certified Plastic Surgeon, Gynecomastia & Male Chest Specialist",
+    "specialties": [
+      "Male Breast Reduction",
+      "Chest Masculinization",
+      "Pectoral Implants"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of Michigan Medical School",
+      "Residency - NewYork-Presbyterian/Weill Cornell Medical Center, Plastic Surgery",
+      "Fellowship - Aesthetic & Reconstructive Breast Surgery, UT Southwestern"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 14,
+    "procedures_count": {
+      "facelifts": 420,
+      "rhinoplasty": 350,
+      "eyelid_surgery": 560
+    },
+    "bio": {
+      "intro": "Dr. Stephanie Powell is a board-certified plastic surgeon with 14 years of dedicated experience in gynecomastia surgery and male chest aesthetics. He is known for delivering athletic, natural-looking results with a meticulous, safety-first approach and consistently high patient satisfaction.",
+      "expertise": "Dr. Powell focuses on comprehensive correction of gynecomastia, tailoring each plan to the underlying anatomy—whether fatty, glandular, or mixed. His technique often combines energy-assisted liposuction for contouring with precise subareolar gland excision through discreet periareolar incisions, optimizing definition while minimizing scarring. He employs drainless methods when appropriate, layered closure for areolar support, and a structured scar-care protocol to promote smooth, even contours.\n\nIn chest masculinization, he offers the full spectrum of approaches—from keyhole/periareolar techniques for smaller chests to double-incision with free nipple grafts for maximal reshaping in larger or ptotic chests. He emphasizes chest width, upper pole development, and nipple-areola complex positioning to achieve a convincingly masculine profile. For select patients seeking additional projection, Dr. Powell performs pectoral implants with careful pocket dissection (subfascial or submuscular) and implant selection to enhance the sternal valley and lateral sweep without compromising mobility.\n\nA recognized resource for revision cases, he addresses residual gland, contour irregularities, and asymmetry with advanced fat-grafting, internal suturing, and strategic gland debulking. His perioperative pathway includes refined pain control, early mobilization, and return-to-training guidance tailored to athletes and active patients.",
+      "philosophy": "Dr. Powell believes that excellent outcomes begin with honest assessment, clear education, and a plan aligned with the patient’s goals and lifestyle. He uses high-resolution photography and 3D visualization to set shared expectations, and he communicates transparently about trade-offs, recovery, and scar patterns.\n\nHe is committed to judgment-free, inclusive care for men and transmasculine individuals. Every detail—from incision placement to postoperative garmenting—is customized to support confident, durable results and a safe, streamlined recovery.",
+      "achievements": [
+        "Invited speaker on contemporary gynecomastia algorithms and scar-minimization strategies at regional and international aesthetic meetings",
+        "Authored peer-reviewed articles on male chest contouring and revision gynecomastia techniques",
+        "Developed a drainless protocol and enhanced-recovery pathway that reduced seroma rates and accelerated return to training for active patients"
+      ]
+    },
+    "image_prompt": "Professional portrait of a male plastic surgeon in his late 40s, Caucasian appearance, named Dr. Stephanie Powell. He is wearing a crisp white lab coat over a light blue dress shirt with a navy tie, subtle pocket name badge, and neatly groomed short hair and light stubble. Pose: three-quarter view, relaxed posture with hands gently clasped at waist level, shoulders open. Expression: warm, confident, and approachable smile with direct eye contact. Background: modern, bright clinical environment with soft-focus exam room elements and clean architectural lines. Lighting: soft, natural key light with gentle fill, minimal shadowing, balanced color temperature. Composition: shallow depth of field (85mm lens look), high-resolution, professional, trustworthy, friendly aesthetic.",
+    "id": "stephanie-powell"
+  },
+  {
+    "name": "Dr. Ryan Barnes",
+    "title": "Board-Certified Plastic Surgeon, Abdominoplasty Specialist",
+    "specialties": [
+      "Extended Tummy Tuck",
+      "Mini Abdominoplasty",
+      "Fleur-de-Lis Tummy Tuck"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of Michigan Medical School",
+      "Residency - Plastic & Reconstructive Surgery, University of Texas Southwestern Medical Center",
+      "Fellowship - Aesthetic & Body Contouring Surgery, University of Miami/Jackson Health"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 16,
+    "procedures_count": {
+      "facelifts": 480,
+      "rhinoplasty": 400,
+      "eyelid_surgery": 640
+    },
+    "bio": {
+      "intro": "Dr. Ryan Barnes is a board-certified plastic surgeon with 16 years of experience dedicated to advanced abdominoplasty and body contouring. Known for natural, waist-defining results and meticulous scar placement, she is a trusted resource for complex revisions and post–weight-loss transformations.",
+      "expertise": "Dr. Barnes’ practice focuses on the full spectrum of tummy tuck procedures, including extended abdominoplasty for circumferential laxity, mini abdominoplasty for targeted lower abdominal refinement, and the fleur‑de‑lis technique to address vertical and horizontal excess after significant weight loss. She frequently incorporates lipoabdominoplasty, high‑lateral tension tightening, and comprehensive rectus diastasis repair to restore core strength and create balanced, long‑lasting contours. Umbilical reconstruction, progressive‑tension (quilting) sutures, and strategic scar placement allow her to achieve smooth transitions and low, concealable incisions.\n\nA proponent of evidence‑based surgery, Dr. Barnes utilizes 3D planning, meticulous hemostasis, and enhanced‑recovery protocols to reduce downtime and postoperative discomfort. She tailors anesthetic plans, employs DVT prophylaxis according to risk stratification, and favors drainless or reduced‑drain techniques when appropriate—always prioritizing safety while maintaining refined, natural aesthetics.",
+      "philosophy": "Every treatment begins with listening. Dr. Barnes believes remarkable outcomes come from understanding each patient’s lifestyle, goals, and anatomy, then designing a plan that maximizes results with the least disruption. She is candid about expected scars, recovery, and longevity of outcomes, fostering informed decisions and mutual trust.\n\nHer patient‑first approach emphasizes comfort, continuity, and follow‑through. From detailed preoperative education to attentive postoperative care, she is committed to safe, beautiful results that respect the patient’s individuality and long‑term wellbeing.",
+      "achievements": [
+        "Invited speaker and course faculty on body contouring at national and international meetings, including ISAPS programs.",
+        "Published peer‑reviewed work and surgical video techniques on drainless lipoabdominoplasty and advanced umbilicoplasty.",
+        "Implemented an Enhanced Recovery pathway for abdominoplasty that has been adopted by multiple practices to improve comfort and reduce downtime."
+      ]
+    },
+    "image_prompt": "Professional portrait of a mid-40s female Caucasian plastic surgeon named Dr. Ryan Barnes; clean, modern medical clinic background with soft natural window light and subtle studio fill; white lab coat over light blue scrubs, minimal jewelry, neatly styled shoulder-length brunette hair, natural makeup; confident, friendly expression with a gentle smile; relaxed posture with hands softly clasped at waist or one hand in coat pocket; shallow depth of field, high-resolution, 85mm lens look; color-balanced, bright and airy aesthetic conveying trust, skill, and approachability.",
+    "id": "ryan-barnes"
+  },
+  {
+    "name": "Dr. Melissa Griffin",
+    "title": "Board-Certified Facial Plastic & Reconstructive Surgeon, Facial Nerve Surgery Specialist",
+    "specialties": [
+      "Facial Paralysis",
+      "Bell's Palsy Treatment",
+      "Nerve Grafting"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - Northwestern University Feinberg School of Medicine",
+      "Residency - Massachusetts Eye and Ear",
+      "Fellowship - Facial Nerve & Facial Reanimation Surgery"
+    ],
+    "certifications": [
+      "American Board of Facial Plastic Surgery",
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)"
+    ],
+    "experience_years": 24,
+    "procedures_count": {
+      "facelifts": 720,
+      "rhinoplasty": 600,
+      "eyelid_surgery": 960
+    },
+    "bio": {
+      "intro": "Dr. Melissa Griffin is a nationally recognized facial nerve surgeon with 24 years of experience dedicated to restoring expression, symmetry, and confidence. He is widely sought for complex facial paralysis care, from acute Bell’s palsy to long-standing paralysis requiring advanced reconstruction.",
+      "expertise": "Dr. Griffin’s practice focuses on comprehensive evaluation and treatment of facial nerve disorders, including Bell’s palsy, Ramsay Hunt syndrome, traumatic and iatrogenic nerve injury, and synkinesis. He is highly skilled in nerve grafting and transfers, including cross-facial nerve grafts, masseteric-to-facial and hypoglossal-to-facial nerve transfers, as well as selective neurectomy and myectomy to refine balance and reduce involuntary movements.\n\nHis reconstructive repertoire extends to gracilis free functional muscle transfer for smile restoration, revision reanimation after prior surgery, and integration of adjunctive therapies such as targeted botulinum toxin, neuromodulation, and specialized facial physical therapy. With meticulous microsurgical technique and an aesthetic eye, he prioritizes both functional recovery and natural appearance, tailoring each plan to the patient’s goals, timeline, and lifestyle.",
+      "philosophy": "Dr. Griffin believes that every face tells a story, and his mission is to help patients reclaim theirs with safety, precision, and empathy. He practices a collaborative, multidisciplinary model—working closely with neurology, ophthalmology, speech-language pathology, and dedicated facial therapists—to deliver seamless, evidence-based care from diagnosis through rehabilitation.\n\nHe emphasizes clear communication, thoughtful counseling, and realistic goal-setting. Patients can expect a personalized roadmap that blends conservative measures with advanced surgical options when indicated, as well as diligent follow-up to optimize long-term outcomes.",
+      "achievements": [
+        "Recognized for advanced masseteric-to-facial and hypoglossal-to-facial nerve transfer techniques with consistently strong functional and aesthetic outcomes.",
+        "Published peer-reviewed research on facial reanimation outcomes and synkinesis management, contributing to best-practice treatment pathways.",
+        "Regular invited lecturer and course instructor at national meetings on facial nerve surgery and facial reanimation."
+      ]
+    },
+    "image_prompt": "Professional head-and-shoulders portrait of a middle-aged (late 40s to early 50s) Caucasian male doctor named Dr. Melissa Griffin, wearing a crisp white lab coat over a light blue dress shirt with a subtle tie. Clean-shaven or neatly trimmed light stubble, short well-groomed hair, calm confident smile, warm approachable eyes. Pose angled slightly toward camera with relaxed shoulders and hands gently clasped at waist level. Background: modern, bright medical environment with soft-focus clinic elements (glass, steel, subtle signage). Lighting: soft, diffused, natural daylight with gentle rim light, high-resolution, 85mm lens look, shallow depth of field, professional editorial style. Convey trustworthiness, expertise, and warmth.",
+    "id": "melissa-griffin"
+  },
+  {
+    "name": "Dr. Kevin Ross",
+    "title": "Board-Certified Dermatologist, Aesthetic Dermatology Specialist",
+    "specialties": [
+      "Advanced Skin Treatments",
+      "Pigmentation Correction",
+      "Acne Scar Treatment"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of California, San Diego School of Medicine",
+      "Residency - University of California, San Francisco (UCSF) Department of Dermatology",
+      "Fellowship - Procedural Dermatology (Cosmetic & Laser Surgery)"
+    ],
+    "certifications": [
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 12,
+    "procedures_count": {
+      "facelifts": 360,
+      "rhinoplasty": 300,
+      "eyelid_surgery": 480
+    },
+    "bio": {
+      "intro": "Dr. Kevin Ross is a board-certified dermatologist specializing in aesthetic dermatology with 12 years of clinical experience. She is widely regarded for her nuanced, evidence-based approach to advanced skin rejuvenation, pigmentation correction, and acne scar revision. Patients and colleagues value her meticulous technique and warm, collaborative manner.",
+      "expertise": "Dr. Ross focuses on comprehensive skin restoration plans that blend regenerative therapies with precision energy-based treatments. She is proficient in fractional ablative and non-ablative resurfacing, picosecond platforms with diffractive lens arrays, RF microneedling, and bespoke chemical peels. For acne scars, she employs tiered protocols combining subcision, TCA CROSS for ice-pick scars, focal laser resurfacing, and judicious hyaluronic acid or biostimulatory fillers to optimize texture and contour while preserving natural expression.\n\nIn pigmentation disorders—including melasma and post-inflammatory hyperpigmentation—Dr. Ross emphasizes barrier repair, pigment-safe laser parameters for diverse skin tones, and staged use of depigmenting agents such as azelaic acid, cysteamine, and carefully titrated tranexamic acid. She integrates dermoscopy and high-resolution imaging to track progress and tailor intervals, prioritizing long-term stability over short-lived lightening.\n\nWorking within a multidisciplinary facial aesthetics team, Dr. Ross co-manages pre- and post-operative skin optimization for surgical patients. She designs perioperative protocols that reduce inflammation, enhance healing, and refine final texture and tone—supporting outcomes across facelifts, rhinoplasty, and eyelid surgery with adjunctive resurfacing and scar modulation.",
+      "philosophy": "Dr. Ross believes the best aesthetic outcomes are achieved when skin health and facial harmony are treated as one continuum. She favors subtle, progressive improvements that respect each patient’s unique features and lifestyle, using data-driven plans and clear education to guide decision-making.\n\nHer practice is grounded in safety, transparency, and inclusivity. From conservative test spots on pigment-prone skin to thorough aftercare and follow-up, she is committed to minimizing downtime and risk while delivering meaningful, natural-looking results that patients can sustain.",
+      "achievements": [
+        "Developed a staged acne scar protocol combining subcision, focal TCA CROSS, and fractional resurfacing, achieving measurable texture improvements with low downtime in a clinic quality-improvement study.",
+        "Invited speaker on pigment-safe laser parameters and melasma stabilization strategies at regional aesthetic dermatology symposia and continuing education programs.",
+        "Authored peer-reviewed articles on post-inflammatory hyperpigmentation and multimodal acne scar management; led implementation of standardized photographic and outcomes tracking in clinic."
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian female dermatologist in her late 30s to early 40s, wearing a crisp white lab coat over a light pastel blouse. Shoulder-length neatly styled hair, minimal natural makeup, warm and confident smile. Pose: three-quarter length, hands gently clasped at waist or resting on a counter, body angled slightly toward camera. Background: modern, softly blurred dermatology clinic with clean white and light grey tones, subtle shelves and a laser/skin treatment device out of focus. Lighting: soft, even key light with gentle fill, natural daylight feel, no harsh shadows. High-resolution, shallow depth of field, 85mm lens look, professional medical headshot style conveying trustworthiness, expertise, and approachability.",
+    "id": "kevin-ross"
+  },
+  {
+    "name": "Dr. Angela Butler",
+    "title": "Board-Certified Plastic Surgeon, Blepharoplasty Specialist",
+    "specialties": [
+      "Asian Eyelid Surgery",
+      "Revision Blepharoplasty",
+      "Lower Eyelid Surgery"
+    ],
+    "languages": [
+      "English",
+      "Mandarin Chinese"
+    ],
+    "education": [
+      "MD - Johns Hopkins University School of Medicine",
+      "Residency - Plastic and Reconstructive Surgery, NewYork-Presbyterian Hospital/Weill Cornell Medical Center",
+      "Fellowship - Oculoplastic and Aesthetic Eyelid Surgery"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 18,
+    "procedures_count": {
+      "facelifts": 540,
+      "rhinoplasty": 450,
+      "eyelid_surgery": 720
+    },
+    "bio": {
+      "intro": "Dr. Angela Butler is a board-certified plastic surgeon with 18 years of focused experience in eyelid and periorbital aesthetics. Known for meticulous technique and understated, natural-looking outcomes, he is a trusted referral for complex eyelid cases. His practice centers on Asian eyelid surgery, revision blepharoplasty, and advanced lower eyelid rejuvenation.",
+      "expertise": "Dr. Butler brings deep, hands-on expertise in Asian eyelid surgery, combining precise crease design with a nuanced understanding of ethnic eyelid anatomy and aesthetic ideals. He tailors suture or incisional approaches based on levator function, skin thickness, and crease stability requirements, and employs techniques such as septal reset and conservative fat handling to create durable, natural creases without a “done” look.\n\nIn revision blepharoplasty, he addresses challenging problems including asymmetry, hollowing, scarring, and lid retraction. His toolkit includes scar release, fat preservation and repositioning, targeted microfat grafting, and canthal support (canthopexy/canthoplasty) when indicated. He favors planned, staged corrections to restore both form and function while minimizing additional scarring.\n\nFor lower eyelid surgery, Dr. Butler prioritizes ocular safety and lid support. He often uses a transconjunctival approach with fat repositioning to smooth the tear trough, combined with orbicularis-sparing skin pinch and lateral canthal tightening to prevent ectropion. Digital planning, high-magnification visualization, and meticulous micro-suturing underpin his consistent, natural results.",
+      "philosophy": "Dr. Butler believes in a conservative, anatomy-first approach that preserves eyelid function while enhancing aesthetics. He emphasizes thorough consultation, honest expectation setting, and culturally sensitive planning, particularly for Asian double-eyelid surgery. The goal is to refresh—not change—one’s identity.\n\nHe is committed to patient safety at every step, from evidence-based perioperative protocols to clear aftercare guidance. Patients appreciate his calm, detail-oriented manner and his dedication to long-term outcomes that age gracefully.",
+      "achievements": [
+        "Invited speaker on Asian eyelid surgery and revision blepharoplasty at international aesthetic meetings, including ISAPS programs.",
+        "Author of peer-reviewed publications and textbook chapters on periorbital aesthetics and lower eyelid fat repositioning.",
+        "Developed a practical, stepwise algorithm for revision blepharoplasty planning that is used by colleagues for complex case assessment."
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian male plastic surgeon in his late 40s, identified as Dr. Angela Butler. He wears a crisp white lab coat over a light blue dress shirt with a navy tie, subtle name badge, no stethoscope. Pose: three-quarter view, relaxed posture with hands gently clasped, warm confident smile, direct eye contact. Background: modern, bright medical clinic with soft-focus glass partitions and clean cabinetry; subtle surgical lighting elements visible but unobtrusive. Lighting: soft, diffused key light at 45 degrees with gentle rim light to define contours; neutral, natural color grading. Composition: mid-chest to head framing, shallow depth of field (85mm lens look, f/2.2), high-resolution, professional, trustworthy, and approachable aesthetic.",
+    "id": "angela-butler"
+  },
+  {
+    "name": "Dr. Justin Wallace",
+    "title": "Board-Certified Facial Plastic Surgeon & Injectable Specialist",
+    "specialties": [
+      "Advanced Filler Techniques",
+      "Facial Volumization",
+      "Jawline Sculpting with Fillers"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - Northwestern University Feinberg School of Medicine",
+      "Residency - Otolaryngology–Head & Neck Surgery, NewYork-Presbyterian/Weill Cornell",
+      "Fellowship - Facial Plastic & Reconstructive Surgery, Manhattan Eye, Ear & Throat Hospital"
+    ],
+    "certifications": [
+      "American Board of Facial Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 10,
+    "procedures_count": {
+      "facelifts": 300,
+      "rhinoplasty": 250,
+      "eyelid_surgery": 400
+    },
+    "bio": {
+      "intro": "Dr. Justin Wallace is a board-certified facial plastic surgeon and injectable specialist with a decade of experience focused on refined, natural-looking facial rejuvenation. Known for her meticulous aesthetic eye and evidence-based approach, she blends artistry with surgical-grade safety to deliver elegant, individualized results.",
+      "expertise": "Dr. Wallace is recognized for advanced filler techniques, including layered facial volumization and precise jawline sculpting that enhances definition without compromising softness. She employs a comprehensive understanding of facial anatomy, vector-based planning, and careful cannula-versus-needle selection to optimize outcomes while minimizing downtime and risk. Her protocols emphasize structurally supportive placement in deep and superficial planes to restore youthful contours and balance proportions.\n\nIn addition to her injector expertise, Dr. Wallace integrates multimodal strategies—such as neuromodulators, skin quality optimization, and peri-oral rejuvenation—to harmonize the entire face. She is an early adopter of ultrasound-guided injection for high-risk zones and leverages photographic analysis and digital morphing to plan treatments transparently with her patients.",
+      "philosophy": "Her philosophy is simple: subtle, strategic enhancements should celebrate a patient’s unique features, not change them. Every plan begins with attentive listening, clear education, and conservative, staged dosing to achieve durable, natural results.\n\nSafety is paramount. Dr. Wallace follows rigorous, anatomy-first protocols, uses premium, well-studied products, and schedules thoughtful follow-up to ensure comfort, symmetry, and long-term satisfaction.",
+      "achievements": [
+        "Faculty trainer for national workshops on advanced filler techniques and jawline contouring, mentoring physicians on safe, anatomy-guided practice.",
+        "Implemented an ultrasound-guided filler protocol that reduced injection-related complications and improved precision in high-risk areas.",
+        "Published peer-reviewed work on injection plane selection and facial anatomy mapping for volumization, and invited speaker at major aesthetic meetings."
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian female facial plastic surgeon in her late 30s to early 40s, named Dr. Justin Wallace. She wears a crisp white lab coat over a neutral blouse, with minimal, polished makeup and neatly styled shoulder-length hair. Pose: standing three-quarter turn toward camera, hands gently folded at waist, warm and confident soft smile, direct eye contact. Setting: modern, bright medical clinic with clean lines, blurred treatment room background, subtle brand-neutral decor. Lighting: soft, natural key light with gentle fill, clean highlights, and flattering skin tones. Composition: mid-chest to head framing, slight depth of field (bokeh), 85mm portrait style, professional, trustworthy, and approachable aesthetic.",
+    "id": "justin-wallace"
+  },
+  {
+    "name": "Dr. Samantha Wood",
+    "title": "Board-Certified Plastic Surgeon, Brazilian Butt Lift Specialist",
+    "specialties": [
+      "BBL",
+      "Buttock Enhancement",
+      "Hip Augmentation"
+    ],
+    "languages": [
+      "English",
+      "Spanish",
+      "Portuguese"
+    ],
+    "education": [
+      "MD - University of Miami Miller School of Medicine",
+      "Residency - UT Southwestern Medical Center, Plastic & Reconstructive Surgery",
+      "Fellowship - Aesthetic Body Contouring & Gluteal Augmentation"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 15,
+    "procedures_count": {
+      "facelifts": 450,
+      "rhinoplasty": 375,
+      "eyelid_surgery": 600
+    },
+    "bio": {
+      "intro": "Dr. Samantha Wood is a board-certified plastic surgeon with 15 years of experience specializing in Brazilian Butt Lift (BBL) surgery and advanced body contouring. Recognized for natural silhouettes and uncompromising safety, he blends surgical precision with artistic balance to create harmonious curves. Patients value his calm, transparent approach and his commitment to personalized care.",
+      "expertise": "Dr. Wood’s practice focuses on comprehensive gluteal and hip shaping, including high-definition lipo 360, waist refinement, and precise fat transfer to the gluteal and peritrochanteric regions to address hip dips and enhance projection. He uses real-time ultrasound guidance for every BBL to confirm cannula position and maintain subcutaneous-only fat placement, aligning technique with the latest safety standards.\n\nTo optimize outcomes, he employs a closed-loop, low-exposure fat processing method, micro-droplet layering, and low-pressure, large-bore cannulas that support graft viability while reducing risk. Treatment plans are tailored using 3D body mapping, skin elasticity assessment, and vector analysis, with expertise in primary and revision BBL, hip augmentation, and combined contouring procedures when appropriate.\n\nHe is experienced in complex and post-weight-loss body contouring, emphasizing symmetry, proportion, and long-term stability of results. His meticulous planning and intraoperative finesse help deliver smooth transitions, balanced projection, and durable results.",
+      "philosophy": "Dr. Wood believes the best outcomes come from honest communication, meticulous planning, and uncompromising safety. He educates each patient on candidacy, realistic volume goals, and recovery milestones, encouraging shared decision-making every step of the way.\n\nHis care pathway features evidence-based safety protocols, thoughtful anesthesia selection, enhanced recovery strategies, and close follow-up. Above all, he prioritizes results that look natural, respect the patient’s anatomy, and enhance confidence without sacrificing well-being.",
+      "achievements": [
+        "Implemented a standardized, ultrasound-guided BBL safety protocol adopted by multiple regional clinics.",
+        "Author of peer-reviewed publications and a textbook chapter on gluteal augmentation and hip contouring.",
+        "Invited speaker and live-demonstration faculty at international aesthetic surgery meetings, including ISAPS-affiliated events."
+      ]
+    },
+    "image_prompt": "Create a professional portrait of a male Caucasian plastic surgeon in his early-to-mid 40s named Dr. Samantha Wood. He is clean-cut with short, neatly styled brown hair, light stubble, and warm hazel eyes. He wears a crisp white lab coat over a light blue dress shirt and a navy tie. Pose: three-quarter view, relaxed posture with arms comfortably at his sides or lightly folded, confident and approachable expression with a gentle smile. Background: modern, bright medical clinic with subtle depth of field (softly blurred), hints of glass, clean lines, and neutral tones. Lighting: soft, natural key light with balanced fill, minimal shadows, professional studio quality. Color grading: clean and true-to-life skin tones. Framing: waist-up, shot on an 85mm lens look, high-resolution, editorial style. The image should convey trustworthiness, expertise, and warmth.",
+    "id": "samantha-wood"
+  },
+  {
+    "name": "Dr. Nathan Phillips",
+    "title": "Board-Certified Plastic Surgeon, Mommy Makeover Specialist",
+    "specialties": [
+      "Post-Pregnancy Body Restoration",
+      "Combined Body Procedures",
+      "Abdominal Restoration"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of California, San Diego",
+      "Residency - University of Texas Southwestern Medical Center (Plastic Surgery)",
+      "Fellowship - Aesthetic Surgery and Body Contouring"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 17,
+    "procedures_count": {
+      "facelifts": 510,
+      "rhinoplasty": 425,
+      "eyelid_surgery": 680
+    },
+    "bio": {
+      "intro": "Dr. Nathan Phillips is a board-certified plastic surgeon with 17 years of experience dedicated to comprehensive post-pregnancy body restoration. Widely regarded for her meticulous technique and patient-centered care, she is sought after for customized mommy makeover plans that prioritize safety, proportion, and natural contours.",
+      "expertise": "Dr. Phillips specializes in thoughtfully sequenced combined procedures, including lipoabdominoplasty with rectus diastasis repair, breast enhancement or lift when indicated, and targeted liposculpting to restore harmony after pregnancy. She employs drainless or reduced-drain techniques when appropriate, advanced muscle plication methods for durable core support, and refined umbilical design to achieve smooth abdominal lines with discreet scarring.\n\nHer approach integrates detailed preoperative planning, 3D imaging for expectation alignment, and enhanced recovery pathways that emphasize multimodal pain control, early ambulation, and rapid return to daily routines. She is particularly experienced in revision abdominal contouring, C-section scar revision, and strategies for restoring the waistline in patients with complex postpartum changes.",
+      "philosophy": "Grounded in a safety-first philosophy, Dr. Phillips believes that every mommy makeover should be as individual as the person receiving it. She invests time to understand each patient’s anatomy, lifestyle, and goals, and educates them on surgical sequencing, recovery timelines, and realistic outcomes.\n\nHer care model emphasizes honesty, gentle communication, and continuity—from the first consultation through long-term follow-up—so patients feel supported, informed, and confident at every step.",
+      "achievements": [
+        "Published outcomes on enhanced recovery and drainless abdominoplasty techniques in aesthetic surgery journals",
+        "Invited speaker on safe combination body procedures at ISAPS and national aesthetic meetings",
+        "Recognized for developing structured patient education and scar-optimization protocols for postpartum body contouring"
+      ]
+    },
+    "image_prompt": "Professional portrait of a female Caucasian plastic surgeon in her early-to-mid 40s, named Dr. Nathan Phillips. She wears a crisp white lab coat over a light blouse, minimal jewelry, and has neatly styled shoulder-length hair. Pose: standing three-quarter view with relaxed, confident posture, gentle friendly smile, hands lightly clasped. Background: modern, bright aesthetic clinic with soft-focus surgical certificates and clean lines. Lighting: soft, even key light with subtle rim light to convey clarity and trust. Color palette: neutral, calming tones. Expression: warm, approachable, highly professional. Photorealistic, high-resolution, editorial-quality head-and-shoulders composition.",
+    "id": "nathan-phillips"
+  },
+  {
+    "name": "Dr. Rebecca Carter",
+    "title": "Board-Certified Plastic Surgeon, Male Aesthetic Surgery Specialist",
+    "specialties": [
+      "Male Facelift",
+      "Male Rhinoplasty",
+      "Male Body Contouring"
+    ],
+    "languages": [
+      "English",
+      "Spanish"
+    ],
+    "education": [
+      "MD - University of Michigan Medical School",
+      "Residency - Integrated Plastic & Reconstructive Surgery, NYU Langone Health",
+      "Fellowship - Aesthetic Surgery, Manhattan Eye, Ear & Throat Hospital (MEETH)"
+    ],
+    "certifications": [
+      "American Board of Plastic Surgery",
+      "International Society of Aesthetic Plastic Surgery (ISAPS)",
+      "World Society of Aesthetic Plastic Surgeons (WSAPS)"
+    ],
+    "experience_years": 19,
+    "procedures_count": {
+      "facelifts": 570,
+      "rhinoplasty": 475,
+      "eyelid_surgery": 760
+    },
+    "bio": {
+      "intro": "Dr. Rebecca Carter is a board-certified plastic surgeon with 19 years of experience devoted to male aesthetic surgery. He is known for natural, masculine results that respect each patient’s anatomy, lifestyle, and goals. His practice is recognized for precision, discretion, and consistently high patient satisfaction.",
+      "expertise": "Dr. Carter focuses on male facelift techniques that maintain a strong, authentic look while rejuvenating the face and neck. He employs a modified deep-plane approach to reposition descended facial ligaments and restore jawline definition, carefully planning incisions to preserve sideburn position and beard-bearing skin to avoid feminizing or distorted outcomes. For thicker male skin and heavier necks, he complements lifting with selective fat contouring and platysmaplasty, achieving durable, low-scar results.\n\nIn male rhinoplasty, Dr. Carter prioritizes structural support and airway function alongside aesthetics. He customizes dorsal lines to remain straight and strong rather than overly reduced, uses grafting (including spreader and alar batten grafts) for long-term stability, and favors preservation and open-structure techniques when indicated to refine the tip without over-rotation or excessive narrowing. His planning uses high-resolution photography and simulation to align expectations while emphasizing subtlety.\n\nFor male body contouring, he performs high-definition liposculpture, gynecomastia correction (combining gland excision with energy-assisted liposuction when appropriate), and abdominal etching that enhances natural musculature. He integrates ultrasound- or radiofrequency-assisted technologies to improve skin retraction and employs meticulous aftercare protocols, including compression, lymphatic therapy, and activity-specific recovery plans tailored to active lifestyles.",
+      "philosophy": "Dr. Carter believes that the most successful outcomes look unoperated—refreshed, confident, and distinctly masculine. He works collaboratively, devoting time to understand each patient’s priorities and to craft individualized surgical plans that balance form, function, and longevity. Safety is paramount: he adheres to evidence-based protocols, thorough preoperative assessment, and precise perioperative management.\n\nFrom consultation through recovery, Dr. Carter is committed to privacy, clear communication, and attentive follow-up. His goal is to deliver results that age gracefully and empower patients to feel like their best, most authentic selves.",
+      "achievements": [
+        "Published peer-reviewed research on incision planning and beard-sparing techniques in the male deep-plane facelift.",
+        "Invited speaker at national aesthetic meetings on contemporary strategies for male rhinoplasty and gynecomastia management.",
+        "Developed a male-focused consultation and recovery pathway that improved return-to-work timelines and patient-reported satisfaction in internal practice audits."
+      ]
+    },
+    "image_prompt": "Professional portrait of a Caucasian male plastic surgeon in his late 40s, named Dr. Rebecca Carter. He wears a crisp white medical coat over a light blue dress shirt with a subtle tie, standing with relaxed confidence, arms gently at his sides or lightly folded, offering a warm, approachable smile. Medium-close, eye-level composition in a modern, well-lit clinic setting with soft-focus background elements (clean exam room, glass partitions, muted neutral tones). Lighting is soft, even, and flattering (daylight-balanced key light with gentle fill), conveying trust and professionalism. High-resolution, natural color grading, minimal retouching, clear skin texture, no dramatic shadows. Include a discreet name badge, stubble neatly groomed, and a calm, friendly expression that inspires confidence.",
+    "id": "rebecca-carter"
+  }
+];
 
 /**
  * 获取所有医生数据
  * @returns {Array} 医生列表
  */
 export function getAllSurgeons() {
-  return surgeonsData.map(surgeon => ({
+  return SURGEONS_DATA.map(surgeon => ({
     ...surgeon,
     surgeon_id: surgeon.id,
     images: {} // 默认空的 images 对象
@@ -23,7 +2071,7 @@ export function getAllSurgeons() {
  * @returns {Object|null} 医生对象
  */
 export function getSurgeonById(surgeonId) {
-  const surgeon = surgeonsData.find(s => s.id === surgeonId);
+  const surgeon = SURGEONS_DATA.find(s => s.id === surgeonId);
   if (!surgeon) return null;
 
   return {
@@ -38,5 +2086,5 @@ export function getSurgeonById(surgeonId) {
  * @returns {number} 医生数量
  */
 export function getSurgeonsCount() {
-  return surgeonsData.length;
+  return SURGEONS_DATA.length;
 }
