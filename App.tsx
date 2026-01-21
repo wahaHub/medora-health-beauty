@@ -18,6 +18,7 @@ import CaseDetail from './components/CaseDetail';
 import OurTeam from './components/OurTeam';
 import AllSurgeons from './pages/AllSurgeons';
 import Gallery from './components/Gallery';
+import ProcedureGallery from './components/ProcedureGallery';
 import TravelPage from './components/TravelPage';
 import ReviewsPage from './components/ReviewsPage';
 import SurgeonProfile from './components/SurgeonProfile';
@@ -102,11 +103,31 @@ function GalleryWrapper() {
   const navigate = useNavigate();
 
   return (
-    <Gallery 
+    <Gallery
       onNavigate={(proc) => {
         navigate(`/procedure/${encodeURIComponent(proc)}`);
         window.scrollTo(0, 0);
-      }} 
+      }}
+    />
+  );
+}
+
+// Procedure Gallery Wrapper
+function ProcedureGalleryWrapper() {
+  const { procedureName } = useParams<{ procedureName: string }>();
+  const navigate = useNavigate();
+
+  return (
+    <ProcedureGallery
+      procedureName={procedureName}
+      onBack={() => {
+        navigate(`/procedure/${encodeURIComponent(procedureName || '')}`);
+        window.scrollTo(0, 0);
+      }}
+      onCaseClick={(caseId) => {
+        navigate(`/procedure/${encodeURIComponent(procedureName || '')}/case/${caseId}`);
+        window.scrollTo(0, 0);
+      }}
     />
   );
 }
@@ -127,6 +148,7 @@ function App() {
             <Route path="/patient-form" element={<PatientForm />} />
             <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
             <Route path="/procedure/:procedureName" element={<ProcedureDetailWrapper />} />
+            <Route path="/procedure/:procedureName/gallery" element={<ProcedureGalleryWrapper />} />
             <Route path="/procedure/:procedureName/case/:caseId" element={<CaseDetailWrapper />} />
             {/* 通配符路由：处理包含 / 的 procedure 名称 */}
             <Route path="/procedure/*/case/:caseId" element={<CaseDetailWrapper />} />

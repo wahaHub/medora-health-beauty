@@ -616,12 +616,15 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
 
             <div className="flex flex-col md:flex-row justify-center gap-6 mt-16">
                <button
-                 onClick={() => navigate('/gallery')}
+                 onClick={() => navigate(`/procedure/${encodeURIComponent(procedureName || '')}/gallery`)}
                  className="bg-navy-900 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-navy-800 transition-colors text-sm"
                >
                  {t('viewPhotoGallery')}
                </button>
-               <button className="bg-gold-600 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-gold-500 transition-colors text-sm">
+               <button
+                 onClick={() => navigate('/patient-form')}
+                 className="bg-gold-600 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-gold-500 transition-colors text-sm"
+               >
                  {t('requestConsultation')}
                </button>
             </div>
@@ -844,13 +847,16 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
             {t('scheduleConsultationDescription')} {displayName.toLowerCase()} {t('andDiscoverHow')}
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-6">
-             <button 
-               onClick={() => navigate('/gallery')}
+             <button
+               onClick={() => navigate(`/procedure/${encodeURIComponent(procedureName || '')}/gallery`)}
                className="bg-navy-900 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-navy-800 transition-colors text-sm"
              >
                {t('viewPhotoGallery')}
              </button>
-             <button className="bg-gold-600 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-gold-500 transition-colors text-sm">
+             <button
+               onClick={() => navigate('/patient-form')}
+               className="bg-gold-600 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-gold-500 transition-colors text-sm"
+             >
                {t('requestConsultation')}
              </button>
           </div>

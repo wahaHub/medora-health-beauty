@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { withAuth } from '../_utils/auth.js';
 
-const supabaseUrl = process.env.SUPABASE_URL || 'https://yamlikuqgmqiiqeaqzaz.supabase.co';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://yamlikuqgmqiigeaqzaz.supabase.co';
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhbWxpa3VxZ21xaWlnZWFxemF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcwODAyMzMsImV4cCI6MjA4MjY1NjIzM30.7VJLrsFbMsFt9A0Y74KBgDbK_sUFN5kQqbpVm9JiOnc';
 
 // 使用 global fetch 配置避免 Vercel 环境的 fetch 问题
