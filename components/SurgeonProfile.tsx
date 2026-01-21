@@ -1,7 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Award, GraduationCap, Languages, Loader2, ArrowLeft, Calendar, MapPin } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslation } from '../hooks/useTranslation';
+
+// Translation data structure
+interface SurgeonTranslation {
+  title: string;
+  specialties: string[];
+  languages: string[];
+  education: string[];
+  certifications: string[];
+  bio: {
+    intro: string;
+    expertise: string;
+    philosophy: string;
+    achievements: string[];
+  };
+}
 
 interface SurgeonDetail {
   surgeon_id: string;
@@ -21,6 +38,9 @@ interface SurgeonDetail {
     philosophy: string;
     achievements: string[];
   };
+  translations?: {
+    [langCode: string]: SurgeonTranslation;
+  };
   created_at: string;
   updated_at: string;
 }
@@ -28,12 +48,47 @@ interface SurgeonDetail {
 const SurgeonProfile: React.FC = () => {
   const { surgeonName } = useParams<{ surgeonName: string }>();
   const navigate = useNavigate();
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation();
   const [surgeon, setSurgeon] = useState<SurgeonDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Enable scroll reveal animations - only after data is loaded
   useScrollReveal(!loading && surgeon !== null);
+
+  // Get translated data based on current language
+  const translatedData = useMemo(() => {
+    if (!surgeon) return null;
+
+    // If language is English or no translations available, use original data
+    if (currentLanguage === 'en' || !surgeon.translations || !surgeon.translations[currentLanguage]) {
+      return {
+        title: surgeon.title,
+        specialties: surgeon.specialties,
+        languages: surgeon.languages,
+        education: surgeon.education,
+        certifications: surgeon.certifications,
+        bio: surgeon.bio,
+      };
+    }
+
+    // Use translated data
+    const trans = surgeon.translations[currentLanguage];
+    return {
+      title: trans.title || surgeon.title,
+      specialties: trans.specialties || surgeon.specialties,
+      languages: trans.languages || surgeon.languages,
+      education: trans.education || surgeon.education,
+      certifications: trans.certifications || surgeon.certifications,
+      bio: {
+        intro: trans.bio?.intro || surgeon.bio.intro,
+        expertise: trans.bio?.expertise || surgeon.bio.expertise,
+        philosophy: trans.bio?.philosophy || surgeon.bio.philosophy,
+        achievements: trans.bio?.achievements || surgeon.bio.achievements,
+      },
+    };
+  }, [surgeon, currentLanguage]);
 
   // Placeholder images
   const placeholderHeroImage = "https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=2670&auto=format&fit=crop";
@@ -85,24 +140,24 @@ const SurgeonProfile: React.FC = () => {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-16 h-16 text-gold-600 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 text-lg">Loading surgeon profile...</p>
+          <p className="text-gray-600 text-lg">{t('loadingSurgeonProfile')}</p>
         </div>
       </div>
     );
   }
 
   // Error state
-  if (error || !surgeon) {
+  if (error || !surgeon || !translatedData) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center max-w-md px-6">
-          <h1 className="text-3xl font-serif text-navy-900 mb-4">Surgeon Not Found</h1>
-          <p className="text-gray-600 mb-8">{error || 'The surgeon you are looking for does not exist.'}</p>
+          <h1 className="text-3xl font-serif text-navy-900 mb-4">{t('surgeonNotFound')}</h1>
+          <p className="text-gray-600 mb-8">{error || t('surgeonNotFoundDesc')}</p>
           <button
             onClick={() => navigate('/surgeons')}
             className="bg-navy-900 text-white px-8 py-3 rounded-lg hover:bg-navy-800 transition-colors"
           >
-            View All Surgeons
+            {t('viewAllSurgeons')}
           </button>
         </div>
       </div>
@@ -111,7 +166,7 @@ const SurgeonProfile: React.FC = () => {
 
   // Calculate total procedures (with safe fallback)
   const totalProcedures = surgeon.procedures_count
-    ? Object.values(surgeon.procedures_count).reduce((sum, count) => sum + count, 0)
+    ? Object.values(surgeon.procedures_count).reduce((sum: number, count: number) => sum + count, 0)
     : 0;
 
   return (
@@ -137,11 +192,11 @@ const SurgeonProfile: React.FC = () => {
               {surgeon.procedures_count && Object.keys(surgeon.procedures_count).length > 0 && (
                 <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 scroll-reveal">
                   <h3 className="text-gold-400 uppercase tracking-[0.2em] text-xs font-bold mb-4">
-                    Surgical Volume Highlights
+                    {t('surgicalVolumeHighlights')}
                   </h3>
                   <div className="space-y-4">
-                    {Object.entries(surgeon.procedures_count).map(([procedure, count]) => {
-                      const maxCount = Math.max(...Object.values(surgeon.procedures_count));
+                    {Object.entries(surgeon.procedures_count).map(([procedure, count]: [string, number]) => {
+                      const maxCount = Math.max(...(Object.values(surgeon.procedures_count) as number[]));
                       const percentage = (count / maxCount) * 100;
                       return (
                         <div key={procedure}>
@@ -165,13 +220,13 @@ const SurgeonProfile: React.FC = () => {
               )}
 
               {/* Board Certifications */}
-              {surgeon.certifications && surgeon.certifications.length > 0 && (
+              {translatedData.certifications && translatedData.certifications.length > 0 && (
                 <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 scroll-reveal">
                   <h3 className="text-gold-400 uppercase tracking-[0.2em] text-xs font-bold mb-4">
-                    Board Certifications
+                    {t('boardCertifications')}
                   </h3>
                   <div className="space-y-3">
-                    {surgeon.certifications.map((cert, idx) => (
+                    {translatedData.certifications.map((cert, idx) => (
                       <div key={idx} className="flex items-start gap-3">
                         <div className="shrink-0 w-5 h-5 rounded-full bg-gold-400 flex items-center justify-center mt-0.5">
                           <svg
@@ -199,9 +254,9 @@ const SurgeonProfile: React.FC = () => {
             {/* Right Content - Main Info */}
             <div className="flex-1">
               <div className="mb-8">
-                <div className="font-serif text-3xl italic tracking-wide text-white">Medora Health</div>
+                <div className="font-serif text-3xl italic tracking-wide text-white">{t('medoraHealth')}</div>
                 <div className="text-xs uppercase tracking-[0.2em] font-light text-sage-200 border-t border-sage-200/30 pt-1 mt-1 inline-block">
-                  Center for Plastic Surgery
+                  {t('centerForPlasticSurgery')}
                 </div>
               </div>
 
@@ -211,21 +266,21 @@ const SurgeonProfile: React.FC = () => {
                   onClick={() => navigate('/')}
                   className="text-gold-500 hover:text-gold-400 transition-colors"
                 >
-                  Home
+                  {t('surgeonHome')}
                 </button>
                 <span className="mx-2 text-white/40">|</span>
                 <button
                   onClick={() => navigate('/surgeons')}
                   className="text-gold-500 hover:text-gold-400 transition-colors"
                 >
-                  About
+                  {t('surgeonAbout')}
                 </button>
                 <span className="mx-2 text-white/40">|</span>
                 <button
                   onClick={() => navigate('/surgeons')}
                   className="text-gold-500 hover:text-gold-400 transition-colors"
                 >
-                  Our Surgeons
+                  {t('ourSurgeons')}
                 </button>
                 <span className="mx-2 text-white/40">|</span>
                 <span className="text-white">{surgeon.name}</span>
@@ -236,21 +291,21 @@ const SurgeonProfile: React.FC = () => {
               </h1>
 
               <p className="text-sage-100 text-base md:text-lg mb-8 font-light scroll-reveal">
-                {surgeon.title}
+                {translatedData.title}
               </p>
 
               <p className="text-sage-200 text-lg leading-relaxed mb-10 max-w-lg font-light scroll-reveal">
-                {surgeon.bio.intro}
+                {translatedData.bio.intro}
               </p>
 
               <div className="flex flex-wrap gap-4 mb-10">
                 <div className="flex items-center gap-2 text-sage-200">
                   <Calendar size={18} />
-                  <span>{surgeon.experience_years}+ Years Experience</span>
+                  <span>{surgeon.experience_years}+ {t('yearsExperience')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sage-200">
                   <Award size={18} />
-                  <span>{surgeon.specialties.length} Specialties</span>
+                  <span>{translatedData.specialties.length} {t('specialtiesCount')}</span>
                 </div>
               </div>
 
@@ -258,7 +313,7 @@ const SurgeonProfile: React.FC = () => {
                 onClick={() => navigate('/contact')}
                 className="bg-[#8b5e3c] text-white px-8 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-[#6d4a2f] transition-colors"
               >
-                Request A Consultation
+                {t('requestAConsultation')}
               </button>
             </div>
           </div>
@@ -271,19 +326,19 @@ const SurgeonProfile: React.FC = () => {
           <div className="flex flex-col lg:flex-row gap-16 items-start">
             <div className="lg:w-1/2">
               <h2 className="font-serif text-4xl md:text-5xl text-navy-900 mb-8 leading-tight scroll-reveal">
-                Expertise & Specialization
+                {t('expertiseSpecialization')}
               </h2>
               <div className="prose prose-lg text-stone-600 leading-relaxed font-light">
-                <div dangerouslySetInnerHTML={{ __html: surgeon.bio.expertise.replace(/\n\n/g, '</p><p class="mb-4">') }} />
+                <div dangerouslySetInnerHTML={{ __html: translatedData.bio.expertise.replace(/\n\n/g, '</p><p class="mb-4">') }} />
               </div>
             </div>
 
             {/* Specialties Card */}
             <div className="lg:w-1/2">
               <div className="bg-sage-50 p-8 border border-sage-100 scroll-reveal">
-                <h3 className="font-serif text-2xl text-navy-900 mb-6">Areas of Specialization</h3>
+                <h3 className="font-serif text-2xl text-navy-900 mb-6">{t('areasOfSpecialization')}</h3>
                 <div className="grid grid-cols-1 gap-3">
-                  {surgeon.specialties.map((specialty, idx) => (
+                  {translatedData.specialties.map((specialty: string, idx: number) => (
                     <div key={idx} className="flex items-center gap-3 text-stone-700">
                       <div className="w-2 h-2 bg-gold-600 rounded-full"></div>
                       <span className="font-medium">{specialty}</span>
@@ -293,14 +348,14 @@ const SurgeonProfile: React.FC = () => {
               </div>
 
               {/* Languages */}
-              {surgeon.languages && surgeon.languages.length > 0 && (
+              {translatedData.languages && translatedData.languages.length > 0 && (
                 <div className="mt-8 bg-white border border-gray-200 p-6">
                   <div className="flex items-center gap-3 mb-4">
                     <Languages size={24} className="text-gold-600" />
-                    <h3 className="font-serif text-xl text-navy-900">Languages Spoken</h3>
+                    <h3 className="font-serif text-xl text-navy-900">{t('languagesSpoken')}</h3>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {surgeon.languages.map((lang, idx) => (
+                    {translatedData.languages.map((lang: string, idx: number) => (
                       <span key={idx} className="bg-sage-50 text-stone-700 px-4 py-2 text-sm rounded-full">
                         {lang}
                       </span>
@@ -314,18 +369,18 @@ const SurgeonProfile: React.FC = () => {
       </section>
 
       {/* 3. STATS - Procedures Count */}
-      {totalProcedures > 0 && (
+      {(totalProcedures as number) > 0 && (
         <section className="py-20 bg-sage-50">
           <div className="container mx-auto px-6 text-center">
             <h2 className="font-serif text-4xl md:text-5xl text-navy-900 mb-6 scroll-reveal">
-              Expertise Refined Through Experience
+              {t('expertiseRefinedExperience')}
             </h2>
             <p className="text-stone-500 text-lg mb-16 max-w-2xl mx-auto font-light">
-              {surgeon.name} has performed thousands of procedures with consistently excellent results.
+              {surgeon.name} {t('proceduresPerformedExcellent')}
             </p>
 
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              {Object.entries(surgeon.procedures_count).map(([procedure, count], idx) => (
+              {Object.entries(surgeon.procedures_count).map(([procedure, count]: [string, number], idx: number) => (
                 <div key={idx} className="bg-white p-10 shadow-sm hover:shadow-md transition-shadow border border-sage-100 scroll-reveal">
                   <div className="font-serif text-5xl md:text-6xl text-navy-900 mb-2">{count.toLocaleString()}+</div>
                   <div className="text-gold-600 font-bold uppercase tracking-widest text-sm">
@@ -354,10 +409,10 @@ const SurgeonProfile: React.FC = () => {
               <div className="mt-12 space-y-4 scroll-reveal">
                 <div className="flex items-center gap-3 mb-4">
                   <GraduationCap size={24} className="text-gold-600" />
-                  <h3 className="font-serif text-2xl text-navy-900">Education & Training</h3>
+                  <h3 className="font-serif text-2xl text-navy-900">{t('educationTraining')}</h3>
                 </div>
                 <div className="space-y-4">
-                  {surgeon.education.map((edu, idx) => (
+                  {translatedData.education.map((edu: string, idx: number) => (
                     <div key={idx} className="pl-4 border-l-2 border-gold-200">
                       <p className="text-stone-600 font-light">{edu}</p>
                     </div>
@@ -371,10 +426,10 @@ const SurgeonProfile: React.FC = () => {
               <div className="mb-12 scroll-reveal">
                 <div className="flex items-center gap-3 mb-6">
                   <Award size={24} className="text-gold-600" />
-                  <h2 className="font-serif text-3xl text-navy-900">Board Certifications</h2>
+                  <h2 className="font-serif text-3xl text-navy-900">{t('boardCertifications')}</h2>
                 </div>
                 <div className="space-y-4">
-                  {surgeon.certifications.map((cert, idx) => (
+                  {translatedData.certifications.map((cert: string, idx: number) => (
                     <div key={idx} className="bg-sage-50 p-4 border-l-4 border-gold-600">
                       <p className="text-stone-700 font-medium">{cert}</p>
                     </div>
@@ -383,13 +438,13 @@ const SurgeonProfile: React.FC = () => {
               </div>
 
               {/* Achievements */}
-              {surgeon.bio.achievements && surgeon.bio.achievements.length > 0 && (
+              {translatedData.bio.achievements && translatedData.bio.achievements.length > 0 && (
                 <div className="mb-12 scroll-reveal">
                   <h2 className="font-serif text-3xl text-navy-900 mb-6 border-b border-gold-200 pb-4">
-                    Notable Achievements
+                    {t('notableAchievements')}
                   </h2>
                   <ul className="space-y-4">
-                    {surgeon.bio.achievements.map((achievement, idx) => (
+                    {translatedData.bio.achievements.map((achievement: string, idx: number) => (
                       <li key={idx} className="flex gap-3 text-stone-600 font-light">
                         <span className="text-gold-500 mt-1 shrink-0">•</span>
                         <span>{achievement}</span>
@@ -410,10 +465,10 @@ const SurgeonProfile: React.FC = () => {
             <div className="w-2 md:w-3 bg-[#8b5e3c] shrink-0"></div>
             <div>
               <h2 className="font-serif text-3xl md:text-4xl text-navy-900 mb-2 leading-tight">
-                Philosophy
+                {t('surgeonPhilosophy')}
               </h2>
               <div className="text-stone-600 text-lg leading-relaxed font-light mb-8">
-                {surgeon.bio.philosophy.split('\n\n').map((paragraph, idx) => (
+                {translatedData.bio.philosophy.split('\n\n').map((paragraph: string, idx: number) => (
                   <p key={idx} className="mb-4">{paragraph}</p>
                 ))}
               </div>
@@ -429,24 +484,23 @@ const SurgeonProfile: React.FC = () => {
       <section className="py-24 bg-navy-900 text-white">
         <div className="container mx-auto px-6 text-center">
           <h2 className="font-serif text-4xl md:text-5xl mb-6">
-            Schedule Your Consultation
+            {t('scheduleYourConsultation')}
           </h2>
           <p className="text-sage-200 text-lg max-w-2xl mx-auto mb-10 font-light">
-            Take the first step towards achieving your aesthetic goals with {surgeon.name}.
-            Schedule a personalized consultation to discuss your needs and learn about your options.
+            {t('takeFirstStep')} {surgeon.name}. {t('schedulePersonalizedConsultation')}
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <button
               onClick={() => navigate('/contact')}
               className="bg-gold-600 text-white px-12 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-gold-500 transition-colors"
             >
-              Book Consultation
+              {t('bookConsultation')}
             </button>
             <button
               onClick={() => navigate('/surgeons')}
               className="bg-transparent border-2 border-white text-white px-12 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-white hover:text-navy-900 transition-colors"
             >
-              View All Surgeons
+              {t('viewAllSurgeons')}
             </button>
           </div>
         </div>

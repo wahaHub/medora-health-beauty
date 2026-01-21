@@ -132,28 +132,61 @@ export default async function handler(req, res) {
       });
     }
 
-    // 如果需要翻译（lang 不是 'en'）
-    let translatedData = {
-      surgeon_id: surgeon.surgeon_id,
-      name: surgeon.name,
-      title: translateText(surgeon.title, lang),
-      experience_years: surgeon.experience_years,
-      image_url: surgeon.image_url,
-      image_prompt: surgeon.image_prompt,
-      specialties: translateArray(surgeon.specialties, lang),
-      languages: surgeon.languages, // 语言名称通常不翻译
-      education: translateArray(surgeon.education, lang),
-      certifications: translateArray(surgeon.certifications, lang),
-      procedures_count: surgeon.procedures_count,
-      bio: translateBio(surgeon.bio, lang),
-      created_at: surgeon.created_at,
-      updated_at: surgeon.updated_at
-    };
+    // 检查是否有预翻译数据
+    const translations = surgeon.translations || {};
+    const hasPreTranslation = lang !== 'en' && translations[lang];
+
+    // 如果有预翻译数据，使用预翻译；否则使用占位符函数（返回原文）
+    let translatedData;
+
+    if (hasPreTranslation) {
+      // 使用数据库中的预翻译数据
+      const trans = translations[lang];
+      translatedData = {
+        surgeon_id: surgeon.surgeon_id,
+        name: surgeon.name,
+        title: trans.title || surgeon.title,
+        experience_years: surgeon.experience_years,
+        image_url: surgeon.image_url,
+        image_prompt: surgeon.image_prompt,
+        specialties: trans.specialties || surgeon.specialties,
+        languages: surgeon.languages, // 语言名称通常不翻译
+        education: trans.education || surgeon.education,
+        certifications: trans.certifications || surgeon.certifications,
+        procedures_count: surgeon.procedures_count,
+        bio: trans.bio || surgeon.bio,
+        created_at: surgeon.created_at,
+        updated_at: surgeon.updated_at,
+        images: surgeon.images || {},
+        translations: translations // 也返回完整的 translations 供前端使用
+      };
+    } else {
+      // 使用原文（英文）或占位符翻译
+      translatedData = {
+        surgeon_id: surgeon.surgeon_id,
+        name: surgeon.name,
+        title: translateText(surgeon.title, lang),
+        experience_years: surgeon.experience_years,
+        image_url: surgeon.image_url,
+        image_prompt: surgeon.image_prompt,
+        specialties: translateArray(surgeon.specialties, lang),
+        languages: surgeon.languages, // 语言名称通常不翻译
+        education: translateArray(surgeon.education, lang),
+        certifications: translateArray(surgeon.certifications, lang),
+        procedures_count: surgeon.procedures_count,
+        bio: translateBio(surgeon.bio, lang),
+        created_at: surgeon.created_at,
+        updated_at: surgeon.updated_at,
+        images: surgeon.images || {},
+        translations: translations // 也返回完整的 translations 供前端使用
+      };
+    }
 
     return res.status(200).json({
       success: true,
       data: translatedData,
-      lang: lang // 返回使用的语言
+      lang: lang, // 返回使用的语言
+      hasPreTranslation: hasPreTranslation // 指示是否使用了预翻译
     });
 
   } catch (error) {
