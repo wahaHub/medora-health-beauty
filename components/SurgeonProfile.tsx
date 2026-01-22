@@ -4,6 +4,8 @@ import { Award, GraduationCap, Languages, Loader2, ArrowLeft, Calendar, MapPin }
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../hooks/useTranslation';
+import { supabase } from '../services/supabaseClient';
+import procedureNames from '../i18n/procedureNames.json';
 
 // Translation data structure
 interface SurgeonTranslation {
@@ -94,6 +96,27 @@ const SurgeonProfile: React.FC = () => {
   const placeholderHeroImage = "https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=2670&auto=format&fit=crop";
   const placeholderOfficeImage = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop";
 
+  // Translate procedure name from database key to localized name
+  const translateProcedureName = (procedureKey: string): string => {
+    // Convert database key format to procedureNames.json format
+    // e.g., "facelifts" -> "Facelift", "eyelid_surgery" -> "Eyelid Surgery"
+    const normalized = procedureKey
+      .replace(/_/g, ' ')  // Replace underscores with spaces
+      .replace(/s$/, '')   // Remove trailing 's' (plural to singular)
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))  // Capitalize each word
+      .join(' ');
+
+    // Look up in procedureNames.json
+    const translations = procedureNames[normalized as keyof typeof procedureNames];
+    if (translations && currentLanguage in translations) {
+      return translations[currentLanguage as keyof typeof translations] as string;
+    }
+
+    // Fallback: return formatted English name
+    return normalized;
+  };
+
   useEffect(() => {
     const fetchSurgeonDetail = async () => {
       if (!surgeonName) {
@@ -110,19 +133,29 @@ const SurgeonProfile: React.FC = () => {
           .replace(/\s+/g, '-')
           .toLowerCase();
 
-        const response = await fetch(`https://www.medorabeauty.com/api/surgeon-detail?surgeon_id=${surgeonId}&lang=${currentLanguage}`);
+        console.log('Fetching surgeon:', surgeonId);
+        console.log('Language:', currentLanguage);
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch surgeon details');
+        // 直接从 Supabase 查询，就像 Procedure 页面一样
+        const { data, error: fetchError } = await supabase
+          .from('surgeons')
+          .select('*')
+          .eq('surgeon_id', surgeonId)
+          .single();
+
+        if (fetchError) {
+          console.error('Supabase error:', fetchError);
+          throw fetchError;
         }
 
-        const result = await response.json();
-
-        if (result.success && result.data) {
-          setSurgeon(result.data);
-        } else {
+        if (!data) {
           throw new Error('Surgeon not found');
         }
+
+        console.log('Surgeon data fetched:', data);
+        console.log('Translations available:', data.translations ? Object.keys(data.translations) : 'none');
+
+        setSurgeon(data as SurgeonDetail);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
         console.error('Error fetching surgeon details:', err);
@@ -202,7 +235,7 @@ const SurgeonProfile: React.FC = () => {
                         <div key={procedure}>
                           <div className="flex justify-between items-center mb-1">
                             <span className="text-white text-sm capitalize">
-                              {procedure.replace(/_/g, ' ')}
+                              {translateProcedureName(procedure)}
                             </span>
                             <span className="text-gold-400 font-bold text-sm">{count}</span>
                           </div>
@@ -384,7 +417,7 @@ const SurgeonProfile: React.FC = () => {
                 <div key={idx} className="bg-white p-10 shadow-sm hover:shadow-md transition-shadow border border-sage-100 scroll-reveal">
                   <div className="font-serif text-5xl md:text-6xl text-navy-900 mb-2">{count.toLocaleString()}+</div>
                   <div className="text-gold-600 font-bold uppercase tracking-widest text-sm">
-                    {procedure.replace(/_/g, ' ')}
+                    {translateProcedureName(procedure)}
                   </div>
                 </div>
               ))}
