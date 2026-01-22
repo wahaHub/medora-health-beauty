@@ -61,11 +61,11 @@ async function handler(req, res) {
     }
 
     console.log('🟢 [update-surgeon-image] Fetching current surgeon...');
-    // 先获取当前的 images
+    // 先获取当前的 images - 支持使用 surgeon_id (slug) 或 id (UUID)
     const { data: surgeon, error: fetchError } = await supabase
       .from('surgeons')
-      .select('images')
-      .eq('id', surgeonId)
+      .select('id, images')
+      .eq('surgeon_id', surgeonId)
       .single();
 
     console.log('🟢 [update-surgeon-image] Fetch result - error:', fetchError, 'data:', surgeon);
@@ -89,11 +89,11 @@ async function handler(req, res) {
     console.log('🟢 [update-surgeon-image] Updated images:', currentImages);
 
     console.log('🟢 [update-surgeon-image] Updating database...');
-    // 更新到数据库
+    // 更新到数据库 - 使用正确的 UUID
     const { error: updateError } = await supabase
       .from('surgeons')
       .update({ images: currentImages })
-      .eq('id', surgeonId);
+      .eq('id', surgeon.id);
 
     console.log('🟢 [update-surgeon-image] Update result - error:', updateError);
 
