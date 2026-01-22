@@ -568,6 +568,38 @@
   <script type="module">
     import { createSlug } from './procedures-categories.js';
 
+    // Check authentication before doing anything
+    function checkAuth() {
+      const token = localStorage.getItem('admin_token');
+      if (!token) {
+        console.warn('⚠️ No token found, redirecting to login...');
+        window.location.href = '/admin/login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // Authenticated fetch helper
+    async function authFetch(url, options = {}) {
+      const token = localStorage.getItem('admin_token');
+      if (!token) {
+        window.location.href = '/admin/login.html';
+        throw new Error('No authentication token');
+      }
+
+      const headers = {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`
+      };
+
+      return fetch(url, { ...options, headers });
+    }
+
+    // Check auth immediately
+    if (!checkAuth()) {
+      throw new Error('Not authenticated');
+    }
+
     let currentProcedureName = '';
     let currentSlug = '';
     let currentSlotType = '';
@@ -596,7 +628,7 @@
       document.getElementById('procedurePath').textContent = `procedures/${currentSlug}/`;
 
       // 获取配置
-      const config = await fetch('/admin/api/health').then(r => r.json());
+      const config = await authFetch('/admin/api/health').then(r => r.json());
       r2PublicUrl = config.publicUrl;
 
       // 渲染槽位
@@ -720,7 +752,7 @@
 
       try {
         // 从 R2 删除
-        const response = await fetch(`/admin/api/images/${encodeURIComponent(image.key)}`, {
+        const response = await authFetch(`/admin/api/images/${encodeURIComponent(image.key)}`, {
           method: 'DELETE'
         });
 
@@ -739,7 +771,7 @@
     async function loadExistingImages() {
       try {
         const prefix = `procedures/${currentSlug}/`;
-        const response = await fetch(`/admin/api/images?prefix=${encodeURIComponent(prefix)}`);
+        const response = await authFetch(`/admin/api/images?prefix=${encodeURIComponent(prefix)}`);
         const data = await response.json();
 
         if (data.success && data.images) {
@@ -885,7 +917,7 @@
         document.getElementById('uploadProgress').classList.add('active');
         document.getElementById('uploadBtn').disabled = true;
 
-        const response = await fetch('/admin/api/upload', {
+        const response = await authFetch('/admin/api/upload', {
           method: 'POST',
           body: formData
         });
@@ -943,7 +975,7 @@
       const key = `procedures/${currentSlug}/${slotId}.jpg`;
 
       try {
-        const response = await fetch(`/admin/api/images/${encodeURIComponent(key)}`, {
+        const response = await authFetch(`/admin/api/images/${encodeURIComponent(key)}`, {
           method: 'DELETE'
         });
 
