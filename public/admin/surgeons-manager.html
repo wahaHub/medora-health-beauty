@@ -163,6 +163,17 @@
     let surgeons = [];
     let currentUpload = null;
 
+    // 检查登录状态
+    function checkAuth() {
+      const token = localStorage.getItem('admin_token');
+      if (!token) {
+        console.warn('⚠️ No token found, redirecting to login...');
+        window.location.href = '/admin/login.html';
+        return false;
+      }
+      return true;
+    }
+
     // 获取认证 headers（用于 Vercel 生产环境）
     function getAuthHeaders() {
       const token = localStorage.getItem('admin_token');
@@ -173,7 +184,11 @@
       return headers;
     }
 
-    document.addEventListener('DOMContentLoaded', loadSurgeons);
+    document.addEventListener('DOMContentLoaded', () => {
+      if (checkAuth()) {
+        loadSurgeons();
+      }
+    });
 
     document.getElementById('fileInput').addEventListener('change', async (e) => {
       if (e.target.files.length > 0 && currentUpload) {
