@@ -240,8 +240,7 @@ export const translations = {
     travelConciergeDescription: 'Through decades of experience serving international clients, we have developed a streamlined travel program for our out-of-town patients. Our proximity to an international airport, private AAAHC-accredited surgery center, discreet onsite and offsite accommodations, and concierge offerings ensure your experience with us will be uncomplicated and rewarding.',
     travelLearnMore: 'Learn About Our Travel Program',
 
-    // Reputation Component
-    reputationTitle: 'A REPUTATION BUILT ON RESULTS',
+    // Reputation Component (duplicate key removed - already defined at line 95)
     reputationReviewFrom: 'Review from Google',
     reputationSource: 'Source: Google',
     reputationReadMore: 'Read More Featured Reviews',
