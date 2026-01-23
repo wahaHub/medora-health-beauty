@@ -10,6 +10,10 @@ interface Surgeon {
   specialties: string[];
   experience_years: number;
   image_url: string | null;
+  images?: {
+    hero?: string;
+    [key: string]: string | undefined;
+  };
 }
 
 interface SurgeonsAPIResponse {
@@ -133,7 +137,7 @@ const AllSurgeons: React.FC = () => {
 
       {/* Filter Section */}
       {!loading && surgeonsData && (
-        <section className="py-12 border-b border-gray-200 sticky top-0 bg-white z-40 shadow-sm">
+        <section className="py-12 border-b border-gray-200 bg-white shadow-sm">
           <div className="container mx-auto px-6">
             <div className="flex flex-wrap gap-3 justify-center">
               <button
@@ -215,7 +219,7 @@ const AllSurgeons: React.FC = () => {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
               {filteredSurgeons.map((surgeon: Surgeon) => (
                 <div
                   key={surgeon.surgeon_id}
@@ -225,7 +229,7 @@ const AllSurgeons: React.FC = () => {
                   {/* Image */}
                   <div className="relative h-80 overflow-hidden bg-gray-100">
                     <img
-                      src={surgeon.image_url || placeholderImage}
+                      src={surgeon.images?.hero || surgeon.image_url || placeholderImage}
                       alt={surgeon.name}
                       className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
                     />

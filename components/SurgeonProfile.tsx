@@ -29,6 +29,11 @@ interface SurgeonDetail {
   experience_years: number;
   image_url: string | null;
   image_prompt: string;
+  images?: {
+    hero?: string;
+    office?: string;
+    [key: string]: string | undefined;
+  };
   specialties: string[];
   languages: string[];
   education: string[];
@@ -210,7 +215,7 @@ const SurgeonProfile: React.FC = () => {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-[#0f201b] via-[#0f201b]/80 to-transparent z-10 w-full lg:w-2/3"></div>
           <img
-            src={surgeon.image_url || placeholderHeroImage}
+            src={surgeon.images?.hero || surgeon.image_url || placeholderHeroImage}
             alt={surgeon.name}
             className="absolute inset-0 w-full h-full object-cover object-[70%_20%] lg:object-[center_20%]"
           />

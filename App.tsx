@@ -23,6 +23,7 @@ import TravelPage from './components/TravelPage';
 import ReviewsPage from './components/ReviewsPage';
 import SurgeonProfile from './components/SurgeonProfile';
 import PatientForm from './components/PatientForm';
+import ProceduresList from './pages/ProceduresList';
 
 // Home page component
 function HomePage() {
@@ -147,6 +148,7 @@ function App() {
             <Route path="/reviews" element={<ReviewsPage />} />
             <Route path="/patient-form" element={<PatientForm />} />
             <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
+            <Route path="/procedures/:category" element={<ProceduresList />} />
             <Route path="/procedure/:procedureName" element={<ProcedureDetailWrapper />} />
             <Route path="/procedure/:procedureName/gallery" element={<ProcedureGalleryWrapper />} />
             <Route path="/procedure/:procedureName/case/:caseId" element={<CaseDetailWrapper />} />

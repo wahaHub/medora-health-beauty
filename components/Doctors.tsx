@@ -10,6 +10,10 @@ interface Surgeon {
   specialties: string[];
   experience_years: number;
   image_url: string | null;
+  images?: {
+    hero?: string;
+    [key: string]: string | undefined;
+  };
 }
 
 interface DoctorCardProps {
@@ -28,7 +32,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ surgeon, onClick }) => {
       {/* Image Container - Fashion Editorial Style */}
       <div className="relative w-full aspect-[3/4] overflow-hidden mb-6 bg-stone-100">
         <img
-          src={surgeon.image_url || placeholderImage}
+          src={surgeon.images?.hero || surgeon.image_url || placeholderImage}
           alt={surgeon.name}
           className="w-full h-full object-cover object-top transition-transform duration-[1.5s] ease-out group-hover:scale-105 filter grayscale-[20%] group-hover:grayscale-0"
         />
@@ -103,8 +107,8 @@ const Doctors: React.FC = () => {
   return (
     <section className="bg-white pb-24 pt-12">
       <div className="container mx-auto px-6">
-        {/* Grid Layout: 1 col mobile, 2 col tablet, 3 col desktop, 4 col large desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
+        {/* Grid Layout: 2 col mobile, 2 col tablet, 3 col desktop, 4 col large desktop */}
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-12 md:gap-x-8 md:gap-y-16">
           {surgeons.map((surgeon) => (
             <DoctorCard
               key={surgeon.surgeon_id}

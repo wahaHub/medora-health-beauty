@@ -518,11 +518,59 @@ const Header: React.FC = () => {
                 >
                   {link.name}
                 </a>
-                {/* Mobile sub-items */}
+                {/* Mobile sub-items - show limited items for better UX */}
                 {link.columns && (
                   <div className="mt-4 pl-4 border-l-2 border-gold-200 space-y-3">
-                    {link.columns.flat().map((item, idx) => (
-                      !item.isHeader && (
+                    {(() => {
+                      const allItems = link.columns.flat().filter(item => !item.isHeader);
+                      // For ABOUT section - show only "View All Doctors" link
+                      if (link.name === t('navAbout')) {
+                        return allItems.filter(item => item.href === '/surgeons' || item.href === '/reviews').map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="text-stone-600 text-sm font-medium"
+                            onClick={(e) => handleLinkClick(e, item.label, true, item.href)}
+                          >
+                            {translateLabel(item.label)}
+                          </div>
+                        ));
+                      }
+                      // For procedure sections (FACE, BODY, NON-SURGICAL) - show first 6 items + "View More"
+                      if (link.name === t('navFace') || link.name === t('navBody') || link.name === t('navNonSurgical')) {
+                        const limitedItems = allItems.slice(0, 6);
+                        // Determine the category route
+                        let categoryRoute = 'face';
+                        if (link.name === t('navBody')) categoryRoute = 'body';
+                        if (link.name === t('navNonSurgical')) categoryRoute = 'nonsurgical';
+
+                        return (
+                          <>
+                            {limitedItems.map((item, idx) => (
+                              <div
+                                key={idx}
+                                className={`text-stone-600 text-sm ${item.isSub ? 'pl-4' : ''}`}
+                                onClick={(e) => handleLinkClick(e, item.label, true, item.href)}
+                              >
+                                {translateLabel(item.label)}
+                              </div>
+                            ))}
+                            {allItems.length > 6 && (
+                              <div
+                                className="text-gold-600 text-sm font-medium italic cursor-pointer hover:text-gold-700"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setMobileMenuOpen(false);
+                                  navigate(`/procedures/${categoryRoute}`);
+                                }}
+                              >
+                                + {allItems.length - 6} more procedures
+                              </div>
+                            )}
+                          </>
+                        );
+                      }
+                      // For other sections - show all items
+                      return allItems.map((item, idx) => (
                         <div
                           key={idx}
                           className={`text-stone-600 text-sm ${item.isSub ? 'pl-4' : ''}`}
@@ -530,8 +578,8 @@ const Header: React.FC = () => {
                         >
                           {translateLabel(item.label)}
                         </div>
-                      )
-                    ))}
+                      ));
+                    })()}
                   </div>
                 )}
               </div>
