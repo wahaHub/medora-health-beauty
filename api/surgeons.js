@@ -40,7 +40,7 @@ export default async function handler(req, res) {
     // 获取所有医生的基本信息
     const { data: surgeons, error } = await supabase
       .from('surgeons')
-      .select('surgeon_id, name, title, image_url, specialties, experience_years')
+      .select('surgeon_id, name, title, image_url, images, specialties, experience_years')
       .order('name', { ascending: true });
 
     if (error) {
@@ -79,6 +79,7 @@ export default async function handler(req, res) {
           name: surgeon.name,
           title: surgeon.title,
           image_url: surgeon.image_url,
+          images: surgeon.images,
           specialties: surgeon.specialties,
           experience_years: surgeon.experience_years
         });
