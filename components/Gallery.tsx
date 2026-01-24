@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { User, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import Reputation from './Reputation';
 import Contact from './Contact';
 import { useTranslation } from '../hooks/useTranslation';
@@ -29,6 +30,7 @@ type ProcedureNameTranslations = {
 const typedProcedureNames = procedureNames as ProcedureNameTranslations;
 
 const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState<'face' | 'body' | 'non-surgical'>('face');
@@ -331,9 +333,6 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               </button>
             </div>
 
-            <div className="hidden md:flex items-center gap-2 cursor-pointer hover:text-gold-600 text-stone-500 font-bold uppercase text-xs tracking-wide transition-colors">
-              <User size={16} /> {t('gallerySignIn')}
-            </div>
           </div>
         </div>
       </section>
@@ -387,9 +386,9 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                         href="#"
                         onClick={(e) => {
                           e.preventDefault();
-                          if (onNavigate) onNavigate(item);
+                          navigate(`/procedure/${encodeURIComponent(item)}/gallery`);
                         }}
-                        className="text-stone-500 hover:text-gold-600 transition-colors text-lg font-light leading-tight"
+                        className="text-stone-500 hover:text-gold-600 transition-colors text-lg font-light leading-tight cursor-pointer"
                       >
                         {translateLabel(item)}
                       </a>
