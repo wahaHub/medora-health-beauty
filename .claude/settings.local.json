@@ -43,7 +43,9 @@
       "Bash(git -C /Users/haowang/Desktop/medora-health-beauty status --short)",
       "Bash(git -C /Users/haowang/Desktop/medora-health-beauty rm:*)",
       "Bash(APIKEY=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlhbWxpa3VxZ21xaWlnZWFxemF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcwODAyMzMsImV4cCI6MjA4MjY1NjIzM30.7VJLrsFbMsFt9A0Y74KBgDbK_sUFN5kQqbpVm9JiOnc\" curl -s \"https://yamlikuqgmqiigeaqzaz.supabase.co/rest/v1/surgeons?select=surgeon_id,name,specialties&limit=3\" -H \"apikey: $APIKEY\" -H \"Authorization: Bearer $APIKEY\")",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(dig:*)",
+      "Bash(nslookup:*)"
     ],
     "deny": [],
     "ask": []

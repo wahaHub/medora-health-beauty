@@ -1,415 +1,278 @@
-# 🛡️ Cloudflare 手动配置指南
+# Cloudflare + Vercel + React Query 缓存架构
 
-完整的 CDN 和安全配置步骤。
-
----
-
-## 📋 配置顺序
-
-1. DNS 记录 ✅ (您可能已完成)
-2. SSL/TLS 设置
-3. 速度优化（CDN）
-4. 安全设置
-5. Page Rules（缓存优化）
+> **域名**: `medorabeauty.com`
+> **最后更新**: 2026-01-26
+> **状态**: 已完成配置
 
 ---
 
-## 1️⃣ DNS 记录设置
+## 架构概览
 
-访问: https://dash.cloudflare.com → 选择 `medorahealth.com` → **DNS** → **Records**
-
-### 添加两条记录：
-
-**记录 1:**
 ```
-Type: CNAME
-Name: @
-Target: cname.vercel-dns.com
-Proxy status: Proxied (橙色云图标 ☁️)
-TTL: Auto
+用户请求
+    ↓
+┌─────────────────────────────────────────────────────────┐
+│  Layer 1: Cloudflare CDN (边缘缓存)                      │
+│  - 全球 300+ 节点                                        │
+│  - Brotli 压缩                                          │
+│  - HSTS 安全                                            │
+│  - Page Rules 静态资源缓存                               │
+└─────────────────────────────────────────────────────────┘
+    ↓ (缓存未命中时)
+┌─────────────────────────────────────────────────────────┐
+│  Layer 2: Vercel Edge (API 缓存)                        │
+│  - Cache-Control: s-maxage=86400                        │
+│  - stale-while-revalidate=604800                        │
+└─────────────────────────────────────────────────────────┘
+    ↓ (缓存未命中时)
+┌─────────────────────────────────────────────────────────┐
+│  Layer 3: React Query (客户端缓存)                       │
+│  - staleTime: 24小时                                    │
+│  - gcTime: 7天                                          │
+│  - 禁用自动刷新                                          │
+└─────────────────────────────────────────────────────────┘
+    ↓ (缓存未命中时)
+┌─────────────────────────────────────────────────────────┐
+│  Supabase (数据库)                                       │
+└─────────────────────────────────────────────────────────┘
 ```
-
-**记录 2:**
-```
-Type: CNAME
-Name: www
-Target: cname.vercel-dns.com
-Proxy status: Proxied (橙色云图标 ☁️)
-TTL: Auto
-```
-
-**⚠️ 重要**: Proxy status 必须是 **Proxied**（橙色云），这样才能使用 CDN！
 
 ---
 
-## 2️⃣ SSL/TLS 设置（加密）
+## 当前配置状态
 
-### A. SSL/TLS 加密模式
+### DNS 记录 (已完成)
 
-1. 左侧菜单点击 **SSL/TLS** → **Overview**
-2. 选择 **Full (strict)** ✅
-   - ⚠️ 不要选 Flexible（不安全）
-   - ⚠️ 不要选 Full（不够严格）
+| Type | Name | Target | Proxy |
+|------|------|--------|-------|
+| CNAME | @ | cname.vercel-dns.com | Proxied (橙色云) |
+| CNAME | www | cname.vercel-dns.com | Proxied (橙色云) |
 
-### B. Always Use HTTPS
+**重要**: Proxy status 必须是 **Proxied**（橙色云），否则 CDN 不生效！
 
-1. 在同一页面下方
-2. 找到 **Always Use HTTPS**
-3. 切换为 **ON** ✅
+### SSL/TLS 设置 (已完成)
 
-### C. Minimum TLS Version
+| 配置项 | 值 | 状态 |
+|--------|-----|------|
+| SSL Mode | Full (strict) | ✅ |
+| Always Use HTTPS | ON | ✅ |
+| Minimum TLS Version | TLS 1.2 | ✅ |
+| HSTS | max-age=15552000 (6个月), includeSubDomains, preload | ✅ |
+| Automatic HTTPS Rewrites | ON | ✅ |
 
-1. 点击 **Edge Certificates**
-2. 找到 **Minimum TLS Version**
-3. 选择 **TLS 1.2** ✅
+### 速度优化 (已完成)
 
-### D. HSTS (HTTP Strict Transport Security)
+| 配置项 | 值 | 状态 |
+|--------|-----|------|
+| Brotli | ON | ✅ |
+| Early Hints | ON | ✅ |
+| Rocket Loader | OFF (与 React 冲突) | ✅ |
+| HTTP/3 (QUIC) | ON | ✅ |
+| 0-RTT Connection Resumption | ON | ✅ |
+| WebSockets | ON | ✅ |
 
-1. 在 **Edge Certificates** 页面
-2. 找到 **HTTP Strict Transport Security (HSTS)**
-3. 点击 **Enable HSTS**
-4. 配置：
-   ```
-   Max Age Header (max-age): 12 months (31536000)
-   Include subdomains: ✅ ON
-   Preload: ✅ ON
-   No-Sniff Header: ✅ ON
-   ```
-5. 点击 **Next** → **I understand** → **Enable HSTS**
+### 缓存设置 (已完成)
 
-### E. Automatic HTTPS Rewrites
+| 配置项 | 值 | 状态 |
+|--------|-----|------|
+| Caching Level | Standard | ✅ |
+| Browser Cache TTL | 4 hours | ✅ |
+| Always Online | ON | ✅ |
+| Development Mode | OFF | ✅ |
 
-1. 在 **Edge Certificates** 页面
-2. 找到 **Automatic HTTPS Rewrites**
-3. 切换为 **ON** ✅
+### Page Rules (已完成 - 3条/3条限额)
 
----
+**优先级顺序很重要！**
 
-## 3️⃣ 速度优化（CDN 配置）
+| 优先级 | URL 匹配 | 动作 |
+|--------|----------|------|
+| 1 | `www.medorabeauty.com/*` | 301 重定向到 `https://medorabeauty.com/$1` |
+| 2 | `medorabeauty.com/assets/*` | Cache Everything, Edge TTL: 1 month |
+| 3 | `medorabeauty.com/*.jpg` | Cache Everything, Edge TTL: 1 month |
 
-### A. Auto Minify（代码压缩）
+### 安全设置 (已完成)
 
-1. 左侧菜单点击 **Speed** → **Optimization**
-2. 找到 **Auto Minify**
-3. 勾选：
-   - ✅ **JavaScript**
-   - ✅ **CSS**
-   - ✅ **HTML**
-
-### B. Brotli（高级压缩）
-
-1. 在同一页面找到 **Brotli**
-2. 切换为 **ON** ✅
-
-### C. Early Hints
-
-1. 找到 **Early Hints**
-2. 切换为 **ON** ✅
-
-### D. Rocket Loader（建议关闭）
-
-1. 找到 **Rocket Loader**
-2. 切换为 **OFF** ❌
-   - ⚠️ Rocket Loader 可能与 React 冲突，建议关闭
-
-### E. HTTP/3 (QUIC)
-
-1. 左侧菜单点击 **Network**
-2. 找到 **HTTP/3 (with QUIC)**
-3. 切换为 **ON** ✅
-
-### F. 0-RTT Connection Resumption
-
-1. 在同一页面找到 **0-RTT Connection Resumption**
-2. 切换为 **ON** ✅
-
-### G. WebSockets
-
-1. 找到 **WebSockets**
-2. 切换为 **ON** ✅
+| 配置项 | 值 | 状态 |
+|--------|-----|------|
+| Security Level | Medium | ✅ |
+| Challenge Passage | 30 minutes | ✅ |
+| Browser Integrity Check | ON | ✅ |
+| Privacy Pass Support | ON | ✅ |
 
 ---
 
-## 4️⃣ 缓存设置
+## Vercel 配置
 
-### A. Caching Level
+### 域名设置
 
-1. 左侧菜单点击 **Caching** → **Configuration**
-2. 找到 **Caching Level**
-3. 选择 **Standard** ✅
+| 域名 | 配置 |
+|------|------|
+| `medorabeauty.com` | Connect to Production (主域名) |
+| `www.medorabeauty.com` | 由 Cloudflare Page Rule 处理重定向 |
 
-### B. Browser Cache TTL
+**注意**: Vercel 中 `www.medorabeauty.com` 可能显示 "Invalid Configuration"，这是正常的，因为 Cloudflare Page Rule 会在请求到达 Vercel 之前完成 301 重定向。
 
-1. 在同一页面找到 **Browser Cache TTL**
-2. 选择 **4 hours** ✅
+### API 缓存头配置
 
----
-
-## 5️⃣ Page Rules（缓存优化）
-
-⚠️ **免费套餐限制**: 只能创建 **3 条** Page Rules
-
-访问: **Rules** → **Page Rules** → **Create Page Rule**
-
-### Rule 1: 缓存静态资源
-
-```
-URL: medorahealth.com/assets/*
-
-Settings:
-- Cache Level: Cache Everything
-- Edge Cache TTL: 1 month
-- Browser Cache TTL: 1 month
+**文件**: `api/surgeons.js`
+```javascript
+// CDN 缓存：24小时缓存，7天 stale-while-revalidate
+res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=604800');
 ```
 
-点击 **Save and Deploy**
-
-### Rule 2: 缓存图片
-
+**文件**: `api/admin/cases.js` (GET 请求)
+```javascript
+// CDN 缓存：1小时缓存，24小时 stale-while-revalidate
+res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
 ```
-URL: medorahealth.com/*.{jpg,jpeg,png,gif,webp,svg,ico}
-
-Settings:
-- Cache Level: Cache Everything
-- Edge Cache TTL: 1 month
-- Browser Cache TTL: 1 month
-```
-
-点击 **Save and Deploy**
-
-### Rule 3: WWW 重定向
-
-```
-URL: www.medorahealth.com/*
-
-Settings:
-- Forwarding URL: 301 - Permanent Redirect
-- Destination URL: https://medorahealth.com/$1
-```
-
-点击 **Save and Deploy**
 
 ---
 
-## 6️⃣ 安全设置
+## React Query 配置
 
-### A. Security Level
+**文件**: `index.tsx`
 
-1. 左侧菜单点击 **Security** → **Settings**
-2. 找到 **Security Level**
-3. 选择 **Medium** ✅
+```typescript
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 60 * 24, // 24小时内认为数据新鲜
+      gcTime: 1000 * 60 * 60 * 24 * 7, // 7天本地缓存
+      refetchOnWindowFocus: false,     // 禁用窗口聚焦刷新
+      refetchOnMount: false,           // 禁用挂载时刷新
+      refetchOnReconnect: false,       // 禁用重连时刷新
+      retry: 1,                        // 失败只重试1次
+    },
+  },
+});
+```
 
-### B. Challenge Passage
+**文件**: `hooks/useData.ts`
 
-1. 在同一页面找到 **Challenge Passage**
-2. 选择 **30 minutes** ✅
+提供以下 hooks:
+- `useSurgeon(surgeonSlug)` - 获取医生详情
+- `useSurgeonCases(surgeonUuid)` - 获取医生案例
+- `useAllSurgeons()` - 获取所有医生列表
+- `useProcedure(procedureName, languageCode)` - 获取手术详情
+- `useProcedureCases(procedureId)` - 获取手术案例
 
-### C. Browser Integrity Check
-
-1. 找到 **Browser Integrity Check**
-2. 切换为 **ON** ✅
-
-### D. Privacy Pass Support
-
-1. 找到 **Privacy Pass Support**
-2. 切换为 **ON** ✅
-
-### E. WAF (Web Application Firewall) - 免费套餐
-
-⚠️ **注意**: 免费套餐只有基础 WAF 功能
-
-1. 左侧菜单点击 **Security** → **WAF**
-2. 如果有 **Managed Rules**，启用推荐的规则集
-
----
-
-## 7️⃣ 其他优化设置
-
-### A. Always Online
-
-1. 左侧菜单点击 **Caching** → **Configuration**
-2. 找到 **Always Online**
-3. 切换为 **ON** ✅
-
-### B. Development Mode（部署完成后关闭）
-
-1. 在同一页面找到 **Development Mode**
-2. 确保是 **OFF** ❌
+所有 hooks 都配置了 `staleTime: Infinity`，数据永不自动过期。
 
 ---
 
-## ✅ 配置完成检查清单
+## 验证命令
 
-### DNS:
-- [ ] @ → cname.vercel-dns.com (Proxied)
-- [ ] www → cname.vercel-dns.com (Proxied)
-
-### SSL/TLS:
-- [ ] SSL Mode: Full (strict)
-- [ ] Always Use HTTPS: ON
-- [ ] Minimum TLS: 1.2
-- [ ] HSTS: Enabled
-- [ ] Automatic HTTPS Rewrites: ON
-
-### Speed (CDN):
-- [ ] Auto Minify: JavaScript, CSS, HTML
-- [ ] Brotli: ON
-- [ ] Early Hints: ON
-- [ ] Rocket Loader: OFF
-- [ ] HTTP/3: ON
-- [ ] 0-RTT: ON
-- [ ] WebSockets: ON
-
-### Caching:
-- [ ] Caching Level: Standard
-- [ ] Browser Cache TTL: 4 hours
-
-### Page Rules (3条):
-- [ ] /assets/* → Cache Everything
-- [ ] /*.{jpg,png...} → Cache Everything
-- [ ] www.* → 301 Redirect
-
-### Security:
-- [ ] Security Level: Medium
-- [ ] Challenge Passage: 30 minutes
-- [ ] Browser Integrity Check: ON
-- [ ] Privacy Pass: ON
-
----
-
-## 🧪 验证配置
-
-### 1. 检查 DNS
+### 检查 CDN 缓存状态
 
 ```bash
-dig medorahealth.com
-# 应该返回 Cloudflare 的 IP
+curl -sI https://medorabeauty.com | grep -E "(cf-cache-status|cache-control|content-encoding)"
 ```
 
-或访问: https://dnschecker.org
+**期望输出**:
+```
+cache-control: public, max-age=31536000, immutable
+cf-cache-status: HIT
+content-encoding: br
+```
 
-### 2. 检查 SSL
-
-访问: https://www.ssllabs.com/ssltest/
-
-输入: `medorahealth.com`
-
-应该得到 **A 或 A+** 评级
-
-### 3. 检查 HTTP 头
+### 检查 HSTS
 
 ```bash
-curl -I https://medorahealth.com
+curl -sI https://medorabeauty.com | grep strict-transport-security
 ```
 
-应该看到：
+**期望输出**:
 ```
-strict-transport-security: max-age=31536000; includeSubDomains; preload
-cf-cache-status: HIT  (第二次访问时)
-content-encoding: br  (Brotli 压缩)
+strict-transport-security: max-age=15552000; includeSubDomains; preload
 ```
 
-### 4. 测试性能
+### 检查 www 重定向
 
-访问: https://www.webpagetest.org
+```bash
+curl -sI https://www.medorabeauty.com | grep -E "(HTTP|location)"
+```
 
-输入: `medorahealth.com`
+**期望输出**:
+```
+HTTP/2 301
+location: https://medorabeauty.com/
+```
 
-应该看到：
-- First Byte Time < 200ms
-- Fully Loaded < 3s
+### 检查 DNS (Cloudflare IP)
 
----
+```bash
+dig medorabeauty.com +short
+```
 
-## 📊 预期效果
-
-配置完成后，您的网站将获得：
-
-### 安全性：
-- ✅ A+ SSL 评级
-- ✅ HSTS 保护
-- ✅ 强制 HTTPS
-- ✅ WAF 防护
-
-### 性能：
-- ✅ 全球 CDN 加速
-- ✅ Brotli 压缩（比 gzip 小 20%）
-- ✅ 静态资源缓存 30 天
-- ✅ HTTP/3 支持
-- ✅ 代码自动压缩
-
-### 可靠性：
-- ✅ Always Online（离线时显示缓存）
-- ✅ DDoS 防护
-- ✅ Bot 过滤
+**期望输出**: Cloudflare 的 IP 地址 (104.x.x.x 或 172.x.x.x)
 
 ---
 
-## 🆘 常见问题
+## 常见问题
 
-### Q1: 配置后没有立即生效？
+### Q1: `cf-cache-status` 显示 MISS 或 DYNAMIC？
 
-**A**: DNS 和 CDN 配置需要时间传播：
-- DNS 更改: 5-30 分钟
-- SSL 证书: 1-5 分钟
-- 缓存清除: 可以手动清除（Caching → Configuration → Purge Everything）
+**A**:
+- MISS: 第一次请求，缓存还未建立，刷新几次后应变为 HIT
+- DYNAMIC: 该资源不被缓存（如 HTML 页面、API 响应），这是正常的
 
-### Q2: 显示 "ERR_TOO_MANY_REDIRECTS"？
+### Q2: 出现 ERR_TOO_MANY_REDIRECTS？
 
-**A**: SSL 模式设置错误
-- 确保选择 **Full (strict)**
-- 不要选 Flexible
+**A**: 检查以下配置：
+1. Cloudflare SSL Mode 必须是 **Full (strict)**，不是 Flexible
+2. Vercel 中 `medorabeauty.com` 必须是 "Connect to Production"，不是重定向
 
-### Q3: 缓存没有命中（MISS）？
+### Q3: www 重定向不工作？
 
-**A**: 
-- 等待几分钟让缓存生效
-- 检查 Page Rules 是否正确配置
-- 访问静态文件（如图片）测试
+**A**: 确保 Cloudflare Page Rule #1 配置正确：
+- URL: `www.medorabeauty.com/*`
+- Setting: Forwarding URL → 301 → `https://medorabeauty.com/$1`
 
-### Q4: 想要更高级的功能？
+### Q4: 如何清除缓存？
 
-**A**: 考虑升级到 Pro 套餐（$20/月）：
-- 更多 Page Rules（20条 vs 3条）
-- 高级 WAF 规则
-- Image Optimization
-- 更详细的分析
+**A**:
+- Cloudflare: Caching → Configuration → Purge Everything
+- React Query: 用户刷新页面或 `queryClient.invalidateQueries()`
 
 ---
 
-## 🎓 进阶配置（可选）
+## 性能预期
 
-### 1. 自定义缓存键
-
-如果您的 URL 有查询参数：
-
-**Caching** → **Configuration** → **Custom Cache Key**
-
-### 2. 图片优化（Pro 套餐）
-
-**Speed** → **Optimization** → **Image Optimization**
-- Polish: Lossless
-- WebP: Enabled
-
-### 3. 自定义错误页面
-
-**Customization** → **Custom Pages**
-- 500 errors
-- 404 errors
+| 指标 | 预期值 |
+|------|--------|
+| TTFB (首字节时间) | < 100ms |
+| 静态资源加载 | < 200ms (CDN HIT) |
+| 页面完全加载 | < 3s |
+| SSL 评级 | A+ |
 
 ---
 
-## 📞 需要帮助？
+## 成本
 
-如果遇到问题：
-
-1. **Cloudflare 文档**: https://developers.cloudflare.com
-2. **Cloudflare 社区**: https://community.cloudflare.com
-3. **Vercel 文档**: https://vercel.com/docs/concepts/projects/domains
+| 服务 | 费用 |
+|------|------|
+| Cloudflare (Free Plan) | $0/月 |
+| Vercel (Hobby/Pro) | 按现有计划 |
+| React Query | $0 (开源) |
+| **总计** | **$0 额外成本** |
 
 ---
 
-**配置完成后，您的网站将拥有企业级的性能和安全性！** 🚀
+## 修改历史
 
-**预计配置时间**: 10-15 分钟
+| 日期 | 修改内容 |
+|------|----------|
+| 2026-01-26 | 完成全部配置，更新文档为实际状态 |
+| 2026-01-26 | 修复 Vercel/Cloudflare 重定向循环问题 |
+| 2026-01-26 | 添加 React Query 客户端缓存 |
+| 2026-01-26 | 配置 Cloudflare Page Rules |
 
+---
+
+## 相关文件
+
+- [hooks/useData.ts](../hooks/useData.ts) - React Query hooks
+- [index.tsx](../index.tsx) - QueryClient 配置
+- [api/surgeons.js](../api/surgeons.js) - Surgeons API 缓存头
+- [api/admin/cases.js](../api/admin/cases.js) - Cases API 缓存头
+- [PERFORMANCE_OPTIMIZATION_ANALYSIS.md](./PERFORMANCE_OPTIMIZATION_ANALYSIS.md) - 性能优化分析

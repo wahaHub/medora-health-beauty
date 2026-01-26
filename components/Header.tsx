@@ -71,7 +71,7 @@ const Header: React.FC = () => {
     const fetchSurgeons = async () => {
       try {
         setSurgeonsLoading(true);
-        const response = await fetch('https://www.medorabeauty.com/api/surgeons');
+        const response = await fetch('/api/surgeons');
         if (response.ok) {
           const result = await response.json();
           if (result.success && result.data) {
