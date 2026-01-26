@@ -41,5 +41,18 @@ crash.*.log
 # Admin Console
 admin/uploads/
 
-# Generated images
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.Python
+
+# Generated images & large assets
 generated_procedure_hero_images/
+photos/
+
+# Generated data (already in Supabase)
+scripts/data/
+translations/

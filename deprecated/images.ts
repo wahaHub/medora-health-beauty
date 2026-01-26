@@ -1,6 +1,17 @@
 /**
+ * ⚠️ DEPRECATED - 此文件未被使用
+ *
+ * 创建日期: 2024-01
+ * 废弃日期: 2026-01-26
+ * 废弃原因: 项目中的图片 URL 直接从 Supabase 数据库获取，
+ *          或直接使用 https://images.medorahealth.com/... 硬编码
+ *
+ * 如需恢复使用，请移回 config/ 目录
+ */
+
+/**
  * 图片 CDN 配置
- * 
+ *
  * 所有网站图片都从 Cloudflare R2 加载
  */
 

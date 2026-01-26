@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslation } from '../hooks/useTranslation';
 
 const Testimonials: React.FC = () => {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const reviews = [
@@ -36,7 +38,7 @@ const Testimonials: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="font-serif text-4xl md:text-5xl text-navy-900">
-            A REPUTATION BUILT ON RESULTS
+            {t('reputationTitle')}
           </h2>
         </div>
 
@@ -89,7 +91,7 @@ const Testimonials: React.FC = () => {
 
           <div className="text-center mt-12">
             <a href="#" className="text-gold-600 hover:text-navy-900 font-bold tracking-wide uppercase text-sm inline-flex items-center gap-1">
-              Read More Reviews <ChevronRight size={14} />
+              {t('readMoreReviews')} <ChevronRight size={14} />
             </a>
           </div>
         </div>

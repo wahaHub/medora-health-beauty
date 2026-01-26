@@ -1,3 +1,14 @@
+/**
+ * ⚠️ DEPRECATED - 此文件未被使用
+ *
+ * 创建日期: 2024-01
+ * 废弃日期: 2026-01-26
+ * 废弃原因: 项目中没有组件 import 使用此配置文件，
+ *          图片 URL 直接硬编码或从 Supabase 获取
+ *
+ * 如需恢复使用，请移回 config/ 目录
+ */
+
 // Cloudflare R2 Configuration
 // 请在 Cloudflare Dashboard 创建 R2 bucket 后，替换以下 PUBLIC_URL
 
