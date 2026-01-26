@@ -1,11 +1,28 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Award, GraduationCap, Languages, Loader2, ArrowLeft, Calendar, MapPin } from 'lucide-react';
+import { Award, GraduationCap, Languages, Loader2, ArrowLeft, Calendar, MapPin, Camera, ChevronRight } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../hooks/useTranslation';
 import { supabase } from '../services/supabaseClient';
+import { getProcedureCaseImage } from '../utils/imageUtils';
 import procedureNames from '../i18n/procedureNames.json';
+
+// Case data structure (from procedure_cases table)
+interface SurgeonCase {
+  id: string;
+  procedure_id: string;
+  case_number: string;
+  description: string | null;
+  provider_name: string | null;
+  patient_age: string | null;
+  patient_gender: string | null;
+  image_count: number;
+  sort_order: number;
+  // Joined from procedures table
+  procedure_name?: string;
+  procedure_slug?: string;
+}
 
 // Translation data structure
 interface SurgeonTranslation {
@@ -58,8 +75,11 @@ const SurgeonProfile: React.FC = () => {
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation();
   const [surgeon, setSurgeon] = useState<SurgeonDetail | null>(null);
+  const [surgeonCases, setSurgeonCases] = useState<SurgeonCase[]>([]);
+  const [casesLoading, setCasesLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hoveredCase, setHoveredCase] = useState<string | null>(null);
 
   // Enable scroll reveal animations - only after data is loaded
   useScrollReveal(!loading && surgeon !== null);
@@ -171,6 +191,80 @@ const SurgeonProfile: React.FC = () => {
 
     fetchSurgeonDetail();
   }, [surgeonName, currentLanguage]);
+
+  // Fetch cases for this surgeon
+  useEffect(() => {
+    const fetchSurgeonCases = async () => {
+      if (!surgeon) return;
+
+      try {
+        setCasesLoading(true);
+
+        // First get the surgeon's UUID from the surgeons table
+        const { data: surgeonData, error: surgeonError } = await supabase
+          .from('surgeons')
+          .select('id')
+          .eq('surgeon_id', surgeon.surgeon_id)
+          .single();
+
+        if (surgeonError || !surgeonData) {
+          console.error('Error fetching surgeon UUID:', surgeonError);
+          return;
+        }
+
+        // Fetch cases with procedure info joined
+        const { data: casesData, error: casesError } = await supabase
+          .from('procedure_cases')
+          .select(`
+            id,
+            procedure_id,
+            case_number,
+            description,
+            provider_name,
+            patient_age,
+            patient_gender,
+            image_count,
+            sort_order,
+            procedures (
+              procedure_name,
+              slug
+            )
+          `)
+          .eq('surgeon_id', surgeonData.id)
+          .order('sort_order', { ascending: true })
+          .limit(12);
+
+        if (casesError) {
+          console.error('Error fetching surgeon cases:', casesError);
+          return;
+        }
+
+        // Transform the data to flatten the procedures join
+        const transformedCases: SurgeonCase[] = (casesData || []).map((c: any) => ({
+          id: c.id,
+          procedure_id: c.procedure_id,
+          case_number: c.case_number,
+          description: c.description,
+          provider_name: c.provider_name,
+          patient_age: c.patient_age,
+          patient_gender: c.patient_gender,
+          image_count: c.image_count,
+          sort_order: c.sort_order,
+          procedure_name: c.procedures?.procedure_name,
+          procedure_slug: c.procedures?.slug,
+        }));
+
+        console.log('Surgeon cases fetched:', transformedCases.length);
+        setSurgeonCases(transformedCases);
+      } catch (err) {
+        console.error('Error fetching surgeon cases:', err);
+      } finally {
+        setCasesLoading(false);
+      }
+    };
+
+    fetchSurgeonCases();
+  }, [surgeon]);
 
   // Loading state
   if (loading) {
@@ -496,7 +590,132 @@ const SurgeonProfile: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. PHILOSOPHY QUOTE */}
+      {/* 5. FEATURED CASES SECTION */}
+      {surgeonCases.length > 0 && (
+        <section className="py-24 bg-white">
+          <div className="container mx-auto px-6">
+            {/* Section Header */}
+            <div className="text-center mb-16 scroll-reveal">
+              <span className="text-gold-600 uppercase tracking-[0.2em] text-xs font-bold mb-4 block">
+                {t('beforeAfterPhotos')}
+              </span>
+              <h2 className="font-serif text-4xl md:text-5xl text-navy-900 mb-4">
+                {t('caseStudy')}
+              </h2>
+              <p className="text-stone-500 max-w-2xl mx-auto">
+                {t('viewRealResults')} {surgeon.name}
+              </p>
+            </div>
+
+            {/* Cases Grid */}
+            {casesLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-8 h-8 text-gold-600 animate-spin" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {surgeonCases.map((caseItem) => {
+                  const caseImage = caseItem.procedure_name
+                    ? getProcedureCaseImage(caseItem.procedure_name, caseItem.case_number, 1)
+                    : '';
+                  const isHovered = hoveredCase === caseItem.case_number;
+
+                  return (
+                    <div
+                      key={caseItem.id}
+                      className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer border border-stone-100"
+                      onClick={() => {
+                        if (caseItem.procedure_name) {
+                          navigate(`/procedure/${encodeURIComponent(caseItem.procedure_name)}/case/${caseItem.case_number}`);
+                          window.scrollTo(0, 0);
+                        }
+                      }}
+                      onMouseEnter={() => setHoveredCase(caseItem.case_number)}
+                      onMouseLeave={() => setHoveredCase(null)}
+                    >
+                      {/* Image Container */}
+                      <div className="relative aspect-[4/3] overflow-hidden bg-sage-50">
+                        <img
+                          src={caseImage}
+                          alt={`${t('caseSingular')} #${caseItem.case_number}`}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+
+                        {/* Hover Overlay */}
+                        <div className={`absolute inset-0 bg-gradient-to-t from-navy-900/90 via-navy-900/50 to-transparent flex items-end justify-center pb-8 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+                          <div className="text-center">
+                            <span className="inline-flex items-center gap-2 text-white uppercase tracking-widest text-sm font-medium bg-gold-600 px-6 py-3 rounded-full">
+                              {t('viewCaseDetails')}
+                              <ChevronRight size={16} />
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Procedure Badge */}
+                        {caseItem.procedure_name && (
+                          <div className="absolute top-4 left-4">
+                            <span className="bg-white/95 backdrop-blur-sm text-navy-900 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm">
+                              {caseItem.procedure_name}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Case Info */}
+                      <div className="p-6">
+                        <div className="flex justify-between items-start mb-3">
+                          <h3 className="text-navy-900 font-semibold text-lg group-hover:text-gold-600 transition-colors">
+                            {t('caseSingular')} #{caseItem.case_number}
+                          </h3>
+                          {caseItem.image_count > 1 && (
+                            <span className="flex items-center gap-1 text-xs bg-sage-100 text-sage-700 px-2.5 py-1 rounded-full">
+                              <Camera size={12} />
+                              {caseItem.image_count}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="space-y-1.5 text-sm text-stone-500">
+                          {caseItem.patient_age && caseItem.patient_gender && (
+                            <p className="flex items-center gap-2">
+                              <span className="text-stone-400">{t('patient')}:</span>
+                              <span>{caseItem.patient_gender}, {caseItem.patient_age}</span>
+                            </p>
+                          )}
+                        </div>
+
+                        {caseItem.description && (
+                          <p className="mt-4 text-stone-600 text-sm line-clamp-2 leading-relaxed">
+                            {caseItem.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* View All Cases Button */}
+            {surgeonCases.length >= 6 && (
+              <div className="text-center mt-12">
+                <button
+                  onClick={() => navigate('/gallery')}
+                  className="inline-flex items-center gap-2 bg-transparent border-2 border-navy-900 text-navy-900 px-10 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-navy-900 hover:text-white transition-all duration-300"
+                >
+                  {t('viewPhotoGallery')}
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* 6. PHILOSOPHY QUOTE */}
       <section className="py-24 bg-[#f5f0eb]">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="flex gap-6 md:gap-10">

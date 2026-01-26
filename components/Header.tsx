@@ -433,15 +433,19 @@ const Header: React.FC = () => {
         </div>
 
         {/* CTA Button */}
-        <div className="hidden lg:flex">
-          <button className={`px-6 py-2 rounded-sm text-sm tracking-widest uppercase transition-colors flex items-center gap-2 border border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white`}>
-            <Phone size={14} /> 预约咨询
+        <div className="hidden lg:flex shrink-0">
+          <button className={`px-4 xl:px-6 py-2 rounded-sm text-xs xl:text-sm tracking-wider xl:tracking-widest uppercase transition-colors flex items-center gap-2 border whitespace-nowrap ${
+            hasWhiteBg
+              ? 'border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white'
+              : 'border-white text-white hover:bg-white hover:text-navy-900'
+          }`}>
+            <Phone size={14} /> {t('requestConsultation')}
           </button>
         </div>
 
         {/* Mobile Menu Toggle */}
         <div className="lg:hidden z-50">
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-navy-900">
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`transition-colors ${hasWhiteBg ? 'text-navy-900' : 'text-white'}`}>
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>

@@ -6,13 +6,15 @@
 
 在 Supabase 控制台中执行以下步骤：
 
-1. 打开 Supabase Dashboard: https://yamlikuqgmqiigeaqzaz.supabase.co
+1. 打开 Supabase Dashboard: https://yamlikuqgmqiiqeaqzaz.supabase.co
 2. 进入 **SQL Editor**
-3. 复制 `supabase_schema.sql` 文件的全部内容
+3. 复制 `migrations/000_complete_schema.sql` 的全部内容
 4. 粘贴到 SQL Editor 中
 5. 点击 **Run** 执行
 
-这将创建以下表：
+### 数据库表结构
+
+**手术相关表:**
 - `procedures` - 手术基本信息
 - `procedure_translations` - 多语言翻译内容
 - `procedure_recovery` - 恢复信息
@@ -23,6 +25,12 @@
 - `procedure_recovery_tips` - 恢复建议
 - `complementary_procedures` - 互补手术
 - `procedure_risks` - 风险和注意事项
+
+**医生相关表:**
+- `surgeons` - 医生信息（含 JSONB 字段支持多语言）
+
+**案例相关表:**
+- `procedure_cases` - 术前术后案例（关联 procedures 和 surgeons）
 
 ### 2️⃣ 导入数据
 
@@ -49,17 +57,36 @@ node import-to-supabase.js
 SELECT * FROM procedures;
 
 -- 查看英文翻译
-SELECT p.procedure_name, pt.overview 
+SELECT p.procedure_name, pt.overview
 FROM procedures p
 JOIN procedure_translations pt ON p.id = pt.procedure_id
 WHERE pt.language_code = 'en'
 LIMIT 10;
 
 -- 按类别统计
-SELECT category, COUNT(*) 
-FROM procedures 
+SELECT category, COUNT(*)
+FROM procedures
 GROUP BY category;
+
+-- 查看医生列表
+SELECT surgeon_id, name, title FROM surgeons ORDER BY name;
+
+-- 统计每个医生的案例数
+SELECT s.name, COUNT(pc.id) as case_count
+FROM surgeons s
+LEFT JOIN procedure_cases pc ON s.id = pc.surgeon_id
+GROUP BY s.id, s.name
+ORDER BY case_count DESC;
 ```
+
+## 📁 迁移文件说明
+
+| 文件 | 用途 |
+|------|------|
+| `migrations/000_complete_schema.sql` | 完整 Schema - 包含所有表、索引、RLS 策略 |
+
+> **注意**: Case-Surgeon 映射数据（332条）已作为注释附录保留在 schema 文件末尾。
+> 完整映射详情请参考 `CASE_ALLOCATION_PLAN.md`。
 
 ## 🌐 多语言支持
 
@@ -84,14 +111,18 @@ await supabase.from('procedure_translations').insert({
 - `es` - Español
 - `fr` - Français
 - `de` - Deutsch
-- 等等...
+- `ru` - Русский
+- `ar` - العربية
+- `vi` - Tiếng Việt
+- `id` - Bahasa Indonesia
 
 ## 🔐 安全设置
 
 当前配置：
 - ✅ 所有表都启用了 Row Level Security (RLS)
 - ✅ 公开读取权限（适合公开网站）
-- ❌ 写入权限需要认证（保护数据）
+- ✅ anon 和 authenticated 用户可写入 procedure_cases
+- ❌ surgeons 表无 RLS（完全公开）
 
 如果需要修改权限，在 Supabase Dashboard 的 **Authentication > Policies** 中配置。
 
@@ -112,7 +143,22 @@ procedure_translations (多语言内容)
 ├── anesthesia (TEXT)
 └── procedure_description (TEXT)
 
-... 其他关联表
+surgeons (医生表)
+├── id (UUID)
+├── surgeon_id (VARCHAR) - URL友好的ID
+├── name, title, experience_years
+├── specialties, languages, education (JSONB)
+├── images (JSONB) - 多张图片
+├── translations (JSONB) - 多语言翻译
+└── timestamps
+
+procedure_cases (案例表)
+├── id (UUID)
+├── procedure_id (FK → procedures)
+├── surgeon_id (FK → surgeons) - 关联医生
+├── case_number, description
+├── patient_age, patient_gender
+└── timestamps
 ```
 
 ## 🚀 在前端使用
@@ -148,6 +194,24 @@ const { data: procedure } = await supabase
   .eq('slug', 'brow-lift')
   .eq('procedure_translations.language_code', 'en')
   .single()
+
+// 获取案例及其关联的医生信息
+const { data: cases } = await supabase
+  .from('procedure_cases')
+  .select(`
+    *,
+    surgeon:surgeons(surgeon_id, name, title, image_url, images)
+  `)
+  .eq('procedure_id', procedureId)
+
+// 获取某医生的所有案例
+const { data: surgeonCases } = await supabase
+  .from('procedure_cases')
+  .select(`
+    *,
+    procedure:procedures(procedure_name, slug)
+  `)
+  .eq('surgeon_id', surgeonUUID)
 ```
 
 ## 📝 注意事项
@@ -156,4 +220,3 @@ const { data: procedure } = await supabase
 2. **Anon Key** 用于前端应用
 3. 不要将 Service Role Key 暴露给客户端
 4. `.env.local` 文件已添加到 `.gitignore`
-
