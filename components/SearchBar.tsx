@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, ChevronDown } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -26,6 +27,7 @@ type ProcedureNameTranslations = {
 const typedProcedureNames = procedureNames as ProcedureNameTranslations;
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   const [procedure, setProcedure] = useState('');
@@ -179,7 +181,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     if (onSearch) {
       onSearch(procedure, country, priceRange);
     }
-    console.log('Search:', { procedure, country, priceRange });
+    // Navigate to search results page with procedure query
+    const searchParams = new URLSearchParams();
+    if (procedure) {
+      searchParams.set('procedure', procedure);
+    }
+    navigate(`/search?${searchParams.toString()}`);
+    window.scrollTo(0, 0);
   };
 
   const getProcedureLabel = () => {
