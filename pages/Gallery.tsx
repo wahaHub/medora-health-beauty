@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
-import Reputation from './Reputation';
-import Contact from './Contact';
+import Reputation from '../components/Reputation';
+import Contact from '../components/Contact';
 import { useTranslation } from '../hooks/useTranslation';
 import { useLanguage } from '../contexts/LanguageContext';
 import procedureNames from '../i18n/procedureNames.json';

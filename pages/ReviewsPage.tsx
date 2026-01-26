@@ -1,7 +1,7 @@
 import React from 'react';
 import { Star, Activity, Heart } from 'lucide-react';
-import Contact from './Contact';
-import Reputation from './Reputation';
+import Contact from '../components/Contact';
+import Reputation from '../components/Reputation';
 
 const ReviewsPage: React.FC = () => {
   const platforms = [

@@ -28,6 +28,9 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+  // CDN 缓存：24小时缓存，7天 stale-while-revalidate
+  res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=604800');
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }

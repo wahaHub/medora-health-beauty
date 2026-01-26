@@ -30,6 +30,21 @@ interface ProcedureCase {
   updated_at: string;
 }
 
+// Surgeon data for "Choosing the Right Surgeon" section
+interface Surgeon {
+  id: string;  // UUID
+  surgeon_id: string;  // slug for URL
+  name: string;
+  title: string;
+  specialties: string[];
+  experience_years: number;
+  image_url: string | null;
+  images?: {
+    hero?: string;
+    [key: string]: string | undefined;
+  };
+}
+
 const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   onBack,
   onCaseClick
@@ -46,6 +61,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [caseImageLoaded, setCaseImageLoaded] = useState(false);
+  const [surgeons, setSurgeons] = useState<Surgeon[]>([]);
 
   // Scroll reveal animation - must be called at top level with other hooks
   useScrollReveal(!loading && !!procedure);
@@ -221,6 +237,63 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
           }
         } catch (casesErr) {
           console.error('Error fetching cases:', casesErr);
+        }
+
+        // Fetch top surgeons who have performed this procedure (based on case count)
+        try {
+          console.log('Fetching top surgeons for procedure_id:', data.id);
+
+          // Get surgeon_id counts from procedure_cases for this procedure
+          const { data: casesBySurgeon, error: casesCountError } = await supabase
+            .from('procedure_cases')
+            .select('surgeon_id')
+            .eq('procedure_id', data.id)
+            .not('surgeon_id', 'is', null);
+
+          if (casesCountError) {
+            console.error('Error fetching cases by surgeon:', casesCountError);
+          } else if (casesBySurgeon && casesBySurgeon.length > 0) {
+            // Count cases per surgeon
+            const surgeonCaseCount: { [key: string]: number } = {};
+            casesBySurgeon.forEach(c => {
+              if (c.surgeon_id) {
+                surgeonCaseCount[c.surgeon_id] = (surgeonCaseCount[c.surgeon_id] || 0) + 1;
+              }
+            });
+
+            // Sort by case count and get top surgeon IDs
+            const topSurgeonIds = Object.entries(surgeonCaseCount)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 3)
+              .map(([id]) => id);
+
+            console.log('Top surgeon IDs by case count:', topSurgeonIds);
+
+            if (topSurgeonIds.length > 0) {
+              // Fetch surgeon details
+              const { data: surgeonsData, error: surgeonsError } = await supabase
+                .from('surgeons')
+                .select('id, surgeon_id, name, title, specialties, experience_years, image_url, images')
+                .in('id', topSurgeonIds);
+
+              if (surgeonsError) {
+                console.error('Error fetching surgeons:', surgeonsError);
+              } else if (surgeonsData) {
+                // Sort surgeons by their case count
+                const sortedSurgeons = surgeonsData.sort((a, b) => {
+                  const countA = surgeonCaseCount[a.id] || 0;
+                  const countB = surgeonCaseCount[b.id] || 0;
+                  return countB - countA;
+                });
+                console.log('Top surgeons fetched:', sortedSurgeons.length);
+                setSurgeons(sortedSurgeons);
+              }
+            }
+          } else {
+            console.log('No cases with surgeon_id found for this procedure');
+          }
+        } catch (surgeonsErr) {
+          console.error('Error fetching surgeons:', surgeonsErr);
         }
       } catch (err) {
         console.error('Error fetching procedure:', err);
@@ -773,71 +846,65 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
       )}
 
       {/* 12. CHOOSING THE RIGHT SURGEON */}
-      <section className="bg-[#1c1c1c] py-24 text-white scroll-reveal-scale">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h4 className="text-gold-600 uppercase tracking-widest text-sm font-bold mb-4">
-              {t('medoraHealthCenterFull')}
-            </h4>
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white">
-              {t('choosingTheRightSurgeon')}
-            </h2>
+      {surgeons.length > 0 && (
+        <section className="bg-[#1c1c1c] py-24 text-white scroll-reveal-scale">
+          <div className="container mx-auto px-6">
+            <div className="text-center mb-16">
+              <h4 className="text-gold-600 uppercase tracking-widest text-sm font-bold mb-4">
+                {t('medoraHealthCenterFull')}
+              </h4>
+              <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white">
+                {t('choosingTheRightSurgeon')}
+              </h2>
+            </div>
+
+            <div className={`grid grid-cols-1 ${surgeons.length === 1 ? 'md:grid-cols-1 max-w-md' : surgeons.length === 2 ? 'md:grid-cols-2 max-w-4xl' : 'md:grid-cols-3 max-w-7xl'} gap-8 lg:gap-12 mx-auto`}>
+              {surgeons.slice(0, 6).map((surgeon) => {
+                // Get surgeon image - prefer hero image from images object, fallback to image_url
+                const surgeonImage = surgeon.images?.hero || surgeon.image_url ||
+                  'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2670&auto=format&fit=crop';
+
+                // Extract last name for "Meet Dr. X" link
+                const nameParts = surgeon.name.split(' ');
+                const lastName = nameParts[nameParts.length - 1];
+
+                return (
+                  <div key={surgeon.surgeon_id} className="flex flex-col">
+                    <div className="mb-6 aspect-[4/3] overflow-hidden">
+                      <img
+                        src={surgeonImage}
+                        alt={surgeon.name}
+                        className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
+                      />
+                    </div>
+                    <h3 className="font-bold text-xl mb-4">{surgeon.name}</h3>
+                    <p className="text-stone-400 text-sm leading-relaxed mb-6 font-light">
+                      {surgeon.title} {surgeon.experience_years > 0 && `with ${surgeon.experience_years} years of experience`}
+                    </p>
+                    <button
+                      onClick={() => navigate(`/surgeon/${encodeURIComponent(surgeon.surgeon_id)}`)}
+                      className="text-gold-500 hover:text-white uppercase tracking-wider text-xs font-bold flex items-center gap-1 mt-auto cursor-pointer"
+                    >
+                      {t('meetDr')} {lastName} <ChevronRight size={14} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            {surgeons.length > 6 && (
+              <div className="text-center mt-12">
+                <button
+                  onClick={() => navigate('/surgeons')}
+                  className="text-gold-500 hover:text-white uppercase tracking-wider text-sm font-bold inline-flex items-center gap-2"
+                >
+                  {t('viewAllSurgeons')} ({surgeons.length}) <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto">
-            <div className="flex flex-col">
-              <div className="mb-6 aspect-[4/3] overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?q=80&w=2670&auto=format&fit=crop" 
-                  alt="Dr. Vito Medora" 
-                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <h3 className="font-bold text-xl mb-4">Dr. Vito Medora</h3>
-              <p className="text-stone-400 text-sm leading-relaxed mb-6 font-light">
-                Dr. Vito Medora is a double board-certified facial plastic and reconstructive surgeon with over 30 years of experience.
-              </p>
-              <a href="#" className="text-gold-500 hover:text-white uppercase tracking-wider text-xs font-bold flex items-center gap-1 mt-auto">
-                Meet Dr. Medora <ChevronRight size={14} />
-              </a>
-            </div>
-
-            <div className="flex flex-col">
-              <div className="mb-6 aspect-[4/3] overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=2665&auto=format&fit=crop" 
-                  alt="Dr. Heather Lee" 
-                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <h3 className="font-bold text-xl mb-4">Dr. Heather Lee</h3>
-              <p className="text-stone-400 text-sm leading-relaxed mb-6 font-light">
-                Dr. Heather Lee is a double board-certified facial plastic surgeon who specializes in aesthetic and functional procedures.
-              </p>
-              <a href="#" className="text-gold-500 hover:text-white uppercase tracking-wider text-xs font-bold flex items-center gap-1 mt-auto">
-                Meet Dr. Lee <ChevronRight size={14} />
-              </a>
-            </div>
-
-            <div className="flex-col">
-              <div className="mb-6 aspect-[4/3] overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2670&auto=format&fit=crop" 
-                  alt="Dr. Alex Montague" 
-                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <h3 className="font-bold text-xl mb-4">Dr. Alex Montague</h3>
-              <p className="text-stone-400 text-sm leading-relaxed mb-6 font-light">
-                Dr. Alex Montague is a board-certified facial plastic surgeon specializing in cosmetic and reconstructive surgery.
-              </p>
-              <a href="#" className="text-gold-500 hover:text-white uppercase tracking-wider text-xs font-bold flex items-center gap-1 mt-auto">
-                Meet Dr. Montague <ChevronRight size={14} />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 13. CTA SECTION */}
       <section className="py-20 bg-sage-50/50 scroll-reveal">

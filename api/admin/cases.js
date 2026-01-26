@@ -20,6 +20,8 @@ async function handler(req, res) {
 
   // GET - 获取某个 procedure 的所有 cases
   if (req.method === 'GET') {
+    // CDN 缓存：1小时缓存，24小时 stale-while-revalidate
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
     try {
       if (!slug) {
         return res.status(400).json({ success: false, message: 'Slug is required' });

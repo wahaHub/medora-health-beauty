@@ -183,6 +183,7 @@ export const translations = {
     introTitle: 'Medora Health Center for Plastic Surgery',
     introDescription: 'Excellence in facial rejuvenation, body contouring, and aesthetic enhancement.',
     meetOurDoctors: 'MEET OUR DOCTORS',
+    meetDr: 'Meet Dr.',
     viewAllSurgeons: 'View All',
     viewAllSurgeonsCount: 'Surgeons',
     
@@ -528,6 +529,7 @@ export const translations = {
     introTitle: 'Medora Health 整形外科中心',
     introDescription: '面部年轻化、身体塑形和美学提升的卓越典范。',
     meetOurDoctors: '认识我们的医生',
+    meetDr: '了解',
     viewAllSurgeons: '查看全部',
     viewAllSurgeonsCount: '位医生',
     
@@ -821,6 +823,7 @@ export const translations = {
     introTitle: 'Centro Medora Health para Cirugía Plástica',
     introDescription: 'Excelencia en rejuvenecimiento facial, contorno corporal y mejora estética.',
     meetOurDoctors: 'CONOZCA A NUESTROS MÉDICOS',
+    meetDr: 'Conocer al Dr.',
     viewAllSurgeons: 'Ver Todos',
     viewAllSurgeonsCount: 'Cirujanos',
     
@@ -1103,6 +1106,7 @@ export const translations = {
     introTitle: 'Centre Medora Health pour la Chirurgie Plastique',
     introDescription: 'Excellence en rajeunissement facial, contour corporel et amélioration esthétique.',
     meetOurDoctors: 'RENCONTREZ NOS MÉDECINS',
+    meetDr: 'Rencontrer Dr.',
     viewAllSurgeons: 'Voir Tous',
     viewAllSurgeonsCount: 'Chirurgiens',
 
@@ -1385,6 +1389,7 @@ export const translations = {
     introTitle: 'Medora Health Zentrum für Plastische Chirurgie',
     introDescription: 'Exzellenz in Gesichtsverjüngung, Körperformung und ästhetischer Verbesserung.',
     meetOurDoctors: 'LERNEN SIE UNSERE ÄRZTE KENNEN',
+    meetDr: 'Dr. kennenlernen',
     viewAllSurgeons: 'Alle Anzeigen',
     viewAllSurgeonsCount: 'Chirurgen',
 
@@ -1665,6 +1670,7 @@ export const translations = {
     introTitle: 'Центр Пластической Хирургии Medora Health',
     introDescription: 'Превосходство в омоложении лица, контурировании тела и эстетическом улучшении.',
     meetOurDoctors: 'ПОЗНАКОМЬТЕСЬ С НАШИМИ ВРАЧАМИ',
+    meetDr: 'Познакомиться с Др.',
     viewAllSurgeons: 'Посмотреть Всех',
     viewAllSurgeonsCount: 'Хирургов',
 
@@ -1945,6 +1951,7 @@ export const translations = {
     introTitle: 'مركز ميدورا الصحي للجراحة التجميلية',
     introDescription: 'التميز في تجديد الوجه ونحت الجسم والتحسين الجمالي.',
     meetOurDoctors: 'تعرف على أطبائنا',
+    meetDr: 'تعرف على د.',
     viewAllSurgeons: 'عرض الكل',
     viewAllSurgeonsCount: 'جراحين',
 
@@ -2225,6 +2232,7 @@ export const translations = {
     introTitle: 'Trung Tâm Phẫu Thuật Thẩm Mỹ Medora Health',
     introDescription: 'Xuất sắc trong trẻ hóa khuôn mặt, tạo hình cơ thể và nâng cao thẩm mỹ.',
     meetOurDoctors: 'GẶP GỠ BÁC SĨ CỦA CHÚNG TÔI',
+    meetDr: 'Gặp Bác Sĩ',
     viewAllSurgeons: 'Xem Tất Cả',
     viewAllSurgeonsCount: 'Bác Sĩ Phẫu Thuật',
 
@@ -2505,6 +2513,7 @@ export const translations = {
     introTitle: 'Pusat Bedah Plastik Medora Health',
     introDescription: 'Keunggulan dalam peremajaan wajah, kontur tubuh, dan peningkatan estetika.',
     meetOurDoctors: 'TEMUI DOKTER KAMI',
+    meetDr: 'Temui Dr.',
     viewAllSurgeons: 'Lihat Semua',
     viewAllSurgeonsCount: 'Ahli Bedah',
 

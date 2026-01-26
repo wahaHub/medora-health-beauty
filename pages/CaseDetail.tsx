@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Heart, User } from 'lucide-react';
-import Contact from './Contact';
+import Contact from '../components/Contact';
 import { getProcedureCaseImage, createSlug } from '../utils/imageUtils';
 import { supabase } from '../services/supabaseClient';
 import { useTranslation } from '../hooks/useTranslation';

@@ -13,16 +13,16 @@ import GalleryCTA from './components/GalleryCTA';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ChatWidget from './components/ChatWidget';
-import ProcedureDetail from './components/ProcedureDetail';
-import CaseDetail from './components/CaseDetail';
-import OurTeam from './components/OurTeam';
+import ProcedureDetail from './pages/ProcedureDetail';
+import CaseDetail from './pages/CaseDetail';
+import OurTeam from './pages/OurTeam';
 import AllSurgeons from './pages/AllSurgeons';
-import Gallery from './components/Gallery';
-import ProcedureGallery from './components/ProcedureGallery';
-import TravelPage from './components/TravelPage';
-import ReviewsPage from './components/ReviewsPage';
-import SurgeonProfile from './components/SurgeonProfile';
-import PatientForm from './components/PatientForm';
+import Gallery from './pages/Gallery';
+import ProcedureGallery from './pages/ProcedureGallery';
+import TravelPage from './pages/TravelPage';
+import ReviewsPage from './pages/ReviewsPage';
+import SurgeonProfile from './pages/SurgeonProfile';
+import PatientForm from './pages/PatientForm';
 import ProceduresList from './pages/ProceduresList';
 
 // Home page component

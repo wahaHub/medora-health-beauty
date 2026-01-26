@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Grid3X3, LayoutGrid, Camera } from 'lucide-react';
-import Contact from './Contact';
+import Contact from '../components/Contact';
 import { getProcedureCaseImage, createSlug } from '../utils/imageUtils';
 import { supabase } from '../services/supabaseClient';
 import { useTranslation } from '../hooks/useTranslation';
