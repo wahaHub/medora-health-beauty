@@ -6,6 +6,7 @@ import { getProcedureCaseImage, createSlug } from '../utils/imageUtils';
 import { supabase } from '../services/supabaseClient';
 import { useTranslation } from '../hooks/useTranslation';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useConsultation } from '../contexts/ConsultationContext';
 import procedureNames from '../i18n/procedureNames.json';
 
 interface CaseDetailProps {
@@ -48,6 +49,7 @@ const CaseDetail: React.FC<CaseDetailProps> = ({ onBack }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
+  const { openConsultation } = useConsultation();
 
   const [caseData, setCaseData] = useState<CaseData | null>(null);
   const [allCases, setAllCases] = useState<CaseData[]>([]);
@@ -447,7 +449,7 @@ const CaseDetail: React.FC<CaseDetailProps> = ({ onBack }) => {
 
             <div className="text-center">
                <button
-                 onClick={() => navigate('/patient-form')}
+                 onClick={() => openConsultation(procedureName)}
                  className="bg-[#8b5e3c] text-white px-12 py-5 uppercase tracking-[0.15em] font-bold text-sm hover:bg-[#6d4a2f] transition-all duration-300 mb-6 hover:shadow-lg"
                >
                   {t('requestConsultation')}

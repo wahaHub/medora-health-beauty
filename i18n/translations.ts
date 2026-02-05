@@ -221,10 +221,7 @@ export const translations = {
     countryPoland: 'Poland',
     countryUK: 'United Kingdom',
     allProcedures: 'All Procedures',
-    categoryFace: 'Face',
-    categoryBody: 'Body',
     categoryBreast: 'Breast',
-    categoryNonSurgical: 'Non-Surgical',
 
     // Partnership Component
     globalStrategy: 'Global Strategy',
@@ -262,6 +259,7 @@ export const translations = {
     categoryBodyItem3: 'Mommy Makeover',
     categoryBodyItem4: 'Body Contouring',
     // Nonsurgical Category
+    categoryNonSurgical: 'Non-Surgical',
     categoryNonsurgical: 'Nonsurgical',
     categoryNonsurgicalSubtitle: 'A refined look—no surgery required',
     categoryNonsurgicalDescription: 'Clinically guided, individually tailored rejuvenation for balanced features, smoother lines, and healthier-looking skin.',
@@ -313,6 +311,11 @@ export const translations = {
     contactHowCanWeHelp: 'How can we help?',
     contactSubmit: 'Submit Request',
 
+    // Consultation Modal
+    consultationThankYou: 'Thank You!',
+    consultationSuccess: 'We have received your consultation request and will contact you shortly.',
+    submitting: 'Submitting...',
+
     // TeamIntro Component
     yiMeiCenter: 'The YiMei Center for Plastic Surgery',
     ourTeamIncludes: 'OUR TEAM INCLUDES',
@@ -321,7 +324,6 @@ export const translations = {
     // Surgeon Profile Page
     surgeonNotFound: 'Surgeon Not Found',
     surgeonNotFoundDesc: 'The surgeon you are looking for does not exist.',
-    viewAllSurgeons: 'View All Surgeons',
     loadingSurgeonProfile: 'Loading surgeon profile...',
     surgicalVolumeHighlights: 'Surgical Volume Highlights',
     boardCertifications: 'Board Certifications',
@@ -344,6 +346,23 @@ export const translations = {
     takeFirstStep: 'Take the first step towards achieving your aesthetic goals with',
     schedulePersonalizedConsultation: 'Schedule a personalized consultation to discuss your needs and learn about your options.',
     bookConsultation: 'Book Consultation',
+
+    // Footer Component
+    footerDescription: 'Medora Health : Beauty is dedicated to providing world-class medical aesthetics services. We believe beauty is unique, personal, and deserves expert care.',
+    footerQuickLinks: 'Quick Links',
+    footerAboutUs: 'About Us',
+    footerOurTeam: 'Our Surgeons',
+    footerProcedures: 'Procedures',
+    footerReviews: 'Reviews',
+    footerTravel: 'Medical Travel',
+    footerPopularProcedures: 'Popular Procedures',
+    footerRhinoplasty: 'Rhinoplasty',
+    footerFacelift: 'Facelift',
+    footerLiposuction: 'Liposuction',
+    footerEyelidSurgery: 'Eyelid Surgery',
+    footerBBL: 'Brazilian Butt Lift',
+    footerContactInfo: 'Contact Info',
+    footerAllRightsReserved: 'All rights reserved.',
   },
   zh: {
     // Procedure Detail Page - 中文
@@ -566,10 +585,7 @@ export const translations = {
     countryPoland: '波兰',
     countryUK: '英国',
     allProcedures: '所有手术项目',
-    categoryFace: '面部',
-    categoryBody: '身体',
     categoryBreast: '胸部',
-    categoryNonSurgical: '非手术',
 
     // Partnership Component
     globalStrategy: '全球战略',
@@ -607,6 +623,7 @@ export const translations = {
     categoryBodyItem3: '产后修复',
     categoryBodyItem4: '身体塑形',
     // Nonsurgical Category
+    categoryNonSurgical: '非手术',
     categoryNonsurgical: '非手术',
     categoryNonsurgicalSubtitle: '精致容颜，无需手术',
     categoryNonsurgicalDescription: '临床指导、个性化定制的年轻化方案，打造均衡轮廓、平滑纹路、健康肌肤。',
@@ -660,6 +677,11 @@ export const translations = {
     contactHowCanWeHelp: '您需要什么帮助？',
     contactSubmit: '提交咨询',
 
+    // Consultation Modal
+    consultationThankYou: '感谢您！',
+    consultationSuccess: '我们已收到您的咨询请求，将尽快与您联系。',
+    submitting: '提交中...',
+
     // TeamIntro Component
     yiMeiCenter: '艺美整形外科中心',
     ourTeamIncludes: '我们的团队包括',
@@ -668,7 +690,6 @@ export const translations = {
     // Surgeon Profile Page
     surgeonNotFound: '未找到医生',
     surgeonNotFoundDesc: '您要查找的医生不存在。',
-    viewAllSurgeons: '查看所有医生',
     loadingSurgeonProfile: '正在加载医生资料...',
     surgicalVolumeHighlights: '手术量统计',
     boardCertifications: '执照认证',
@@ -691,6 +712,23 @@ export const translations = {
     takeFirstStep: '迈出第一步，与',
     schedulePersonalizedConsultation: '一起实现您的美丽目标。预约个性化咨询，讨论您的需求和选择。',
     bookConsultation: '预约咨询',
+
+    // Footer Component
+    footerDescription: 'Medora Health : Beauty 致力于为每一位求美者提供世界级的医疗美容服务。我们相信美是独特的，是个性的，是需要精心呵护的。',
+    footerQuickLinks: '快速链接',
+    footerAboutUs: '关于我们',
+    footerOurTeam: '专家团队',
+    footerProcedures: '整形项目',
+    footerReviews: '用户评价',
+    footerTravel: '医疗旅行',
+    footerPopularProcedures: '热门项目',
+    footerRhinoplasty: '鼻部整形',
+    footerFacelift: '面部提升',
+    footerLiposuction: '吸脂塑形',
+    footerEyelidSurgery: '眼部整形',
+    footerBBL: '巴西臀部提升',
+    footerContactInfo: '联系方式',
+    footerAllRightsReserved: '保留所有权利。',
   },
   es: {
     // Procedure Detail Page - Español
@@ -859,10 +897,7 @@ export const translations = {
     countryPoland: 'Polonia',
     countryUK: 'Reino Unido',
     allProcedures: 'Todos los Procedimientos',
-    categoryFace: 'Rostro',
-    categoryBody: 'Cuerpo',
     categoryBreast: 'Senos',
-    categoryNonSurgical: 'No Quirúrgico',
 
     // Partnership Component
     globalStrategy: 'Estrategia Global',
@@ -897,6 +932,7 @@ export const translations = {
     categoryBodyItem2: 'Liposucción',
     categoryBodyItem3: 'Mommy Makeover',
     categoryBodyItem4: 'Contorno Corporal',
+    categoryNonSurgical: 'No Quirúrgico',
     categoryNonsurgical: 'No Quirúrgico',
     categoryNonsurgicalSubtitle: 'Un look refinado, sin cirugía',
     categoryNonsurgicalDescription: 'Rejuvenecimiento guiado clínicamente y personalizado para rasgos equilibrados, líneas más suaves y piel de aspecto más saludable.',
@@ -942,6 +978,11 @@ export const translations = {
     contactHowCanWeHelp: '¿Cómo podemos ayudarle?',
     contactSubmit: 'Enviar Solicitud',
 
+    // Consultation Modal
+    consultationThankYou: '¡Gracias!',
+    consultationSuccess: 'Hemos recibido su solicitud de consulta y nos pondremos en contacto con usted en breve.',
+    submitting: 'Enviando...',
+
     // TeamIntro Component
     yiMeiCenter: 'El Centro YiMei para Cirugía Plástica',
     ourTeamIncludes: 'NUESTRO EQUIPO INCLUYE',
@@ -973,6 +1014,23 @@ export const translations = {
     takeFirstStep: 'Dé el primer paso hacia sus objetivos estéticos con',
     schedulePersonalizedConsultation: 'Programe una consulta personalizada para discutir sus necesidades.',
     bookConsultation: 'Reservar Consulta',
+
+    // Footer Component
+    footerDescription: 'Medora Health : Beauty se dedica a proporcionar servicios de estética médica de clase mundial. Creemos que la belleza es única, personal y merece un cuidado experto.',
+    footerQuickLinks: 'Enlaces Rápidos',
+    footerAboutUs: 'Sobre Nosotros',
+    footerOurTeam: 'Nuestros Cirujanos',
+    footerProcedures: 'Procedimientos',
+    footerReviews: 'Reseñas',
+    footerTravel: 'Viaje Médico',
+    footerPopularProcedures: 'Procedimientos Populares',
+    footerRhinoplasty: 'Rinoplastia',
+    footerFacelift: 'Lifting Facial',
+    footerLiposuction: 'Liposucción',
+    footerEyelidSurgery: 'Cirugía de Párpados',
+    footerBBL: 'Levantamiento de Glúteos',
+    footerContactInfo: 'Información de Contacto',
+    footerAllRightsReserved: 'Todos los derechos reservados.',
   },
   fr: {
     // Procedure Detail Page - Français
@@ -1141,10 +1199,7 @@ export const translations = {
     countryPoland: 'Pologne',
     countryUK: 'Royaume-Uni',
     allProcedures: 'Toutes les Procédures',
-    categoryFace: 'Visage',
-    categoryBody: 'Corps',
     categoryBreast: 'Poitrine',
-    categoryNonSurgical: 'Non Chirurgical',
 
     // Partnership Component
     globalStrategy: 'Stratégie Mondiale',
@@ -1179,6 +1234,7 @@ export const translations = {
     categoryBodyItem2: 'Liposuccion',
     categoryBodyItem3: 'Mommy Makeover',
     categoryBodyItem4: 'Contour Corporel',
+    categoryNonSurgical: 'Non Chirurgical',
     categoryNonsurgical: 'Non Chirurgical',
     categoryNonsurgicalSubtitle: 'Un look raffiné, sans chirurgie',
     categoryNonsurgicalDescription: 'Rajeunissement guidé cliniquement et personnalisé pour des traits équilibrés, des lignes plus lisses et une peau d\'apparence plus saine.',
@@ -1224,6 +1280,11 @@ export const translations = {
     contactHowCanWeHelp: 'Comment pouvons-nous vous aider?',
     contactSubmit: 'Soumettre la Demande',
 
+    // Consultation Modal
+    consultationThankYou: 'Merci!',
+    consultationSuccess: 'Nous avons bien reçu votre demande de consultation et vous contacterons sous peu.',
+    submitting: 'Envoi en cours...',
+
     // TeamIntro Component
     yiMeiCenter: 'Le Centre YiMei pour la Chirurgie Plastique',
     ourTeamIncludes: 'NOTRE ÉQUIPE COMPREND',
@@ -1255,6 +1316,23 @@ export const translations = {
     takeFirstStep: 'Faites le premier pas vers vos objectifs esthétiques avec',
     schedulePersonalizedConsultation: 'Planifiez une consultation personnalisée pour discuter de vos besoins.',
     bookConsultation: 'Réserver une Consultation',
+
+    // Footer Component
+    footerDescription: 'Medora Health : Beauty se consacre à fournir des services d\'esthétique médicale de classe mondiale. Nous croyons que la beauté est unique, personnelle et mérite des soins experts.',
+    footerQuickLinks: 'Liens Rapides',
+    footerAboutUs: 'À Propos',
+    footerOurTeam: 'Nos Chirurgiens',
+    footerProcedures: 'Procédures',
+    footerReviews: 'Avis',
+    footerTravel: 'Voyage Médical',
+    footerPopularProcedures: 'Procédures Populaires',
+    footerRhinoplasty: 'Rhinoplastie',
+    footerFacelift: 'Lifting du Visage',
+    footerLiposuction: 'Liposuccion',
+    footerEyelidSurgery: 'Chirurgie des Paupières',
+    footerBBL: 'Lifting Brésilien des Fesses',
+    footerContactInfo: 'Coordonnées',
+    footerAllRightsReserved: 'Tous droits réservés.',
   },
   de: {
     // Procedure Detail Page - Deutsch
@@ -1459,6 +1537,7 @@ export const translations = {
     categoryBodyItem2: 'Fettabsaugung',
     categoryBodyItem3: 'Mommy Makeover',
     categoryBodyItem4: 'Körperkonturierung',
+    categoryNonSurgical: 'Nicht-Chirurgisch',
     categoryNonsurgical: 'Nicht-Chirurgisch',
     categoryNonsurgicalSubtitle: 'Ein raffiniertes Aussehen – ohne Operation',
     categoryNonsurgicalDescription: 'Klinisch geführte, individuell angepasste Verjüngung für ausgewogene Gesichtszüge, glattere Linien und gesünder aussehende Haut.',
@@ -1504,6 +1583,11 @@ export const translations = {
     contactHowCanWeHelp: 'Wie können wir Ihnen helfen?',
     contactSubmit: 'Anfrage Absenden',
 
+    // Consultation Modal
+    consultationThankYou: 'Vielen Dank!',
+    consultationSuccess: 'Wir haben Ihre Beratungsanfrage erhalten und werden uns in Kürze bei Ihnen melden.',
+    submitting: 'Wird gesendet...',
+
     // TeamIntro Component
     yiMeiCenter: 'Das YiMei Zentrum für Plastische Chirurgie',
     ourTeamIncludes: 'UNSER TEAM UMFASST',
@@ -1535,6 +1619,23 @@ export const translations = {
     takeFirstStep: 'Machen Sie den ersten Schritt zu Ihren ästhetischen Zielen mit',
     schedulePersonalizedConsultation: 'Vereinbaren Sie eine persönliche Beratung.',
     bookConsultation: 'Beratung Buchen',
+
+    // Footer Component
+    footerDescription: 'Medora Health : Beauty widmet sich der Bereitstellung erstklassiger medizinischer Ästhetikdienste. Wir glauben, dass Schönheit einzigartig, persönlich ist und fachkundige Pflege verdient.',
+    footerQuickLinks: 'Schnelllinks',
+    footerAboutUs: 'Über Uns',
+    footerOurTeam: 'Unsere Chirurgen',
+    footerProcedures: 'Eingriffe',
+    footerReviews: 'Bewertungen',
+    footerTravel: 'Medizinreisen',
+    footerPopularProcedures: 'Beliebte Eingriffe',
+    footerRhinoplasty: 'Nasenkorrektur',
+    footerFacelift: 'Facelifting',
+    footerLiposuction: 'Fettabsaugung',
+    footerEyelidSurgery: 'Augenlidchirurgie',
+    footerBBL: 'Brasilianisches Po-Lifting',
+    footerContactInfo: 'Kontaktinformationen',
+    footerAllRightsReserved: 'Alle Rechte vorbehalten.',
   },
   ru: {
     // Procedure Detail Page - Русский
@@ -1739,6 +1840,7 @@ export const translations = {
     categoryBodyItem2: 'Липосакция',
     categoryBodyItem3: 'Мамми Мейковер',
     categoryBodyItem4: 'Контурирование тела',
+    categoryNonSurgical: 'Безоперационные',
     categoryNonsurgical: 'Безоперационные',
     categoryNonsurgicalSubtitle: 'Изысканный вид — без хирургии',
     categoryNonsurgicalDescription: 'Клинически направленное, индивидуально подобранное омоложение для сбалансированных черт, гладких линий и здоровой кожи.',
@@ -1784,6 +1886,11 @@ export const translations = {
     contactHowCanWeHelp: 'Чем мы можем помочь?',
     contactSubmit: 'Отправить запрос',
 
+    // Consultation Modal
+    consultationThankYou: 'Спасибо!',
+    consultationSuccess: 'Мы получили вашу заявку на консультацию и свяжемся с вами в ближайшее время.',
+    submitting: 'Отправка...',
+
     // TeamIntro Component
     yiMeiCenter: 'Центр Пластической Хирургии YiMei',
     ourTeamIncludes: 'НАША КОМАНДА ВКЛЮЧАЕТ',
@@ -1815,6 +1922,23 @@ export const translations = {
     takeFirstStep: 'Сделайте первый шаг к достижению эстетических целей с',
     schedulePersonalizedConsultation: 'Запишитесь на индивидуальную консультацию.',
     bookConsultation: 'Записаться',
+
+    // Footer Component
+    footerDescription: 'Medora Health : Beauty стремится предоставлять услуги медицинской эстетики мирового класса. Мы верим, что красота уникальна, индивидуальна и заслуживает профессионального ухода.',
+    footerQuickLinks: 'Быстрые Ссылки',
+    footerAboutUs: 'О Нас',
+    footerOurTeam: 'Наши Хирурги',
+    footerProcedures: 'Процедуры',
+    footerReviews: 'Отзывы',
+    footerTravel: 'Медицинский Туризм',
+    footerPopularProcedures: 'Популярные Процедуры',
+    footerRhinoplasty: 'Ринопластика',
+    footerFacelift: 'Подтяжка Лица',
+    footerLiposuction: 'Липосакция',
+    footerEyelidSurgery: 'Блефаропластика',
+    footerBBL: 'Бразильская Подтяжка Ягодиц',
+    footerContactInfo: 'Контактная Информация',
+    footerAllRightsReserved: 'Все права защищены.',
   },
   ar: {
     // Procedure Detail Page - العربية
@@ -2019,6 +2143,7 @@ export const translations = {
     categoryBodyItem2: 'شفط الدهون',
     categoryBodyItem3: 'مومي ميك أوفر',
     categoryBodyItem4: 'نحت الجسم',
+    categoryNonSurgical: 'غير جراحي',
     categoryNonsurgical: 'غير جراحي',
     categoryNonsurgicalSubtitle: 'مظهر راقٍ — بدون جراحة',
     categoryNonsurgicalDescription: 'تجديد موجه سريرياً ومخصص لملامح متوازنة وخطوط أنعم وبشرة أكثر صحة.',
@@ -2064,6 +2189,11 @@ export const translations = {
     contactHowCanWeHelp: 'كيف يمكننا مساعدتك؟',
     contactSubmit: 'إرسال الطلب',
 
+    // Consultation Modal
+    consultationThankYou: 'شكراً لك!',
+    consultationSuccess: 'لقد تلقينا طلب الاستشارة الخاص بك وسنتواصل معك قريباً.',
+    submitting: 'جاري الإرسال...',
+
     // TeamIntro Component
     yiMeiCenter: 'مركز يي مي للجراحة التجميلية',
     ourTeamIncludes: 'يضم فريقنا',
@@ -2095,6 +2225,23 @@ export const translations = {
     takeFirstStep: 'اتخذ الخطوة الأولى نحو أهدافك التجميلية مع',
     schedulePersonalizedConsultation: 'حدد موعد استشارة شخصية لمناقشة احتياجاتك.',
     bookConsultation: 'حجز استشارة',
+
+    // Footer Component
+    footerDescription: 'Medora Health : Beauty مكرسة لتقديم خدمات التجميل الطبي على مستوى عالمي. نؤمن بأن الجمال فريد وشخصي ويستحق رعاية متخصصة.',
+    footerQuickLinks: 'روابط سريعة',
+    footerAboutUs: 'من نحن',
+    footerOurTeam: 'جراحونا',
+    footerProcedures: 'الإجراءات',
+    footerReviews: 'التقييمات',
+    footerTravel: 'السياحة العلاجية',
+    footerPopularProcedures: 'الإجراءات الشائعة',
+    footerRhinoplasty: 'تجميل الأنف',
+    footerFacelift: 'شد الوجه',
+    footerLiposuction: 'شفط الدهون',
+    footerEyelidSurgery: 'جراحة الجفون',
+    footerBBL: 'رفع المؤخرة البرازيلي',
+    footerContactInfo: 'معلومات الاتصال',
+    footerAllRightsReserved: 'جميع الحقوق محفوظة.',
   },
   vi: {
     // Procedure Detail Page - Tiếng Việt
@@ -2299,6 +2446,7 @@ export const translations = {
     categoryBodyItem2: 'Hút mỡ',
     categoryBodyItem3: 'Mommy Makeover',
     categoryBodyItem4: 'Tạo đường viền cơ thể',
+    categoryNonSurgical: 'Không Phẫu Thuật',
     categoryNonsurgical: 'Không Phẫu Thuật',
     categoryNonsurgicalSubtitle: 'Vẻ ngoài tinh tế — không cần phẫu thuật',
     categoryNonsurgicalDescription: 'Trẻ hóa được hướng dẫn lâm sàng, tùy chỉnh cá nhân để có các đường nét cân đối, làn da mịn màng và khỏe mạnh hơn.',
@@ -2344,6 +2492,11 @@ export const translations = {
     contactHowCanWeHelp: 'Chúng tôi có thể giúp gì cho bạn?',
     contactSubmit: 'Gửi yêu cầu',
 
+    // Consultation Modal
+    consultationThankYou: 'Cảm ơn bạn!',
+    consultationSuccess: 'Chúng tôi đã nhận được yêu cầu tư vấn của bạn và sẽ liên hệ với bạn sớm.',
+    submitting: 'Đang gửi...',
+
     // TeamIntro Component
     yiMeiCenter: 'Trung Tâm Phẫu Thuật Thẩm Mỹ YiMei',
     ourTeamIncludes: 'ĐỘI NGŨ CỦA CHÚNG TÔI BAO GỒM',
@@ -2375,6 +2528,23 @@ export const translations = {
     takeFirstStep: 'Hãy thực hiện bước đầu tiên hướng tới mục tiêu thẩm mỹ của bạn với',
     schedulePersonalizedConsultation: 'Đặt lịch tư vấn cá nhân để thảo luận về nhu cầu của bạn.',
     bookConsultation: 'Đặt Lịch',
+
+    // Footer Component
+    footerDescription: 'Medora Health : Beauty cam kết cung cấp dịch vụ thẩm mỹ y tế đẳng cấp thế giới. Chúng tôi tin rằng vẻ đẹp là duy nhất, cá nhân và xứng đáng được chăm sóc chuyên nghiệp.',
+    footerQuickLinks: 'Liên Kết Nhanh',
+    footerAboutUs: 'Về Chúng Tôi',
+    footerOurTeam: 'Bác Sĩ Của Chúng Tôi',
+    footerProcedures: 'Thủ Thuật',
+    footerReviews: 'Đánh Giá',
+    footerTravel: 'Du Lịch Y Tế',
+    footerPopularProcedures: 'Thủ Thuật Phổ Biến',
+    footerRhinoplasty: 'Nâng Mũi',
+    footerFacelift: 'Căng Da Mặt',
+    footerLiposuction: 'Hút Mỡ',
+    footerEyelidSurgery: 'Phẫu Thuật Mí Mắt',
+    footerBBL: 'Nâng Mông Brazil',
+    footerContactInfo: 'Thông Tin Liên Hệ',
+    footerAllRightsReserved: 'Đã đăng ký bản quyền.',
   },
   id: {
     // Procedure Detail Page - Bahasa Indonesia
@@ -2582,6 +2752,7 @@ export const translations = {
     categoryBodyItem3: 'Mommy Makeover',
     categoryBodyItem4: 'Kontur Tubuh',
     // Nonsurgical Category
+    categoryNonSurgical: 'Non-Bedah',
     categoryNonsurgical: 'Non-Bedah',
     categoryNonsurgicalSubtitle: 'Tampilan halus—tanpa operasi',
     categoryNonsurgicalDescription: 'Peremajaan yang dipandu secara klinis dan disesuaikan secara individual untuk fitur seimbang, garis lebih halus, dan kulit yang tampak lebih sehat.',
@@ -2635,6 +2806,11 @@ export const translations = {
     contactHowCanWeHelp: 'Bagaimana kami bisa membantu?',
     contactSubmit: 'Kirim Permintaan',
 
+    // Consultation Modal
+    consultationThankYou: 'Terima Kasih!',
+    consultationSuccess: 'Kami telah menerima permintaan konsultasi Anda dan akan segera menghubungi Anda.',
+    submitting: 'Mengirim...',
+
     // TeamIntro Component
     yiMeiCenter: 'Pusat Bedah Plastik YiMei',
     ourTeamIncludes: 'TIM KAMI TERMASUK',
@@ -2666,6 +2842,23 @@ export const translations = {
     takeFirstStep: 'Ambil langkah pertama menuju tujuan estetika Anda dengan',
     schedulePersonalizedConsultation: 'Jadwalkan konsultasi yang dipersonalisasi.',
     bookConsultation: 'Pesan Konsultasi',
+
+    // Footer Component
+    footerDescription: 'Medora Health : Beauty berdedikasi untuk menyediakan layanan estetika medis kelas dunia. Kami percaya bahwa kecantikan itu unik, personal, dan layak mendapat perawatan ahli.',
+    footerQuickLinks: 'Tautan Cepat',
+    footerAboutUs: 'Tentang Kami',
+    footerOurTeam: 'Dokter Bedah Kami',
+    footerProcedures: 'Prosedur',
+    footerReviews: 'Ulasan',
+    footerTravel: 'Wisata Medis',
+    footerPopularProcedures: 'Prosedur Populer',
+    footerRhinoplasty: 'Rhinoplasti',
+    footerFacelift: 'Facelift',
+    footerLiposuction: 'Liposuction',
+    footerEyelidSurgery: 'Operasi Kelopak Mata',
+    footerBBL: 'Brazilian Butt Lift',
+    footerContactInfo: 'Info Kontak',
+    footerAllRightsReserved: 'Hak cipta dilindungi.',
   },
 } as const;
 

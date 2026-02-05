@@ -1,9 +1,11 @@
 import React from 'react';
 import { Plane, MapPin, Bed, Monitor, Stethoscope, ChevronRight, Phone } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
+import { useConsultation } from '../contexts/ConsultationContext';
 
 const TravelPage: React.FC = () => {
   const { t } = useTranslation();
+  const { openConsultation } = useConsultation();
   return (
     <div className="bg-white animate-fade-in-up">
       {/* 1. HERO SECTION */}
@@ -78,7 +80,7 @@ const TravelPage: React.FC = () => {
             </div>
 
             <div className="text-center mt-12">
-               <button className="bg-[#8b5e3c] text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-[#6d4a2f] transition-colors text-sm font-bold">
+               <button onClick={() => openConsultation()} className="bg-[#8b5e3c] text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-[#6d4a2f] transition-colors text-sm font-bold">
                   {t('travelRequestConsultation')}
                </button>
             </div>
@@ -131,7 +133,7 @@ const TravelPage: React.FC = () => {
                   <p className="text-stone-600 font-light text-sm mb-8 leading-relaxed">
                      {t('travelInPersonDesc')}
                   </p>
-                  <button className="bg-[#8b5e3c] text-white px-8 py-3 uppercase tracking-widest text-xs font-bold hover:bg-[#6d4a2f]">
+                  <button onClick={() => openConsultation()} className="bg-[#8b5e3c] text-white px-8 py-3 uppercase tracking-widest text-xs font-bold hover:bg-[#6d4a2f]">
                      {t('travelRequestConsultation')}
                   </button>
                </div>
@@ -141,7 +143,7 @@ const TravelPage: React.FC = () => {
                   <p className="text-stone-600 font-light text-sm mb-8 leading-relaxed">
                      {t('travelVirtualDesc')}
                   </p>
-                  <button className="bg-[#8b5e3c] text-white px-8 py-3 uppercase tracking-widest text-xs font-bold hover:bg-[#6d4a2f]">
+                  <button onClick={() => openConsultation()} className="bg-[#8b5e3c] text-white px-8 py-3 uppercase tracking-widest text-xs font-bold hover:bg-[#6d4a2f]">
                      {t('travelRequestConsultation')}
                   </button>
                </div>

@@ -6,6 +6,7 @@ import type { CompleteProcedureData } from '../services/supabaseClient';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../hooks/useTranslation';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useConsultation } from '../contexts/ConsultationContext';
 import procedureNames from '../i18n/procedureNames.json';
 import { getProcedureImage, getProcedureCaseImage } from '../utils/imageUtils';
 
@@ -53,6 +54,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   const navigate = useNavigate();
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation();
+  const { openConsultation } = useConsultation();
   const [procedure, setProcedure] = useState<CompleteProcedureData | null>(null);
   const [cases, setCases] = useState<ProcedureCase[]>([]);
   const [currentCaseIndex, setCurrentCaseIndex] = useState(0);
@@ -695,7 +697,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                  {t('viewPhotoGallery')}
                </button>
                <button
-                 onClick={() => navigate('/patient-form')}
+                 onClick={() => openConsultation(procedureName)}
                  className="bg-gold-600 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-gold-500 transition-colors text-sm"
                >
                  {t('requestConsultation')}
@@ -921,7 +923,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                {t('viewPhotoGallery')}
              </button>
              <button
-               onClick={() => navigate('/patient-form')}
+               onClick={() => openConsultation(procedureName)}
                className="bg-gold-600 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-gold-500 transition-colors text-sm"
              >
                {t('requestConsultation')}

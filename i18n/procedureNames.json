@@ -1307,5 +1307,203 @@
     "ar": "شد منتصف الوجه",
     "vi": "Nâng Giữa Mặt",
     "id": "Midface Lift"
+  },
+  "Face & Neck": {
+    "en": "Face & Neck",
+    "zh": "面部与颈部",
+    "es": "Rostro y Cuello",
+    "fr": "Visage et Cou",
+    "de": "Gesicht und Hals",
+    "ru": "Лицо и шея",
+    "ar": "الوجه والرقبة",
+    "vi": "Mặt & Cổ",
+    "id": "Wajah & Leher"
+  },
+  "Facial Contouring & Implants": {
+    "en": "Facial Contouring & Implants",
+    "zh": "面部轮廓与植入物",
+    "es": "Contorno Facial e Implantes",
+    "fr": "Contour du Visage et Implants",
+    "de": "Gesichtskonturierung und Implantate",
+    "ru": "Контурная пластика лица и импланты",
+    "ar": "تحديد الوجه والزرعات",
+    "vi": "Tạo Đường Nét Khuôn Mặt & Cấy Ghép",
+    "id": "Kontur Wajah & Implan"
+  },
+  "Injectables & Regenerative": {
+    "en": "Injectables & Regenerative",
+    "zh": "注射与再生疗法",
+    "es": "Inyectables y Tratamientos Regenerativos",
+    "fr": "Injectables et Régénération",
+    "de": "Injektionen und Regenerative Therapien",
+    "ru": "Инъекции и регенеративная терапия",
+    "ar": "الحقن والعلاج التجديدي",
+    "vi": "Tiêm & Tái Tạo",
+    "id": "Suntikan & Regeneratif"
+  },
+  "Lips": {
+    "en": "Lips",
+    "zh": "唇部",
+    "es": "Labios",
+    "fr": "Lèvres",
+    "de": "Lippen",
+    "ru": "Губы",
+    "ar": "الشفاه",
+    "vi": "Môi",
+    "id": "Bibir"
+  },
+  "Skin Tightening & Resurfacing": {
+    "en": "Skin Tightening & Resurfacing",
+    "zh": "皮肤紧致与换肤",
+    "es": "Tensado y Rejuvenecimiento de la Piel",
+    "fr": "Raffermissement et Resurfaçage de la Peau",
+    "de": "Hautstraffung und Hauterneuerung",
+    "ru": "Подтяжка и обновление кожи",
+    "ar": "شد وتجديد البشرة",
+    "vi": "Căng & Tái Tạo Da",
+    "id": "Pengencangan & Peremajaan Kulit"
+  },
+  "Hair": {
+    "en": "Hair",
+    "zh": "毛发",
+    "es": "Cabello",
+    "fr": "Cheveux",
+    "de": "Haare",
+    "ru": "Волосы",
+    "ar": "الشعر",
+    "vi": "Tóc",
+    "id": "Rambut"
+  },
+  "Core Body Contouring": {
+    "en": "Core Body Contouring",
+    "zh": "核心身体塑形",
+    "es": "Contorno Corporal Central",
+    "fr": "Sculpture Corporelle Centrale",
+    "de": "Körperkonturierung (Körpermitte)",
+    "ru": "Основная контурная пластика тела",
+    "ar": "نحت الجسم الأساسي",
+    "vi": "Tạo Đường Nét Thân Hình Chính",
+    "id": "Kontur Tubuh Inti"
+  },
+  "Arms / Legs / Back": {
+    "en": "Arms / Legs / Back",
+    "zh": "手臂 / 腿部 / 背部",
+    "es": "Brazos / Piernas / Espalda",
+    "fr": "Bras / Jambes / Dos",
+    "de": "Arme / Beine / Rücken",
+    "ru": "Руки / Ноги / Спина",
+    "ar": "الذراعين / الساقين / الظهر",
+    "vi": "Tay / Chân / Lưng",
+    "id": "Lengan / Kaki / Punggung"
+  },
+  "After Weight Loss / Body Lifts": {
+    "en": "After Weight Loss / Body Lifts",
+    "zh": "减重后 / 身体提升",
+    "es": "Después de Pérdida de Peso / Lifting Corporal",
+    "fr": "Après Perte de Poids / Lifting Corporel",
+    "de": "Nach Gewichtsverlust / Körperstraffung",
+    "ru": "После похудения / Подтяжка тела",
+    "ar": "بعد فقدان الوزن / شد الجسم",
+    "vi": "Sau Giảm Cân / Nâng Cơ Thể",
+    "id": "Setelah Penurunan Berat Badan / Body Lift"
+  },
+  "Breast / Chest": {
+    "en": "Breast / Chest",
+    "zh": "胸部",
+    "es": "Senos / Pecho",
+    "fr": "Poitrine",
+    "de": "Brust",
+    "ru": "Грудь",
+    "ar": "الثدي / الصدر",
+    "vi": "Ngực",
+    "id": "Payudara / Dada"
+  },
+  "Buttocks": {
+    "en": "Buttocks",
+    "zh": "臀部",
+    "es": "Glúteos",
+    "fr": "Fesses",
+    "de": "Gesäß",
+    "ru": "Ягодицы",
+    "ar": "الأرداف",
+    "vi": "Mông",
+    "id": "Bokong"
+  },
+  "Intimate": {
+    "en": "Intimate",
+    "zh": "私密整形",
+    "es": "Íntimo",
+    "fr": "Intime",
+    "de": "Intimbereich",
+    "ru": "Интимная пластика",
+    "ar": "المناطق الحميمة",
+    "vi": "Vùng Kín",
+    "id": "Intim"
+  },
+  "Cellulite": {
+    "en": "Cellulite",
+    "zh": "橘皮组织",
+    "es": "Celulitis",
+    "fr": "Cellulite",
+    "de": "Cellulite",
+    "ru": "Целлюлит",
+    "ar": "السيلوليت",
+    "vi": "Cellulite",
+    "id": "Selulit"
+  },
+  "Injectables": {
+    "en": "Injectables",
+    "zh": "注射类",
+    "es": "Inyectables",
+    "fr": "Injectables",
+    "de": "Injektionen",
+    "ru": "Инъекции",
+    "ar": "الحقن",
+    "vi": "Tiêm",
+    "id": "Suntikan"
+  },
+  "Skin Tightening": {
+    "en": "Skin Tightening",
+    "zh": "皮肤紧致",
+    "es": "Tensado de la Piel",
+    "fr": "Raffermissement de la Peau",
+    "de": "Hautstraffung",
+    "ru": "Подтяжка кожи",
+    "ar": "شد البشرة",
+    "vi": "Căng Da",
+    "id": "Pengencangan Kulit"
+  },
+  "Resurfacing / Skin Renewal": {
+    "en": "Resurfacing / Skin Renewal",
+    "zh": "换肤 / 皮肤更新",
+    "es": "Rejuvenecimiento / Renovación de la Piel",
+    "fr": "Resurfaçage / Renouvellement Cutané",
+    "de": "Hauterneuerung / Skin Renewal",
+    "ru": "Обновление / Омоложение кожи",
+    "ar": "تجديد / إعادة تسطيح البشرة",
+    "vi": "Tái Tạo / Làm Mới Da",
+    "id": "Peremajaan / Pembaruan Kulit"
+  },
+  "Light / Laser-Based Skin Treatments": {
+    "en": "Light / Laser-Based Skin Treatments",
+    "zh": "光疗 / 激光皮肤治疗",
+    "es": "Tratamientos de Piel con Luz / Láser",
+    "fr": "Traitements Cutanés par Lumière / Laser",
+    "de": "Licht- / Laserbasierte Hautbehandlungen",
+    "ru": "Световые / Лазерные процедуры для кожи",
+    "ar": "علاجات الجلد بالضوء / الليزر",
+    "vi": "Điều Trị Da Bằng Ánh Sáng / Laser",
+    "id": "Perawatan Kulit Berbasis Cahaya / Laser"
+  },
+  "Hair Removal": {
+    "en": "Hair Removal",
+    "zh": "脱毛",
+    "es": "Depilación",
+    "fr": "Épilation",
+    "de": "Haarentfernung",
+    "ru": "Удаление волос",
+    "ar": "إزالة الشعر",
+    "vi": "Triệt Lông",
+    "id": "Penghilangan Bulu"
   }
 }

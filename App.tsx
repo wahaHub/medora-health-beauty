@@ -1,8 +1,10 @@
 import React from 'react';
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { ConsultationProvider } from './contexts/ConsultationContext';
 import Header from './components/Header';
 import Intro from './components/Intro';
+import ConsultationModal from './components/ConsultationModal';
 import Partnership from './components/Partnership';
 import Categories from './components/Categories';
 import TeamIntro from './components/TeamIntro';
@@ -25,6 +27,7 @@ import SurgeonProfile from './pages/SurgeonProfile';
 import PatientForm from './pages/PatientForm';
 import ProceduresList from './pages/ProceduresList';
 import SearchResults from './pages/SearchResults';
+import HospitalDetail from './pages/HospitalDetail';
 
 // Home page component
 function HomePage() {
@@ -137,30 +140,34 @@ function ProcedureGalleryWrapper() {
 function App() {
   return (
     <LanguageProvider>
-      <div className="min-h-screen flex flex-col font-sans selection:bg-gold-200 selection:text-navy-900">
-        <Header />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/team" element={<OurTeam />} />
-            <Route path="/surgeons" element={<AllSurgeons />} />
-            <Route path="/gallery" element={<GalleryWrapper />} />
-            <Route path="/travel" element={<TravelPage />} />
-            <Route path="/reviews" element={<ReviewsPage />} />
-            <Route path="/patient-form" element={<PatientForm />} />
-            <Route path="/search" element={<SearchResults />} />
-            <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
-            <Route path="/procedures/:category" element={<ProceduresList />} />
-            <Route path="/procedure/:procedureName" element={<ProcedureDetailWrapper />} />
-            <Route path="/procedure/:procedureName/gallery" element={<ProcedureGalleryWrapper />} />
-            <Route path="/procedure/:procedureName/case/:caseId" element={<CaseDetailWrapper />} />
-            {/* 通配符路由：处理包含 / 的 procedure 名称 */}
-            <Route path="/procedure/*/case/:caseId" element={<CaseDetailWrapper />} />
-          </Routes>
-        </main>
-        <Footer />
-        <ChatWidget />
-      </div>
+      <ConsultationProvider>
+        <div className="min-h-screen flex flex-col font-sans selection:bg-gold-200 selection:text-navy-900">
+          <Header />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/team" element={<OurTeam />} />
+              <Route path="/surgeons" element={<AllSurgeons />} />
+              <Route path="/gallery" element={<GalleryWrapper />} />
+              <Route path="/travel" element={<TravelPage />} />
+              <Route path="/reviews" element={<ReviewsPage />} />
+              <Route path="/patient-form" element={<PatientForm />} />
+              <Route path="/search" element={<SearchResults />} />
+              <Route path="/hospital/:hospitalSlug" element={<HospitalDetail />} />
+              <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
+              <Route path="/procedures/:category" element={<ProceduresList />} />
+              <Route path="/procedure/:procedureName" element={<ProcedureDetailWrapper />} />
+              <Route path="/procedure/:procedureName/gallery" element={<ProcedureGalleryWrapper />} />
+              <Route path="/procedure/:procedureName/case/:caseId" element={<CaseDetailWrapper />} />
+              {/* 通配符路由：处理包含 / 的 procedure 名称 */}
+              <Route path="/procedure/*/case/:caseId" element={<CaseDetailWrapper />} />
+            </Routes>
+          </main>
+          <Footer />
+          <ChatWidget />
+          <ConsultationModal />
+        </div>
+      </ConsultationProvider>
     </LanguageProvider>
   );
 }

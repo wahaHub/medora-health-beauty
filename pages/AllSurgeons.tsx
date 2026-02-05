@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Award, GraduationCap, Clock, Loader2 } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useConsultation } from '../contexts/ConsultationContext';
 
 interface Surgeon {
   surgeon_id: string;
@@ -27,6 +28,7 @@ interface SurgeonsAPIResponse {
 
 const AllSurgeons: React.FC = () => {
   const navigate = useNavigate();
+  const { openConsultation } = useConsultation();
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("All");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -326,7 +328,7 @@ const AllSurgeons: React.FC = () => {
               Schedule a consultation to discuss your goals and learn how our expert team can help you achieve the results you desire.
             </p>
             <button
-              onClick={() => navigate('/contact')}
+              onClick={() => openConsultation()}
               className="bg-gold-600 text-white px-12 py-4 uppercase tracking-[0.2em] text-sm font-bold hover:bg-gold-500 transition-colors"
             >
               Schedule Consultation

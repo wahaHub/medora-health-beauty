@@ -4,6 +4,7 @@ import { Award, GraduationCap, Languages, Loader2, ArrowLeft, Calendar, MapPin, 
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../hooks/useTranslation';
+import { useConsultation } from '../contexts/ConsultationContext';
 import { supabase } from '../services/supabaseClient';
 import { getProcedureCaseImage } from '../utils/imageUtils';
 import procedureNames from '../i18n/procedureNames.json';
@@ -74,6 +75,7 @@ const SurgeonProfile: React.FC = () => {
   const navigate = useNavigate();
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation();
+  const { openConsultation } = useConsultation();
   const [surgeon, setSurgeon] = useState<SurgeonDetail | null>(null);
   const [surgeonCases, setSurgeonCases] = useState<SurgeonCase[]>([]);
   const [casesLoading, setCasesLoading] = useState(false);
@@ -442,7 +444,7 @@ const SurgeonProfile: React.FC = () => {
               </div>
 
               <button
-                onClick={() => navigate('/contact')}
+                onClick={() => openConsultation(undefined, surgeon?.surgeon_id)}
                 className="bg-[#8b5e3c] text-white px-8 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-[#6d4a2f] transition-colors"
               >
                 {t('requestAConsultation')}
@@ -748,7 +750,7 @@ const SurgeonProfile: React.FC = () => {
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <button
-              onClick={() => navigate('/contact')}
+              onClick={() => openConsultation(undefined, surgeon?.surgeon_id)}
               className="bg-gold-600 text-white px-12 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-gold-500 transition-colors"
             >
               {t('bookConsultation')}
