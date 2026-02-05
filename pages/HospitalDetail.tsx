@@ -1004,7 +1004,7 @@ const HospitalDetail: React.FC = () => {
             </div>
 
             <button
-              onClick={() => { setConsultWidgetOpen(false); openConsultation(); }}
+              onClick={() => { setConsultWidgetOpen(false); navigate(`/get-quote?hospital=${hospital.id}`); }}
               className="w-full bg-[#8b5e3c] text-white py-3.5 uppercase tracking-[0.15em] text-sm font-bold hover:bg-[#6d4a2f] transition-colors rounded"
             >
               Get a Free Quote

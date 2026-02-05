@@ -28,6 +28,7 @@ import PatientForm from './pages/PatientForm';
 import ProceduresList from './pages/ProceduresList';
 import SearchResults from './pages/SearchResults';
 import HospitalDetail from './pages/HospitalDetail';
+import ConsultationSurvey from './pages/ConsultationSurvey';
 
 // Home page component
 function HomePage() {
@@ -153,6 +154,7 @@ function App() {
               <Route path="/reviews" element={<ReviewsPage />} />
               <Route path="/patient-form" element={<PatientForm />} />
               <Route path="/search" element={<SearchResults />} />
+              <Route path="/get-quote" element={<ConsultationSurvey />} />
               <Route path="/hospital/:hospitalSlug" element={<HospitalDetail />} />
               <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
               <Route path="/procedures/:category" element={<ProceduresList />} />

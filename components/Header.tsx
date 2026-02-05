@@ -4,7 +4,6 @@ import { Menu, X, Phone } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from '../hooks/useTranslation';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useConsultation } from '../contexts/ConsultationContext';
 import procedureNames from '../i18n/procedureNames.json';
 
 interface SubMenuItem {
@@ -51,7 +50,6 @@ const Header: React.FC = () => {
   const location = useLocation();
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
-  const { openConsultation } = useConsultation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -437,13 +435,13 @@ const Header: React.FC = () => {
         {/* CTA Button */}
         <div className="hidden lg:flex shrink-0">
           <button
-            onClick={() => openConsultation()}
+            onClick={() => { navigate('/get-quote'); window.scrollTo(0, 0); }}
             className={`px-4 xl:px-6 py-2 rounded-sm text-xs xl:text-sm tracking-wider xl:tracking-widest uppercase transition-colors flex items-center gap-2 border whitespace-nowrap ${
             hasWhiteBg
               ? 'border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white'
               : 'border-white text-white hover:bg-white hover:text-navy-900'
           }`}>
-            <Phone size={14} /> {t('requestConsultation')}
+            <Phone size={14} /> {t('navGetFreeQuote')}
           </button>
         </div>
 

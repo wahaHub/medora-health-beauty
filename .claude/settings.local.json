@@ -46,7 +46,8 @@
       "Bash(npm run build:*)",
       "Bash(dig:*)",
       "Bash(nslookup:*)",
-      "mcp__desktop-commander__list_directory"
+      "mcp__desktop-commander__list_directory",
+      "Bash(npx vite build:*)"
     ],
     "deny": [],
     "ask": []
