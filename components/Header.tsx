@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Phone } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from '../hooks/useTranslation';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useSurgeonsList } from '../hooks/useData';
 import procedureNames from '../i18n/procedureNames.json';
 
 interface SubMenuItem {
@@ -39,9 +40,9 @@ const typedProcedureNames = procedureNames as ProcedureNameTranslations;
 interface Surgeon {
   surgeon_id: string;
   name: string;
-  title: string;
+  title: string | null;
   specialties: string[];
-  experience_years: number;
+  experience_years: number | null;
   image_url: string | null;
 }
 
@@ -54,8 +55,16 @@ const Header: React.FC = () => {
   const [isAtTop, setIsAtTop] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
-  const [surgeons, setSurgeons] = useState<Surgeon[]>([]);
-  const [surgeonsLoading, setSurgeonsLoading] = useState(true);
+
+  // Fetch surgeons using React Query hook
+  const shouldLoadSurgeons = hoveredNav === t('navAbout');
+  const { data: surgeonsData, isLoading: surgeonsLoading } = useSurgeonsList({ enabled: shouldLoadSurgeons });
+
+  // Use the already-unique, already-sorted surgeons list from the query.
+  // (Avoids O(n^2) dedupe on large datasets.)
+  const surgeons = useMemo(() => {
+    return (surgeonsData?.surgeons || []) as Surgeon[];
+  }, [surgeonsData]);
 
   // Helper function to translate procedure/menu item names
   const translateLabel = (englishLabel: string): string => {
@@ -65,36 +74,6 @@ const Header: React.FC = () => {
     }
     return englishLabel; // Fallback to English if no translation found
   };
-
-  // Fetch surgeons data
-  useEffect(() => {
-    const fetchSurgeons = async () => {
-      try {
-        setSurgeonsLoading(true);
-        const response = await fetch('/api/surgeons');
-        if (response.ok) {
-          const result = await response.json();
-          if (result.success && result.data) {
-            // Get unique surgeons from all specialties
-            const allSurgeons = Object.values(result.data.surgeonsBySpecialty).flat() as Surgeon[];
-            const uniqueSurgeons = allSurgeons.filter((surgeon: Surgeon, index: number, self: Surgeon[]) =>
-              index === self.findIndex((s: Surgeon) => s.surgeon_id === surgeon.surgeon_id)
-            );
-            // Sort by name and show all surgeons
-            const sortedSurgeons = uniqueSurgeons
-              .sort((a, b) => a.name.localeCompare(b.name));
-            setSurgeons(sortedSurgeons);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch surgeons:', error);
-      } finally {
-        setSurgeonsLoading(false);
-      }
-    };
-
-    fetchSurgeons();
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {

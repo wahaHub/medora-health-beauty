@@ -1,0 +1,320 @@
+{
+  "hospitals": [
+    {
+      "slug": "bangkok-aesthetic-center",
+      "name": "Bangkok Aesthetic Surgery Center",
+      "year_established": 2005,
+      "rating": 4.9,
+      "review_count": 847,
+      "hero_image": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2670&auto=format&fit=crop",
+      "total_patients": 6740,
+      "recommend_rate": 94,
+      "photos": [
+        "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2670&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=2670&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?q=80&w=2670&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?q=80&w=2670&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1551190822-a9ce113ac100?q=80&w=2670&auto=format&fit=crop"
+      ],
+      "payment_methods": ["Visa", "Mastercard", "American Express", "UnionPay", "Wire Transfer", "Cash (THB/USD)", "Medical Financing", "Cryptocurrency"],
+      "highlights": [
+        {"icon": "award", "text": "JCI Accredited since 2012"},
+        {"icon": "shield", "text": "ISO 9001:2015 Certified"},
+        {"icon": "users", "text": "50,000+ International Patients Served"},
+        {"icon": "globe", "text": "Multilingual Staff (EN, ZH, KR, JP, AR)"},
+        {"icon": "wifi", "text": "Private Recovery Suites with Wi-Fi"},
+        {"icon": "car", "text": "Complimentary Airport Transfer"},
+        {"icon": "plane", "text": "Medical Tourism Concierge Service"},
+        {"icon": "heart", "text": "Lifetime Follow-up Care Program"}
+      ],
+      "is_active": true,
+      "sort_order": 1
+    }
+  ],
+  "hospital_translations": [
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "language_code": "en",
+      "tagline": "World-Class Cosmetic Surgery in the Heart of Bangkok",
+      "description": "Bangkok Aesthetic Surgery Center is one of Southeast Asia's most prestigious cosmetic surgery destinations, offering world-class surgical and non-surgical procedures in a state-of-the-art facility. Our center combines the expertise of internationally trained surgeons with cutting-edge technology and the renowned warmth of Thai hospitality.\n\nWith nearly two decades of experience serving international patients, we have developed comprehensive care protocols that ensure safety, comfort, and exceptional results. Our facility is JCI-accredited and meets the highest international standards for patient care and safety.",
+      "highlights": [
+        {"icon": "award", "text": "JCI Accredited since 2012"},
+        {"icon": "shield", "text": "ISO 9001:2015 Certified"},
+        {"icon": "users", "text": "50,000+ International Patients Served"},
+        {"icon": "globe", "text": "Multilingual Staff (EN, ZH, KR, JP, AR)"},
+        {"icon": "wifi", "text": "Private Recovery Suites with Wi-Fi"},
+        {"icon": "car", "text": "Complimentary Airport Transfer"},
+        {"icon": "plane", "text": "Medical Tourism Concierge Service"},
+        {"icon": "heart", "text": "Lifetime Follow-up Care Program"}
+      ]
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "language_code": "zh",
+      "tagline": "曼谷心脏地带的世界级整形手术",
+      "description": "曼谷美学外科中心是东南亚最负盛名的整形手术目的地之一，在最先进的设施中提供世界一流的手术和非手术治疗。我们的中心将国际培训的外科医生的专业知识与尖端技术和泰国热情好客的声誉相结合。\n\n凭借近二十年服务国际患者的经验，我们制定了全面的护理协议，确保安全、舒适和卓越的效果。我们的设施获得了 JCI 认证，并符合最高的国际患者护理和安全标准。",
+      "highlights": [
+        {"icon": "award", "text": "2012年起获得JCI认证"},
+        {"icon": "shield", "text": "ISO 9001:2015认证"},
+        {"icon": "users", "text": "已服务50,000+国际患者"},
+        {"icon": "globe", "text": "多语言员工(英/中/韩/日/阿)"},
+        {"icon": "wifi", "text": "带Wi-Fi的私人康复套房"},
+        {"icon": "car", "text": "免费机场接送"},
+        {"icon": "plane", "text": "医疗旅游礼宾服务"},
+        {"icon": "heart", "text": "终身随访护理计划"}
+      ]
+    }
+  ],
+  "hospital_rating_breakdown": [
+    {"hospital_slug": "bangkok-aesthetic-center", "language_code": "en", "label": "Doctor", "score": 4.9, "sort_order": 1},
+    {"hospital_slug": "bangkok-aesthetic-center", "language_code": "en", "label": "Facilities", "score": 4.8, "sort_order": 2},
+    {"hospital_slug": "bangkok-aesthetic-center", "language_code": "en", "label": "Staff", "score": 4.9, "sort_order": 3},
+    {"hospital_slug": "bangkok-aesthetic-center", "language_code": "en", "label": "Language Assistance", "score": 4.8, "sort_order": 4},
+    {"hospital_slug": "bangkok-aesthetic-center", "language_code": "en", "label": "Support", "score": 4.7, "sort_order": 5}
+  ],
+  "hospital_procedures": [
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Rhinoplasty", "price_range": "$2,800 – $5,500", "price_min": 2800, "price_max": 5500, "is_popular": true, "sort_order": 1},
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Facelift", "price_range": "$4,500 – $8,000", "price_min": 4500, "price_max": 8000, "is_popular": true, "sort_order": 2},
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Breast Augmentation", "price_range": "$3,500 – $6,000", "price_min": 3500, "price_max": 6000, "is_popular": true, "sort_order": 3},
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Liposuction", "price_range": "$2,000 – $5,000", "price_min": 2000, "price_max": 5000, "is_popular": false, "sort_order": 4},
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Tummy Tuck", "price_range": "$4,000 – $7,500", "price_min": 4000, "price_max": 7500, "is_popular": false, "sort_order": 5},
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Eyelid Surgery", "price_range": "$1,500 – $3,000", "price_min": 1500, "price_max": 3000, "is_popular": true, "sort_order": 6},
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Brazilian Butt Lift", "price_range": "$4,500 – $8,500", "price_min": 4500, "price_max": 8500, "is_popular": false, "sort_order": 7},
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Hair Transplant (FUE)", "price_range": "$3,000 – $6,000", "price_min": 3000, "price_max": 6000, "is_popular": false, "sort_order": 8},
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Chin Augmentation", "price_range": "$2,000 – $4,000", "price_min": 2000, "price_max": 4000, "is_popular": false, "sort_order": 9},
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Neck Lift", "price_range": "$3,500 – $6,500", "price_min": 3500, "price_max": 6500, "is_popular": false, "sort_order": 10},
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Lip Lift", "price_range": "$1,200 – $2,500", "price_min": 1200, "price_max": 2500, "is_popular": false, "sort_order": 11},
+    {"hospital_slug": "bangkok-aesthetic-center", "procedure_name": "Botox (per area)", "price_range": "$150 – $350", "price_min": 150, "price_max": 350, "is_popular": true, "sort_order": 12}
+  ],
+  "hospital_location": [
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "address": "888 Sukhumvit Road, Khlong Toei, Bangkok 10110, Thailand",
+      "phone": "+66 2 XXX XXXX",
+      "email": "info@bangkokaesthetic.com",
+      "website": "www.bangkokaesthetic.com",
+      "hours": "Mon–Sat: 9:00 AM – 6:00 PM",
+      "map_embed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.6!2d100.56!3d13.73!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDQzJzQ4LjAiTiAxMDDCsDMzJzM2LjAiRQ!5e0!3m2!1sen!2sth!4v1",
+      "latitude": 13.7300,
+      "longitude": 100.5600
+    }
+  ],
+  "hospital_nearby_attractions": [
+    {"hospital_slug": "bangkok-aesthetic-center", "language_code": "en", "name": "5 min from BTS Asok Station", "distance": "5 min", "sort_order": 1},
+    {"hospital_slug": "bangkok-aesthetic-center", "language_code": "en", "name": "20 min from Suvarnabhumi Airport", "distance": "20 min", "sort_order": 2},
+    {"hospital_slug": "bangkok-aesthetic-center", "language_code": "en", "name": "Walking distance to Terminal 21 Shopping Mall", "distance": "walking", "sort_order": 3},
+    {"hospital_slug": "bangkok-aesthetic-center", "language_code": "en", "name": "Adjacent to 5-star Sheraton Grande Hotel", "distance": "adjacent", "sort_order": 4}
+  ],
+  "surgeons": [
+    {
+      "surgeon_id": "dr-somchai",
+      "hospital_slug": "bangkok-aesthetic-center",
+      "name": "Dr. Somchai Rattanaphan",
+      "title": "Chief Plastic Surgeon",
+      "specialties": ["Rhinoplasty", "Facelift", "Revision Surgery"],
+      "experience_years": 22,
+      "images": ["https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2670&auto=format&fit=crop"],
+      "case_count": 3500
+    },
+    {
+      "surgeon_id": "dr-narin",
+      "hospital_slug": "bangkok-aesthetic-center",
+      "name": "Dr. Narin Kongkiat",
+      "title": "Senior Cosmetic Surgeon",
+      "specialties": ["Breast Surgery", "Body Contouring", "Liposuction"],
+      "experience_years": 18,
+      "images": ["https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2670&auto=format&fit=crop"],
+      "case_count": 2800
+    },
+    {
+      "surgeon_id": "dr-anong",
+      "hospital_slug": "bangkok-aesthetic-center",
+      "name": "Dr. Anong Srisawat",
+      "title": "Oculoplastic Specialist",
+      "specialties": ["Eyelid Surgery", "Brow Lift", "Under-eye Rejuvenation"],
+      "experience_years": 15,
+      "images": ["https://images.unsplash.com/photo-1594824476967-48c8b964ac31?q=80&w=2670&auto=format&fit=crop"],
+      "case_count": 2100
+    },
+    {
+      "surgeon_id": "dr-piyarat",
+      "hospital_slug": "bangkok-aesthetic-center",
+      "name": "Dr. Piyarat Chaiyakul",
+      "title": "Non-Surgical Aesthetics Director",
+      "specialties": ["Injectables", "Laser Treatments", "Skin Rejuvenation"],
+      "experience_years": 12,
+      "images": ["https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=2670&auto=format&fit=crop"],
+      "case_count": 5200
+    }
+  ],
+  "reviews": [
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "author_name": "Sarah M.",
+      "country": "Australia",
+      "rating": 5,
+      "review_date": "2024-11-15",
+      "procedure_name": "Rhinoplasty",
+      "language_code": "en",
+      "review_text": "Absolutely incredible experience from start to finish. The hospital is immaculate, the staff speaks perfect English, and Dr. Somchai is a true artist. My nose looks completely natural and I couldn't be happier. The recovery suite felt like a luxury hotel.",
+      "is_verified": true
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "author_name": "James L.",
+      "country": "United Kingdom",
+      "rating": 5,
+      "review_date": "2024-10-28",
+      "procedure_name": "Facelift",
+      "language_code": "en",
+      "review_text": "I traveled from London specifically for this clinic after extensive research. The results exceeded my expectations. The pre-op consultations were thorough, and the aftercare was world-class. I look 15 years younger and everyone thinks I just came back from holiday.",
+      "is_verified": true
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "author_name": "Yuki T.",
+      "country": "Japan",
+      "rating": 5,
+      "review_date": "2024-09-20",
+      "procedure_name": "Eyelid Surgery",
+      "language_code": "en",
+      "review_text": "Dr. Anong understood exactly what I wanted. The communication was seamless with Japanese-speaking coordinators. Surgery was quick and recovery was smooth. Very happy with the natural-looking results.",
+      "is_verified": true
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "author_name": "Ahmed K.",
+      "country": "UAE",
+      "rating": 4,
+      "review_date": "2024-08-12",
+      "procedure_name": "Liposuction",
+      "language_code": "en",
+      "review_text": "Professional team and excellent facilities. The VIP package included everything from airport pickup to a private recovery suite. Results are great and the savings compared to Dubai are significant. Would definitely recommend.",
+      "is_verified": true
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "author_name": "Maria G.",
+      "country": "United States",
+      "rating": 5,
+      "review_date": "2024-07-05",
+      "procedure_name": "Breast Augmentation",
+      "language_code": "en",
+      "review_text": "Dr. Narin is exceptionally skilled. He took the time to understand my goals and recommended the perfect implant size. The facility is modern and clean, and the nursing staff checked on me constantly. Truly a five-star experience.",
+      "is_verified": true
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "author_name": "Chen Wei",
+      "country": "China",
+      "rating": 5,
+      "review_date": "2024-06-18",
+      "procedure_name": "Rhinoplasty",
+      "language_code": "en",
+      "review_text": "I chose this hospital because of the Chinese-speaking staff and JCI accreditation. Everything was organized perfectly. My results are beautiful and very natural. The price was a fraction of what it would cost in Shanghai.",
+      "is_verified": true
+    }
+  ],
+  "video_testimonials": [
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "language_code": "en",
+      "title": "Sarah's Rhinoplasty Journey",
+      "video_url": "https://www.youtube.com/watch?v=example1",
+      "thumbnail_url": "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?q=80&w=800&auto=format&fit=crop",
+      "duration": "4:32",
+      "procedure_name": "Rhinoplasty",
+      "country": "Australia",
+      "sort_order": 1
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "language_code": "en",
+      "title": "James's Facelift Transformation",
+      "video_url": "https://www.youtube.com/watch?v=example2",
+      "thumbnail_url": "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=800&auto=format&fit=crop",
+      "duration": "6:15",
+      "procedure_name": "Facelift",
+      "country": "UK",
+      "sort_order": 2
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "language_code": "en",
+      "title": "Maria's Breast Augmentation Story",
+      "video_url": "https://www.youtube.com/watch?v=example3",
+      "thumbnail_url": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop",
+      "duration": "5:48",
+      "procedure_name": "Breast Augmentation",
+      "country": "USA",
+      "sort_order": 3
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "language_code": "en",
+      "title": "Chen's Experience from China",
+      "video_url": "https://www.youtube.com/watch?v=example4",
+      "thumbnail_url": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop",
+      "duration": "3:55",
+      "procedure_name": "Rhinoplasty",
+      "country": "China",
+      "sort_order": 4
+    }
+  ],
+  "procedure_cases": [
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "procedure_name": "Rhinoplasty",
+      "surgeon_id": "dr-somchai",
+      "patient_age": 32,
+      "patient_gender": "Female",
+      "before_image": "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?q=80&w=800&auto=format&fit=crop",
+      "after_image": "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "procedure_name": "Facelift",
+      "surgeon_id": "dr-somchai",
+      "patient_age": 55,
+      "patient_gender": "Female",
+      "before_image": "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=800&auto=format&fit=crop",
+      "after_image": "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "procedure_name": "Breast Augmentation",
+      "surgeon_id": "dr-narin",
+      "patient_age": 28,
+      "patient_gender": "Female",
+      "before_image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop",
+      "after_image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "procedure_name": "Eyelid Surgery",
+      "surgeon_id": "dr-anong",
+      "patient_age": 41,
+      "patient_gender": "Female",
+      "before_image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=800&auto=format&fit=crop",
+      "after_image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "procedure_name": "Liposuction",
+      "surgeon_id": "dr-narin",
+      "patient_age": 38,
+      "patient_gender": "Male",
+      "before_image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop",
+      "after_image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      "hospital_slug": "bangkok-aesthetic-center",
+      "procedure_name": "Rhinoplasty",
+      "surgeon_id": "dr-somchai",
+      "patient_age": 29,
+      "patient_gender": "Male",
+      "before_image": "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?q=80&w=800&auto=format&fit=crop",
+      "after_image": "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?q=80&w=800&auto=format&fit=crop"
+    }
+  ]
+}

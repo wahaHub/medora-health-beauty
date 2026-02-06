@@ -47,7 +47,11 @@
       "Bash(dig:*)",
       "Bash(nslookup:*)",
       "mcp__desktop-commander__list_directory",
-      "Bash(npx vite build:*)"
+      "Bash(npx vite build:*)",
+      "Bash(pip3 install:*)",
+      "Bash(source:*)",
+      "Bash(pip install:*)",
+      "mcp__puppeteer__puppeteer_navigate"
     ],
     "deny": [],
     "ask": []

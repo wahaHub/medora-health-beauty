@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ChevronRight, Star, MapPin, Phone, Globe, Clock, X, ChevronLeft,
   CreditCard, Award, Shield, Wifi, Car, Plane, Heart, Play,
-  CheckCircle, Users, Camera, Quote, ChevronDown, ChevronUp
+  CheckCircle, Users, Camera, Quote, ChevronDown, ChevronUp, Loader2
 } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useTranslation } from '../hooks/useTranslation';
 import { useConsultation } from '../contexts/ConsultationContext';
+import { useHospital, CompleteHospitalData } from '../hooks/useData';
+import { useLanguage } from '../contexts/LanguageContext';
+import { getProcedureCaseImage } from '../utils/imageUtils';
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
@@ -161,8 +164,114 @@ const HospitalDetail: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { openConsultation } = useConsultation();
+  const { currentLanguage } = useLanguage();
 
-  const hospital = MOCK_HOSPITAL;
+  console.log('🏥 [HospitalDetail] Component render - hospitalSlug:', hospitalSlug, 'lang:', currentLanguage);
+
+  // Fetch hospital data from backend
+  const { data: hospitalData, isLoading, error } = useHospital(hospitalSlug, currentLanguage);
+  console.log('🏥 [HospitalDetail] Query state - isLoading:', isLoading, 'error:', error?.message, 'hasData:', !!hospitalData);
+
+  // Transform backend data to match the component's expected format
+  console.log('🏥 [HospitalDetail] Starting useMemo...');
+  const memoStart = performance.now();
+  const hospital = useMemo(() => {
+    console.log('🏥 [HospitalDetail] Inside useMemo execution');
+    if (!hospitalData) return MOCK_HOSPITAL; // Fallback to mock data
+
+    const { hospital: h, translation, ratingBreakdown, procedures, location, nearbyAttractions, reviews, videoTestimonials, surgeons, cases } = hospitalData;
+
+    return {
+      id: h.slug,
+      name: h.name,
+      tagline: translation?.tagline || MOCK_HOSPITAL.tagline,
+      rating: h.rating,
+      reviewCount: h.review_count,
+      yearEstablished: h.year_established,
+      ratingBreakdown: ratingBreakdown.length > 0
+        ? ratingBreakdown.map(r => ({ label: r.label, score: r.score }))
+        : MOCK_HOSPITAL.ratingBreakdown,
+      totalPatients: h.total_patients,
+      recommendRate: h.recommend_rate,
+      description: translation?.description || MOCK_HOSPITAL.description,
+      highlights: (translation?.highlights || h.highlights || MOCK_HOSPITAL.highlights) as { icon: string; text: string }[],
+      paymentMethods: h.payment_methods || MOCK_HOSPITAL.paymentMethods,
+      photos: h.photos?.length > 0 ? h.photos : MOCK_HOSPITAL.photos,
+      surgeries: procedures.length > 0
+        ? procedures.map(p => ({
+            name: p.procedures?.procedure_name || '',
+            priceRange: p.price_range || '',
+            popular: p.is_popular,
+          }))
+        : MOCK_HOSPITAL.surgeries,
+      doctors: surgeons.length > 0
+        ? surgeons.map(s => ({
+            id: s.surgeon_id,
+            name: s.name,
+            title: s.title || '',
+            specialties: s.specialties || [],
+            experience: s.experience_years || 0,
+            image: s.images?.hero || s.images?.[0] || MOCK_HOSPITAL.doctors[0].image,
+            caseCount: 0, // TODO: aggregate from cases
+          }))
+        : MOCK_HOSPITAL.doctors,
+      beforeAfter: cases.length > 0
+        ? cases.map((c, idx) => {
+            const procedureName = c.procedures?.procedure_name || '';
+            return {
+              id: idx + 1,
+              procedure: procedureName,
+              beforeImg: procedureName && c.case_number
+                ? getProcedureCaseImage(procedureName, c.case_number, 1)
+                : MOCK_HOSPITAL.beforeAfter[0].beforeImg,
+              afterImg: procedureName && c.case_number
+                ? getProcedureCaseImage(procedureName, c.case_number, 2)
+                : MOCK_HOSPITAL.beforeAfter[0].afterImg,
+              doctor: c.surgeons?.name || '',
+              patientInfo: `${c.patient_gender || ''}, ${c.patient_age || ''}`.replace(/^, |, $/g, ''),
+            };
+          })
+        : MOCK_HOSPITAL.beforeAfter,
+      reviews: reviews.length > 0
+        ? reviews.map((r, idx) => ({
+            id: idx + 1,
+            author: r.author_name,
+            country: r.country || '',
+            rating: r.rating,
+            date: r.review_date || '',
+            procedure: r.procedures?.procedure_name || '',
+            text: r.review_text,
+          }))
+        : MOCK_HOSPITAL.reviews,
+      videoTestimonials: videoTestimonials.length > 0
+        ? videoTestimonials.map((v, idx) => ({
+            id: idx + 1,
+            title: v.title,
+            thumbnail: v.thumbnail_url || MOCK_HOSPITAL.videoTestimonials[0].thumbnail,
+            duration: v.duration || '',
+            procedure: v.procedures?.procedure_name || '',
+            country: v.country || '',
+          }))
+        : MOCK_HOSPITAL.videoTestimonials,
+      location: location
+        ? {
+            address: location.address || '',
+            phone: location.phone || '',
+            email: location.email || '',
+            website: location.website || '',
+            hours: location.hours || '',
+            mapEmbed: location.map_embed || MOCK_HOSPITAL.location.mapEmbed,
+            nearbyAttractions: nearbyAttractions.length > 0
+              ? nearbyAttractions.map(a => a.name)
+              : MOCK_HOSPITAL.location.nearbyAttractions,
+          }
+        : MOCK_HOSPITAL.location,
+    };
+  }, [hospitalData]);
+  console.log('🏥 [HospitalDetail] useMemo completed in', (performance.now() - memoStart).toFixed(0), 'ms');
+  console.log('🏥 [HospitalDetail] Hospital data:', hospital.name, 'photos:', hospital.photos?.length, 'doctors:', hospital.doctors?.length);
+  console.log('🏥 [HospitalDetail] Photo URLs:', hospital.photos);
+  console.log('🏥 [HospitalDetail] Map embed:', hospital.location?.mapEmbed?.substring(0, 100));
 
   // State
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
@@ -173,7 +282,9 @@ const HospitalDetail: React.FC = () => {
   const [consultWidgetOpen, setConsultWidgetOpen] = useState(true);
 
   // Scroll reveal
-  useScrollReveal(true);
+  // Important: only start reveal *after* data is loaded and the real DOM exists.
+  // Otherwise elements with `scroll-reveal` stay `opacity: 0` (invisible but still clickable).
+  useScrollReveal(!isLoading);
 
   // Filter reviews
   const filteredReviews = activeReviewFilter === 'all'
@@ -184,6 +295,25 @@ const HospitalDetail: React.FC = () => {
 
   // Unique procedures for filter
   const reviewProcedures = [...new Set(hospital.reviews.map(r => r.procedure))];
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-gold-600 mx-auto mb-4" />
+          <p className="text-stone-500">Loading hospital details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state (still show page with mock data as fallback)
+  if (error) {
+    console.warn('Failed to fetch hospital data, using fallback:', error);
+  }
+
+  console.log('🏥 [HospitalDetail] RENDERING JSX - data ready, about to return');
 
   return (
     <>
@@ -691,7 +821,7 @@ const HospitalDetail: React.FC = () => {
           {/* View all gallery button */}
           <div className="text-center mt-12">
             <button
-              onClick={() => navigate('/gallery')}
+              onClick={() => navigate(`/hospital/${hospitalSlug}/gallery`)}
               className="inline-flex items-center gap-2 bg-transparent border-2 border-navy-900 text-navy-900 px-10 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-navy-900 hover:text-white transition-all duration-300"
             >
               View Full Gallery

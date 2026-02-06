@@ -333,3 +333,491 @@ export function useProcedureCases(procedureId: string | undefined) {
     staleTime: Infinity,
   });
 }
+
+// ============================================
+// Hospital Types
+// ============================================
+
+export interface Hospital {
+  id: string;
+  slug: string;
+  name: string;
+  year_established: number | null;
+  rating: number;
+  review_count: number;
+  hero_image: string | null;
+  total_patients: number;
+  recommend_rate: number;
+  photos: string[];
+  payment_methods: string[];
+  highlights: { icon: string; text: string }[];
+  is_active: boolean;
+  sort_order: number;
+}
+
+export interface HospitalTranslation {
+  tagline: string | null;
+  description: string | null;
+  highlights: { icon: string; text: string }[];
+}
+
+export interface HospitalRatingBreakdown {
+  label: string;
+  score: number;
+  sort_order: number;
+}
+
+export interface HospitalProcedure {
+  id: string;
+  price_range: string | null;
+  price_min: number | null;
+  price_max: number | null;
+  is_popular: boolean;
+  sort_order: number;
+  procedures: {
+    id: string;
+    procedure_name: string;
+    slug: string;
+  };
+}
+
+export interface HospitalLocation {
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  hours: string | null;
+  map_embed: string | null;
+  latitude: number | null;
+  longitude: number | null;
+}
+
+export interface HospitalNearbyAttraction {
+  name: string;
+  distance: string | null;
+  sort_order: number;
+}
+
+export interface HospitalReview {
+  id: string;
+  author_name: string;
+  country: string | null;
+  rating: number;
+  review_date: string | null;
+  review_text: string;
+  is_verified: boolean;
+  procedures: {
+    procedure_name: string;
+  } | null;
+}
+
+export interface HospitalVideoTestimonial {
+  id: string;
+  title: string;
+  video_url: string | null;
+  thumbnail_url: string | null;
+  duration: string | null;
+  country: string | null;
+  sort_order: number;
+  procedures: {
+    procedure_name: string;
+  } | null;
+}
+
+export interface HospitalSurgeon {
+  surgeon_id: string;
+  name: string;
+  title: string | null;
+  specialties: string[];
+  experience_years: number | null;
+  images: any;
+}
+
+export interface HospitalCase {
+  id: string;
+  case_number: string;
+  patient_age: string | null;
+  patient_gender: string | null;
+  image_count: number | null;
+  sort_order: number | null;
+  procedures: {
+    id: string;
+    procedure_name: string;
+    slug: string;
+  } | null;
+  surgeons: {
+    surgeon_id: string;
+    name: string;
+    hospital_id: string;
+  } | null;
+}
+
+export interface CompleteHospitalData {
+  hospital: Hospital;
+  translation: HospitalTranslation | null;
+  ratingBreakdown: HospitalRatingBreakdown[];
+  procedures: HospitalProcedure[];
+  location: HospitalLocation | null;
+  nearbyAttractions: HospitalNearbyAttraction[];
+  reviews: HospitalReview[];
+  videoTestimonials: HospitalVideoTestimonial[];
+  surgeons: HospitalSurgeon[];
+  cases: HospitalCase[];
+}
+
+// ============================================
+// Hospital Query Keys
+// ============================================
+
+queryKeys.hospitals = {
+  all: ['hospitals'] as const,
+  list: () => [...queryKeys.hospitals.all, 'list'] as const,
+  detail: (slug: string, lang: string) => [...queryKeys.hospitals.all, 'detail', slug, lang] as const,
+};
+
+// ============================================
+// Hospital Fetch Functions
+// ============================================
+
+async function fetchHospitalBySlug(
+  slug: string,
+  languageCode: string
+): Promise<CompleteHospitalData | null> {
+  console.log('🏥 [fetchHospitalBySlug] START - slug:', slug, 'lang:', languageCode);
+  const startTime = performance.now();
+
+  // 1. First fetch hospital (needed for hospital_id)
+  const hospitalStart = performance.now();
+  const { data: hospital, error: hospitalError } = await supabase
+    .from('hospitals')
+    .select('*')
+    .eq('slug', slug)
+    .eq('is_active', true)
+    .single();
+  console.log('🏥 [fetchHospitalBySlug] Hospital query took:', (performance.now() - hospitalStart).toFixed(0), 'ms');
+
+  if (hospitalError || !hospital) {
+    console.error('🏥 [fetchHospitalBySlug] Error fetching hospital:', hospitalError);
+    return null;
+  }
+  console.log('🏥 [fetchHospitalBySlug] Hospital found:', hospital.id, hospital.name);
+
+  // 2. Fetch all related data in PARALLEL
+  console.log('🏥 [fetchHospitalBySlug] Starting parallel queries...');
+  const parallelStart = performance.now();
+  const [
+    translationResult,
+    ratingBreakdownResult,
+    proceduresResult,
+    locationResult,
+    nearbyAttractionsResult,
+    reviewsResult,
+    videoTestimonialsResult,
+    surgeonsResult,
+    casesResult,
+  ] = await Promise.all([
+    // Translation
+    supabase
+      .from('hospital_translations')
+      .select('tagline, description, highlights')
+      .eq('hospital_id', hospital.id)
+      .eq('language_code', languageCode)
+      .single(),
+
+    // Rating breakdown
+    supabase
+      .from('hospital_rating_breakdown')
+      .select('label, score, sort_order')
+      .eq('hospital_id', hospital.id)
+      .eq('language_code', languageCode)
+      .order('sort_order'),
+
+    // Procedures with pricing
+    supabase
+      .from('hospital_procedures')
+      .select(`
+        id, price_range, price_min, price_max, is_popular, sort_order,
+        procedures (id, procedure_name, slug)
+      `)
+      .eq('hospital_id', hospital.id)
+      .order('sort_order'),
+
+    // Location
+    supabase
+      .from('hospital_location')
+      .select('address, phone, email, website, hours, map_embed, latitude, longitude')
+      .eq('hospital_id', hospital.id)
+      .single(),
+
+    // Nearby attractions
+    supabase
+      .from('hospital_nearby_attractions')
+      .select('name, distance, sort_order')
+      .eq('hospital_id', hospital.id)
+      .eq('language_code', languageCode)
+      .order('sort_order'),
+
+    // Reviews
+    supabase
+      .from('reviews')
+      .select(`
+        id, author_name, country, rating, review_date, review_text, is_verified,
+        procedures (procedure_name)
+      `)
+      .eq('hospital_id', hospital.id)
+      .eq('language_code', languageCode)
+      .order('review_date', { ascending: false }),
+
+    // Video testimonials
+    supabase
+      .from('video_testimonials')
+      .select(`
+        id, title, video_url, thumbnail_url, duration, country, sort_order,
+        procedures (procedure_name)
+      `)
+      .eq('hospital_id', hospital.id)
+      .eq('language_code', languageCode)
+      .order('sort_order'),
+
+    // Surgeons
+    supabase
+      .from('surgeons')
+      .select('surgeon_id, name, title, specialties, experience_years, images')
+      .eq('hospital_id', hospital.id),
+
+    // Cases (before/after)
+    supabase
+      .from('procedure_cases')
+      .select(`
+        id, case_number, patient_age, patient_gender, image_count, sort_order,
+        procedures (id, procedure_name, slug),
+        surgeons!inner (surgeon_id, name, hospital_id)
+      `)
+      .eq('surgeons.hospital_id', hospital.id)
+      .order('sort_order', { ascending: true })
+      .order('case_number', { ascending: false })
+      .limit(6),
+  ]);
+
+  console.log('🏥 [fetchHospitalBySlug] Parallel queries took:', (performance.now() - parallelStart).toFixed(0), 'ms');
+  console.log('🏥 [fetchHospitalBySlug] Results:', {
+    translation: !!translationResult.data,
+    translationError: translationResult.error?.message,
+    ratingBreakdown: ratingBreakdownResult.data?.length || 0,
+    procedures: proceduresResult.data?.length || 0,
+    location: !!locationResult.data,
+    nearbyAttractions: nearbyAttractionsResult.data?.length || 0,
+    reviews: reviewsResult.data?.length || 0,
+    videoTestimonials: videoTestimonialsResult.data?.length || 0,
+    surgeons: surgeonsResult.data?.length || 0,
+    cases: casesResult.data?.length || 0,
+    casesError: casesResult.error?.message,
+  });
+  console.log('🏥 [fetchHospitalBySlug] TOTAL TIME:', (performance.now() - startTime).toFixed(0), 'ms');
+
+  return {
+    hospital,
+    translation: translationResult.data || null,
+    ratingBreakdown: ratingBreakdownResult.data || [],
+    procedures: proceduresResult.data || [],
+    location: locationResult.data || null,
+    nearbyAttractions: nearbyAttractionsResult.data || [],
+    reviews: reviewsResult.data || [],
+    videoTestimonials: videoTestimonialsResult.data || [],
+    surgeons: surgeonsResult.data || [],
+    cases: casesResult.data || [],
+  };
+}
+
+// ============================================
+// Hospital React Query Hook
+// ============================================
+
+/**
+ * Hook to fetch complete hospital data by slug
+ */
+export function useHospital(slug: string | undefined, languageCode: string = 'en') {
+  return useQuery({
+    queryKey: queryKeys.hospitals.detail(slug || '', languageCode),
+    queryFn: () => fetchHospitalBySlug(slug!, languageCode),
+    enabled: !!slug,
+    staleTime: Infinity,
+  });
+}
+
+// ============================================
+// Hospital Gallery - All Cases
+// ============================================
+
+export interface HospitalGalleryData {
+  hospital: { id: string; slug: string; name: string } | null;
+  cases: HospitalCase[];
+  surgeons: { surgeon_id: string; name: string }[];
+  procedures: { id: string; procedure_name: string; slug: string }[];
+}
+
+async function fetchHospitalGallery(slug: string): Promise<HospitalGalleryData | null> {
+  // 1. Get hospital by slug
+  const { data: hospital, error: hospitalError } = await supabase
+    .from('hospitals')
+    .select('id, slug, name')
+    .eq('slug', slug)
+    .eq('is_active', true)
+    .single();
+
+  if (hospitalError || !hospital) {
+    console.error('Error fetching hospital for gallery:', hospitalError);
+    return null;
+  }
+
+  // 2. Fetch ALL cases for this hospital's surgeons (no limit)
+  const { data: cases } = await supabase
+    .from('procedure_cases')
+    .select(`
+      id, case_number, patient_age, patient_gender, image_count, sort_order,
+      procedures (id, procedure_name, slug),
+      surgeons!inner (surgeon_id, name, hospital_id)
+    `)
+    .eq('surgeons.hospital_id', hospital.id)
+    .order('sort_order', { ascending: true })
+    .order('case_number', { ascending: false });
+
+  // 3. Extract unique surgeons and procedures from cases
+  const surgeonMap = new Map<string, { surgeon_id: string; name: string }>();
+  const procedureMap = new Map<string, { id: string; procedure_name: string; slug: string }>();
+
+  (cases || []).forEach(c => {
+    if (c.surgeons) {
+      surgeonMap.set(c.surgeons.surgeon_id, {
+        surgeon_id: c.surgeons.surgeon_id,
+        name: c.surgeons.name,
+      });
+    }
+    if (c.procedures) {
+      procedureMap.set(c.procedures.id, {
+        id: c.procedures.id,
+        procedure_name: c.procedures.procedure_name,
+        slug: c.procedures.slug,
+      });
+    }
+  });
+
+  return {
+    hospital,
+    cases: cases || [],
+    surgeons: Array.from(surgeonMap.values()).sort((a, b) => a.name.localeCompare(b.name)),
+    procedures: Array.from(procedureMap.values()).sort((a, b) => a.procedure_name.localeCompare(b.procedure_name)),
+  };
+}
+
+/**
+ * Hook to fetch all cases for hospital gallery page
+ */
+export function useHospitalGallery(slug: string | undefined) {
+  return useQuery({
+    queryKey: [...queryKeys.hospitals.all, 'gallery', slug] as const,
+    queryFn: () => fetchHospitalGallery(slug!),
+    enabled: !!slug,
+    staleTime: Infinity,
+  });
+}
+
+// ============================================
+// Surgeons Grouped by Specialty (for Header & ConsultationModal)
+// ============================================
+
+export interface SurgeonListItem {
+  surgeon_id: string;
+  name: string;
+  title: string | null;
+  image_url: string | null;
+  images: any;
+  specialties: string[];
+  experience_years: number | null;
+}
+
+export interface SurgeonsBySpecialty {
+  [specialty: string]: SurgeonListItem[];
+}
+
+export interface SurgeonsData {
+  surgeons: SurgeonListItem[];
+  surgeonsBySpecialty: SurgeonsBySpecialty;
+  allSpecialties: string[];
+  totalSurgeons: number;
+}
+
+async function fetchSurgeonsGrouped(): Promise<SurgeonsData> {
+  const { data: surgeons, error } = await supabase
+    .from('surgeons')
+    .select('surgeon_id, name, title, image_url, images, specialties, experience_years')
+    .order('name', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching surgeons:', error);
+    return { surgeons: [], surgeonsBySpecialty: {}, allSpecialties: [], totalSurgeons: 0 };
+  }
+
+  if (!surgeons || surgeons.length === 0) {
+    return { surgeons: [], surgeonsBySpecialty: {}, allSpecialties: [], totalSurgeons: 0 };
+  }
+
+  // Keep an already-unique, already-sorted surgeons list.
+  // This avoids expensive O(n^2) "unique filter + findIndex" patterns in components.
+  const surgeonList: SurgeonListItem[] = (surgeons || [])
+    .map((surgeon: any) => ({
+      surgeon_id: surgeon.surgeon_id,
+      name: surgeon.name,
+      title: surgeon.title,
+      image_url: surgeon.image_url,
+      images: surgeon.images,
+      specialties: Array.isArray(surgeon.specialties) ? surgeon.specialties : [],
+      experience_years: surgeon.experience_years,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  // Group surgeons by specialty
+  const surgeonsBySpecialty: SurgeonsBySpecialty = {};
+  const specialtySet = new Set<string>();
+
+  surgeonList.forEach((surgeon) => {
+    surgeon.specialties.forEach((specialty: string) => {
+      specialtySet.add(specialty);
+
+      if (!surgeonsBySpecialty[specialty]) {
+        surgeonsBySpecialty[specialty] = [];
+      }
+
+      surgeonsBySpecialty[specialty].push({
+        surgeon_id: surgeon.surgeon_id,
+        name: surgeon.name,
+        title: surgeon.title,
+        image_url: surgeon.image_url,
+        images: surgeon.images,
+        specialties: surgeon.specialties,
+        experience_years: surgeon.experience_years,
+      });
+    });
+  });
+
+  const allSpecialties = Array.from(specialtySet).sort();
+
+  return {
+    surgeons: surgeonList,
+    surgeonsBySpecialty,
+    allSpecialties,
+    totalSurgeons: surgeonList.length,
+  };
+}
+
+/**
+ * Hook to fetch all surgeons grouped by specialty
+ */
+export function useSurgeonsList(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: ['surgeons', 'grouped'] as const,
+    queryFn: fetchSurgeonsGrouped,
+    enabled: options?.enabled ?? true,
+    staleTime: Infinity,
+  });
+}

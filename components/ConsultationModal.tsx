@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { X, ChevronDown, Phone, Mail, Check } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useConsultation } from '../contexts/ConsultationContext';
+import { useSurgeonsList } from '../hooks/useData';
 import procedureNames from '../i18n/procedureNames.json';
 
 // Type for procedure names translation
@@ -32,8 +33,16 @@ const ConsultationModal: React.FC = () => {
   const { currentLanguage } = useLanguage();
   const { isOpen, closeConsultation, preselectedProcedure, preselectedSurgeon } = useConsultation();
 
-  const [surgeons, setSurgeons] = useState<Surgeon[]>([]);
-  const [loadingSurgeons, setLoadingSurgeons] = useState(true);
+  // Fetch surgeons using React Query hook
+  const { data: surgeonsData, isLoading: loadingSurgeons } = useSurgeonsList({ enabled: isOpen });
+
+  // Use the already-unique, already-sorted surgeons list from the query.
+  // Also, avoid any work when modal is closed.
+  const surgeons = useMemo(() => {
+    if (!isOpen) return [];
+    return (surgeonsData?.surgeons || []) as Surgeon[];
+  }, [isOpen, surgeonsData]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -60,32 +69,6 @@ const ConsultationModal: React.FC = () => {
       setIsSubmitted(false);
     }
   }, [isOpen, preselectedProcedure, preselectedSurgeon]);
-
-  // Fetch surgeons from API
-  useEffect(() => {
-    const fetchSurgeons = async () => {
-      try {
-        const response = await fetch('/api/surgeons');
-        if (response.ok) {
-          const result = await response.json();
-          if (result.success && result.data) {
-            const allSurgeons = Object.values(result.data.surgeonsBySpecialty).flat() as Surgeon[];
-            const uniqueSurgeons = allSurgeons.filter((surgeon: Surgeon, index: number, self: Surgeon[]) =>
-              index === self.findIndex((s: Surgeon) => s.surgeon_id === surgeon.surgeon_id)
-            );
-            uniqueSurgeons.sort((a, b) => a.name.localeCompare(b.name));
-            setSurgeons(uniqueSurgeons);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch surgeons:', error);
-      } finally {
-        setLoadingSurgeons(false);
-      }
-    };
-
-    fetchSurgeons();
-  }, []);
 
   // Get translated procedure name
   const getTranslatedProcedure = (englishName: string): string => {
