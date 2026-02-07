@@ -177,82 +177,102 @@ const HospitalDetail: React.FC = () => {
   const memoStart = performance.now();
   const hospital = useMemo(() => {
     console.log('🏥 [HospitalDetail] Inside useMemo execution');
-    if (!hospitalData) return MOCK_HOSPITAL; // Fallback to mock data
+    if (!hospitalData) {
+      // Return minimal structure when no data
+      return {
+        id: '',
+        name: '',
+        tagline: '',
+        rating: 0,
+        reviewCount: 0,
+        yearEstablished: 0,
+        ratingBreakdown: [],
+        totalPatients: 0,
+        recommendRate: 0,
+        description: '',
+        highlights: [],
+        paymentMethods: [],
+        photos: [],
+        surgeries: [],
+        doctors: [],
+        beforeAfter: [],
+        reviews: [],
+        videoTestimonials: [],
+        location: {
+          address: '',
+          phone: '',
+          email: '',
+          website: '',
+          hours: '',
+          mapEmbed: '',
+          nearbyAttractions: [],
+        },
+      };
+    }
 
     const { hospital: h, translation, ratingBreakdown, procedures, location, nearbyAttractions, reviews, videoTestimonials, surgeons, cases } = hospitalData;
 
     return {
       id: h.slug,
       name: h.name,
-      tagline: translation?.tagline || MOCK_HOSPITAL.tagline,
-      rating: h.rating,
-      reviewCount: h.review_count,
-      yearEstablished: h.year_established,
-      ratingBreakdown: ratingBreakdown.length > 0
-        ? ratingBreakdown.map(r => ({ label: r.label, score: r.score }))
-        : MOCK_HOSPITAL.ratingBreakdown,
-      totalPatients: h.total_patients,
-      recommendRate: h.recommend_rate,
-      description: translation?.description || MOCK_HOSPITAL.description,
-      highlights: (translation?.highlights || h.highlights || MOCK_HOSPITAL.highlights) as { icon: string; text: string }[],
-      paymentMethods: h.payment_methods || MOCK_HOSPITAL.paymentMethods,
-      photos: h.photos?.length > 0 ? h.photos : MOCK_HOSPITAL.photos,
-      surgeries: procedures.length > 0
-        ? procedures.map(p => ({
-            name: p.procedures?.procedure_name || '',
-            priceRange: p.price_range || '',
-            popular: p.is_popular,
-          }))
-        : MOCK_HOSPITAL.surgeries,
-      doctors: surgeons.length > 0
-        ? surgeons.map(s => ({
-            id: s.surgeon_id,
-            name: s.name,
-            title: s.title || '',
-            specialties: s.specialties || [],
-            experience: s.experience_years || 0,
-            image: s.images?.hero || s.images?.[0] || MOCK_HOSPITAL.doctors[0].image,
-            caseCount: 0, // TODO: aggregate from cases
-          }))
-        : MOCK_HOSPITAL.doctors,
-      beforeAfter: cases.length > 0
-        ? cases.map((c, idx) => {
-            const procedureName = c.procedures?.procedure_name || '';
-            return {
-              id: idx + 1,
-              procedure: procedureName,
-              beforeImg: procedureName && c.case_number
-                ? getProcedureCaseImage(procedureName, c.case_number, 1)
-                : MOCK_HOSPITAL.beforeAfter[0].beforeImg,
-              afterImg: procedureName && c.case_number
-                ? getProcedureCaseImage(procedureName, c.case_number, 2)
-                : MOCK_HOSPITAL.beforeAfter[0].afterImg,
-              doctor: c.surgeons?.name || '',
-              patientInfo: `${c.patient_gender || ''}, ${c.patient_age || ''}`.replace(/^, |, $/g, ''),
-            };
-          })
-        : MOCK_HOSPITAL.beforeAfter,
-      reviews: reviews.length > 0
-        ? reviews.map((r, idx) => ({
-            id: idx + 1,
-            author: r.author_name,
-            country: r.country || '',
-            rating: r.rating,
-            date: r.review_date || '',
-            procedure: r.procedures?.procedure_name || '',
-            text: r.review_text,
-          }))
-        : MOCK_HOSPITAL.reviews,
-      videoTestimonials: videoTestimonials.length > 0
-        ? videoTestimonials.map((v, idx) => ({
-            id: idx + 1,
-            title: v.title,
-            thumbnail: v.thumbnail_url || MOCK_HOSPITAL.videoTestimonials[0].thumbnail,
-            duration: v.duration || '',
-            procedure: v.procedures?.procedure_name || '',
-            country: v.country || '',
-          }))
-        : MOCK_HOSPITAL.videoTestimonials,
+      tagline: translation?.tagline || '',
+      rating: h.rating || 0,
+      reviewCount: h.review_count || 0,
+      yearEstablished: h.year_established || 0,
+      ratingBreakdown: ratingBreakdown.map(r => ({ label: r.label, score: r.score })),
+      totalPatients: h.total_patients || 0,
+      recommendRate: h.recommend_rate || 0,
+      description: translation?.description || '',
+      highlights: (translation?.highlights || h.highlights || []) as { icon: string; text: string }[],
+      paymentMethods: h.payment_methods || [],
+      photos: h.photos || [],
+      surgeries: procedures.map(p => ({
+        name: p.procedures?.procedure_name || '',
+        priceRange: p.price_range || '',
+        popular: p.is_popular,
+      })),
+      doctors: surgeons.map(s => ({
+        id: s.surgeon_id,
+        name: s.name,
+        title: s.title || '',
+        specialties: s.specialties || [],
+        experience: s.experience_years || 0,
+        image: s.images?.hero || s.images?.[0] || '',
+        caseCount: 0,
+      })),
+      beforeAfter: cases.map((c, idx) => {
+        const procedureName = c.procedures?.procedure_name || '';
+        return {
+          id: idx + 1,
+          procedure: procedureName,
+          beforeImg: procedureName && c.case_number
+            ? getProcedureCaseImage(procedureName, c.case_number, 1)
+            : '',
+          afterImg: procedureName && c.case_number
+            ? getProcedureCaseImage(procedureName, c.case_number, 2)
+            : '',
+          doctor: c.surgeons?.name || '',
+          patientInfo: `${c.patient_gender || ''}, ${c.patient_age || ''}`.replace(/^, |, $/g, ''),
+        };
+      }),
+      reviews: reviews.map((r, idx) => ({
+        id: idx + 1,
+        author: r.author_name,
+        country: r.country || '',
+        rating: r.rating,
+        date: r.review_date || '',
+        procedure: r.procedures?.procedure_name || '',
+        text: r.review_text,
+      })),
+      videoTestimonials: videoTestimonials.map((v, idx) => ({
+        id: idx + 1,
+        title: v.title,
+        thumbnail: v.thumbnail_url || '',
+        duration: v.duration || '',
+        procedure: v.procedures?.procedure_name || '',
+        country: v.country || '',
+        video_url: v.video_url || '',
+      })),
       location: location
         ? {
             address: location.address || '',
@@ -260,12 +280,18 @@ const HospitalDetail: React.FC = () => {
             email: location.email || '',
             website: location.website || '',
             hours: location.hours || '',
-            mapEmbed: location.map_embed || MOCK_HOSPITAL.location.mapEmbed,
-            nearbyAttractions: nearbyAttractions.length > 0
-              ? nearbyAttractions.map(a => a.name)
-              : MOCK_HOSPITAL.location.nearbyAttractions,
+            mapEmbed: location.map_embed || '',
+            nearbyAttractions: nearbyAttractions.map(a => a.name),
           }
-        : MOCK_HOSPITAL.location,
+        : {
+            address: '',
+            phone: '',
+            email: '',
+            website: '',
+            hours: '',
+            mapEmbed: '',
+            nearbyAttractions: [],
+          },
     };
   }, [hospitalData]);
   console.log('🏥 [HospitalDetail] useMemo completed in', (performance.now() - memoStart).toFixed(0), 'ms');
@@ -323,14 +349,18 @@ const HospitalDetail: React.FC = () => {
           1. HERO SECTION — Dark background with text (like SurgeonProfile)
          ═══════════════════════════════════════════════════════════════════════ */}
       <section className="relative min-h-[700px] bg-luxury-green flex items-end overflow-hidden pb-16">
-        {/* Subtle background image */}
+        {/* Background image */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0f201b] via-[#0f201b]/90 to-[#0f201b]/70 z-10" />
-          <img
-            src={hospital.photos[0]}
-            alt={hospital.name}
-            className="absolute inset-0 w-full h-full object-cover opacity-30"
-          />
+          {hospital.photos.length > 0 ? (
+            <img
+              src={hospital.photos[0]}
+              alt={hospital.name}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-luxury-green to-luxury-green/80" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0f201b]/80 via-[#0f201b]/70 to-[#0f201b]/60 z-10" />
         </div>
 
         {/* Content */}
@@ -393,57 +423,67 @@ const HospitalDetail: React.FC = () => {
          ═══════════════════════════════════════════════════════════════════════ */}
       <section className="pt-8 pb-4 bg-white">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 rounded-xl overflow-hidden h-[420px]">
-            {/* Left — Large photo (50%) */}
-            <div
-              className="relative group cursor-pointer overflow-hidden"
-              onClick={() => { setModalPhotoIndex(0); setPhotoModalOpen(true); }}
-            >
-              <img
-                src={hospital.photos[0]}
-                alt={`${hospital.name} - Main`}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-
-            {/* Right — 2x2 grid (50%) */}
-            <div className="hidden md:grid grid-cols-2 grid-rows-2 gap-2">
-              {hospital.photos.slice(1, 5).map((photo, idx) => (
-                <div
-                  key={idx}
-                  className="relative group cursor-pointer overflow-hidden"
-                  onClick={() => { setModalPhotoIndex(idx + 1); setPhotoModalOpen(true); }}
-                >
-                  <img
-                    src={photo}
-                    alt={`${hospital.name} - ${idx + 2}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  {/* "Show all photos" on last cell */}
-                  {idx === 3 && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setModalPhotoIndex(0); setPhotoModalOpen(true); }}
-                      className="absolute bottom-3 right-3 z-10 bg-white/95 backdrop-blur-sm text-navy-900 text-sm font-medium px-4 py-2 rounded-full shadow-md hover:bg-white transition-colors flex items-center gap-2"
-                    >
-                      <Camera size={14} />
-                      Show all photos
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Mobile — show button below the single image */}
-            <div className="md:hidden flex justify-center -mt-14 relative z-10 pb-4">
-              <button
+          {hospital.photos.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 rounded-xl overflow-hidden h-[420px]">
+              {/* Left — Large photo (50%) */}
+              <div
+                className="relative group cursor-pointer overflow-hidden"
                 onClick={() => { setModalPhotoIndex(0); setPhotoModalOpen(true); }}
-                className="bg-white/95 backdrop-blur-sm text-navy-900 text-sm font-medium px-5 py-2.5 rounded-full shadow-md hover:bg-white transition-colors flex items-center gap-2"
               >
-                <Camera size={14} />
-                Show all {hospital.photos.length} photos
-              </button>
+                <img
+                  src={hospital.photos[0]}
+                  alt={`${hospital.name} - Main`}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+
+              {/* Right — 2x2 grid (50%) */}
+              <div className="hidden md:grid grid-cols-2 grid-rows-2 gap-2">
+                {hospital.photos.slice(1, 5).map((photo, idx) => (
+                  <div
+                    key={idx}
+                    className="relative group cursor-pointer overflow-hidden"
+                    onClick={() => { setModalPhotoIndex(idx + 1); setPhotoModalOpen(true); }}
+                  >
+                    <img
+                      src={photo}
+                      alt={`${hospital.name} - ${idx + 2}`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    {/* "Show all photos" on last cell */}
+                    {idx === 3 && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setModalPhotoIndex(0); setPhotoModalOpen(true); }}
+                        className="absolute bottom-3 right-3 z-10 bg-white/95 backdrop-blur-sm text-navy-900 text-sm font-medium px-4 py-2 rounded-full shadow-md hover:bg-white transition-colors flex items-center gap-2"
+                      >
+                        <Camera size={14} />
+                        Show all photos
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Mobile — show button below the single image */}
+              <div className="md:hidden flex justify-center -mt-14 relative z-10 pb-4">
+                <button
+                  onClick={() => { setModalPhotoIndex(0); setPhotoModalOpen(true); }}
+                  className="bg-white/95 backdrop-blur-sm text-navy-900 text-sm font-medium px-5 py-2.5 rounded-full shadow-md hover:bg-white transition-colors flex items-center gap-2"
+                >
+                  <Camera size={14} />
+                  Show all {hospital.photos.length} photos
+                </button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="rounded-xl overflow-hidden h-[420px] bg-gradient-to-br from-sage-50 to-sage-100 flex items-center justify-center border-2 border-dashed border-sage-300">
+              <div className="text-center px-6">
+                <Camera size={64} className="mx-auto mb-4 text-sage-400" />
+                <h3 className="text-xl font-serif text-sage-600 mb-2">No Photos Available</h3>
+                <p className="text-sage-500 text-sm">Photos will be displayed here once they are added.</p>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -656,9 +696,10 @@ const HospitalDetail: React.FC = () => {
             </p>
           </div>
 
-          <div className="max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {displayedSurgeries.map((surgery, idx) => (
+          {hospital.surgeries.length > 0 ? (
+            <div className="max-w-5xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {displayedSurgeries.map((surgery, idx) => (
                 <div
                   key={idx}
                   className="bg-white p-6 border border-sage-100 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between gap-4"
@@ -690,13 +731,20 @@ const HospitalDetail: React.FC = () => {
               </div>
             )}
 
-            {/* Price note */}
-            <div className="mt-8 bg-[#f9f5f1] p-6 border-l-4 border-gold-600">
-              <p className="text-stone-600 text-sm font-light leading-relaxed">
-                <span className="font-bold text-navy-900">Note:</span> Prices are estimates and may vary based on individual patient needs, complexity of the procedure, and surgeon selection. Final pricing will be provided during your personal consultation. All prices are in USD.
-              </p>
+              {/* Price note */}
+              <div className="mt-8 bg-[#f9f5f1] p-6 border-l-4 border-gold-600">
+                <p className="text-stone-600 text-sm font-light leading-relaxed">
+                  <span className="font-bold text-navy-900">Note:</span> Prices are estimates and may vary based on individual patient needs, complexity of the procedure, and surgeon selection. Final pricing will be provided during your personal consultation. All prices are in USD.
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="max-w-3xl mx-auto rounded-xl bg-white p-16 text-center border-2 border-dashed border-sage-300">
+              <CreditCard size={64} className="mx-auto mb-4 text-sage-400" />
+              <h3 className="text-xl font-serif text-sage-600 mb-2">No Pricing Information Available</h3>
+              <p className="text-sage-500 text-sm">Surgery pricing details will be displayed here once they are added.</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -714,8 +762,9 @@ const HospitalDetail: React.FC = () => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 max-w-7xl mx-auto">
-            {hospital.doctors.map((doctor) => {
+          {hospital.doctors.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 max-w-7xl mx-auto">
+              {hospital.doctors.map((doctor) => {
               const lastName = doctor.name.split(' ').pop();
               return (
                 <div key={doctor.id} className="flex flex-col group">
@@ -749,7 +798,14 @@ const HospitalDetail: React.FC = () => {
                 </div>
               );
             })}
-          </div>
+            </div>
+          ) : (
+            <div className="max-w-3xl mx-auto rounded-xl bg-white/5 backdrop-blur-sm p-16 text-center border-2 border-dashed border-white/20">
+              <Users size={64} className="mx-auto mb-4 text-white/40" />
+              <h3 className="text-xl font-serif text-white/80 mb-2">No Doctors Available</h3>
+              <p className="text-white/60 text-sm">Doctor profiles will be displayed here once they are added.</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -770,8 +826,10 @@ const HospitalDetail: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {hospital.beforeAfter.map((item) => (
+          {hospital.beforeAfter.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {hospital.beforeAfter.map((item) => (
               <div
                 key={item.id}
                 className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer border border-stone-100"
@@ -816,18 +874,26 @@ const HospitalDetail: React.FC = () => {
                 </div>
               </div>
             ))}
-          </div>
+              </div>
 
-          {/* View all gallery button */}
-          <div className="text-center mt-12">
-            <button
-              onClick={() => navigate(`/hospital/${hospitalSlug}/gallery`)}
-              className="inline-flex items-center gap-2 bg-transparent border-2 border-navy-900 text-navy-900 px-10 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-navy-900 hover:text-white transition-all duration-300"
-            >
-              View Full Gallery
-              <ChevronRight size={18} />
-            </button>
-          </div>
+              {/* View all gallery button */}
+              <div className="text-center mt-12">
+                <button
+                  onClick={() => navigate(`/hospital/${hospitalSlug}/gallery`)}
+                  className="inline-flex items-center gap-2 bg-transparent border-2 border-navy-900 text-navy-900 px-10 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-navy-900 hover:text-white transition-all duration-300"
+                >
+                  View Full Gallery
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="max-w-3xl mx-auto rounded-xl bg-gradient-to-br from-sage-50 to-sage-100 p-16 text-center border-2 border-dashed border-sage-300">
+              <Camera size={64} className="mx-auto mb-4 text-sage-400" />
+              <h3 className="text-xl font-serif text-sage-600 mb-2">No Before & After Cases Available</h3>
+              <p className="text-sage-500 text-sm">Patient transformation cases will be displayed here once they are added.</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -854,36 +920,38 @@ const HospitalDetail: React.FC = () => {
             </div>
           </div>
 
-          {/* Filter pills */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            <button
-              onClick={() => setActiveReviewFilter('all')}
-              className={`px-5 py-2 text-sm uppercase tracking-wider font-medium transition-all ${
-                activeReviewFilter === 'all'
-                  ? 'bg-navy-900 text-white'
-                  : 'bg-white text-stone-600 hover:bg-navy-900 hover:text-white border border-stone-200'
-              }`}
-            >
-              All
-            </button>
-            {reviewProcedures.map((proc) => (
-              <button
-                key={proc}
-                onClick={() => setActiveReviewFilter(proc)}
-                className={`px-5 py-2 text-sm uppercase tracking-wider font-medium transition-all ${
-                  activeReviewFilter === proc
-                    ? 'bg-navy-900 text-white'
-                    : 'bg-white text-stone-600 hover:bg-navy-900 hover:text-white border border-stone-200'
-                }`}
-              >
-                {proc}
-              </button>
-            ))}
-          </div>
+          {hospital.reviews.length > 0 ? (
+            <>
+              {/* Filter pills */}
+              <div className="flex flex-wrap justify-center gap-3 mb-12">
+                <button
+                  onClick={() => setActiveReviewFilter('all')}
+                  className={`px-5 py-2 text-sm uppercase tracking-wider font-medium transition-all ${
+                    activeReviewFilter === 'all'
+                      ? 'bg-navy-900 text-white'
+                      : 'bg-white text-stone-600 hover:bg-navy-900 hover:text-white border border-stone-200'
+                  }`}
+                >
+                  All
+                </button>
+                {reviewProcedures.map((proc) => (
+                  <button
+                    key={proc}
+                    onClick={() => setActiveReviewFilter(proc)}
+                    className={`px-5 py-2 text-sm uppercase tracking-wider font-medium transition-all ${
+                      activeReviewFilter === proc
+                        ? 'bg-navy-900 text-white'
+                        : 'bg-white text-stone-600 hover:bg-navy-900 hover:text-white border border-stone-200'
+                    }`}
+                  >
+                    {proc}
+                  </button>
+                ))}
+              </div>
 
-          {/* Review cards */}
-          <div className="max-w-4xl mx-auto space-y-6">
-            {filteredReviews.slice(0, visibleReviews).map((review) => (
+              {/* Review cards */}
+              <div className="max-w-4xl mx-auto space-y-6">
+                {filteredReviews.slice(0, visibleReviews).map((review) => (
               <div key={review.id} className="bg-white p-8 shadow-sm border border-sage-100">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
                   <div>
@@ -909,18 +977,26 @@ const HospitalDetail: React.FC = () => {
                 </p>
               </div>
             ))}
-          </div>
+              </div>
 
-          {/* Show more reviews */}
-          {filteredReviews.length > visibleReviews && (
-            <div className="text-center mt-10">
-              <button
-                onClick={() => setVisibleReviews((prev) => prev + 3)}
-                className="inline-flex items-center gap-2 text-navy-900 uppercase tracking-widest text-sm font-bold hover:text-gold-600 transition-colors"
-              >
-                Load More Reviews
-                <ChevronDown size={18} />
-              </button>
+              {/* Show more reviews */}
+              {filteredReviews.length > visibleReviews && (
+                <div className="text-center mt-10">
+                  <button
+                    onClick={() => setVisibleReviews((prev) => prev + 3)}
+                    className="inline-flex items-center gap-2 text-navy-900 uppercase tracking-widest text-sm font-bold hover:text-gold-600 transition-colors"
+                  >
+                    Load More Reviews
+                    <ChevronDown size={18} />
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="max-w-3xl mx-auto rounded-xl bg-white p-16 text-center border-2 border-dashed border-sage-300">
+              <Quote size={64} className="mx-auto mb-4 text-sage-400" />
+              <h3 className="text-xl font-serif text-sage-600 mb-2">No Reviews Available</h3>
+              <p className="text-sage-500 text-sm">Patient reviews and testimonials will be displayed here once they are added.</p>
             </div>
           )}
         </div>
@@ -943,8 +1019,9 @@ const HospitalDetail: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {hospital.videoTestimonials.map((video) => (
+          {hospital.videoTestimonials.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {hospital.videoTestimonials.map((video) => (
               <div key={video.id} className="group cursor-pointer">
                 <div className="relative aspect-video overflow-hidden rounded-lg bg-sage-100 mb-5 shadow-sm">
                   <img
@@ -973,7 +1050,14 @@ const HospitalDetail: React.FC = () => {
                 <p className="text-stone-500 text-sm">{video.procedure} &middot; {video.country}</p>
               </div>
             ))}
-          </div>
+            </div>
+          ) : (
+            <div className="max-w-3xl mx-auto rounded-xl bg-gradient-to-br from-sage-50 to-sage-100 p-16 text-center border-2 border-dashed border-sage-300">
+              <Play size={64} className="mx-auto mb-4 text-sage-400" />
+              <h3 className="text-xl font-serif text-sage-600 mb-2">No Video Testimonials Available</h3>
+              <p className="text-sage-500 text-sm">Patient video testimonials will be displayed here once they are added.</p>
+            </div>
+          )}
         </div>
       </section>
 

@@ -352,7 +352,7 @@ const ConsultationSurvey: React.FC = () => {
   // ─── Main survey ────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sage-50 via-white to-[#faf8f5] flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-sage-50 via-white to-[#faf8f5] flex flex-col pt-24">
       <style>{`
         @keyframes slideInRight {
           from { transform: translateX(80px); opacity: 0; }
