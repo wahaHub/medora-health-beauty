@@ -338,6 +338,33 @@ export function useProcedureCases(procedureId: string | undefined) {
 // Hospital Types
 // ============================================
 
+/**
+ * CRM Metadata stored in hospitals.crm_metadata JSONB field
+ */
+export interface CRMMetadata {
+  bedCount?: number;
+  patientCapacity?: number;
+  multilingualStaff?: string[];  // 语言代码数组: ['en', 'zh', 'ar', ...]
+  airportServices?: string[];    // 服务代码数组: ['complimentary_transfer', 'paid_transfer', ...]
+  followUpCare?: string[];       // 服务代码数组: ['lifetime', 'telemedicine', ...]
+  amenities?: string[];          // 设施代码数组: ['wifi', 'concierge', ...]
+  certifications?: Array<{
+    id: string;
+    name: string;
+    nameEn: string;
+    year?: number;
+    isActive: boolean;
+  }>;
+  videoTestimonials?: Array<{
+    id: string;
+    title: string;
+    thumbnailUrl: string;
+    videoUrl: string;
+    patientName?: string;
+    procedureType?: string;
+  }>;
+}
+
 export interface Hospital {
   id: string;
   slug: string;
@@ -351,6 +378,7 @@ export interface Hospital {
   photos: string[];
   payment_methods: string[];
   highlights: { icon: string; text: string }[];
+  crm_metadata: CRMMetadata | null;
   is_active: boolean;
   sort_order: number;
 }

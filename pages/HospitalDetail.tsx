@@ -3,14 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ChevronRight, Star, MapPin, Phone, Globe, Clock, X, ChevronLeft,
   CreditCard, Award, Shield, Wifi, Car, Plane, Heart, Play,
-  CheckCircle, Users, Camera, Quote, ChevronDown, ChevronUp, Loader2
+  CheckCircle, Users, Camera, Quote, ChevronDown, ChevronUp, Loader2,
+  Bed, Coffee, Building2
 } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useTranslation } from '../hooks/useTranslation';
 import { useConsultation } from '../contexts/ConsultationContext';
-import { useHospital, CompleteHospitalData } from '../hooks/useData';
+import { useHospital, CompleteHospitalData, CRMMetadata } from '../hooks/useData';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getProcedureCaseImage } from '../utils/imageUtils';
+import { generateSmartHighlights, getFacilityFeatures, getCertificationBadgeInfo, getAmenitiesDisplay } from '../utils/hospitalUtils';
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
@@ -155,6 +157,21 @@ const highlightIconMap: Record<string, React.ReactNode> = {
   car: <Car size={20} />,
   plane: <Plane size={20} />,
   heart: <Heart size={20} />,
+  bed: <Bed size={20} />,
+  coffee: <Coffee size={20} />,
+  building: <Building2 size={20} />,
+  check: <CheckCircle size={20} />,
+  star: <Star size={20} />,
+  'check-circle': <CheckCircle size={20} />,
+};
+
+// Facility features icon mapping
+const facilityIconMap: Record<string, React.ReactNode> = {
+  bed: <Bed size={24} />,
+  users: <Users size={24} />,
+  globe: <Globe size={24} />,
+  plane: <Plane size={24} />,
+  heart: <Heart size={24} />,
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -191,6 +208,8 @@ const HospitalDetail: React.FC = () => {
         recommendRate: 0,
         description: '',
         highlights: [],
+        crmMetadata: null as CRMMetadata | null,
+        facilityFeatures: [],
         paymentMethods: [],
         photos: [],
         surgeries: [],
@@ -212,6 +231,19 @@ const HospitalDetail: React.FC = () => {
 
     const { hospital: h, translation, ratingBreakdown, procedures, location, nearbyAttractions, reviews, videoTestimonials, surgeons, cases } = hospitalData;
 
+    // Get existing highlights
+    const existingHighlights = (translation?.highlights || h.highlights || []) as { icon: string; text: string }[];
+
+    // Generate smart highlights from CRM metadata
+    const smartHighlights = generateSmartHighlights(
+      h.crm_metadata,
+      existingHighlights,
+      { maxItems: 8, language: 'en' }
+    );
+
+    // Get facility features for the new section
+    const facilityFeatures = getFacilityFeatures(h.crm_metadata, 'en');
+
     return {
       id: h.slug,
       name: h.name,
@@ -223,7 +255,9 @@ const HospitalDetail: React.FC = () => {
       totalPatients: h.total_patients || 0,
       recommendRate: h.recommend_rate || 0,
       description: translation?.description || '',
-      highlights: (translation?.highlights || h.highlights || []) as { icon: string; text: string }[],
+      highlights: smartHighlights,
+      crmMetadata: h.crm_metadata,
+      facilityFeatures,
       paymentMethods: h.payment_methods || [],
       photos: h.photos || [],
       surgeries: procedures.map(p => ({
@@ -419,9 +453,44 @@ const HospitalDetail: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          1b. PHOTO GALLERY — Left 50% big + Right 2x2 grid
+          STICKY SECTION NAVIGATION
          ═══════════════════════════════════════════════════════════════════════ */}
-      <section className="pt-8 pb-4 bg-white">
+      <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-sage-100 shadow-sm">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-8 py-3">
+            {[
+              { id: 'environment', label: 'Environment' },
+              { id: 'overview', label: 'Overview' },
+              { id: 'prices', label: 'Prices' },
+              { id: 'before-after', label: 'Before and After Photos' },
+              { id: 'doctors', label: 'Doctors' },
+              { id: 'reviews', label: 'Reviews' },
+              { id: 'videos', label: 'Videos' },
+              { id: 'location', label: 'Location' },
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  const element = document.getElementById(item.id);
+                  if (element) {
+                    const navHeight = 60;
+                    const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+                    window.scrollTo({ top: elementPosition - navHeight, behavior: 'smooth' });
+                  }
+                }}
+                className="py-2.5 text-base font-semibold text-stone-600 hover:text-navy-900 hover:bg-sage-50 transition-colors whitespace-nowrap text-center"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          1b. ENVIRONMENT (Photo Gallery)
+         ═══════════════════════════════════════════════════════════════════════ */}
+      <section id="environment" className="pt-8 pb-4 bg-white">
         <div className="container mx-auto px-6">
           {hospital.photos.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 rounded-xl overflow-hidden h-[420px]">
@@ -615,7 +684,7 @@ const HospitalDetail: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════════════
           2. OVERVIEW — Highlights + Payment Methods
          ═══════════════════════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-white scroll-reveal">
+      <section id="overview" className="py-24 bg-white scroll-reveal">
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row gap-16 items-start">
             {/* Left — About */}
@@ -680,9 +749,125 @@ const HospitalDetail: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          3. PRICES — Surgery Price List
+          2b. CERTIFICATIONS & FACILITY FEATURES
          ═══════════════════════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-sage-50 scroll-reveal">
+      {(hospital.crmMetadata?.certifications?.length || hospital.facilityFeatures?.length > 0) && (
+        <section className="py-16 bg-sage-50 scroll-reveal">
+          <div className="container mx-auto px-6">
+            <div className="max-w-6xl mx-auto">
+              {/* Certifications */}
+              {hospital.crmMetadata?.certifications && hospital.crmMetadata.certifications.length > 0 && (
+                <div className="mb-12">
+                  <div className="text-center mb-8">
+                    <span className="text-gold-600 uppercase tracking-[0.2em] text-xs font-bold mb-2 block">
+                      Trusted & Accredited
+                    </span>
+                    <h2 className="font-serif text-3xl md:text-4xl text-navy-900">
+                      Certifications & Accreditations
+                    </h2>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-6">
+                    {hospital.crmMetadata.certifications
+                      .filter(cert => cert.isActive)
+                      .map((cert, idx) => {
+                        const badgeInfo = getCertificationBadgeInfo(cert.name);
+                        return (
+                          <div
+                            key={idx}
+                            className="bg-white border border-sage-100 shadow-sm px-8 py-6 flex flex-col items-center gap-3 min-w-[140px]"
+                          >
+                            <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
+                              badgeInfo.color === 'gold' ? 'bg-gold-600/10 text-gold-600' :
+                              badgeInfo.color === 'blue' ? 'bg-blue-500/10 text-blue-600' :
+                              badgeInfo.color === 'green' ? 'bg-emerald-500/10 text-emerald-600' :
+                              badgeInfo.color === 'purple' ? 'bg-purple-500/10 text-purple-600' :
+                              'bg-stone-100 text-stone-600'
+                            }`}>
+                              {highlightIconMap[badgeInfo.icon] || <Award size={24} />}
+                            </div>
+                            <div className="text-center">
+                              <div className="font-bold text-navy-900 text-lg">{badgeInfo.shortName}</div>
+                              {cert.year && (
+                                <div className="text-stone-500 text-sm">Since {cert.year}</div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+
+              {/* Facility Features */}
+              {hospital.facilityFeatures && hospital.facilityFeatures.length > 0 && (
+                <div>
+                  <div className="text-center mb-8">
+                    <span className="text-gold-600 uppercase tracking-[0.2em] text-xs font-bold mb-2 block">
+                      World-Class Facilities
+                    </span>
+                    <h2 className="font-serif text-3xl md:text-4xl text-navy-900">
+                      Facility Features
+                    </h2>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {hospital.facilityFeatures.map((feature, idx) => (
+                      <div
+                        key={idx}
+                        className={`bg-white border shadow-sm p-4 md:p-5 flex flex-col items-center text-center gap-2 transition-all min-h-[140px] ${
+                          feature.available
+                            ? 'border-sage-100 hover:shadow-md'
+                            : 'border-stone-100 opacity-50'
+                        }`}
+                      >
+                        <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          feature.available
+                            ? 'bg-gold-600/10 text-gold-600'
+                            : 'bg-stone-100 text-stone-400'
+                        }`}>
+                          {facilityIconMap[feature.icon] || <CheckCircle size={24} />}
+                        </div>
+                        <div className="flex-1 flex flex-col justify-center">
+                          <div className="font-medium text-navy-900 text-sm leading-tight">{feature.title}</div>
+                          <div className={`text-xs mt-1 leading-relaxed ${
+                            feature.available ? 'text-gold-600 font-semibold' : 'text-stone-400'
+                          }`}>
+                            {feature.available ? feature.description : 'N/A'}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Amenities */}
+                  {hospital.crmMetadata?.amenities && hospital.crmMetadata.amenities.length > 0 && (
+                    <div className="mt-8 bg-white border border-sage-100 p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <Wifi size={20} className="text-gold-600" />
+                        <h4 className="font-medium text-navy-900">Amenities</h4>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {getAmenitiesDisplay(hospital.crmMetadata, 'en').map((amenityLabel, idx) => (
+                          <span
+                            key={idx}
+                            className="bg-sage-50 text-stone-700 px-4 py-2 text-sm rounded-full border border-sage-100"
+                          >
+                            {amenityLabel}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          4. PRICES — Surgery Price List
+         ═══════════════════════════════════════════════════════════════════════ */}
+      <section id="prices" className="py-24 bg-sage-50 scroll-reveal">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <span className="text-gold-600 uppercase tracking-[0.2em] text-xs font-bold mb-4 block">
@@ -749,9 +934,97 @@ const HospitalDetail: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          4. DOCTORS
+          5. BEFORE & AFTER PHOTOS
          ═══════════════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#1c1c1c] py-24 text-white scroll-reveal-scale">
+      <section id="before-after" className="py-24 bg-white scroll-reveal">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-gold-600 uppercase tracking-[0.2em] text-xs font-bold mb-4 block">
+              Real Results
+            </span>
+            <h2 className="font-serif text-4xl md:text-5xl text-navy-900 mb-4">
+              Before & After Photos
+            </h2>
+            <p className="text-stone-500 max-w-2xl mx-auto font-light">
+              View real patient transformations performed by our expert surgical team.
+            </p>
+          </div>
+
+          {hospital.beforeAfter.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {hospital.beforeAfter.map((item) => (
+                  <div
+                    key={item.id}
+                    className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer border border-stone-100"
+                  >
+                    {/* Image */}
+                    <div className="relative aspect-[4/3] overflow-hidden bg-sage-50">
+                      <img
+                        src={item.beforeImg}
+                        alt={`${item.procedure} - Before & After`}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-navy-900/90 via-navy-900/50 to-transparent flex items-end justify-center pb-8 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+                        <span className="inline-flex items-center gap-2 text-white uppercase tracking-widest text-sm font-medium bg-gold-600 px-6 py-3 rounded-full">
+                          View Case Details
+                          <ChevronRight size={16} />
+                        </span>
+                      </div>
+                      {/* Procedure badge */}
+                      <div className="absolute top-4 left-4">
+                        <span className="bg-white/95 backdrop-blur-sm text-navy-900 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm">
+                          {item.procedure}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Info */}
+                    <div className="p-6">
+                      <h3 className="text-navy-900 font-semibold text-lg group-hover:text-gold-600 transition-colors mb-2">
+                        {item.procedure}
+                      </h3>
+                      <div className="space-y-1.5 text-sm text-stone-500">
+                        <p className="flex items-center gap-2">
+                          <span className="text-stone-400">Doctor:</span>
+                          <span>{item.doctor}</span>
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <span className="text-stone-400">Patient:</span>
+                          <span>{item.patientInfo}</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* View all gallery button */}
+              <div className="text-center mt-12">
+                <button
+                  onClick={() => navigate(`/hospital/${hospitalSlug}/gallery`)}
+                  className="inline-flex items-center gap-2 bg-transparent border-2 border-navy-900 text-navy-900 px-10 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-navy-900 hover:text-white transition-all duration-300"
+                >
+                  View Full Gallery
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="max-w-3xl mx-auto rounded-xl bg-gradient-to-br from-sage-50 to-sage-100 p-16 text-center border-2 border-dashed border-sage-300">
+              <Camera size={64} className="mx-auto mb-4 text-sage-400" />
+              <h3 className="text-xl font-serif text-sage-600 mb-2">No Before & After Cases Available</h3>
+              <p className="text-sage-500 text-sm">Patient transformation cases will be displayed here once they are added.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          6. DOCTORS
+         ═══════════════════════════════════════════════════════════════════════ */}
+      <section id="doctors" className="bg-[#1c1c1c] py-24 text-white scroll-reveal-scale">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <span className="text-gold-600 uppercase tracking-widest text-sm font-bold mb-4 block">
@@ -810,97 +1083,9 @@ const HospitalDetail: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          5. BEFORE & AFTER PHOTOS
+          7. REVIEWS
          ═══════════════════════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-white scroll-reveal">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <span className="text-gold-600 uppercase tracking-[0.2em] text-xs font-bold mb-4 block">
-              Real Results
-            </span>
-            <h2 className="font-serif text-4xl md:text-5xl text-navy-900 mb-4">
-              Before & After Photos
-            </h2>
-            <p className="text-stone-500 max-w-2xl mx-auto font-light">
-              View real patient transformations performed by our expert surgical team.
-            </p>
-          </div>
-
-          {hospital.beforeAfter.length > 0 ? (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {hospital.beforeAfter.map((item) => (
-              <div
-                key={item.id}
-                className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer border border-stone-100"
-              >
-                {/* Image */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-sage-50">
-                  <img
-                    src={item.beforeImg}
-                    alt={`${item.procedure} - Before & After`}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy-900/90 via-navy-900/50 to-transparent flex items-end justify-center pb-8 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-                    <span className="inline-flex items-center gap-2 text-white uppercase tracking-widest text-sm font-medium bg-gold-600 px-6 py-3 rounded-full">
-                      View Case Details
-                      <ChevronRight size={16} />
-                    </span>
-                  </div>
-                  {/* Procedure badge */}
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-white/95 backdrop-blur-sm text-navy-900 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm">
-                      {item.procedure}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Info */}
-                <div className="p-6">
-                  <h3 className="text-navy-900 font-semibold text-lg group-hover:text-gold-600 transition-colors mb-2">
-                    {item.procedure}
-                  </h3>
-                  <div className="space-y-1.5 text-sm text-stone-500">
-                    <p className="flex items-center gap-2">
-                      <span className="text-stone-400">Doctor:</span>
-                      <span>{item.doctor}</span>
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <span className="text-stone-400">Patient:</span>
-                      <span>{item.patientInfo}</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-              </div>
-
-              {/* View all gallery button */}
-              <div className="text-center mt-12">
-                <button
-                  onClick={() => navigate(`/hospital/${hospitalSlug}/gallery`)}
-                  className="inline-flex items-center gap-2 bg-transparent border-2 border-navy-900 text-navy-900 px-10 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-navy-900 hover:text-white transition-all duration-300"
-                >
-                  View Full Gallery
-                  <ChevronRight size={18} />
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="max-w-3xl mx-auto rounded-xl bg-gradient-to-br from-sage-50 to-sage-100 p-16 text-center border-2 border-dashed border-sage-300">
-              <Camera size={64} className="mx-auto mb-4 text-sage-400" />
-              <h3 className="text-xl font-serif text-sage-600 mb-2">No Before & After Cases Available</h3>
-              <p className="text-sage-500 text-sm">Patient transformation cases will be displayed here once they are added.</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════════════
-          6. REVIEWS
-         ═══════════════════════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-[#f9f5f1] scroll-reveal">
+      <section id="reviews" className="py-24 bg-[#f9f5f1] scroll-reveal">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <span className="text-gold-600 uppercase tracking-[0.2em] text-xs font-bold mb-4 block">
@@ -1003,9 +1188,9 @@ const HospitalDetail: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          7. VIDEO TESTIMONIALS
+          8. VIDEO TESTIMONIALS
          ═══════════════════════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-white scroll-reveal">
+      <section id="videos" className="py-24 bg-white scroll-reveal">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <span className="text-gold-600 uppercase tracking-[0.2em] text-xs font-bold mb-4 block">
@@ -1062,9 +1247,9 @@ const HospitalDetail: React.FC = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          8. LOCATION
+          9. LOCATION
          ═══════════════════════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-sage-50 scroll-reveal">
+      <section id="location" className="py-24 bg-sage-50 scroll-reveal">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <span className="text-gold-600 uppercase tracking-[0.2em] text-xs font-bold mb-4 block">

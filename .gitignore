@@ -56,3 +56,4 @@ photos/
 # Generated data (already in Supabase)
 scripts/data/
 translations/
+.claude/settings.local.json
