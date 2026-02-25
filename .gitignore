@@ -57,3 +57,6 @@ photos/
 scripts/data/
 translations/
 .claude/settings.local.json
+
+# Separate projects (have their own git repos)
+medical-crm/

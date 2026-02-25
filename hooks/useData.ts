@@ -515,12 +515,13 @@ async function fetchHospitalBySlug(
   const startTime = performance.now();
 
   // 1. First fetch hospital (needed for hospital_id)
+  // Note: Don't filter by is_active here - direct URL access should work regardless
+  // is_active filtering is only for search results
   const hospitalStart = performance.now();
   const { data: hospital, error: hospitalError } = await supabase
     .from('hospitals')
     .select('*')
     .eq('slug', slug)
-    .eq('is_active', true)
     .single();
   console.log('🏥 [fetchHospitalBySlug] Hospital query took:', (performance.now() - hospitalStart).toFixed(0), 'ms');
 
@@ -685,12 +686,11 @@ export interface HospitalGalleryData {
 }
 
 async function fetchHospitalGallery(slug: string): Promise<HospitalGalleryData | null> {
-  // 1. Get hospital by slug
+  // 1. Get hospital by slug (no is_active filter - direct URL access should work)
   const { data: hospital, error: hospitalError } = await supabase
     .from('hospitals')
     .select('id, slug, name')
     .eq('slug', slug)
-    .eq('is_active', true)
     .single();
 
   if (hospitalError || !hospital) {
