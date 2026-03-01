@@ -340,6 +340,8 @@ const HospitalDetail: React.FC = () => {
   const [activeReviewFilter, setActiveReviewFilter] = useState<string>('all');
   const [visibleReviews, setVisibleReviews] = useState(3);
   const [consultWidgetOpen, setConsultWidgetOpen] = useState(true);
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [currentVideo, setCurrentVideo] = useState<{ url: string; title: string } | null>(null);
 
   // Scroll reveal
   // Important: only start reveal *after* data is loaded and the real DOM exists.
@@ -1207,13 +1209,28 @@ const HospitalDetail: React.FC = () => {
           {hospital.videoTestimonials.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {hospital.videoTestimonials.map((video) => (
-              <div key={video.id} className="group cursor-pointer">
+              <div
+                key={video.id}
+                className="group cursor-pointer"
+                onClick={() => {
+                  if (video.video_url) {
+                    setCurrentVideo({ url: video.video_url, title: video.title });
+                    setVideoModalOpen(true);
+                  }
+                }}
+              >
                 <div className="relative aspect-video overflow-hidden rounded-lg bg-sage-100 mb-5 shadow-sm">
-                  <img
-                    src={video.thumbnail}
-                    alt={video.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
+                  {video.thumbnail ? (
+                    <img
+                      src={video.thumbnail}
+                      alt={video.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sage-100 to-sage-200">
+                      <Play size={64} className="text-sage-400" />
+                    </div>
+                  )}
                   {/* Play button overlay */}
                   <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
                     <div className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
@@ -1360,6 +1377,47 @@ const HospitalDetail: React.FC = () => {
       </section>
 
     </div>
+
+    {/* ═══════════════════════════════════════════════════════════════════════
+        VIDEO MODAL
+       ═══════════════════════════════════════════════════════════════════════ */}
+    {videoModalOpen && currentVideo && (
+      <div
+        className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+        onClick={() => {
+          setVideoModalOpen(false);
+          setCurrentVideo(null);
+        }}
+      >
+        <div
+          className="relative w-full max-w-5xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={() => {
+              setVideoModalOpen(false);
+              setCurrentVideo(null);
+            }}
+            className="absolute -top-12 right-0 text-white hover:text-gold-400 transition-colors"
+          >
+            <X size={32} />
+          </button>
+          <div className="aspect-video bg-black rounded-lg overflow-hidden">
+            <video
+              src={currentVideo.url}
+              controls
+              autoPlay
+              className="w-full h-full"
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <h3 className="text-white text-xl font-semibold mt-4 text-center">
+            {currentVideo.title}
+          </h3>
+        </div>
+      </div>
+    )}
 
     {/* ═══════════════════════════════════════════════════════════════════════
         FLOATING CONSULTATION WIDGET — outside animated div so fixed works
