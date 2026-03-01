@@ -642,6 +642,26 @@ async function fetchHospitalBySlug(
     cases: casesResult.data?.length || 0,
     casesError: casesResult.error?.message,
   });
+
+  // ✅ For beauty hospitals (role=hospital): Transform crm_metadata.videoTestimonials
+  let finalVideoTestimonials = videoTestimonialsResult.data || [];
+  if (hospital.crm_metadata?.videoTestimonials && Array.isArray(hospital.crm_metadata.videoTestimonials)) {
+    console.log('🏥 [fetchHospitalBySlug] Using crm_metadata.videoTestimonials:', hospital.crm_metadata.videoTestimonials.length);
+    finalVideoTestimonials = hospital.crm_metadata.videoTestimonials.map((video: any, index: number) => ({
+      id: video.id || `video-${index}`,
+      title: video.title || '',
+      video_url: video.videoUrl || null,
+      thumbnail_url: video.thumbnailUrl || null,
+      // Transform to match frontend expectations (HospitalDetail.tsx uses these fields)
+      thumbnail: video.thumbnailUrl || null,
+      duration: '2:00', // Default duration since CRM doesn't store it
+      procedure: video.procedureType || '',
+      country: video.patientName || '',
+      sort_order: index,
+      procedures: video.procedureType ? { procedure_name: video.procedureType } : null,
+    }));
+  }
+
   console.log('🏥 [fetchHospitalBySlug] TOTAL TIME:', (performance.now() - startTime).toFixed(0), 'ms');
 
   return {
@@ -652,7 +672,7 @@ async function fetchHospitalBySlug(
     location: locationResult.data || null,
     nearbyAttractions: nearbyAttractionsResult.data || [],
     reviews: reviewsResult.data || [],
-    videoTestimonials: videoTestimonialsResult.data || [],
+    videoTestimonials: finalVideoTestimonials,
     surgeons: surgeonsResult.data || [],
     cases: casesResult.data || [],
   };
