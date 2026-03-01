@@ -276,16 +276,24 @@ const HospitalDetail: React.FC = () => {
       })),
       beforeAfter: cases.map((c, idx) => {
         const procedureName = c.procedures?.procedure_name || '';
+        const procedureSlug = c.procedures?.slug || '';
 
         // ✅ Use case_media if available, otherwise fallback to convention-based URLs
         const caseMedia = c.case_media || [];
         const sortedMedia = [...caseMedia].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
         const imageMedia = sortedMedia.filter((m: any) => m.media_type === 'image');
 
-        const beforeImg = imageMedia[0]?.media_url ||
-          (procedureName && c.case_number ? getProcedureCaseImage(procedureName, c.case_number, 1) : '');
-        const afterImg = imageMedia[1]?.media_url ||
-          (procedureName && c.case_number ? getProcedureCaseImage(procedureName, c.case_number, 2) : '');
+        // Generate correct R2 URL matching CRM's upload path
+        const R2_BASE = 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev';
+        const getCaseImageUrl = (index: number) => {
+          if (h.id && procedureSlug && c.case_number) {
+            return `${R2_BASE}/hospitals/${h.id}/cases/${procedureSlug}/case-${c.case_number}-${index}.png`;
+          }
+          return '';
+        };
+
+        const beforeImg = imageMedia[0]?.media_url || getCaseImageUrl(1);
+        const afterImg = imageMedia[1]?.media_url || getCaseImageUrl(2);
 
         return {
           id: idx + 1,

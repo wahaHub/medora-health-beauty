@@ -726,15 +726,23 @@ async function fetchHospitalGallery(slug: string): Promise<HospitalGalleryData |
     return null;
   }
 
-  // 2. Fetch ALL cases for this hospital's surgeons (no limit)
+  // 2. Fetch ALL cases for this hospital (no limit)
   const { data: cases } = await supabase
     .from('procedure_cases')
     .select(`
       id, case_number, patient_age, patient_gender, image_count, sort_order,
       procedures (id, procedure_name, slug),
-      surgeons!inner (surgeon_id, name, hospital_id)
+      surgeons (surgeon_id, name, hospital_id),
+      case_media (
+        id,
+        media_type,
+        media_url,
+        thumbnail_url,
+        caption,
+        sort_order
+      )
     `)
-    .eq('surgeons.hospital_id', hospital.id)
+    .eq('hospital_id', hospital.id)
     .order('sort_order', { ascending: true })
     .order('case_number', { ascending: false });
 

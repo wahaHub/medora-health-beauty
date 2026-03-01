@@ -302,7 +302,17 @@ const HospitalGallery: React.FC = () => {
                   }`}>
                     {cases.map((caseItem) => {
                       const procedureName = caseItem.procedures?.procedure_name || '';
-                      const caseImage = getProcedureCaseImage(procedureName, caseItem.case_number, 1);
+                      const procedureSlug = caseItem.procedures?.slug || '';
+
+                      // ✅ Use case_media if available, otherwise fallback to R2 convention-based URL
+                      const caseMedia = (caseItem as any).case_media || [];
+                      const imageMedia = caseMedia.filter((m: any) => m.media_type === 'image');
+                      const R2_BASE = 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev';
+                      const caseImage = imageMedia[0]?.media_url ||
+                        (galleryData?.hospital?.id && procedureSlug && caseItem.case_number
+                          ? `${R2_BASE}/hospitals/${galleryData.hospital.id}/cases/${procedureSlug}/case-${caseItem.case_number}-1.png`
+                          : getProcedureCaseImage(procedureName, caseItem.case_number, 1));
+
                       const isHovered = hoveredCase === caseItem.case_number;
 
                       return (
