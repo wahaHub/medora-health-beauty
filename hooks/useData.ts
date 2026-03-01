@@ -620,7 +620,7 @@ async function fetchHospitalBySlug(
       .select(`
         id, case_number, patient_age, patient_gender, image_count, sort_order,
         procedures (id, procedure_name, slug),
-        surgeons!inner (surgeon_id, name, hospital_id),
+        surgeons (surgeon_id, name, hospital_id),
         case_media (
           id,
           media_type,
@@ -630,7 +630,7 @@ async function fetchHospitalBySlug(
           sort_order
         )
       `)
-      .eq('surgeons.hospital_id', hospital.id)
+      .eq('hospital_id', hospital.id)
       .order('sort_order', { ascending: true })
       .order('case_number', { ascending: false })
       .limit(6),
