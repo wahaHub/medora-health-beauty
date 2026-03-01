@@ -276,15 +276,22 @@ const HospitalDetail: React.FC = () => {
       })),
       beforeAfter: cases.map((c, idx) => {
         const procedureName = c.procedures?.procedure_name || '';
+
+        // ✅ Use case_media if available, otherwise fallback to convention-based URLs
+        const caseMedia = c.case_media || [];
+        const sortedMedia = [...caseMedia].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        const imageMedia = sortedMedia.filter((m: any) => m.media_type === 'image');
+
+        const beforeImg = imageMedia[0]?.media_url ||
+          (procedureName && c.case_number ? getProcedureCaseImage(procedureName, c.case_number, 1) : '');
+        const afterImg = imageMedia[1]?.media_url ||
+          (procedureName && c.case_number ? getProcedureCaseImage(procedureName, c.case_number, 2) : '');
+
         return {
           id: idx + 1,
           procedure: procedureName,
-          beforeImg: procedureName && c.case_number
-            ? getProcedureCaseImage(procedureName, c.case_number, 1)
-            : '',
-          afterImg: procedureName && c.case_number
-            ? getProcedureCaseImage(procedureName, c.case_number, 2)
-            : '',
+          beforeImg,
+          afterImg,
           doctor: c.surgeons?.name || '',
           patientInfo: `${c.patient_gender || ''}, ${c.patient_age || ''}`.replace(/^, |, $/g, ''),
         };
@@ -959,6 +966,7 @@ const HospitalDetail: React.FC = () => {
                   <div
                     key={item.id}
                     className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer border border-stone-100"
+                    onClick={() => navigate(`/hospital/${hospitalSlug}/gallery?case=${item.id}`)}
                   >
                     {/* Image */}
                     <div className="relative aspect-[4/3] overflow-hidden bg-sage-50">

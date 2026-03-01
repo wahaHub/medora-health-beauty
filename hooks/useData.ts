@@ -614,13 +614,21 @@ async function fetchHospitalBySlug(
       .select('surgeon_id, name, title, specialties, experience_years, images')
       .eq('hospital_id', hospital.id),
 
-    // Cases (before/after)
+    // Cases (before/after) with case_media
     supabase
       .from('procedure_cases')
       .select(`
         id, case_number, patient_age, patient_gender, image_count, sort_order,
         procedures (id, procedure_name, slug),
-        surgeons!inner (surgeon_id, name, hospital_id)
+        surgeons!inner (surgeon_id, name, hospital_id),
+        case_media (
+          id,
+          media_type,
+          media_url,
+          thumbnail_url,
+          caption,
+          sort_order
+        )
       `)
       .eq('surgeons.hospital_id', hospital.id)
       .order('sort_order', { ascending: true })
