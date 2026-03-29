@@ -8,7 +8,7 @@ interface ContactInfoStepProps {
 }
 
 export function ContactInfoStep({ onSubmit }: ContactInfoStepProps) {
-  const { loginWithOnboarding } = usePatientAuth();
+  const { bootstrapSession } = usePatientAuth();
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -29,7 +29,7 @@ export function ContactInfoStep({ onSubmit }: ContactInfoStepProps) {
         ...form,
         captchaToken: 'dev-bypass',
       });
-      loginWithOnboarding({ id: result.patientId, name: form.name, email: form.email });
+      bootstrapSession({ patientId: result.patientId, caseId: result.caseId, name: form.name, email: form.email, restoreToken: (result as any).restoreToken ?? '', nextStep: (result as any).nextStep ?? 'select-hospitals' });
       onSubmit(result.caseId);
     } catch (err: any) {
       setError(err.message ?? 'Something went wrong');

@@ -1,17 +1,91 @@
 const BASE_URL = '/api/patient';
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...options.headers as Record<string, string> },
-    ...options,
-  });
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.error ?? `Request failed: ${res.status}`);
+export const RESTORE_TOKEN_STORAGE_KEY = 'medora.patient.restoreToken';
+
+export class ApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
   }
-  return res.json();
 }
+
+function isBrowser() {
+  return typeof window !== 'undefined';
+}
+
+export function getStoredRestoreToken(): string | null {
+  if (!isBrowser()) return null;
+  return window.localStorage.getItem(RESTORE_TOKEN_STORAGE_KEY);
+}
+
+export function setStoredRestoreToken(token: string): void {
+  if (!isBrowser()) return;
+  window.localStorage.setItem(RESTORE_TOKEN_STORAGE_KEY, token);
+}
+
+export function clearStoredRestoreToken(): void {
+  if (!isBrowser()) return;
+  window.localStorage.removeItem(RESTORE_TOKEN_STORAGE_KEY);
+}
+
+export function shouldClearStoredRestoreToken(error: unknown): boolean {
+  if (!(error instanceof ApiError)) return false;
+  if (error.status === 408 || error.status === 429) return false;
+  return error.status >= 400 && error.status < 500;
+}
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const headers = new Headers((options.headers as Record<string, string>) || {});
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  const res = await fetch(`${BASE_URL}${path}`, {
+    ...options,
+    credentials: 'include',
+    headers,
+  });
+
+  const rawBody = await res.text();
+  let body: any = {};
+  if (rawBody) {
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      body = { message: rawBody };
+    }
+  }
+
+  if (!res.ok) {
+    throw new ApiError(body.error ?? body.message ?? `Request failed: ${res.status}`, res.status);
+  }
+
+  return body as T;
+}
+
+export type PatientSessionProfile = {
+  id?: string;
+  patientId?: string;
+  caseId?: string;
+  name?: string;
+  email?: string;
+  patientCode?: string | null;
+  preferredLanguage?: string;
+  restoreToken?: string;
+  nextStep?: 'select-hospitals' | 'messages-ready';
+};
+
+export type VerifyTokenResponse = PatientSessionProfile & {
+  patientId: string;
+  caseId: string;
+  restoreToken: string;
+  nextStep: 'select-hospitals' | 'messages-ready';
+};
+
+export type PatientSessionBootstrap = VerifyTokenResponse;
 
 export const crmApi = {
   // Public onboarding
@@ -24,11 +98,15 @@ export const crmApi = {
     request<{ hospitals: any[] }>('/match-hospitals', { method: 'POST', body: JSON.stringify(data) }),
 
   // Auth
-  getMe: () => request<{ id: string; patientCode: string | null; preferredLanguage: string }>('/me'),
+  getMe: () => request<PatientSessionProfile>('/me'),
   sendMagicLink: (email: string) =>
     request<{ ok: true }>('/magic-link', { method: 'POST', body: JSON.stringify({ email }) }),
-  verifyToken: (token: string) =>
-    request<{ patientId: string }>('/verify-token', { method: 'POST', body: JSON.stringify({ token }) }),
+  verifyMagicLink: (token: string) =>
+    request<VerifyTokenResponse>('/verify-token', { method: 'POST', body: JSON.stringify({ token }) }),
+  restoreSession: (restoreToken: string) =>
+    request<VerifyTokenResponse>('/session/restore', { method: 'POST', body: JSON.stringify({ restoreToken }) }),
+  logout: () =>
+    request<{ ok: true }>('/logout', { method: 'POST' }),
   setPassword: (password: string) =>
     request<{ ok: true }>('/set-password', { method: 'POST', body: JSON.stringify({ password }) }),
 
