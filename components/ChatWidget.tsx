@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { usePatientEntry } from '../hooks/usePatientEntry';
 import { ChatBubble } from './chat/ChatBubble';
 import { ChatWindow } from './chat/ChatWindow';
 
 export default function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isWidgetOpen, openWidget, closeWidget, toggleWidget } = usePatientEntry();
 
   return (
     <>
-      <ChatBubble isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
-      {isOpen && <ChatWindow onClose={() => setIsOpen(false)} />}
+      <ChatBubble isOpen={isWidgetOpen} onClick={toggleWidget} />
+      {isWidgetOpen && <ChatWindow onClose={closeWidget} />}
     </>
   );
 }
