@@ -37,7 +37,7 @@ export function shouldClearStoredRestoreToken(error: unknown): boolean {
   return error.status >= 400 && error.status < 500;
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers((options.headers as Record<string, string>) || {});
   if (!headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');

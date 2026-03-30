@@ -169,7 +169,13 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
     } catch (logoutError) {
       console.warn('Patient logout request failed, clearing local session anyway:', logoutError);
     } finally {
-      queryClient.clear();
+      // Clear all patient-scoped query groups on logout
+      await Promise.all([
+        queryClient.removeQueries({ queryKey: ['patient-phase2'] }),
+        queryClient.removeQueries({ queryKey: ['patient', 'conversations'] }),
+        queryClient.removeQueries({ queryKey: ['patient', 'cases'] }),
+        queryClient.removeQueries({ queryKey: ['patient', 'intake'] }),
+      ]);
       setIsLoading(false);
       navigate('/login', { replace: true });
     }
