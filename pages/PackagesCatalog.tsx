@@ -50,7 +50,7 @@ function PackageCard({
  *                   and writes orderId to sessionStorage
  *   await-payment — order exists; "Pay Now" calls createPaymentIntent
  *                   retry here reuses the same orderId, no second order
- *   payment       — client_secret received; simulate Stripe launch
+ *   payment       — payment intent is prepared; UI never exposes the secret
  *   done          — success; clear sessionStorage entry for this package
  *
  * Re-opening the modal for a package that has a sessionStorage entry skips
