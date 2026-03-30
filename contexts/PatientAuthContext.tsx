@@ -18,6 +18,10 @@ import {
   type PatientSessionBootstrap,
   type PatientSessionProfile,
 } from '../services/crmApiClient';
+import {
+  clearPatientReturnTo,
+  readPatientReturnTo,
+} from '../services/patientRouteMemory';
 import { useQueryClient } from '@tanstack/react-query';
 
 export interface PatientProfile {
@@ -79,6 +83,15 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
   const [patient, setPatient] = useState<PatientProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const resolvePostAuthPath = useCallback(() => {
+    const target = readPatientReturnTo();
+    if (target && target !== '/login') {
+      clearPatientReturnTo();
+      return target;
+    }
+    return '/dashboard';
+  }, []);
 
   useEffect(() => {
     patientRef.current = patient;
@@ -169,6 +182,7 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
     } catch (logoutError) {
       console.warn('Patient logout request failed, clearing local session anyway:', logoutError);
     } finally {
+      clearPatientReturnTo();
       // Clear all patient-scoped query groups on logout
       await Promise.all([
         queryClient.removeQueries({ queryKey: ['patient-phase2'] }),
@@ -205,7 +219,7 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
           const tokenResolved = await handleDashboardToken(token);
           if (cancelled) return;
 
-          navigate(tokenResolved ? '/dashboard' : '/login', tokenResolved
+          navigate(tokenResolved ? resolvePostAuthPath() : '/login', tokenResolved
             ? { replace: true }
             : { replace: true, state: { error: 'invalid-token' } });
           return;
@@ -219,6 +233,9 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
 
         if (recovered) {
           applyPatientSession(recovered);
+          if (pathname === '/login') {
+            navigate(resolvePostAuthPath(), { replace: true });
+          }
           return;
         }
 
@@ -237,7 +254,7 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [handleDashboardToken, navigate, recoverPatientSession, applyPatientSession]);
+  }, [handleDashboardToken, navigate, recoverPatientSession, applyPatientSession, resolvePostAuthPath]);
 
   // Re-verify a new token that appears in the URL after initial bootstrap
   useEffect(() => {
@@ -267,7 +284,7 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
 
       if (cancelled) return;
 
-      navigate(tokenResolved ? '/dashboard' : '/login', tokenResolved
+      navigate(tokenResolved ? resolvePostAuthPath() : '/login', tokenResolved
         ? { replace: true }
         : { replace: true, state: { error: 'invalid-token' } });
 
@@ -283,7 +300,7 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [handleDashboardToken, location.pathname, location.search, navigate]);
+  }, [handleDashboardToken, location.pathname, location.search, navigate, resolvePostAuthPath]);
 
   const value = useMemo<PatientAuthContextValue>(() => ({
     patient,

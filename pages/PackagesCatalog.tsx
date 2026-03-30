@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Check, X, CreditCard, Loader2, AlertCircle } from 'lucide-react';
 import { usePatientPackages, useCreatePatientOrder, useCreatePaymentIntent } from '../hooks/usePatientPhase2';
-import { usePatientAuth } from '../contexts/PatientAuthContext';
 import type { PatientPackage } from '../services/patientPhase2Api';
 
 /** sessionStorage key for a pending (unpaid) order per package */
@@ -63,7 +63,7 @@ type ModalState =
   | { stage: 'done'; pkg: PatientPackage };
 
 export default function PackagesCatalog() {
-  const { patient } = usePatientAuth();
+  const navigate = useNavigate();
   const { data, isLoading, error: packagesError } = usePatientPackages();
   const createOrder = useCreatePatientOrder();
   const createPayment = useCreatePaymentIntent();
@@ -93,7 +93,6 @@ export default function PackagesCatalog() {
     try {
       const order = await createOrder.mutateAsync({
         packageId: modal.pkg.id,
-        caseId: patient?.caseId,
       });
       sessionStorage.setItem(pendingOrderKey(modal.pkg.id), order.id);
       setModal({ stage: 'await-payment', orderId: order.id, pkg: modal.pkg });
@@ -231,18 +230,23 @@ export default function PackagesCatalog() {
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm space-y-2">
                   <p className="font-medium text-amber-800">Payment Ready</p>
                   <p className="text-amber-600">
-                    Order #{modal.orderId.slice(0, 8)} created. In production, Stripe would launch here.
-                  </p>
-                  <p className="text-amber-500 font-mono text-xs break-all">
-                    client_secret: {modal.clientSecret.slice(0, 30)}…
+                    Order #{modal.orderId.slice(0, 8)} created. The real checkout surface will use the payment intent privately.
                   </p>
                 </div>
-                <button
-                  onClick={() => setModal({ stage: 'done', pkg: modal.pkg })}
-                  className="w-full bg-gold-600 hover:bg-gold-700 text-white py-3 rounded-xl font-medium transition-colors"
-                >
-                  Simulate Payment Complete
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => navigate(`/dashboard/orders?orderId=${modal.orderId}`)}
+                    className="flex-1 bg-gold-600 hover:bg-gold-700 text-white py-3 rounded-xl font-medium transition-colors"
+                  >
+                    View Order
+                  </button>
+                  <button
+                    onClick={() => setModal({ stage: 'done', pkg: modal.pkg })}
+                    className="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 py-3 rounded-xl font-medium transition-colors"
+                  >
+                    Mark Complete
+                  </button>
+                </div>
               </>
             )}
 
