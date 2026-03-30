@@ -38,6 +38,8 @@ import ConsultationSurvey from './pages/ConsultationSurvey';
 import DashboardLayout from './pages/dashboard/DashboardLayout';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import DashboardCaseDetail from './pages/dashboard/CaseDetail';
+import MessagesPage from './pages/dashboard/MessagesPage';
+import QuotesPage from './pages/dashboard/QuotesPage';
 import IntakePage from './pages/dashboard/IntakePage';
 import AccountPage from './pages/dashboard/AccountPage';
 import LoginPage from './pages/dashboard/LoginPage';
@@ -200,7 +202,11 @@ function App() {
 
               {/* Dashboard routes (no marketing Header/Footer) */}
               <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+                {/* Phase 1: 3 primary tabs */}
                 <Route index element={<DashboardHome />} />
+                <Route path="quotes" element={<QuotesPage />} />
+                <Route path="messages" element={<MessagesPage />} />
+                {/* Nested routes — accessible but not top-level nav tabs */}
                 <Route path="cases/:caseId" element={<DashboardCaseDetail />} />
                 <Route path="intake/:caseId" element={<IntakePage />} />
                 <Route path="account" element={<AccountPage />} />

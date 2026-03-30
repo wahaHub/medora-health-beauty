@@ -1,17 +1,38 @@
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { usePatientAuth } from '../../contexts/PatientAuthContext';
-import { usePatientEntry } from '../../hooks/usePatientEntry';
-import { LogOut, LayoutDashboard, User, MessageCircle } from 'lucide-react';
+import { usePatientCases } from '../../hooks/usePatientCases';
+import { LogOut, LayoutDashboard, FileText, MessageCircle } from 'lucide-react';
 
 export default function DashboardLayout() {
   const { patient, logout } = usePatientAuth();
-  const { openPanel: openMessages } = usePatientEntry();
+  const { data } = usePatientCases();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
+
+  // Compute total unread count across all cases
+  const totalUnread = (data?.cases ?? []).reduce(
+    (sum: number, c: any) => sum + (c.unreadCount ?? 0),
+    0,
+  );
+
+  const isActive = (path: string) => {
+    if (path === '/dashboard') {
+      return location.pathname === '/dashboard' || location.pathname === '/dashboard/';
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  const navLinkClass = (path: string) =>
+    `flex items-center gap-1.5 text-sm transition-colors ${
+      isActive(path)
+        ? 'text-gold-600 font-medium'
+        : 'text-stone-600 hover:text-gold-600'
+    }`;
 
   return (
     <div className="min-h-screen bg-sage-50">
@@ -23,18 +44,32 @@ export default function DashboardLayout() {
               Medora
             </Link>
             <nav className="flex items-center gap-4">
-              <Link to="/dashboard" className="text-stone-600 hover:text-gold-600 flex items-center gap-1.5 text-sm">
-                <LayoutDashboard size={16} /> My Cases
+              {/* Tab 1: Home */}
+              <Link to="/dashboard" className={navLinkClass('/dashboard')}>
+                <LayoutDashboard size={16} /> Home
               </Link>
-              <button onClick={openMessages} className="text-stone-600 hover:text-gold-600 flex items-center gap-1.5 text-sm">
-                <MessageCircle size={16} /> Messages
-              </button>
-              <Link to="/dashboard/account" className="text-stone-600 hover:text-gold-600 flex items-center gap-1.5 text-sm">
-                <User size={16} /> Account
+
+              {/* Tab 2: Quotes */}
+              <Link to="/dashboard/quotes" className={navLinkClass('/dashboard/quotes')}>
+                <FileText size={16} /> Quotes
+              </Link>
+
+              {/* Tab 3: Messages — opens PatientMessagePanel */}
+              <Link to="/dashboard/messages" className={navLinkClass('/dashboard/messages')}>
+                <MessageCircle size={16} />
+                Messages
+                {totalUnread > 0 && (
+                  <span className="ml-0.5 bg-gold-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none">
+                    {totalUnread > 9 ? '9+' : totalUnread}
+                  </span>
+                )}
               </Link>
             </nav>
           </div>
-          <button onClick={handleLogout} className="text-stone-500 hover:text-stone-700 flex items-center gap-1.5 text-sm">
+          <button
+            onClick={handleLogout}
+            className="text-stone-500 hover:text-stone-700 flex items-center gap-1.5 text-sm"
+          >
             <LogOut size={16} /> Sign out
           </button>
         </div>
