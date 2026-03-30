@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
-import { MessageSquare } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { MessageSquare, ShoppingBag, Package } from 'lucide-react';
 import { usePatientEntry } from '../../hooks/usePatientEntry';
 import { usePatientConversations } from '../../hooks/usePatientConversations';
 import { PanelHeader } from './PanelHeader';
@@ -19,6 +20,7 @@ import type { Conversation } from '../../services/crmApiClient';
  * and selected by default (driven by `activeConversationId` from context).
  */
 export function PatientMessagePanel() {
+  const navigate = useNavigate();
   const {
     isPanelOpen,
     closePanel,
@@ -80,6 +82,22 @@ export function PatientMessagePanel() {
       {/* Panel */}
       <div className="relative bg-white rounded-2xl shadow-lg w-full max-w-4xl h-[80vh] flex flex-col overflow-hidden mx-4">
         <PanelHeader onClose={closePanel} />
+
+        {/* Phase-2 quick actions */}
+        <div className="flex items-center gap-2 px-4 py-2 border-b border-stone-100 bg-stone-50">
+          <button
+            onClick={() => { closePanel(); navigate('/packages'); }}
+            className="flex items-center gap-1.5 text-xs text-gold-700 font-medium bg-gold-50 hover:bg-gold-100 border border-gold-200 px-3 py-1.5 rounded-lg transition-colors"
+          >
+            <Package size={13} /> Browse Packages
+          </button>
+          <button
+            onClick={() => { closePanel(); navigate('/dashboard/orders'); }}
+            className="flex items-center gap-1.5 text-xs text-stone-600 font-medium bg-white hover:bg-stone-100 border border-stone-200 px-3 py-1.5 rounded-lg transition-colors"
+          >
+            <ShoppingBag size={13} /> View Orders
+          </button>
+        </div>
 
         {isLoading ? (
           <div className="flex-1 flex items-center justify-center">

@@ -47,6 +47,7 @@ import TicketsPage from './pages/dashboard/TicketsPage';
 import OrdersPage from './pages/dashboard/OrdersPage';
 import JourneyPage from './pages/dashboard/JourneyPage';
 import AiSummaryPage from './pages/dashboard/AiSummaryPage';
+import PackagesCatalog from './pages/PackagesCatalog';
 
 // Home page component
 function HomePage() {
@@ -203,6 +204,7 @@ function App() {
 
               {/* Standalone pages */}
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/packages" element={<PackagesCatalog />} />
 
               {/* Dashboard routes (no marketing Header/Footer) */}
               <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>

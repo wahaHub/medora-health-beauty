@@ -1,0 +1,183 @@
+import { useState } from 'react';
+import { ShoppingBag, Check, X, CreditCard, Loader2 } from 'lucide-react';
+import { usePatientPackages, useCreatePatientOrder, useCreatePaymentIntent } from '../hooks/usePatientPhase2';
+import { usePatientAuth } from '../contexts/PatientAuthContext';
+import type { PatientPackage } from '../services/patientPhase2Api';
+
+function PackageCard({
+  pkg,
+  onSelect,
+}: {
+  key?: string;
+  pkg: PatientPackage;
+  onSelect: (pkg: PatientPackage) => void;
+}) {
+  return (
+    <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+      {pkg.coverImageUrl && (
+        <img src={pkg.coverImageUrl} alt={pkg.nameEn} className="h-44 w-full object-cover" />
+      )}
+      <div className="p-5 flex flex-col flex-1">
+        <h3 className="text-base font-serif font-semibold text-navy-900 mb-1">
+          {pkg.nameZh ?? pkg.nameEn}
+        </h3>
+        <p className="text-stone-500 text-sm flex-1 line-clamp-3">
+          {pkg.descriptionZh ?? pkg.descriptionEn ?? ''}
+        </p>
+        <div className="mt-4 flex items-center justify-between">
+          <span className="text-lg font-bold text-gold-700">
+            {pkg.currency} {Number(pkg.price).toLocaleString()}
+          </span>
+          <button
+            onClick={() => onSelect(pkg)}
+            className="bg-gold-600 hover:bg-gold-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+          >
+            Order
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type ModalState =
+  | { stage: 'confirm'; pkg: PatientPackage }
+  | { stage: 'payment'; orderId: string; clientSecret: string; pkg: PatientPackage }
+  | { stage: 'done'; pkg: PatientPackage };
+
+export default function PackagesCatalog() {
+  const { patient } = usePatientAuth();
+  const { data, isLoading } = usePatientPackages();
+  const createOrder = useCreatePatientOrder();
+  const createPayment = useCreatePaymentIntent();
+
+  const [modal, setModal] = useState<ModalState | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const packages = data?.data ?? [];
+
+  const handleConfirmOrder = async () => {
+    if (!modal || modal.stage !== 'confirm') return;
+    setError(null);
+    try {
+      const order = await createOrder.mutateAsync({
+        packageId: modal.pkg.id,
+        caseId: patient?.caseId,
+      });
+      const payment = await createPayment.mutateAsync(order.id);
+      setModal({ stage: 'payment', orderId: order.id, clientSecret: payment.clientSecret, pkg: modal.pkg });
+    } catch (e: any) {
+      setError(e.message ?? 'Failed to create order');
+    }
+  };
+
+  const closeModal = () => {
+    setModal(null);
+    setError(null);
+  };
+
+  if (isLoading) {
+    return <div className="text-center py-20 text-stone-400">Loading packages…</div>;
+  }
+
+  return (
+    <div className="min-h-screen bg-sage-50 py-12 px-6">
+      <div className="max-w-5xl mx-auto space-y-8">
+        <div>
+          <h1 className="text-3xl font-serif font-bold text-navy-900">Packages</h1>
+          <p className="text-stone-500 mt-1">Choose a package that fits your journey.</p>
+        </div>
+
+        {packages.length === 0 ? (
+          <div className="bg-white rounded-2xl p-16 text-center">
+            <ShoppingBag className="mx-auto text-stone-300 mb-3" size={40} />
+            <p className="text-stone-400">No packages available right now.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {packages.map((pkg) => (
+              <PackageCard key={pkg.id} pkg={pkg} onSelect={(p: PatientPackage) => { setModal({ stage: 'confirm', pkg: p }); }} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Modal */}
+      {modal && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-navy-900">
+                {modal.stage === 'confirm' && 'Confirm Order'}
+                {modal.stage === 'payment' && 'Payment'}
+                {modal.stage === 'done' && 'Order Placed!'}
+              </h2>
+              <button onClick={closeModal}><X size={18} /></button>
+            </div>
+
+            {modal.stage === 'confirm' && (
+              <>
+                <div className="bg-stone-50 rounded-xl p-4 space-y-2 text-sm">
+                  <p className="font-medium text-stone-800">{modal.pkg.nameZh ?? modal.pkg.nameEn}</p>
+                  <p className="text-stone-500">{modal.pkg.descriptionZh ?? modal.pkg.descriptionEn ?? ''}</p>
+                  <p className="text-gold-700 font-bold text-base">
+                    {modal.pkg.currency} {Number(modal.pkg.price).toLocaleString()}
+                  </p>
+                </div>
+                {error && <p className="text-red-500 text-sm">{error}</p>}
+                <button
+                  onClick={handleConfirmOrder}
+                  disabled={createOrder.isPending || createPayment.isPending}
+                  className="w-full flex items-center justify-center gap-2 bg-gold-600 hover:bg-gold-700 text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
+                >
+                  {(createOrder.isPending || createPayment.isPending) ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <CreditCard size={16} />
+                  )}
+                  {createOrder.isPending ? 'Creating order…' : createPayment.isPending ? 'Initializing payment…' : 'Proceed to Payment'}
+                </button>
+              </>
+            )}
+
+            {modal.stage === 'payment' && (
+              <>
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm space-y-2">
+                  <p className="font-medium text-amber-800">Payment Ready</p>
+                  <p className="text-amber-600">
+                    Order #{modal.orderId.slice(0, 8)} created. In production, Stripe would launch here.
+                  </p>
+                  <p className="text-amber-500 font-mono text-xs break-all">
+                    client_secret: {modal.clientSecret.slice(0, 30)}…
+                  </p>
+                </div>
+                <button
+                  onClick={() => setModal({ stage: 'done', pkg: modal.pkg })}
+                  className="w-full bg-gold-600 hover:bg-gold-700 text-white py-3 rounded-xl font-medium transition-colors"
+                >
+                  Simulate Payment Complete
+                </button>
+              </>
+            )}
+
+            {modal.stage === 'done' && (
+              <div className="text-center py-4 space-y-3">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                  <Check size={24} className="text-green-600" />
+                </div>
+                <p className="font-semibold text-stone-800">Order placed successfully!</p>
+                <p className="text-stone-500 text-sm">Your coordinator will be in touch shortly.</p>
+                <button
+                  onClick={closeModal}
+                  className="w-full bg-stone-100 hover:bg-stone-200 text-stone-700 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
