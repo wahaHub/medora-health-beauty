@@ -124,6 +124,37 @@ export interface ConversationsResponse {
 }
 
 // ---------------------------------------------------------------------------
+// Intake types
+// ---------------------------------------------------------------------------
+
+export interface IntakeQuestion {
+  id: string;
+  type: 'text' | 'textarea' | 'select' | 'multiselect' | 'boolean' | 'date' | 'file';
+  label: string;
+  required: boolean;
+  options?: string[];
+  hint?: string;
+}
+
+export interface IntakeSection {
+  id: string;
+  title: string;
+  questions: IntakeQuestion[];
+}
+
+export interface IntakeTemplate {
+  id: string;
+  sections: IntakeSection[];
+}
+
+export interface IntakeResponse {
+  caseId: string;
+  status: 'not-started' | 'draft' | 'submitted';
+  answers: Record<string, string | string[] | boolean | null>;
+  submittedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
 
 export const crmApi = {
   // Public onboarding
@@ -183,7 +214,17 @@ export const crmApi = {
     request<any>(`/cases/${caseId}/quote/accept`, { method: 'POST', body: JSON.stringify({ quoteId }) }),
   rejectQuote: (caseId: string, quoteId: string) =>
     request<any>(`/cases/${caseId}/quote/reject`, { method: 'POST', body: JSON.stringify({ quoteId }) }),
-  getIntakeTemplate: (caseId: string) => request<any>(`/intake/${caseId}/template`),
-  submitIntake: (caseId: string, responses: any[]) =>
-    request<any>(`/intake/${caseId}`, { method: 'POST', body: JSON.stringify({ responses }) }),
+  // Intake (dynamic template contract)
+  getIntakeTemplate: (caseId: string) =>
+    request<IntakeTemplate>(`/cases/${caseId}/intake-template`),
+  getIntakeResponse: (caseId: string) =>
+    request<IntakeResponse>(`/cases/${caseId}/intake-response`),
+  saveIntakeResponse: (
+    caseId: string,
+    data: { answers: Record<string, unknown>; status: 'draft' | 'submitted' },
+  ) =>
+    request<IntakeResponse>(`/cases/${caseId}/intake-response`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
 };
