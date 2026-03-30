@@ -92,8 +92,14 @@ export const crmApi = {
   getProcedures: (category?: string) =>
     request<any>(`/procedures${category ? `?category=${category}` : ''}`),
   getDestinations: () => request<any>('/destinations'),
-  initOnboarding: (data: { email: string; name: string; phone: string; preferredLanguage: string; captchaToken: string }) =>
-    request<{ patientId: string; caseId: string }>('/onboarding/init', { method: 'POST', body: JSON.stringify(data) }),
+  initOnboarding: (data: { email: string; name: string; phone: string; disease?: string; destination?: string; preferredLanguage: string; captchaToken: string }) =>
+    request<{
+      patientId: string;
+      caseId: string;
+      restoreToken?: string;
+      nextStep?: string;
+      conversations?: Array<{ id: string; type: string }>;
+    }>('/onboarding/init', { method: 'POST', body: JSON.stringify(data) }),
   matchHospitals: (data: { procedureId?: string; destination?: string; category?: string }) =>
     request<{ hospitals: any[] }>('/match-hospitals', { method: 'POST', body: JSON.stringify(data) }),
 
