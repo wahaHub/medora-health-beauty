@@ -4,6 +4,9 @@ import { usePatientPackages, useCreatePatientOrder, useCreatePaymentIntent } fro
 import { usePatientAuth } from '../contexts/PatientAuthContext';
 import type { PatientPackage } from '../services/patientPhase2Api';
 
+/** sessionStorage key for a pending (unpaid) order per package */
+const pendingOrderKey = (packageId: string) => `medora:pending-order:${packageId}`;
+
 function PackageCard({
   pkg,
   onSelect,
@@ -41,11 +44,17 @@ function PackageCard({
 }
 
 /**
- * Two-stage flow with idempotent retry:
- *   confirm        — show package summary, create the order on "Proceed"
- *   await-payment  — order created (orderId stored), create payment intent on "Pay"
- *                    retry here only calls createPaymentIntent, NOT createOrder again
- *   done           — success screen
+ * Four-stage flow with fully idempotent retry (survives modal close):
+ *
+ *   confirm       — show package summary; "Proceed" calls createOrder once
+ *                   and writes orderId to sessionStorage
+ *   await-payment — order exists; "Pay Now" calls createPaymentIntent
+ *                   retry here reuses the same orderId, no second order
+ *   payment       — client_secret received; simulate Stripe launch
+ *   done          — success; clear sessionStorage entry for this package
+ *
+ * Re-opening the modal for a package that has a sessionStorage entry skips
+ * straight to await-payment so the pending order is never abandoned.
  */
 type ModalState =
   | { stage: 'confirm'; pkg: PatientPackage }
@@ -64,7 +73,20 @@ export default function PackagesCatalog() {
 
   const packages = data?.data ?? [];
 
-  /** Step 1: create order → advance to await-payment */
+  /** Open the order modal for a package.
+   * If a pending orderId exists in sessionStorage (e.g. payment failed before),
+   * jump straight to await-payment instead of re-creating the order. */
+  const openModal = (pkg: PatientPackage) => {
+    const existingOrderId = sessionStorage.getItem(pendingOrderKey(pkg.id));
+    if (existingOrderId) {
+      setModal({ stage: 'await-payment', orderId: existingOrderId, pkg });
+    } else {
+      setModal({ stage: 'confirm', pkg });
+    }
+    setError(null);
+  };
+
+  /** Step 1: create order once, persist orderId → advance to await-payment */
   const handleCreateOrder = async () => {
     if (!modal || modal.stage !== 'confirm') return;
     setError(null);
@@ -73,13 +95,15 @@ export default function PackagesCatalog() {
         packageId: modal.pkg.id,
         caseId: patient?.caseId,
       });
+      sessionStorage.setItem(pendingOrderKey(modal.pkg.id), order.id);
       setModal({ stage: 'await-payment', orderId: order.id, pkg: modal.pkg });
     } catch (e: any) {
       setError(e.message ?? 'Failed to create order');
     }
   };
 
-  /** Step 2: create payment intent using the already-created orderId */
+  /** Step 2: create payment intent using the already-created orderId.
+   * On failure: stay on await-payment so retry reuses the same orderId. */
   const handleInitPayment = async () => {
     if (!modal || modal.stage !== 'await-payment') return;
     setError(null);
@@ -87,12 +111,19 @@ export default function PackagesCatalog() {
       const payment = await createPayment.mutateAsync(modal.orderId);
       setModal({ stage: 'payment', orderId: modal.orderId, clientSecret: payment.clientSecret, pkg: modal.pkg });
     } catch (e: any) {
-      // Stay on await-payment so the user can retry without creating a second order
       setError(e.message ?? 'Failed to initialize payment');
     }
   };
 
   const closeModal = () => {
+    // Keep sessionStorage entry intact so re-opening resumes from await-payment.
+    // Only clear it on 'done' (below).
+    setModal(null);
+    setError(null);
+  };
+
+  const finishAndClose = (pkgId: string) => {
+    sessionStorage.removeItem(pendingOrderKey(pkgId));
     setModal(null);
     setError(null);
   };
@@ -132,7 +163,7 @@ export default function PackagesCatalog() {
               <PackageCard
                 key={pkg.id}
                 pkg={pkg}
-                onSelect={(p: PatientPackage) => { setModal({ stage: 'confirm', pkg: p }); }}
+                onSelect={openModal}
               />
             ))}
           </div>
@@ -224,7 +255,7 @@ export default function PackagesCatalog() {
                 <p className="font-semibold text-stone-800">Order placed successfully!</p>
                 <p className="text-stone-500 text-sm">Your coordinator will be in touch shortly.</p>
                 <button
-                  onClick={closeModal}
+                  onClick={() => finishAndClose(modal.pkg.id)}
                   className="w-full bg-stone-100 hover:bg-stone-200 text-stone-700 py-2.5 rounded-xl text-sm font-medium transition-colors"
                 >
                   Close
