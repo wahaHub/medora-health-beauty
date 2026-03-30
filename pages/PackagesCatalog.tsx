@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ShoppingBag, Check, X, CreditCard, Loader2 } from 'lucide-react';
+import { ShoppingBag, Check, X, CreditCard, Loader2, AlertCircle } from 'lucide-react';
 import { usePatientPackages, useCreatePatientOrder, useCreatePaymentIntent } from '../hooks/usePatientPhase2';
 import { usePatientAuth } from '../contexts/PatientAuthContext';
 import type { PatientPackage } from '../services/patientPhase2Api';
@@ -40,14 +40,22 @@ function PackageCard({
   );
 }
 
+/**
+ * Two-stage flow with idempotent retry:
+ *   confirm        — show package summary, create the order on "Proceed"
+ *   await-payment  — order created (orderId stored), create payment intent on "Pay"
+ *                    retry here only calls createPaymentIntent, NOT createOrder again
+ *   done           — success screen
+ */
 type ModalState =
   | { stage: 'confirm'; pkg: PatientPackage }
+  | { stage: 'await-payment'; orderId: string; pkg: PatientPackage }
   | { stage: 'payment'; orderId: string; clientSecret: string; pkg: PatientPackage }
   | { stage: 'done'; pkg: PatientPackage };
 
 export default function PackagesCatalog() {
   const { patient } = usePatientAuth();
-  const { data, isLoading } = usePatientPackages();
+  const { data, isLoading, error: packagesError } = usePatientPackages();
   const createOrder = useCreatePatientOrder();
   const createPayment = useCreatePaymentIntent();
 
@@ -56,7 +64,8 @@ export default function PackagesCatalog() {
 
   const packages = data?.data ?? [];
 
-  const handleConfirmOrder = async () => {
+  /** Step 1: create order → advance to await-payment */
+  const handleCreateOrder = async () => {
     if (!modal || modal.stage !== 'confirm') return;
     setError(null);
     try {
@@ -64,10 +73,22 @@ export default function PackagesCatalog() {
         packageId: modal.pkg.id,
         caseId: patient?.caseId,
       });
-      const payment = await createPayment.mutateAsync(order.id);
-      setModal({ stage: 'payment', orderId: order.id, clientSecret: payment.clientSecret, pkg: modal.pkg });
+      setModal({ stage: 'await-payment', orderId: order.id, pkg: modal.pkg });
     } catch (e: any) {
       setError(e.message ?? 'Failed to create order');
+    }
+  };
+
+  /** Step 2: create payment intent using the already-created orderId */
+  const handleInitPayment = async () => {
+    if (!modal || modal.stage !== 'await-payment') return;
+    setError(null);
+    try {
+      const payment = await createPayment.mutateAsync(modal.orderId);
+      setModal({ stage: 'payment', orderId: modal.orderId, clientSecret: payment.clientSecret, pkg: modal.pkg });
+    } catch (e: any) {
+      // Stay on await-payment so the user can retry without creating a second order
+      setError(e.message ?? 'Failed to initialize payment');
     }
   };
 
@@ -78,6 +99,18 @@ export default function PackagesCatalog() {
 
   if (isLoading) {
     return <div className="text-center py-20 text-stone-400">Loading packages…</div>;
+  }
+
+  if (packagesError) {
+    return (
+      <div className="min-h-screen bg-sage-50 flex items-center justify-center p-6">
+        <div className="bg-white rounded-2xl p-10 text-center max-w-sm">
+          <AlertCircle className="mx-auto text-red-400 mb-3" size={36} />
+          <p className="font-medium text-stone-700 mb-1">Could not load packages</p>
+          <p className="text-stone-400 text-sm">{(packagesError as Error).message}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -96,7 +129,11 @@ export default function PackagesCatalog() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {packages.map((pkg) => (
-              <PackageCard key={pkg.id} pkg={pkg} onSelect={(p: PatientPackage) => { setModal({ stage: 'confirm', pkg: p }); }} />
+              <PackageCard
+                key={pkg.id}
+                pkg={pkg}
+                onSelect={(p: PatientPackage) => { setModal({ stage: 'confirm', pkg: p }); }}
+              />
             ))}
           </div>
         )}
@@ -109,12 +146,14 @@ export default function PackagesCatalog() {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-navy-900">
                 {modal.stage === 'confirm' && 'Confirm Order'}
+                {modal.stage === 'await-payment' && 'Proceed to Payment'}
                 {modal.stage === 'payment' && 'Payment'}
                 {modal.stage === 'done' && 'Order Placed!'}
               </h2>
               <button onClick={closeModal}><X size={18} /></button>
             </div>
 
+            {/* Stage 1: confirm — creates the order */}
             {modal.stage === 'confirm' && (
               <>
                 <div className="bg-stone-50 rounded-xl p-4 space-y-2 text-sm">
@@ -126,20 +165,36 @@ export default function PackagesCatalog() {
                 </div>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
                 <button
-                  onClick={handleConfirmOrder}
-                  disabled={createOrder.isPending || createPayment.isPending}
+                  onClick={handleCreateOrder}
+                  disabled={createOrder.isPending}
                   className="w-full flex items-center justify-center gap-2 bg-gold-600 hover:bg-gold-700 text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
                 >
-                  {(createOrder.isPending || createPayment.isPending) ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <CreditCard size={16} />
-                  )}
-                  {createOrder.isPending ? 'Creating order…' : createPayment.isPending ? 'Initializing payment…' : 'Proceed to Payment'}
+                  {createOrder.isPending ? <Loader2 size={16} className="animate-spin" /> : <CreditCard size={16} />}
+                  {createOrder.isPending ? 'Creating order…' : 'Proceed to Payment'}
                 </button>
               </>
             )}
 
+            {/* Stage 2: await-payment — order exists, initialise payment intent */}
+            {modal.stage === 'await-payment' && (
+              <>
+                <p className="text-stone-500 text-sm">
+                  Order <span className="font-mono">#{modal.orderId.slice(0, 8)}</span> created.
+                  Click below to initialise your payment.
+                </p>
+                {error && <p className="text-red-500 text-sm">{error}</p>}
+                <button
+                  onClick={handleInitPayment}
+                  disabled={createPayment.isPending}
+                  className="w-full flex items-center justify-center gap-2 bg-gold-600 hover:bg-gold-700 text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
+                >
+                  {createPayment.isPending ? <Loader2 size={16} className="animate-spin" /> : <CreditCard size={16} />}
+                  {createPayment.isPending ? 'Initializing payment…' : 'Pay Now'}
+                </button>
+              </>
+            )}
+
+            {/* Stage 3: payment intent ready */}
             {modal.stage === 'payment' && (
               <>
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm space-y-2">
@@ -160,6 +215,7 @@ export default function PackagesCatalog() {
               </>
             )}
 
+            {/* Stage 4: done */}
             {modal.stage === 'done' && (
               <div className="text-center py-4 space-y-3">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto">

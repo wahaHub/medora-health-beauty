@@ -204,7 +204,7 @@ function App() {
 
               {/* Standalone pages */}
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/packages" element={<PackagesCatalog />} />
+              <Route path="/packages" element={<ProtectedRoute><PackagesCatalog /></ProtectedRoute>} />
 
               {/* Dashboard routes (no marketing Header/Footer) */}
               <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
