@@ -1,49 +1,80 @@
 import { useEffect, useState } from 'react';
 import { Loader2, Check, ArrowRight } from 'lucide-react';
 import { crmApi } from '../../services/crmApiClient';
+import { usePatientEntry } from '../../hooks/usePatientEntry';
+import { usePatientAuth } from '../../contexts/PatientAuthContext';
 
-interface HospitalCardsProps {
-  category: string;
-  procedureId?: string;
-  destination?: string;
-  caseId: string;
-  onSubmit: () => void;
-}
+export function HospitalCards() {
+  const {
+    caseId,
+    profileDraft,
+    matchedHospitals,
+    setMatchedHospitals,
+    selectedHospitalIds,
+    toggleHospitalSelection,
+    applyOnboardingResult,
+    openPanel,
+  } = usePatientEntry();
 
-export function HospitalCards({ category, procedureId, destination, caseId, onSubmit }: HospitalCardsProps) {
-  const [hospitals, setHospitals] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { patient } = usePatientAuth();
+
+  const [loading, setLoading] = useState(matchedHospitals.length === 0);
   const [error, setError] = useState<string | null>(null);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (matchedHospitals.length > 0) return;
     setLoading(true);
     setError(null);
-    crmApi.matchHospitals({ category, procedureId, destination })
+    crmApi
+      .matchHospitals({
+        destination: profileDraft.destination || undefined,
+      })
       .then((data) => {
-        setHospitals(data.hospitals ?? []);
+        setMatchedHospitals(data.hospitals ?? []);
       })
       .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [category, procedureId, destination]);
-
-  const toggleHospital = (id: string) => {
-    setSelected(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileDraft.destination, matchedHospitals.length]);
 
   const handleSubmit = async () => {
-    if (selected.size === 0 || submitting) return;
+    if (selectedHospitalIds.length === 0 || submitting || !caseId) return;
+    if (!patient?.id) {
+      setError('Session expired. Please refresh and try again.');
+      return;
+    }
     setSubmitting(true);
     setError(null);
     try {
-      await crmApi.selectHospitals({ caseId, hospitalIds: Array.from(selected) });
-      onSubmit();
+      await crmApi.selectHospitals({
+        caseId,
+        hospitalIds: selectedHospitalIds,
+      });
+
+      // Fetch the full conversation list so we can identify the admin
+      // conversation and pass it to applyOnboardingResult.
+      const allConversations = await crmApi.getConversations();
+
+      // Keep only conversations belonging to this case (server may return all).
+      const caseConversations = allConversations.filter(
+        (c) => !c.caseId || c.caseId === caseId,
+      );
+
+      // Map to FormalConversationRef shape expected by applyOnboardingResult.
+      const conversationRefs = caseConversations.map((c) => ({
+        id: c.id,
+        type: c.type,
+        category: c.category,
+      }));
+
+      applyOnboardingResult({
+        patientId: patient?.id ?? '',
+        caseId,
+        nextStep: 'messages-ready',
+        conversations: conversationRefs,
+      });
+      openPanel();
     } catch (err: any) {
       setError(err.message ?? 'Failed to select hospitals');
     } finally {
@@ -53,62 +84,58 @@ export function HospitalCards({ category, procedureId, destination, caseId, onSu
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="mx-3 my-2 flex items-center justify-center py-8">
         <Loader2 className="w-6 h-6 text-gold-600 animate-spin" />
       </div>
     );
   }
 
-  if (error && hospitals.length === 0) {
+  if (error && matchedHospitals.length === 0) {
     return (
-      <div className="p-4 text-center">
+      <div className="mx-3 my-2 p-4 bg-stone-50 border border-stone-200 rounded-2xl text-center">
         <p className="text-red-500 text-sm">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="p-4 flex flex-col h-full">
-      <h4 className="text-stone-800 font-serif text-lg mb-1">Recommended Hospitals</h4>
-      <p className="text-stone-500 text-sm mb-3">Select hospitals to start chatting with.</p>
+    <div className="mx-3 my-2 p-4 bg-stone-50 border border-stone-200 rounded-2xl flex flex-col">
+      <h4 className="text-stone-800 font-serif text-base mb-0.5">Recommended Hospitals</h4>
+      <p className="text-stone-500 text-xs mb-3">Select hospitals to start chatting with.</p>
 
-      <div className="flex-1 overflow-y-auto space-y-2 -mr-2 pr-2">
-        {hospitals.map((h: any) => {
-          const isSelected = selected.has(h.id);
+      <div className="space-y-2 max-h-56 overflow-y-auto -mr-1 pr-1">
+        {matchedHospitals.map((h) => {
+          const isSelected = selectedHospitalIds.includes(h.id);
           return (
             <button
               key={h.id}
-              onClick={() => toggleHospital(h.id)}
+              onClick={() => toggleHospitalSelection(h.id)}
               className={`w-full text-left p-3 rounded-xl border transition-all duration-300 flex items-start gap-3 ${
                 isSelected
                   ? 'border-gold-500 bg-gold-50'
-                  : 'border-stone-200 bg-stone-50 hover:border-gold-300 hover:bg-gold-50/50'
+                  : 'border-stone-200 bg-white hover:border-gold-300 hover:bg-gold-50/50'
               }`}
             >
-              <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                isSelected ? 'border-gold-600 bg-gold-600' : 'border-stone-300'
-              }`}>
+              <div
+                className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                  isSelected ? 'border-gold-600 bg-gold-600' : 'border-stone-300'
+                }`}
+              >
                 {isSelected && <Check className="w-3 h-3 text-white" />}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-stone-800 text-sm font-medium truncate">{h.name}</p>
-                {h.rating && (
-                  <p className="text-stone-500 text-xs mt-0.5">Rating: {h.rating}</p>
+                {h.city && (
+                  <p className="text-stone-500 text-xs mt-0.5">{h.city}</p>
                 )}
-                {h.tags && h.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {h.tags.slice(0, 3).map((tag: string) => (
-                      <span key={tag} className="text-xs bg-white px-2 py-0.5 rounded-full text-stone-500 border border-stone-200">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                {h.summary && (
+                  <p className="text-stone-400 text-xs mt-0.5 line-clamp-2">{h.summary}</p>
                 )}
               </div>
             </button>
           );
         })}
-        {hospitals.length === 0 && (
+        {matchedHospitals.length === 0 && (
           <p className="text-stone-400 text-sm text-center py-4">No hospitals found.</p>
         )}
       </div>
@@ -117,8 +144,8 @@ export function HospitalCards({ category, procedureId, destination, caseId, onSu
 
       <button
         onClick={handleSubmit}
-        disabled={selected.size === 0 || submitting}
-        className="mt-3 w-full bg-gold-600 hover:bg-gold-700 disabled:bg-stone-300 text-white py-2.5 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2"
+        disabled={selectedHospitalIds.length === 0 || submitting || !caseId}
+        className="mt-3 w-full bg-gold-600 hover:bg-gold-700 disabled:bg-stone-300 text-white py-2 rounded-xl font-medium text-sm transition-all duration-300 flex items-center justify-center gap-2"
       >
         {submitting ? (
           <Loader2 className="w-4 h-4 animate-spin" />

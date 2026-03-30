@@ -1,36 +1,49 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useCaseDetail } from '../../hooks/useCaseDetail';
 import { useQuote } from '../../hooks/useQuote';
-import { usePatientConversations } from '../../hooks/usePatientConversations';
-import { ChatView } from '../../components/messaging/ChatView';
+import { usePatientEntry } from '../../hooks/usePatientEntry';
 import { crmApi } from '../../services/crmApiClient';
-import { MessageCircle, FileText, Info, Check, X } from 'lucide-react';
+import { MessageCircle, FileText, Info, Check, X, ArrowLeft } from 'lucide-react';
 
 export default function CaseDetail() {
   const { caseId } = useParams<{ caseId: string }>();
-  const [activeTab, setActiveTab] = useState<'messages' | 'quote' | 'overview'>('messages');
+  const [activeTab, setActiveTab] = useState<'quote' | 'overview'>('overview');
   const { data: caseData, isLoading } = useCaseDetail(caseId!);
   const { data: quoteData } = useQuote(caseId!);
-  const { data: convData } = usePatientConversations();
-
-  // Find conversations for this case
-  const conversations = (convData?.conversations ?? []).filter((c: any) => c.caseId === caseId);
-  const [activeConvId, setActiveConvId] = useState<string | null>(null);
+  const { openPanel } = usePatientEntry();
+  const navigate = useNavigate();
 
   if (isLoading) return <div className="text-center py-20 text-stone-400">Loading...</div>;
 
   const tabs = [
-    { id: 'messages', label: 'Messages', icon: MessageCircle },
-    { id: 'quote', label: 'Quotes', icon: FileText },
     { id: 'overview', label: 'Overview', icon: Info },
+    { id: 'quote', label: 'Quotes', icon: FileText },
   ] as const;
 
   return (
     <div>
-      <h1 className="text-xl font-serif font-bold text-navy-900 mb-4">
-        Case {caseData?.caseNumber}
-      </h1>
+      {/* Back nav */}
+      <button
+        onClick={() => navigate('/dashboard')}
+        className="flex items-center gap-1.5 text-stone-500 hover:text-stone-700 text-sm mb-4"
+      >
+        <ArrowLeft size={15} /> Back to dashboard
+      </button>
+
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-xl font-serif font-bold text-navy-900">
+          Case {caseData?.caseNumber}
+        </h1>
+        {/* Messages shortcut — opens PatientMessagePanel */}
+        <button
+          onClick={openPanel}
+          className="flex items-center gap-1.5 px-4 py-2 bg-gold-600 text-white rounded-xl text-sm hover:bg-gold-700 transition-colors"
+        >
+          <MessageCircle size={14} /> Messages
+        </button>
+      </div>
 
       {/* Tabs */}
       <div className="flex gap-1 mb-6 bg-white rounded-xl p-1">
@@ -46,33 +59,6 @@ export default function CaseDetail() {
       </div>
 
       {/* Tab content */}
-      {activeTab === 'messages' && (
-        <div className="bg-white rounded-2xl overflow-hidden" style={{ height: '60vh' }}>
-          {conversations.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-stone-400">No conversations yet</div>
-          ) : (
-            <div className="flex h-full">
-              {conversations.length > 1 && (
-                <div className="w-64 border-r border-stone-100 overflow-y-auto">
-                  {conversations.map((conv: any) => (
-                    <button key={conv.id}
-                      onClick={() => setActiveConvId(conv.id)}
-                      className={`w-full text-left px-4 py-3 border-b border-stone-50 hover:bg-sage-50 ${
-                        activeConvId === conv.id ? 'bg-sage-50' : ''
-                      }`}>
-                      <p className="text-sm font-medium text-stone-700">{conv.hospitalName || 'Hospital'}</p>
-                    </button>
-                  ))}
-                </div>
-              )}
-              <div className="flex-1">
-                <ChatView conversation={conversations.find((c: any) => c.id === (activeConvId || conversations[0]?.id)) || conversations[0]} />
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
       {activeTab === 'quote' && (
         <QuoteTab caseId={caseId!} quoteData={quoteData} />
       )}
@@ -93,6 +79,7 @@ export default function CaseDetail() {
 
 function QuoteTab({ caseId, quoteData }: { caseId: string; quoteData: any }) {
   const [confirming, setConfirming] = useState<{ action: 'accept' | 'reject'; quoteId: string } | null>(null);
+  const queryClient = useQueryClient();
 
   const handleAction = async () => {
     if (!confirming) return;
@@ -102,7 +89,8 @@ function QuoteTab({ caseId, quoteData }: { caseId: string; quoteData: any }) {
       await crmApi.rejectQuote(caseId, confirming.quoteId);
     }
     setConfirming(null);
-    // Refetch would happen via React Query invalidation
+    await queryClient.invalidateQueries({ queryKey: ['patient', 'cases'] });
+    await queryClient.invalidateQueries({ queryKey: ['patient', 'quote', caseId] });
   };
 
   const quotes = quoteData?.quotes ?? [];

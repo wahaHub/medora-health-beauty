@@ -1,10 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
-import { crmApi } from '../services/crmApiClient';
+import { crmApi, type Conversation } from '../services/crmApiClient';
+import { usePatientAuth } from '../contexts/PatientAuthContext';
+
+export const patientConversationKeys = {
+  all: (patientId: string) => ['patient', patientId, 'conversations'] as const,
+};
 
 export function usePatientConversations() {
-  return useQuery({
-    queryKey: ['patient', 'conversations'],
+  const { patient } = usePatientAuth();
+  const patientId = patient?.id ?? '';
+
+  return useQuery<Conversation[]>({
+    queryKey: patientConversationKeys.all(patientId),
     queryFn: () => crmApi.getConversations(),
+    enabled: !!patientId,
     staleTime: 10_000,
   });
 }
