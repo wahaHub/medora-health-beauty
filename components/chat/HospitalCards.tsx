@@ -35,10 +35,15 @@ export function HospitalCards() {
       })
       .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [profileDraft.destination]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileDraft.destination, matchedHospitals.length]);
 
   const handleSubmit = async () => {
     if (selectedHospitalIds.length === 0 || submitting || !caseId) return;
+    if (!patient?.id) {
+      setError('Session expired. Please refresh and try again.');
+      return;
+    }
     setSubmitting(true);
     setError(null);
     try {

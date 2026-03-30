@@ -25,7 +25,7 @@ export function ContactInfoStep() {
         disease: profileDraft.disease,
         destination: profileDraft.destination,
         preferredLanguage: 'en',
-        captchaToken: 'dev-bypass',
+        captchaToken: 'dev-bypass', // TODO: replace with real captcha token before production
       });
 
       const nextStep: 'select-hospitals' | 'messages-ready' =

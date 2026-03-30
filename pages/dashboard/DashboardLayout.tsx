@@ -1,4 +1,4 @@
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { usePatientAuth } from '../../contexts/PatientAuthContext';
 import { usePatientCases } from '../../hooks/usePatientCases';
 import { LogOut, LayoutDashboard, FileText, MessageCircle } from 'lucide-react';
@@ -6,12 +6,11 @@ import { LogOut, LayoutDashboard, FileText, MessageCircle } from 'lucide-react';
 export default function DashboardLayout() {
   const { patient, logout } = usePatientAuth();
   const { data } = usePatientCases();
-  const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = () => {
-    logout();
-    navigate('/');
+    // PatientAuthContext.logout() navigates to /login after clearing session
+    void logout();
   };
 
   // Compute total unread count across all cases
