@@ -87,6 +87,44 @@ export type VerifyTokenResponse = PatientSessionProfile & {
 
 export type PatientSessionBootstrap = VerifyTokenResponse;
 
+// ---------------------------------------------------------------------------
+// Domain types
+// ---------------------------------------------------------------------------
+
+export interface Conversation {
+  id: string;
+  caseId?: string;
+  /** Discriminator: admin ↔ patient vs. hospital ↔ patient */
+  type: 'patient-admin' | 'patient-hospital';
+  /** Server-side category string, e.g. 'ADMIN_PATIENT' | 'HOSPITAL_PATIENT' */
+  category?: string;
+  hospitalId?: string;
+  hospitalName?: string;
+  unreadCount: number;
+  lastMessage?: {
+    content: string;
+    createdAt: string;
+  };
+  updatedAt?: string;
+}
+
+export interface Message {
+  id: string;
+  conversationId: string;
+  /** Who sent the message */
+  role: 'patient' | 'admin' | 'system';
+  /** Maps to senderType used in MessageList component */
+  senderType?: 'patient' | 'hospital' | 'system';
+  content: string;
+  createdAt: string;
+}
+
+export interface ConversationsResponse {
+  conversations: Conversation[];
+}
+
+// ---------------------------------------------------------------------------
+
 export const crmApi = {
   // Public onboarding
   getProcedures: (category?: string) =>
@@ -118,8 +156,16 @@ export const crmApi = {
 
   // Authenticated
   selectHospitals: (data: { caseId: string; hospitalIds: string[] }) =>
-    request<{ conversationIds: string[] }>('/select-hospitals', { method: 'POST', body: JSON.stringify(data) }),
-  getConversations: () => request<any>('/conversations'),
+    request<{ conversationIds: string[]; conversations?: Conversation[] }>('/select-hospitals', { method: 'POST', body: JSON.stringify(data) }),
+  /**
+   * Returns a typed list of conversations. The server may return them as an
+   * array directly, or wrapped in `{ conversations: [...] }`.
+   */
+  getConversations: (): Promise<Conversation[]> =>
+    request<Conversation[] | ConversationsResponse>('/conversations').then((raw) => {
+      if (Array.isArray(raw)) return raw;
+      return (raw as ConversationsResponse).conversations ?? [];
+    }),
   getCases: () => request<any>('/cases'),
   getCaseDetail: (id: string) => request<any>(`/cases/${id}`),
   getMessages: (convId: string, params?: { cursor?: string; limit?: number; after?: string }) => {

@@ -1,11 +1,11 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { usePatientAuth } from '../../contexts/PatientAuthContext';
-import { useMessagePanel } from '../../contexts/MessagePanelContext';
+import { usePatientEntry } from '../../hooks/usePatientEntry';
 import { LogOut, LayoutDashboard, User, MessageCircle } from 'lucide-react';
 
 export default function DashboardLayout() {
   const { patient, logout } = usePatientAuth();
-  const { open: openMessages } = useMessagePanel();
+  const { openPanel: openMessages } = usePatientEntry();
   const navigate = useNavigate();
 
   const handleLogout = () => {

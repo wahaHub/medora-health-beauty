@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState, type KeyboardEvent, type ChangeEvent } from 'react';
 import { Send, RefreshCw, MessageSquare } from 'lucide-react';
 import { usePatientEntry } from '../../hooks/usePatientEntry';
-import { useMessagePanel } from '../../contexts/MessagePanelContext';
 import { ContactInfoStep } from './ContactInfoStep';
 import { HospitalCards } from './HospitalCards';
 import type { PreBootstrapMessage } from '../../services/patientEntryStorage';
@@ -107,8 +106,8 @@ export function OnboardingFlow({ onClose }: OnboardingFlowProps = {}) {
     preBootstrapMessages,
     bootstrapError,
     clearBootstrapError,
+    openPanel,
   } = usePatientEntry();
-  const { open: openMessages } = useMessagePanel();
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -155,7 +154,7 @@ export function OnboardingFlow({ onClose }: OnboardingFlowProps = {}) {
             </div>
             <button
               onClick={() => {
-                openMessages();
+                openPanel();
                 onClose?.();
               }}
               className="bg-gold-600 hover:bg-gold-700 text-white px-6 py-2.5 rounded-xl font-medium transition-all duration-300"

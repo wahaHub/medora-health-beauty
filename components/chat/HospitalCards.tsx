@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Loader2, Check, ArrowRight } from 'lucide-react';
 import { crmApi } from '../../services/crmApiClient';
 import { usePatientEntry } from '../../hooks/usePatientEntry';
+import { usePatientAuth } from '../../contexts/PatientAuthContext';
 
 export function HospitalCards() {
   const {
@@ -12,7 +13,10 @@ export function HospitalCards() {
     selectedHospitalIds,
     toggleHospitalSelection,
     applyOnboardingResult,
+    openPanel,
   } = usePatientEntry();
+
+  const { patient } = usePatientAuth();
 
   const [loading, setLoading] = useState(matchedHospitals.length === 0);
   const [error, setError] = useState<string | null>(null);
@@ -31,29 +35,41 @@ export function HospitalCards() {
       })
       .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [profileDraft.destination]);
 
   const handleSubmit = async () => {
     if (selectedHospitalIds.length === 0 || submitting || !caseId) return;
     setSubmitting(true);
     setError(null);
     try {
-      const result = await crmApi.selectHospitals({
+      await crmApi.selectHospitals({
         caseId,
         hospitalIds: selectedHospitalIds,
       });
 
-      const conversationIds: string[] = result.conversationIds ?? [];
+      // Fetch the full conversation list so we can identify the admin
+      // conversation and pass it to applyOnboardingResult.
+      const allConversations = await crmApi.getConversations();
+
+      // Keep only conversations belonging to this case (server may return all).
+      const caseConversations = allConversations.filter(
+        (c) => !c.caseId || c.caseId === caseId,
+      );
+
+      // Map to FormalConversationRef shape expected by applyOnboardingResult.
+      const conversationRefs = caseConversations.map((c) => ({
+        id: c.id,
+        type: c.type,
+        category: c.category,
+      }));
+
       applyOnboardingResult({
-        patientId: '',   // caseId is already bound; patientId not needed here
+        patientId: patient?.id ?? '',
         caseId,
         nextStep: 'messages-ready',
-        conversations: conversationIds.map((id) => ({
-          id,
-          type: 'patient-hospital' as const,
-        })),
+        conversations: conversationRefs,
       });
+      openPanel();
     } catch (err: any) {
       setError(err.message ?? 'Failed to select hospitals');
     } finally {
