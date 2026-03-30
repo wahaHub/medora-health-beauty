@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { usePatientAuth } from '../../contexts/PatientAuthContext';
 import { usePatientCases } from '../../hooks/usePatientCases';
-import { LogOut, LayoutDashboard, FileText, MessageCircle } from 'lucide-react';
+import { LogOut, LayoutDashboard, FileText, MessageCircle, Ticket, ShoppingBag, MapPin, Sparkles } from 'lucide-react';
 
 export default function DashboardLayout() {
   const { patient, logout } = usePatientAuth();
@@ -42,7 +42,7 @@ export default function DashboardLayout() {
             <Link to="/dashboard" className="text-xl font-serif font-bold text-navy-900">
               Medora
             </Link>
-            <nav className="flex items-center gap-4">
+            <nav className="flex items-center gap-4 overflow-x-auto">
               {/* Tab 1: Home */}
               <Link to="/dashboard" className={navLinkClass('/dashboard')}>
                 <LayoutDashboard size={16} /> Home
@@ -62,6 +62,26 @@ export default function DashboardLayout() {
                     {totalUnread > 9 ? '9+' : totalUnread}
                   </span>
                 )}
+              </Link>
+
+              {/* Tab 4: Support Tickets */}
+              <Link to="/dashboard/tickets" className={navLinkClass('/dashboard/tickets')}>
+                <Ticket size={16} /> Support
+              </Link>
+
+              {/* Tab 5: Orders */}
+              <Link to="/dashboard/orders" className={navLinkClass('/dashboard/orders')}>
+                <ShoppingBag size={16} /> Orders
+              </Link>
+
+              {/* Tab 6: Journey */}
+              <Link to="/dashboard/journey" className={navLinkClass('/dashboard/journey')}>
+                <MapPin size={16} /> Journey
+              </Link>
+
+              {/* Tab 7: AI Summary */}
+              <Link to="/dashboard/ai-summary" className={navLinkClass('/dashboard/ai-summary')}>
+                <Sparkles size={16} /> AI Summary
               </Link>
             </nav>
           </div>

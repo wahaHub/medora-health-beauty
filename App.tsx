@@ -43,6 +43,10 @@ import QuotesPage from './pages/dashboard/QuotesPage';
 import IntakePage from './pages/dashboard/IntakePage';
 import AccountPage from './pages/dashboard/AccountPage';
 import LoginPage from './pages/dashboard/LoginPage';
+import TicketsPage from './pages/dashboard/TicketsPage';
+import OrdersPage from './pages/dashboard/OrdersPage';
+import JourneyPage from './pages/dashboard/JourneyPage';
+import AiSummaryPage from './pages/dashboard/AiSummaryPage';
 
 // Home page component
 function HomePage() {
@@ -206,6 +210,11 @@ function App() {
                 <Route index element={<DashboardHome />} />
                 <Route path="quotes" element={<QuotesPage />} />
                 <Route path="messages" element={<MessagesPage />} />
+                {/* Phase 2: 4 additional tabs */}
+                <Route path="tickets" element={<TicketsPage />} />
+                <Route path="orders" element={<OrdersPage />} />
+                <Route path="journey" element={<JourneyPage />} />
+                <Route path="ai-summary" element={<AiSummaryPage />} />
                 {/* Nested routes — accessible but not top-level nav tabs */}
                 <Route path="cases/:caseId" element={<DashboardCaseDetail />} />
                 <Route path="intake/:caseId" element={<IntakePage />} />
