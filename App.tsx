@@ -37,7 +37,6 @@ import HospitalGallery from './pages/HospitalGallery';
 import ConsultationSurvey from './pages/ConsultationSurvey';
 import DashboardLayout from './pages/dashboard/DashboardLayout';
 import DashboardHome from './pages/dashboard/DashboardHome';
-import DashboardCaseDetail from './pages/dashboard/CaseDetail';
 import MessagesPage from './pages/dashboard/MessagesPage';
 import QuotesPage from './pages/dashboard/QuotesPage';
 import IntakePage from './pages/dashboard/IntakePage';
@@ -218,8 +217,7 @@ function App() {
                 <Route path="journey" element={<JourneyPage />} />
                 <Route path="ai-summary" element={<AiSummaryPage />} />
                 {/* Nested routes — accessible but not top-level nav tabs */}
-                <Route path="cases/:caseId" element={<DashboardCaseDetail />} />
-                <Route path="intake/:caseId" element={<IntakePage />} />
+                <Route path="intake" element={<IntakePage />} />
                 <Route path="account" element={<AccountPage />} />
               </Route>
             </Routes>

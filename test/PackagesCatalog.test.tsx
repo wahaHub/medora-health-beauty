@@ -140,7 +140,7 @@ describe('/packages route', () => {
 
     // Retry — must reuse same orderId
     await user.click(screen.getByRole('button', { name: /pay now/i }));
-    await waitFor(() => expect(screen.getByText(/pi_test_secret_abc/i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/payment ready/i)).toBeInTheDocument());
 
     expect(createOrderMutateAsync).toHaveBeenCalledTimes(1);
     expect(createPaymentMutateAsync).toHaveBeenCalledTimes(2);

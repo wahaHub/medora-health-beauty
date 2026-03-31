@@ -1,29 +1,26 @@
 import { useState } from 'react';
-import { ShoppingBag, Check, X, CreditCard, Loader2, AlertCircle, RotateCcw } from 'lucide-react';
-import { usePatientPackages, useCreatePatientOrder, useCreatePaymentIntent } from '../hooks/usePatientPhase2';
+import { useNavigate } from 'react-router-dom';
+import {
+  ShoppingBag,
+  Check,
+  X,
+  CreditCard,
+  Loader2,
+  AlertCircle,
+  RotateCcw,
+} from 'lucide-react';
+import {
+  usePatientPackages,
+  useCreatePatientOrder,
+  useCreatePaymentIntent,
+} from '../hooks/usePatientPhase2';
 import { usePatientAuth } from '../contexts/PatientAuthContext';
 import type { PatientPackage } from '../services/patientPhase2Api';
 
-// ─── Patient-scoped sessionStorage helpers ────────────────────────────────────
-
 const PENDING_ORDER_PREFIX = 'medora:pending-order:';
 
-/** Key scoped to a specific patient so different accounts on the same browser never share state. */
 const pendingOrderKey = (patientId: string, packageId: string) =>
   `${PENDING_ORDER_PREFIX}${patientId}:${packageId}`;
-
-/** Called during logout to remove all pending-order entries for the signing-out patient. */
-export function clearPatientPendingOrders(patientId: string) {
-  const prefix = `${PENDING_ORDER_PREFIX}${patientId}:`;
-  const keysToRemove: string[] = [];
-  for (let i = 0; i < sessionStorage.length; i++) {
-    const key = sessionStorage.key(i);
-    if (key?.startsWith(prefix)) keysToRemove.push(key);
-  }
-  keysToRemove.forEach((k) => sessionStorage.removeItem(k));
-}
-
-// ─── PackageCard ──────────────────────────────────────────────────────────────
 
 function PackageCard({
   pkg,
@@ -61,29 +58,14 @@ function PackageCard({
   );
 }
 
-// ─── PackagesCatalog ──────────────────────────────────────────────────────────
-
-/**
- * Four-stage order flow with patient-scoped idempotent retry:
- *
- *   confirm       — create order once; persist under patient+package key
- *   await-payment — order exists; call createPaymentIntent (retry safe)
- *                   if payment intent fails with a terminal error, offer
- *                   "Start over" to abandon the stale order and re-create
- *   payment       — client_secret received; simulate Stripe launch
- *   done          — success; clear sessionStorage entry
- *
- * Keys are scoped to patientId so two users on the same browser tab never
- * share state. All keys for the current patient are wiped on logout via
- * clearPatientPendingOrders().
- */
 type ModalState =
   | { stage: 'confirm'; pkg: PatientPackage }
   | { stage: 'await-payment'; orderId: string; pkg: PatientPackage }
-  | { stage: 'payment'; orderId: string; clientSecret: string; pkg: PatientPackage }
+  | { stage: 'payment'; orderId: string; pkg: PatientPackage }
   | { stage: 'done'; pkg: PatientPackage };
 
 export default function PackagesCatalog() {
+  const navigate = useNavigate();
   const { patient } = usePatientAuth();
   const patientId = patient?.id ?? '';
   const { data, isLoading, error: packagesError } = usePatientPackages();
@@ -95,26 +77,25 @@ export default function PackagesCatalog() {
 
   const packages = data?.data ?? [];
 
-  /** Open modal. If this patient already has a pending orderId for this package,
-   *  jump to await-payment; otherwise start at confirm. */
   const openModal = (pkg: PatientPackage) => {
     const existingOrderId = patientId
       ? sessionStorage.getItem(pendingOrderKey(patientId, pkg.id))
       : null;
-    setModal(existingOrderId
-      ? { stage: 'await-payment', orderId: existingOrderId, pkg }
-      : { stage: 'confirm', pkg });
+
+    setModal(
+      existingOrderId
+        ? { stage: 'await-payment', orderId: existingOrderId, pkg }
+        : { stage: 'confirm', pkg },
+    );
     setError(null);
   };
 
-  /** Step 1: create order once, persist orderId scoped to this patient. */
   const handleCreateOrder = async () => {
     if (!modal || modal.stage !== 'confirm' || !patientId) return;
     setError(null);
     try {
       const order = await createOrder.mutateAsync({
         packageId: modal.pkg.id,
-        caseId: patient?.caseId,
       });
       sessionStorage.setItem(pendingOrderKey(patientId, modal.pkg.id), order.id);
       setModal({ stage: 'await-payment', orderId: order.id, pkg: modal.pkg });
@@ -123,35 +104,34 @@ export default function PackagesCatalog() {
     }
   };
 
-  /** Step 2: create payment intent for the already-created orderId.
-   *  On failure, stay on await-payment so the user can retry or start over. */
   const handleInitPayment = async () => {
     if (!modal || modal.stage !== 'await-payment') return;
     setError(null);
     try {
-      const payment = await createPayment.mutateAsync(modal.orderId);
-      setModal({ stage: 'payment', orderId: modal.orderId, clientSecret: payment.clientSecret, pkg: modal.pkg });
+      await createPayment.mutateAsync(modal.orderId);
+      setModal({ stage: 'payment', orderId: modal.orderId, pkg: modal.pkg });
     } catch (e: any) {
       setError(e.message ?? 'Failed to initialize payment');
     }
   };
 
-  /** Discard a stale/terminal pending order and return to the confirm stage.
-   *  Used when createPaymentIntent keeps failing (e.g. order cancelled/expired). */
   const abandonAndRestart = (pkg: PatientPackage) => {
-    if (patientId) sessionStorage.removeItem(pendingOrderKey(patientId, pkg.id));
+    if (patientId) {
+      sessionStorage.removeItem(pendingOrderKey(patientId, pkg.id));
+    }
     setModal({ stage: 'confirm', pkg });
     setError(null);
   };
 
   const closeModal = () => {
-    // Keep sessionStorage entry so re-opening resumes at await-payment.
     setModal(null);
     setError(null);
   };
 
   const finishAndClose = (pkg: PatientPackage) => {
-    if (patientId) sessionStorage.removeItem(pendingOrderKey(patientId, pkg.id));
+    if (patientId) {
+      sessionStorage.removeItem(pendingOrderKey(patientId, pkg.id));
+    }
     setModal(null);
     setError(null);
   };
@@ -194,7 +174,6 @@ export default function PackagesCatalog() {
         )}
       </div>
 
-      {/* Modal */}
       {modal && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-md p-6 space-y-4">
@@ -208,7 +187,6 @@ export default function PackagesCatalog() {
               <button onClick={closeModal}><X size={18} /></button>
             </div>
 
-            {/* Stage 1: confirm */}
             {modal.stage === 'confirm' && (
               <>
                 <div className="bg-stone-50 rounded-xl p-4 space-y-2 text-sm">
@@ -230,7 +208,6 @@ export default function PackagesCatalog() {
               </>
             )}
 
-            {/* Stage 2: await-payment */}
             {modal.stage === 'await-payment' && (
               <>
                 <p className="text-stone-500 text-sm">
@@ -259,28 +236,31 @@ export default function PackagesCatalog() {
               </>
             )}
 
-            {/* Stage 3: payment intent ready */}
             {modal.stage === 'payment' && (
               <>
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm space-y-2">
                   <p className="font-medium text-amber-800">Payment Ready</p>
                   <p className="text-amber-600">
-                    Order #{modal.orderId.slice(0, 8)} created. In production, Stripe would launch here.
-                  </p>
-                  <p className="text-amber-500 font-mono text-xs break-all">
-                    client_secret: {modal.clientSecret.slice(0, 30)}…
+                    Order #{modal.orderId.slice(0, 8)} created. The real checkout surface will use the payment intent privately.
                   </p>
                 </div>
-                <button
-                  onClick={() => setModal({ stage: 'done', pkg: modal.pkg })}
-                  className="w-full bg-gold-600 hover:bg-gold-700 text-white py-3 rounded-xl font-medium transition-colors"
-                >
-                  Simulate Payment Complete
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => navigate(`/dashboard/orders?orderId=${modal.orderId}`)}
+                    className="flex-1 bg-gold-600 hover:bg-gold-700 text-white py-3 rounded-xl font-medium transition-colors"
+                  >
+                    View Order
+                  </button>
+                  <button
+                    onClick={() => setModal({ stage: 'done', pkg: modal.pkg })}
+                    className="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 py-3 rounded-xl font-medium transition-colors"
+                  >
+                    Mark Complete
+                  </button>
+                </div>
               </>
             )}
 
-            {/* Stage 4: done */}
             {modal.stage === 'done' && (
               <div className="text-center py-4 space-y-3">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto">

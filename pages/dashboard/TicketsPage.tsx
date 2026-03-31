@@ -6,6 +6,7 @@ import {
   useCreatePatientTicket,
   useReplyToPatientTicket,
 } from '../../hooks/usePatientPhase2';
+import { usePatientCases } from '../../hooks/usePatientCases';
 import type { PatientTicketType } from '../../services/patientPhase2Api';
 
 const STATUS_LABEL: Record<string, string> = {
@@ -26,22 +27,32 @@ const TICKET_TYPES: PatientTicketType[] = [
 
 export default function TicketsPage() {
   const { data, isLoading } = usePatientTickets();
+  const { data: casesData } = usePatientCases();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [replyContent, setReplyContent] = useState('');
-  const [newTicket, setNewTicket] = useState({ type: 'GENERAL_SUPPORT' as PatientTicketType, subject: '', description: '' });
+  const [newTicket, setNewTicket] = useState({
+    caseId: '',
+    type: 'GENERAL_SUPPORT' as PatientTicketType,
+    subject: '',
+    description: '',
+  });
 
   const { data: detail } = usePatientTicket(selectedId);
   const createMutation = useCreatePatientTicket();
   const replyMutation = useReplyToPatientTicket();
 
   const tickets = data?.data ?? [];
+  const cases = casesData?.cases ?? [];
 
   const handleCreate = async () => {
     if (!newTicket.subject || !newTicket.description) return;
-    await createMutation.mutateAsync(newTicket);
+    await createMutation.mutateAsync({
+      ...newTicket,
+      caseId: newTicket.caseId || undefined,
+    });
     setShowCreate(false);
-    setNewTicket({ type: 'GENERAL_SUPPORT', subject: '', description: '' });
+    setNewTicket({ caseId: '', type: 'GENERAL_SUPPORT', subject: '', description: '' });
   };
 
   const handleReply = async () => {
@@ -74,6 +85,18 @@ export default function TicketsPage() {
               className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm">
               {TICKET_TYPES.map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}
             </select>
+            <select
+              value={newTicket.caseId}
+              onChange={e => setNewTicket(t => ({ ...t, caseId: e.target.value }))}
+              className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm"
+            >
+              <option value="">No linked case</option>
+              {cases.map((caseItem: any) => (
+                <option key={caseItem.id} value={caseItem.id}>
+                  {caseItem.caseNumber}
+                </option>
+              ))}
+            </select>
             <input placeholder="Subject" value={newTicket.subject}
               onChange={e => setNewTicket(t => ({ ...t, subject: e.target.value }))}
               className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm" />
@@ -99,7 +122,7 @@ export default function TicketsPage() {
             <div className="flex-1 overflow-y-auto p-6 space-y-3">
               <div className="bg-stone-50 rounded-xl p-4 text-sm text-stone-700">{detail.ticket.description}</div>
               {detail.replies.map(r => (
-                <div key={r.id} className={`rounded-xl p-3 text-sm ${r.authorRole === 'patient' ? 'bg-gold-50 ml-8' : 'bg-white border border-stone-100 mr-8'}`}>
+                <div key={r.id} className={`rounded-xl p-3 text-sm ${r.authorRole.toUpperCase() === 'PATIENT' ? 'bg-gold-50 ml-8' : 'bg-white border border-stone-100 mr-8'}`}>
                   <p className="text-xs text-stone-400 mb-1">{r.authorRole} · {new Date(r.createdAt).toLocaleDateString()}</p>
                   {r.content}
                 </div>

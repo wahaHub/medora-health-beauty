@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { usePatientCases } from '../../hooks/usePatientCases';
 import { usePatientAuth } from '../../contexts/PatientAuthContext';
 import { usePatientEntry } from '../../hooks/usePatientEntry';
@@ -64,7 +64,7 @@ export default function DashboardHome() {
                   const c = cases.find(
                     (c: any) => c.assignmentStatus !== 'ASSIGNED' && !c.intakeCompleted,
                   );
-                  if (c) navigate(`/dashboard/intake/${c.id}`);
+                  if (c) navigate(`/dashboard/intake?caseId=${c.id}`);
                 }}
               />
             )}
@@ -186,6 +186,8 @@ function ActionItem({
 }
 
 function CaseCard({ caseData: c }: { caseData: any }) {
+  const navigate = useNavigate();
+  const { openPanel } = usePatientEntry();
   const statusLabel =
     c.assignmentStatus === 'ASSIGNED' ? 'In Progress' : 'Awaiting Quotes';
   const statusClass =
@@ -194,10 +196,7 @@ function CaseCard({ caseData: c }: { caseData: any }) {
       : 'bg-gold-100 text-gold-700';
 
   return (
-    <Link
-      to={`/dashboard/cases/${c.id}`}
-      className="bg-white rounded-2xl p-6 hover:shadow-md transition-shadow flex items-center justify-between"
-    >
+    <div className="bg-white rounded-2xl p-6 hover:shadow-md transition-shadow flex items-center justify-between gap-6">
       <div>
         <div className="flex items-center gap-3 mb-2">
           <span className="text-sm font-mono text-stone-400">{c.caseNumber}</span>
@@ -220,9 +219,32 @@ function CaseCard({ caseData: c }: { caseData: any }) {
             <span className="text-sm font-medium">{c.unreadCount}</span>
           </span>
         )}
-        <ChevronRight size={16} className="text-stone-300" />
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <button
+            onClick={openPanel}
+            className="rounded-xl border border-stone-200 px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-gold-300 hover:text-gold-700"
+          >
+            Messages
+          </button>
+          {!c.intakeCompleted ? (
+            <button
+              onClick={() => navigate(`/dashboard/intake?caseId=${c.id}`)}
+              className="rounded-xl bg-gold-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-gold-700"
+            >
+              Continue Intake
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/dashboard/quotes')}
+              className="rounded-xl bg-gold-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-gold-700"
+            >
+              View Quotes
+            </button>
+          )}
+          <ChevronRight size={16} className="text-stone-300" />
+        </div>
       </div>
-    </Link>
+    </div>
   );
 }
 

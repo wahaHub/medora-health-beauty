@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ShoppingBag, CreditCard, ChevronRight, X } from 'lucide-react';
 import { usePatientOrders, usePatientOrder, useCreatePaymentIntent } from '../../hooks/usePatientPhase2';
 
 const STATUS_COLOR: Record<string, string> = {
-  PENDING: 'bg-amber-100 text-amber-700',
-  AWAITING_PAYMENT: 'bg-orange-100 text-orange-700',
+  PENDING_PAYMENT: 'bg-orange-100 text-orange-700',
   PAID: 'bg-green-100 text-green-700',
+  IN_PROGRESS: 'bg-blue-100 text-blue-700',
   COMPLETED: 'bg-blue-100 text-blue-700',
+  REFUNDED: 'bg-violet-100 text-violet-700',
   CANCELLED: 'bg-stone-100 text-stone-500',
 };
 
@@ -19,11 +20,14 @@ export default function OrdersPage() {
 
   const orders = data?.data ?? [];
 
+  useEffect(() => {
+    setPaymentResult(null);
+  }, [selectedId]);
+
   const handleInitPayment = async () => {
     if (!selectedId) return;
-    const result = await paymentMutation.mutateAsync(selectedId);
-    // In a real app you'd launch Stripe with result.clientSecret
-    setPaymentResult(`Payment initiated. Client secret: ${result.clientSecret.slice(0, 20)}…`);
+    await paymentMutation.mutateAsync(selectedId);
+    setPaymentResult('Payment preparation is ready for this order. Checkout will consume the payment intent privately.');
   };
 
   if (isLoading) return <div className="text-center py-20 text-stone-400">Loading orders…</div>;
@@ -48,7 +52,7 @@ export default function OrdersPage() {
               </div>
               {order.paidAt && <div className="flex justify-between"><span className="text-stone-400">Paid</span><span>{new Date(order.paidAt).toLocaleDateString()}</span></div>}
             </div>
-            {order.status === 'AWAITING_PAYMENT' && (
+            {order.status === 'PENDING_PAYMENT' && (
               <>
                 {paymentResult ? (
                   <p className="text-xs text-green-600 bg-green-50 rounded-xl p-3">{paymentResult}</p>

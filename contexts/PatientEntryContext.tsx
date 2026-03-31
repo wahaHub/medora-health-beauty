@@ -303,14 +303,17 @@ export function PatientEntryProvider({ children }: { children: ReactNode }) {
   }, [phase, preBootstrapMessages.length, scopedSession]);
 
   const clearBootstrapError = useCallback(() => {
-    if (scopedSession) {
-      clearBootstrapErrorMarker(scopedSession.patientId, scopedSession.caseId);
+    const markerPatientId = scopedSession?.patientId ?? patient?.id ?? null;
+    const markerCaseId = scopedSession?.caseId ?? patient?.caseId ?? null;
+
+    if (markerPatientId && markerCaseId) {
+      clearBootstrapErrorMarker(markerPatientId, markerCaseId);
     }
     lastAppliedRestoreKeyRef.current = null;
     setPhase('collect-profile');
     setImportStatusState('idle');
     setBootstrapErrorState(null);
-  }, [scopedSession]);
+  }, [patient?.caseId, patient?.id, scopedSession]);
 
   const resolveMessagesReadyState = useCallback(
     (input: {
@@ -451,12 +454,7 @@ export function PatientEntryProvider({ children }: { children: ReactNode }) {
           const records = await crmApi.getConversations();
           if (cancelled) return;
 
-          // records may be an array directly or wrapped; handle both
-          const list: Array<{ id: string; caseId?: string; category?: string }> = Array.isArray(
-            records,
-          )
-            ? records
-            : records?.conversations ?? records?.data ?? [];
+          const list = records as Array<{ id: string; caseId?: string; category?: string }>;
 
           conversations = list
             .filter(

@@ -1,15 +1,20 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { crmApi } from '../../services/crmApiClient';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 export default function LoginPage() {
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const initialError =
+    location.state && typeof location.state === 'object' && 'error' in location.state
+      ? location.state.error
+      : null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -32,6 +37,11 @@ export default function LoginPage() {
 
         <h1 className="text-2xl font-serif font-bold text-navy-900 mb-2">Sign in to your dashboard</h1>
         <p className="text-stone-500 mb-6">We'll send you a magic link to sign in.</p>
+        {initialError === 'invalid-token' && !error && (
+          <p className="text-amber-600 text-sm mb-4">
+            That sign-in link is no longer valid. Request a fresh magic link below.
+          </p>
+        )}
 
         {sent ? (
           <div className="text-center py-8">

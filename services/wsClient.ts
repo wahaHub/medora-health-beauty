@@ -8,10 +8,17 @@ export class WsClient {
   private maxReconnectDelay = 30000;
   private url: string = '';
   private _isConnected = false;
+  private shouldReconnect = false;
 
   get isConnected() { return this._isConnected; }
 
   connect(url: string): void {
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
+    }
+
+    this.shouldReconnect = true;
     this.url = url;
     this.ws = new WebSocket(url);
 
@@ -32,7 +39,10 @@ export class WsClient {
 
     this.ws.onclose = () => {
       this._isConnected = false;
-      this.scheduleReconnect();
+      this.ws = null;
+      if (this.shouldReconnect) {
+        this.scheduleReconnect();
+      }
     };
 
     this.ws.onerror = () => {
@@ -47,14 +57,22 @@ export class WsClient {
   }
 
   disconnect(): void {
-    if (this.reconnectTimeout) clearTimeout(this.reconnectTimeout);
+    this.shouldReconnect = false;
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
+    }
     this.ws?.close();
     this.ws = null;
     this._isConnected = false;
   }
 
   private scheduleReconnect(): void {
+    if (!this.shouldReconnect || !this.url) {
+      return;
+    }
     this.reconnectTimeout = setTimeout(() => {
+      this.reconnectTimeout = null;
       this.connect(this.url);
       this.reconnectDelay = Math.min(this.reconnectDelay * 2, this.maxReconnectDelay);
     }, this.reconnectDelay);

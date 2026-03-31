@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { CheckCircle, Save } from 'lucide-react';
 import {
   useIntakeTemplate,
   useIntakeResponse,
   useSaveIntakeResponse,
 } from '../../hooks/usePatientIntake';
+import { usePatientCases } from '../../hooks/usePatientCases';
+import { usePatientAuth } from '../../contexts/PatientAuthContext';
 import type { IntakeQuestion } from '../../services/crmApiClient';
 
 // ---------------------------------------------------------------------------
@@ -153,7 +155,13 @@ function QuestionField({ question, value, onChange, readOnly }: QuestionFieldPro
 // ---------------------------------------------------------------------------
 
 export default function IntakePage() {
-  const { caseId } = useParams<{ caseId: string }>();
+  const [searchParams] = useSearchParams();
+  const { patient } = usePatientAuth();
+  const { data: casesData, isLoading: casesLoading } = usePatientCases();
+  const requestedCaseId = searchParams.get('caseId') ?? undefined;
+  const cases = casesData?.cases ?? [];
+  const fallbackCaseId = patient?.caseId ?? cases[0]?.id;
+  const caseId = requestedCaseId ?? fallbackCaseId;
 
   const {
     data: template,
@@ -178,7 +186,7 @@ export default function IntakePage() {
     }
   }, [intakeResponse]);
 
-  const isLoading = templateLoading || responseLoading;
+  const isLoading = casesLoading || templateLoading || responseLoading;
   const isSubmitted = intakeResponse?.status === 'submitted';
 
   const handleChange = (id: string, value: string | string[] | boolean) => {
@@ -203,6 +211,14 @@ export default function IntakePage() {
   }
 
   if (templateError || !template) {
+    if (!caseId) {
+      return (
+        <div className="text-center py-20 text-stone-400">
+          No case is available for intake yet.
+        </div>
+      );
+    }
+
     return (
       <div className="text-center py-20 text-red-400">
         Unable to load intake form. Please try again later.
