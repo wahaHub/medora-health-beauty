@@ -172,6 +172,8 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     setIsLoading(true);
     setError(null);
+    // Capture patientId before we clear it so we can clean up scoped storage
+    const leavingPatientId = patientRef.current?.id;
     clearStoredRestoreToken();
     patientRef.current = null;
     sessionStateRef.current.lastVerifiedToken = null;
@@ -190,6 +192,16 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
         queryClient.removeQueries({ queryKey: ['patient', 'cases'] }),
         queryClient.removeQueries({ queryKey: ['patient', 'intake'] }),
       ]);
+      // Clear any pending-order sessionStorage entries scoped to this patient
+      if (leavingPatientId) {
+        const prefix = `medora:pending-order:${leavingPatientId}:`;
+        const toRemove: string[] = [];
+        for (let i = 0; i < sessionStorage.length; i++) {
+          const k = sessionStorage.key(i);
+          if (k?.startsWith(prefix)) toRemove.push(k);
+        }
+        toRemove.forEach((k) => sessionStorage.removeItem(k));
+      }
       setIsLoading(false);
       navigate('/login', { replace: true });
     }
