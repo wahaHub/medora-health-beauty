@@ -131,6 +131,7 @@ export function usePatientPackages(page = 1, limit = 50) {
   return useQuery({
     queryKey: patientPhase2Keys.packageList(scope, page, limit),
     queryFn: () => patientPhase2Api.listPackages({ page, limit }),
+    enabled: scope !== 'anonymous',
   });
 }
 
@@ -141,7 +142,7 @@ export function usePatientPackage(packageId: string | null) {
       ? patientPhase2Keys.packageDetail(scope, packageId)
       : [...patientPhase2Keys.packages(scope), 'detail', 'idle'],
     queryFn: () => patientPhase2Api.getPackage(packageId!),
-    enabled: !!packageId,
+    enabled: !!packageId && scope !== 'anonymous',
   });
 }
 

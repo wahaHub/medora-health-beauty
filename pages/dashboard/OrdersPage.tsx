@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ShoppingBag, CreditCard, ChevronRight, X } from 'lucide-react';
 import { usePatientOrders, usePatientOrder, useCreatePaymentIntent } from '../../hooks/usePatientPhase2';
 
@@ -12,22 +13,30 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 export default function OrdersPage() {
+  const [searchParams] = useSearchParams();
   const { data, isLoading } = usePatientOrders();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(searchParams.get('orderId'));
   const { data: order } = usePatientOrder(selectedId);
   const paymentMutation = useCreatePaymentIntent();
   const [paymentResult, setPaymentResult] = useState<string | null>(null);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const orders = data?.data ?? [];
 
   useEffect(() => {
     setPaymentResult(null);
+    setPaymentError(null);
   }, [selectedId]);
 
   const handleInitPayment = async () => {
     if (!selectedId) return;
-    await paymentMutation.mutateAsync(selectedId);
-    setPaymentResult('Payment preparation is ready for this order. Checkout will consume the payment intent privately.');
+    setPaymentError(null);
+    try {
+      await paymentMutation.mutateAsync(selectedId);
+      setPaymentResult('Payment preparation is ready for this order. Checkout will consume the payment intent privately.');
+    } catch (e: any) {
+      setPaymentError(e.message ?? 'Failed to initialize payment');
+    }
   };
 
   if (isLoading) return <div className="text-center py-20 text-stone-400">Loading orders…</div>;
@@ -57,11 +66,14 @@ export default function OrdersPage() {
                 {paymentResult ? (
                   <p className="text-xs text-green-600 bg-green-50 rounded-xl p-3">{paymentResult}</p>
                 ) : (
-                  <button onClick={handleInitPayment} disabled={paymentMutation.isPending}
-                    className="w-full flex items-center justify-center gap-2 bg-gold-600 hover:bg-gold-700 text-white py-2.5 rounded-xl font-medium transition-colors disabled:opacity-50">
-                    <CreditCard size={16} />
-                    {paymentMutation.isPending ? 'Loading…' : 'Pay Now'}
-                  </button>
+                  <>
+                    {paymentError && <p className="text-xs text-red-500">{paymentError}</p>}
+                    <button onClick={handleInitPayment} disabled={paymentMutation.isPending}
+                      className="w-full flex items-center justify-center gap-2 bg-gold-600 hover:bg-gold-700 text-white py-2.5 rounded-xl font-medium transition-colors disabled:opacity-50">
+                      <CreditCard size={16} />
+                      {paymentMutation.isPending ? 'Loading…' : 'Pay Now'}
+                    </button>
+                  </>
                 )}
               </>
             )}

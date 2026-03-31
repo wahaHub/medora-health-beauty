@@ -22,6 +22,7 @@ import {
   clearPatientReturnTo,
   readPatientReturnTo,
 } from '../services/patientRouteMemory';
+import { PENDING_ORDER_KEY_PREFIX } from '../services/storageKeys';
 import { useQueryClient } from '@tanstack/react-query';
 
 export interface PatientProfile {
@@ -194,7 +195,7 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
       ]);
       // Clear any pending-order sessionStorage entries scoped to this patient
       if (leavingPatientId) {
-        const prefix = `medora:pending-order:${leavingPatientId}:`;
+        const prefix = `${PENDING_ORDER_KEY_PREFIX}${leavingPatientId}:`;
         const toRemove: string[] = [];
         for (let i = 0; i < sessionStorage.length; i++) {
           const k = sessionStorage.key(i);

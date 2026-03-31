@@ -16,17 +16,12 @@ import {
 } from '../hooks/usePatientPhase2';
 import { usePatientAuth } from '../contexts/PatientAuthContext';
 import type { PatientPackage } from '../services/patientPhase2Api';
-
-const PENDING_ORDER_PREFIX = 'medora:pending-order:';
-
-const pendingOrderKey = (patientId: string, packageId: string) =>
-  `${PENDING_ORDER_PREFIX}${patientId}:${packageId}`;
+import { pendingOrderKey } from '../services/storageKeys';
 
 function PackageCard({
   pkg,
   onSelect,
 }: {
-  key?: string;
   pkg: PatientPackage;
   onSelect: (pkg: PatientPackage) => void;
 }) {
@@ -96,6 +91,7 @@ export default function PackagesCatalog() {
     try {
       const order = await createOrder.mutateAsync({
         packageId: modal.pkg.id,
+        ...(patient?.caseId ? { caseId: patient.caseId } : {}),
       });
       sessionStorage.setItem(pendingOrderKey(patientId, modal.pkg.id), order.id);
       setModal({ stage: 'await-payment', orderId: order.id, pkg: modal.pkg });
