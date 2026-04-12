@@ -61,3 +61,15 @@ translations/
 # Separate projects (have their own git repos)
 medical-crm/
 medical-china-comb/
+medical-crm-v2/
+medical-crm-v2-deploy/
+medical-crm-v2-deploy-clean/
+medical-crm-v2-deploy-live/
+medical-crm-v2-smoke-deploy/
+.gstack/
+
+# Tool/agent working directories
+.superpowers/
+.codex-worktrees/
+codex-post-review/
+comparison/
