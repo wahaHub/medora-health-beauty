@@ -1,6 +1,6 @@
 const BASE_URL = '/api/patient';
 
-export const RESTORE_TOKEN_STORAGE_KEY = 'medora.patient.restoreToken';
+export const RESTORE_TOKEN_STORAGE_KEY = 'beauty.patient.restoreToken';
 
 export class ApiError extends Error {
   status: number;
@@ -14,6 +14,10 @@ export class ApiError extends Error {
 
 function isBrowser() {
   return typeof window !== 'undefined';
+}
+
+function buildRequestUrl(path: string): string {
+  return path.startsWith('/api/') ? path : `${BASE_URL}${path}`;
 }
 
 export function getStoredRestoreToken(): string | null {
@@ -38,12 +42,12 @@ export function shouldClearStoredRestoreToken(error: unknown): boolean {
 }
 
 export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const headers = new Headers((options.headers as Record<string, string>) || {});
+  const headers = new Headers(options.headers || {});
   if (!headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
 
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(buildRequestUrl(path), {
     ...options,
     credentials: 'include',
     headers,

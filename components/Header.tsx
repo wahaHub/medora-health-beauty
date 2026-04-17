@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Phone } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from '../hooks/useTranslation';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useSurgeonsList } from '../hooks/useData';
+import { usePatientAuth } from '../contexts/PatientAuthContext';
 import procedureNames from '../i18n/procedureNames.json';
 
 interface SubMenuItem {
@@ -51,6 +52,7 @@ const Header: React.FC = () => {
   const location = useLocation();
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
+  const { isAuthenticated: isPatientAuthenticated, isLoading: isPatientAuthLoading } = usePatientAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -359,6 +361,13 @@ const Header: React.FC = () => {
   // On pages with dark hero sections, header should be transparent at top
   // On home page and other pages, header is white at top
   const hasWhiteBg = isScrolled || Boolean(hoveredNav) || (!hasDarkHero && isAtTop);
+  const authHref = isPatientAuthenticated ? '/dashboard' : '/login';
+  const authLabel = isPatientAuthLoading ? 'Account' : isPatientAuthenticated ? 'Dashboard' : 'Login';
+  const authButtonClass = `px-4 xl:px-6 py-2 rounded-sm text-xs xl:text-sm tracking-wider xl:tracking-widest uppercase transition-colors flex items-center justify-center border whitespace-nowrap ${
+    hasWhiteBg
+      ? 'border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white'
+      : 'border-white text-white hover:bg-white hover:text-navy-900'
+  }`;
 
   return (
     <header
@@ -406,22 +415,24 @@ const Header: React.FC = () => {
           ))}
         </nav>
 
-        {/* Language Selector */}
-        <div className="hidden lg:block">
-          <LanguageSelector isTransparent={!hasWhiteBg} />
-        </div>
-
-        {/* CTA Button */}
-        <div className="hidden lg:flex shrink-0">
-          <button
-            onClick={() => { navigate('/get-quote'); window.scrollTo(0, 0); }}
-            className={`px-4 xl:px-6 py-2 rounded-sm text-xs xl:text-sm tracking-wider xl:tracking-widest uppercase transition-colors flex items-center gap-2 border whitespace-nowrap ${
-            hasWhiteBg
-              ? 'border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white'
-              : 'border-white text-white hover:bg-white hover:text-navy-900'
-          }`}>
-            <Phone size={14} /> {t('navGetFreeQuote')}
-          </button>
+        {/* Utility Controls */}
+        <div className="hidden lg:flex shrink-0 items-center gap-3">
+          <LanguageSelector isTransparent={!hasWhiteBg} compact />
+          {isPatientAuthLoading ? (
+            <span
+              className={`${authButtonClass} cursor-default opacity-80`}
+              aria-disabled="true"
+            >
+              {authLabel}
+            </span>
+          ) : (
+            <Link
+              to={authHref}
+              className={authButtonClass}
+            >
+              {authLabel}
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -494,6 +505,25 @@ const Header: React.FC = () => {
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 bg-white z-40 pt-24 px-6 overflow-y-auto">
           <div className="flex flex-col space-y-6">
+            <div className="flex items-center justify-between gap-3 border-b border-stone-200 pb-5">
+              <LanguageSelector compact />
+              {isPatientAuthLoading ? (
+                <span
+                  className="min-w-[8.5rem] rounded-sm border border-navy-900 px-4 py-2 text-center text-xs uppercase tracking-[0.2em] text-navy-900 opacity-80"
+                  aria-disabled="true"
+                >
+                  {authLabel}
+                </span>
+              ) : (
+                <Link
+                  to={authHref}
+                  className="min-w-[8.5rem] rounded-sm border border-navy-900 px-4 py-2 text-center text-xs uppercase tracking-[0.2em] text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {authLabel}
+                </Link>
+              )}
+            </div>
             {navItems.map((link) => (
               <div key={link.name}>
                 <a

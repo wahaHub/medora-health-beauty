@@ -102,6 +102,7 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
     const nextPatient = toPatientProfile(session);
     patientRef.current = nextPatient;
     setPatient(nextPatient);
+    setError(null);
 
     if (session.restoreToken) {
       setStoredRestoreToken(session.restoreToken);
@@ -148,7 +149,9 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
       sessionStateRef.current.lastVerifiedToken = token;
       return true;
     } catch (tokenError) {
-      clearStoredRestoreToken();
+      if (shouldClearStoredRestoreToken(tokenError)) {
+        clearStoredRestoreToken();
+      }
       patientRef.current = null;
       sessionStateRef.current.lastVerifiedToken = null;
       setPatient(null);
@@ -208,7 +211,8 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
     }
   }, [navigate, queryClient]);
 
-  // Initial bootstrap: token-in-URL → cookie/getMe → restore-token → logged-out
+  // Initial bootstrap uses Beauty-only session state: token-in-URL → cookie/getMe
+  // → Beauty restore token → logged-out.
   useEffect(() => {
     let cancelled = false;
 
