@@ -114,10 +114,13 @@ describe('Beauty widget onboarding form', () => {
         email: 'alice@example.com',
         phone: '+1 555 0100',
         disease: 'Rhinoplasty',
-        procedureId: 'rhinoplasty',
         category: 'face',
         destination: 'South Korea',
       }));
     });
+
+    expect(crmApiState.initOnboarding).not.toHaveBeenCalledWith(expect.objectContaining({
+      procedureId: 'rhinoplasty',
+    }));
   });
 });
