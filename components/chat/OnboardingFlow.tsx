@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, type KeyboardEvent, type ChangeEvent } from 'react';
-import { Send, RefreshCw, MessageSquare } from 'lucide-react';
+import { Paperclip, Send, RefreshCw, MessageSquare } from 'lucide-react';
 import { usePatientEntry } from '../../hooks/usePatientEntry';
 import { ContactInfoStep } from './ContactInfoStep';
 import { HospitalCards } from './HospitalCards';
@@ -67,6 +67,15 @@ function PreBootstrapInput() {
   return (
     <div className="px-4 py-3 border-t border-stone-200 shrink-0 bg-white">
       <div className="flex items-end gap-2 bg-stone-50 rounded-2xl px-4 py-2 border border-stone-200 focus-within:border-gold-500 transition-colors">
+        <button
+          type="button"
+          disabled
+          aria-label="Attach files"
+          title="Attachments become available once your patient chat session is ready."
+          className="rounded-full p-2 text-stone-300"
+        >
+          <Paperclip size={16} />
+        </button>
         <textarea
           ref={textareaRef}
           value={content}
@@ -79,6 +88,7 @@ function PreBootstrapInput() {
         <button
           onClick={handleSend}
           disabled={!content.trim()}
+          aria-label="Send message"
           className={`p-2 rounded-full transition-colors shrink-0 ${
             content.trim()
               ? 'bg-gold-600 text-white hover:bg-gold-700'

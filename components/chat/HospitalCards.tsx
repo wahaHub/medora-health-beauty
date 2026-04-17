@@ -28,6 +28,8 @@ export function HospitalCards() {
     setError(null);
     crmApi
       .matchHospitals({
+        procedureId: profileDraft.procedureId || undefined,
+        category: profileDraft.category || undefined,
         destination: profileDraft.destination || undefined,
       })
       .then((data) => {
@@ -36,7 +38,12 @@ export function HospitalCards() {
       .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profileDraft.destination, matchedHospitals.length]);
+  }, [
+    profileDraft.category,
+    profileDraft.destination,
+    profileDraft.procedureId,
+    matchedHospitals.length,
+  ]);
 
   const handleSubmit = async () => {
     if (selectedHospitalIds.length === 0 || submitting || !caseId) return;

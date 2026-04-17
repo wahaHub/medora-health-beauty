@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { WsClient } from '../services/wsClient';
 import { usePatientAuth } from '../contexts/PatientAuthContext';
+import { getCrmApiOrigin } from '../services/crmApiClient';
 
 export function useWebSocket(path: string, enabled = true) {
   const clientRef = useRef<WsClient | null>(null);
@@ -10,8 +11,10 @@ export function useWebSocket(path: string, enabled = true) {
   useEffect(() => {
     if (!enabled || !isAuthenticated) return;
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const url = `${protocol}//${window.location.host}${path}`;
+    const crmOrigin = getCrmApiOrigin();
+    const originUrl = new URL(crmOrigin, window.location.origin);
+    originUrl.protocol = originUrl.protocol === 'https:' ? 'wss:' : 'ws:';
+    const url = new URL(path, originUrl).toString();
 
     const client = new WsClient();
     client.connect(url);

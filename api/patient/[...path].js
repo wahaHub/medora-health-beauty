@@ -1,7 +1,17 @@
-const DEFAULT_CRM_API_BASE_URL = 'http://localhost:3001';
+const LOCAL_CRM_API_BASE_URL = 'http://localhost:3001';
+const PRODUCTION_CRM_API_BASE_URL = 'https://crmapi.medicaltourismchina.health';
 
 function getCrmApiBaseUrl() {
-  return (process.env.CRM_API_BASE_URL || DEFAULT_CRM_API_BASE_URL).replace(/\/+$/, '');
+  const configuredBaseUrl = process.env.CRM_API_BASE_URL;
+  if (configuredBaseUrl) {
+    return configuredBaseUrl.replace(/\/+$/, '');
+  }
+
+  const fallbackBaseUrl = process.env.VERCEL || process.env.NODE_ENV === 'production'
+    ? PRODUCTION_CRM_API_BASE_URL
+    : LOCAL_CRM_API_BASE_URL;
+
+  return fallbackBaseUrl.replace(/\/+$/, '');
 }
 
 function getUpstreamUrl(req) {

@@ -137,4 +137,47 @@ describe('Beauty patient proxy', () => {
     expect(res.headers.get('set-cookie')).toBe('patient_session=solo; Path=/; HttpOnly');
     expect(res.body).toBe('{"ok":true}');
   });
+
+  it('falls back to the production CRM origin when CRM_API_BASE_URL is unset on Vercel', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: vi.fn().mockResolvedValue('{"ok":true}'),
+      headers: {
+        get: (name: string) => (name.toLowerCase() === 'content-type' ? 'application/json' : null),
+      },
+    });
+
+    global.fetch = fetchMock as typeof fetch;
+    const originalVercel = process.env.VERCEL;
+    const originalCrmApiBaseUrl = process.env.CRM_API_BASE_URL;
+    process.env.VERCEL = '1';
+    delete process.env.CRM_API_BASE_URL;
+
+    const req: MockRequest = {
+      method: 'GET',
+      query: { path: ['me'] },
+      headers: {},
+      url: '/api/patient/me',
+    };
+    const res = createResponseRecorder();
+
+    try {
+      await handler(req as never, res as never);
+    } finally {
+      process.env.VERCEL = originalVercel;
+      if (typeof originalCrmApiBaseUrl === 'string') {
+        process.env.CRM_API_BASE_URL = originalCrmApiBaseUrl;
+      } else {
+        delete process.env.CRM_API_BASE_URL;
+      }
+    }
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://crmapi.medicaltourismchina.health/api/patient/me',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+  });
 });

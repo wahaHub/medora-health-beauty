@@ -1,4 +1,5 @@
 const BASE_URL = '/api/patient';
+const CRM_API_BASE_URL = (import.meta.env.VITE_CRM_API_BASE_URL || '').replace(/\/+$/, '');
 
 export const RESTORE_TOKEN_STORAGE_KEY = 'beauty.patient.restoreToken';
 
@@ -17,7 +18,24 @@ function isBrowser() {
 }
 
 function buildRequestUrl(path: string): string {
-  return path.startsWith('/api/') ? path : `${BASE_URL}${path}`;
+  const relativePath = path.startsWith('/api/') ? path : `${BASE_URL}${path}`;
+  return CRM_API_BASE_URL ? `${CRM_API_BASE_URL}${relativePath}` : relativePath;
+}
+
+export function getCrmApiOrigin(): string {
+  if (CRM_API_BASE_URL) {
+    try {
+      return new URL(CRM_API_BASE_URL).origin;
+    } catch {
+      // Fall back to the current origin if the configured base URL is malformed.
+    }
+  }
+
+  if (isBrowser()) {
+    return window.location.origin;
+  }
+
+  return 'http://localhost';
 }
 
 export function getStoredRestoreToken(): string | null {
@@ -121,6 +139,15 @@ export interface Message {
   senderType?: 'patient' | 'hospital' | 'system';
   content: string;
   createdAt: string;
+  attachments?: MessageAttachment[];
+}
+
+export interface MessageAttachment {
+  fileName: string;
+  mimeType: string;
+  fileSize: number;
+  storageKey: string;
+  url?: string;
 }
 
 export interface ConversationsResponse {
@@ -165,14 +192,21 @@ export const crmApi = {
   getProcedures: (category?: string) =>
     request<any>(`/procedures${category ? `?category=${category}` : ''}`),
   getDestinations: () => request<any>('/destinations'),
-  initOnboarding: (data: { email: string; name: string; phone: string; disease?: string; destination?: string; preferredLanguage: string; captchaToken: string }) =>
+  initOnboarding: (data: { email: string; name: string; phone: string; disease?: string; destination?: string; preferredLanguage?: string; captchaToken?: string }) =>
     request<{
       patientId: string;
       caseId: string;
       restoreToken?: string;
       nextStep?: string;
       conversations?: Array<{ id: string; type: string }>;
-    }>('/onboarding/init', { method: 'POST', body: JSON.stringify(data) }),
+    }>('/onboarding/init', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...data,
+        ...(data.captchaToken ? { captchaToken: data.captchaToken } : {}),
+        ...(data.preferredLanguage ? { preferredLanguage: data.preferredLanguage } : {}),
+      }),
+    }),
   matchHospitals: (data: { procedureId?: string; destination?: string; category?: string }) =>
     request<{ hospitals: any[] }>('/match-hospitals', { method: 'POST', body: JSON.stringify(data) }),
 
@@ -211,8 +245,53 @@ export const crmApi = {
     const query = qs.toString();
     return request<any>(`/conversations/${convId}/messages${query ? `?${query}` : ''}`);
   },
-  sendMessage: (convId: string, content: string) =>
-    request<any>(`/conversations/${convId}/messages`, { method: 'POST', body: JSON.stringify({ content }) }),
+  sendMessage: (
+    convId: string,
+    content: string,
+    options?: {
+      messageType?: 'TEXT' | 'IMAGE' | 'FILE';
+      attachments?: Array<{
+        fileName: string;
+        mimeType: string;
+        fileSize: number;
+        storageKey: string;
+      }>;
+    },
+  ) =>
+    request<any>(`/conversations/${convId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({
+        content,
+        ...(options?.messageType ? { messageType: options.messageType } : {}),
+        ...(options?.attachments ? { attachments: options.attachments } : {}),
+      }),
+    }),
+  initConversationAttachmentUpload: (data: {
+    conversationId: string;
+    fileName: string;
+    fileSize: number;
+    mimeType: string;
+  }) =>
+    request<{
+      upload: {
+        uploadUrl: string;
+        storageKey: string;
+        expiresIn: number;
+      };
+      asset: {
+        fileName: string;
+        mimeType: string;
+        fileSize: number;
+        storageKey: string;
+      };
+    }>(`/conversations/${data.conversationId}/attachments/upload`, {
+      method: 'POST',
+      body: JSON.stringify({
+        fileName: data.fileName,
+        fileSize: data.fileSize,
+        mimeType: data.mimeType,
+      }),
+    }),
   getQuote: (caseId: string) => request<any>(`/cases/${caseId}/quote`),
   acceptQuote: (caseId: string, quoteId: string) =>
     request<any>(`/cases/${caseId}/quote/accept`, { method: 'POST', body: JSON.stringify({ quoteId }) }),

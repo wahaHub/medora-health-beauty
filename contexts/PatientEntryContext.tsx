@@ -58,6 +58,8 @@ export type PatientProfileDraft = {
   phone: string;
   disease: string;
   destination: string;
+  category: string;
+  procedureId: string;
 };
 
 export type PatientConversationSummary = {
@@ -196,7 +198,15 @@ export const PatientEntryContext = createContext<PatientEntryContextValue | unde
 // ---------------------------------------------------------------------------
 
 function createEmptyProfileDraft(): PatientProfileDraft {
-  return { name: '', email: '', phone: '', disease: '', destination: '' };
+  return {
+    name: '',
+    email: '',
+    phone: '',
+    disease: '',
+    destination: '',
+    category: '',
+    procedureId: '',
+  };
 }
 
 function identifyAdminConversation(
