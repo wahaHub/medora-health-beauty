@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import ChatWidget from '../components/ChatWidget';
 
 const patientEntryState = vi.hoisted(() => ({
-  isWidgetOpen: true,
+  isWidgetOpen: false,
   phase: 'collect-profile',
   activeConversationId: null,
   caseId: 'case-1',
@@ -52,9 +52,20 @@ vi.mock('../components/chat/OnboardingFlow', () => ({
 }));
 
 describe('ChatWidget CRM-backed entry shell', () => {
+  const desktopMatchMedia = (matches = false) => vi.fn().mockImplementation(() => ({
+    matches,
+    media: '(max-width: 767px)',
+    onchange: null,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }));
+
   beforeEach(() => {
     vi.clearAllMocks();
-    patientEntryState.isWidgetOpen = true;
+    patientEntryState.isWidgetOpen = false;
     patientEntryState.phase = 'collect-profile';
     patientEntryState.activeConversationId = null;
     patientEntryState.caseId = 'case-1';
@@ -65,6 +76,13 @@ describe('ChatWidget CRM-backed entry shell', () => {
     messagesState.data = { messages: [] };
     messagesState.isLoading = false;
     Element.prototype.scrollIntoView = vi.fn();
+    window.matchMedia = desktopMatchMedia(false);
+    patientEntryState.openWidget.mockImplementation(() => {
+      patientEntryState.isWidgetOpen = true;
+    });
+    patientEntryState.closeWidget.mockImplementation(() => {
+      patientEntryState.isWidgetOpen = false;
+    });
   });
 
   it('hides the floating widget on /login', () => {
@@ -82,6 +100,7 @@ describe('ChatWidget CRM-backed entry shell', () => {
     'keeps the onboarding shell for %s',
     (phase) => {
       patientEntryState.phase = phase;
+      patientEntryState.isWidgetOpen = true;
 
       render(
         <MemoryRouter initialEntries={['/']}>
@@ -95,6 +114,7 @@ describe('ChatWidget CRM-backed entry shell', () => {
 
   it('renders the CRM-backed conversation surface inline for messages-ready', () => {
     patientEntryState.phase = 'messages-ready';
+    patientEntryState.isWidgetOpen = true;
     conversationsState.data = [
       {
         id: 'admin-conv',
@@ -126,5 +146,64 @@ describe('ChatWidget CRM-backed entry shell', () => {
     expect(screen.getByRole('link', { name: /full workspace/i })).toHaveAttribute('href', '/dashboard/messages');
     expect(screen.queryByRole('button', { name: /open messages/i })).toBeNull();
     expect(screen.queryByTestId('onboarding-shell')).toBeNull();
+  });
+
+  it('opens as a larger panel, can maximize to modal, then minimize back to panel', () => {
+    patientEntryState.phase = 'messages-ready';
+    conversationsState.data = [
+      {
+        id: 'admin-conv',
+        caseId: 'case-1',
+        type: 'patient-admin',
+        unreadCount: 0,
+        lastMessage: { content: 'Latest CRM message', createdAt: '2026-04-17T00:00:00.000Z' },
+      },
+    ];
+
+    const view = render(
+      <MemoryRouter initialEntries={['/']}>
+        <ChatWidget />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /open chat/i }));
+    view.rerender(
+      <MemoryRouter initialEntries={['/']}>
+        <ChatWidget />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId('chat-window')).toHaveAttribute('data-chat-display-mode', 'panel');
+    expect(screen.getByRole('button', { name: /maximize chat/i })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /maximize chat/i }));
+    expect(screen.getByTestId('chat-window')).toHaveAttribute('data-chat-display-mode', 'modal');
+    expect(screen.getByRole('button', { name: /minimize chat/i })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /minimize chat/i }));
+    expect(screen.getByTestId('chat-window')).toHaveAttribute('data-chat-display-mode', 'panel');
+  });
+
+  it('uses the mobile two-state shell without a maximize button', () => {
+    window.matchMedia = desktopMatchMedia(true);
+    patientEntryState.phase = 'messages-ready';
+    patientEntryState.isWidgetOpen = true;
+    conversationsState.data = [
+      {
+        id: 'admin-conv',
+        caseId: 'case-1',
+        type: 'patient-admin',
+        unreadCount: 0,
+      },
+    ];
+
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <ChatWidget />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId('chat-window')).toHaveAttribute('data-chat-display-mode', 'mobile-panel');
+    expect(screen.queryByRole('button', { name: /maximize chat/i })).toBeNull();
   });
 });
