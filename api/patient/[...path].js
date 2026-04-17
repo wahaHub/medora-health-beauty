@@ -15,7 +15,12 @@ function getCrmApiBaseUrl() {
 }
 
 function getUpstreamUrl(req) {
-  const pathParts = Array.isArray(req.query?.path) ? req.query.path : [];
+  const rawPath = req.query?.path;
+  const pathParts = Array.isArray(rawPath)
+    ? rawPath
+    : typeof rawPath === 'string' && rawPath.length > 0
+      ? [rawPath]
+      : [];
   const path = pathParts.join('/');
   const search = new URL(req.url || '/api/patient', 'http://localhost').search;
   return `${getCrmApiBaseUrl()}/api/patient/${path}${search}`;

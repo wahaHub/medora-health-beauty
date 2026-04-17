@@ -16,6 +16,10 @@
       "destination": "/api/admin/:path*"
     },
     {
+      "source": "/api/patient/:match*",
+      "destination": "/api/patient/[...path]?path=:match*"
+    },
+    {
       "source": "/((?!admin|api).*)",
       "destination": "/index.html"
     }

@@ -4,7 +4,7 @@ import handler from '../api/patient/[...path].js';
 
 type MockRequest = {
   method: string;
-  query: { path: string[] };
+  query: { path: string[] | string };
   headers: Record<string, string>;
   body?: unknown;
   url: string;
@@ -175,6 +175,49 @@ describe('Beauty patient proxy', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://crmapi.medicaltourismchina.health/api/patient/me',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+  });
+
+  it('normalizes single-segment catch-all params emitted as a string by Vercel', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: vi.fn().mockResolvedValue('{"ok":true}'),
+      headers: {
+        get: (name: string) => (name.toLowerCase() === 'content-type' ? 'application/json' : null),
+      },
+    });
+
+    global.fetch = fetchMock as typeof fetch;
+    const originalVercel = process.env.VERCEL;
+    const originalCrmApiBaseUrl = process.env.CRM_API_BASE_URL;
+    process.env.VERCEL = '1';
+    delete process.env.CRM_API_BASE_URL;
+
+    const req: MockRequest = {
+      method: 'GET',
+      query: { path: 'procedures' },
+      headers: {},
+      url: '/api/patient/procedures?category=face',
+    };
+    const res = createResponseRecorder();
+
+    try {
+      await handler(req as never, res as never);
+    } finally {
+      process.env.VERCEL = originalVercel;
+      if (typeof originalCrmApiBaseUrl === 'string') {
+        process.env.CRM_API_BASE_URL = originalCrmApiBaseUrl;
+      } else {
+        delete process.env.CRM_API_BASE_URL;
+      }
+    }
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://crmapi.medicaltourismchina.health/api/patient/procedures?category=face',
       expect.objectContaining({
         method: 'GET',
       }),
