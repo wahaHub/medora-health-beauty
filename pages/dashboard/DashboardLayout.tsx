@@ -64,9 +64,9 @@ export default function DashboardLayout() {
                 )}
               </Link>
 
-              {/* Tab 4: Support Tickets */}
+              {/* Tab 4: Tickets */}
               <Link to="/dashboard/tickets" className={navLinkClass('/dashboard/tickets')}>
-                <Ticket size={16} /> Support
+                <Ticket size={16} /> Tickets
               </Link>
 
               {/* Tab 5: Orders */}
