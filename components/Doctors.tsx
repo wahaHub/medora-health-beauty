@@ -2,19 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../hooks/useTranslation';
 import { Loader2 } from 'lucide-react';
-
-interface Surgeon {
-  surgeon_id: string;
-  name: string;
-  title: string;
-  specialties: string[];
-  experience_years: number;
-  image_url: string | null;
-  images?: {
-    hero?: string;
-    [key: string]: string | undefined;
-  };
-}
+import { fetchSurgeonsData, type Surgeon } from '../services/surgeons';
 
 interface DoctorCardProps {
   surgeon: Surgeon;
@@ -67,23 +55,17 @@ const Doctors: React.FC = () => {
   useEffect(() => {
     const fetchSurgeons = async () => {
       try {
-        const response = await fetch('/api/surgeons');
-        if (response.ok) {
-          const result = await response.json();
-          if (result.success && result.data) {
-            // Get unique surgeons from all specialties
-            const allSurgeons = Object.values(result.data.surgeonsBySpecialty).flat() as Surgeon[];
-            const uniqueSurgeons = allSurgeons.filter((surgeon: Surgeon, index: number, self: Surgeon[]) =>
-              index === self.findIndex((s: Surgeon) => s.surgeon_id === surgeon.surgeon_id)
-            );
-            // Sort by name and take first 8 for display
-            const sortedSurgeons = uniqueSurgeons
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .slice(0, 8);
-            setSurgeons(sortedSurgeons);
-            setTotalSurgeons(result.data.totalSurgeons || uniqueSurgeons.length);
-          }
-        }
+        const data = await fetchSurgeonsData();
+        const allSurgeons = Object.values(data.surgeonsBySpecialty).flat() as Surgeon[];
+        const uniqueSurgeons = allSurgeons.filter((surgeon: Surgeon, index: number, self: Surgeon[]) =>
+          index === self.findIndex((s: Surgeon) => s.surgeon_id === surgeon.surgeon_id)
+        );
+        const sortedSurgeons = uniqueSurgeons
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .slice(0, 8);
+
+        setSurgeons(sortedSurgeons);
+        setTotalSurgeons(data.totalSurgeons || uniqueSurgeons.length);
       } catch (error) {
         console.error('Failed to fetch surgeons:', error);
       } finally {

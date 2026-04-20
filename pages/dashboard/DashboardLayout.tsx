@@ -14,7 +14,8 @@ export default function DashboardLayout() {
   };
 
   // Compute total unread count across all cases
-  const totalUnread = (data?.cases ?? []).reduce(
+  const cases = Array.isArray(data) ? data : (data?.cases ?? []);
+  const totalUnread = cases.reduce(
     (sum: number, c: any) => sum + (c.unreadCount ?? 0),
     0,
   );

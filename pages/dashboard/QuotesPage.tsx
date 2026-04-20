@@ -24,7 +24,7 @@ export default function QuotesPage() {
     );
   }
 
-  const cases = data?.cases ?? [];
+  const cases = Array.isArray(data) ? data : (data?.cases ?? []);
 
   // Collect all cases that have at least one quote, or fallback to all cases
   const casesWithQuotes = cases.filter((c: any) => (c.quotes ?? []).length > 0);

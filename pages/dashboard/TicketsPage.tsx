@@ -43,7 +43,7 @@ export default function TicketsPage() {
   const replyMutation = useReplyToPatientTicket();
 
   const tickets = data?.data ?? [];
-  const cases = casesData?.cases ?? [];
+  const cases = Array.isArray(casesData) ? casesData : (casesData?.cases ?? []);
 
   const handleCreate = async () => {
     if (!newTicket.subject || !newTicket.description) return;

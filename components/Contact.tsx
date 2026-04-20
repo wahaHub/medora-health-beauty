@@ -4,6 +4,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import procedureNames from '../i18n/procedureNames.json';
+import { fetchSurgeonsData, type Surgeon } from '../services/surgeons';
 
 // Type for procedure names translation
 type ProcedureNameTranslations = {
@@ -22,11 +23,6 @@ type ProcedureNameTranslations = {
 
 const typedProcedureNames = procedureNames as ProcedureNameTranslations;
 
-interface Surgeon {
-  surgeon_id: string;
-  name: string;
-}
-
 const Contact: React.FC = () => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
@@ -40,20 +36,14 @@ const Contact: React.FC = () => {
   useEffect(() => {
     const fetchSurgeons = async () => {
       try {
-        const response = await fetch('/api/surgeons');
-        if (response.ok) {
-          const result = await response.json();
-          if (result.success && result.data) {
-            // Get unique surgeons from all specialties
-            const allSurgeons = Object.values(result.data.surgeonsBySpecialty).flat() as Surgeon[];
-            const uniqueSurgeons = allSurgeons.filter((surgeon: Surgeon, index: number, self: Surgeon[]) =>
-              index === self.findIndex((s: Surgeon) => s.surgeon_id === surgeon.surgeon_id)
-            );
-            // Sort by name
-            uniqueSurgeons.sort((a, b) => a.name.localeCompare(b.name));
-            setSurgeons(uniqueSurgeons);
-          }
-        }
+        const data = await fetchSurgeonsData();
+        const allSurgeons = Object.values(data.surgeonsBySpecialty).flat() as Surgeon[];
+        const uniqueSurgeons = allSurgeons.filter((surgeon: Surgeon, index: number, self: Surgeon[]) =>
+          index === self.findIndex((s: Surgeon) => s.surgeon_id === surgeon.surgeon_id)
+        );
+
+        uniqueSurgeons.sort((a, b) => a.name.localeCompare(b.name));
+        setSurgeons(uniqueSurgeons);
       } catch (error) {
         console.error('Failed to fetch surgeons:', error);
       } finally {
