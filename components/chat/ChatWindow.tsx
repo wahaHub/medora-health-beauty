@@ -7,7 +7,11 @@ import { usePatientConversations } from '../../hooks/usePatientConversations';
 import { ChatView } from '../messaging/ChatView';
 import { ConversationList } from '../messaging/ConversationList';
 import { OnboardingFlow } from './OnboardingFlow';
-import type { Conversation } from '../../services/crmApiClient';
+import {
+  getPreferredPatientConversationId,
+  sortPatientConversations,
+  type Conversation,
+} from '../../services/crmApiClient';
 
 interface ChatWindowProps {
   displayMode: ChatWindowDisplayMode;
@@ -105,7 +109,9 @@ function MessagesReadyContent(props: {
       <div className="flex items-center justify-between gap-3 border-b border-stone-200 bg-white px-4 py-3">
         <div>
           <h4 className="font-serif text-base text-navy-900">Messages</h4>
-          <p className="text-xs text-stone-500">Continue the same CRM-backed conversation here.</p>
+          <p className="text-xs text-stone-500">
+            Continue your case conversations across support and hospital sessions.
+          </p>
         </div>
         <Link
           to="/dashboard/messages"
@@ -140,6 +146,7 @@ function MessagesReadyContent(props: {
                 conversations={visibleConversations}
                 activeId={activeConversationId ?? defaultConversationId ?? null}
                 onSelect={(conversation) => setActiveConversationId(conversation.id)}
+                variant="sidebar"
               />
             </div>
           </div>
@@ -155,13 +162,12 @@ function MessagesReadyContent(props: {
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="max-h-48 shrink-0 overflow-y-auto border-b border-stone-200 bg-white">
-            <ConversationList
-              conversations={visibleConversations}
-              activeId={activeConversationId ?? defaultConversationId ?? null}
-              onSelect={(conversation) => setActiveConversationId(conversation.id)}
-            />
-          </div>
+          <ConversationList
+            conversations={visibleConversations}
+            activeId={activeConversationId ?? defaultConversationId ?? null}
+            onSelect={(conversation) => setActiveConversationId(conversation.id)}
+            variant="switcher"
+          />
           <div className="flex-1 min-h-0 bg-white">
             {activeConversation ? (
               <ChatView conversation={activeConversation} />
@@ -188,16 +194,7 @@ export function ChatWindow({ displayMode, onClose, onMaximize, onMinimize }: Cha
   const { data: conversations = [], isLoading: isLoadingConversations } = usePatientConversations();
 
   const sortedConversations = useMemo<Conversation[]>(() => {
-    const adminConversations = conversations.filter((conversation) => conversation.type === 'patient-admin');
-    const hospitalConversations = conversations
-      .filter((conversation) => conversation.type !== 'patient-admin')
-      .sort((left, right) => {
-        const leftTime = left.updatedAt ? new Date(left.updatedAt).getTime() : 0;
-        const rightTime = right.updatedAt ? new Date(right.updatedAt).getTime() : 0;
-        return rightTime - leftTime;
-      });
-
-    return [...adminConversations, ...hospitalConversations];
+    return sortPatientConversations(conversations);
   }, [conversations]);
 
   const visibleConversations = useMemo(
@@ -210,12 +207,7 @@ export function ChatWindow({ displayMode, onClose, onMaximize, onMinimize }: Cha
   );
 
   const defaultConversationId = useMemo(() => {
-    if (activeConversationId && visibleConversations.some((conversation) => conversation.id === activeConversationId)) {
-      return activeConversationId;
-    }
-
-    const adminConversation = visibleConversations.find((conversation) => conversation.type === 'patient-admin');
-    return adminConversation?.id ?? visibleConversations[0]?.id ?? null;
+    return getPreferredPatientConversationId(visibleConversations, activeConversationId);
   }, [activeConversationId, visibleConversations]);
 
   useEffect(() => {

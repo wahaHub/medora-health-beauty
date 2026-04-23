@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { crmApi } from '../services/crmApiClient';
+import { crmApi, normalizePatientMessage } from '../services/crmApiClient';
 import { useWebSocket } from './useWebSocket';
 
 export function useMessages(conversationId: string) {
@@ -23,7 +23,7 @@ export function useMessages(conversationId: string) {
     const unsub = subscribe('new_message', (message: any) => {
       queryClient.setQueryData(queryKey, (old: any) => {
         if (!old) return old;
-        return { ...old, messages: [...(old.messages ?? []), message] };
+        return { ...old, messages: [...(old.messages ?? []), normalizePatientMessage(message)] };
       });
     });
     return unsub;

@@ -98,6 +98,10 @@ export type PatientSessionProfile = {
   preferredLanguage?: string;
   restoreToken?: string;
   nextStep?: 'select-hospitals' | 'messages-ready';
+  widgetChatTarget?: {
+    kind: 'CHATBOT_SESSION';
+    sessionId: string;
+  } | null;
 };
 
 export type VerifyTokenResponse = PatientSessionProfile & {
@@ -120,6 +124,7 @@ export interface Conversation {
   type: 'patient-admin' | 'patient-hospital';
   /** Server-side category string, e.g. 'ADMIN_PATIENT' | 'HOSPITAL_PATIENT' */
   category?: string;
+  title?: string;
   hospitalId?: string;
   hospitalName?: string;
   unreadCount: number;
@@ -137,6 +142,8 @@ export interface Message {
   role: 'patient' | 'admin' | 'system';
   /** Maps to senderType used in MessageList component */
   senderType?: 'patient' | 'hospital' | 'system';
+  /** Preserves the backend sender identity when available */
+  senderRole?: string;
   content: string;
   createdAt: string;
   attachments?: MessageAttachment[];
@@ -152,6 +159,228 @@ export interface MessageAttachment {
 
 export interface ConversationsResponse {
   conversations: Conversation[];
+}
+
+type ConversationLike = {
+  id: string;
+  caseId?: string;
+  type?: string;
+  category?: string;
+  title?: string;
+  hospitalId?: string;
+  hospitalName?: string;
+  unreadCount?: number;
+  lastMessage?: {
+    content: string;
+    createdAt: string;
+  };
+  lastMessagePreview?: string;
+  lastMessageAt?: string;
+  updatedAt?: string;
+};
+
+type MessageLike = {
+  id: string;
+  conversationId: string;
+  role?: 'patient' | 'admin' | 'system';
+  senderType?: 'patient' | 'hospital' | 'system';
+  senderRole?: string;
+  content: string;
+  createdAt: string;
+  attachments?: MessageAttachment[];
+};
+
+type MessageListResponse = {
+  data?: MessageLike[];
+  messages?: MessageLike[];
+};
+
+function normalizeConversationToken(value?: string | null): string | null {
+  if (!value) return null;
+  return value.trim().replace(/[\s-]+/g, '_').toUpperCase();
+}
+
+export function getPatientConversationType(
+  conversation: Pick<ConversationLike, 'type' | 'category'>,
+): Conversation['type'] | null {
+  const normalizedType = normalizeConversationToken(conversation.type);
+  if (
+    normalizedType === 'PATIENT_ADMIN'
+    || normalizedType === 'ADMIN_PATIENT'
+  ) {
+    return 'patient-admin';
+  }
+
+  if (
+    normalizedType === 'PATIENT_HOSPITAL'
+    || normalizedType === 'HOSPITAL_PATIENT'
+  ) {
+    return 'patient-hospital';
+  }
+
+  const normalizedCategory = normalizeConversationToken(conversation.category);
+  if (
+    normalizedCategory === 'PATIENT_ADMIN'
+    || normalizedCategory === 'ADMIN_PATIENT'
+  ) {
+    return 'patient-admin';
+  }
+
+  if (
+    normalizedCategory === 'PATIENT_HOSPITAL'
+    || normalizedCategory === 'HOSPITAL_PATIENT'
+  ) {
+    return 'patient-hospital';
+  }
+
+  return null;
+}
+
+export function isAdminPatientConversation(
+  conversation: Pick<ConversationLike, 'type' | 'category'>,
+): boolean {
+  return getPatientConversationType(conversation) === 'patient-admin';
+}
+
+export function isHospitalPatientConversation(
+  conversation: Pick<ConversationLike, 'type' | 'category'>,
+): boolean {
+  return getPatientConversationType(conversation) === 'patient-hospital';
+}
+
+export function isFormalPatientConversation(
+  conversation: Pick<ConversationLike, 'type' | 'category'>,
+): boolean {
+  return getPatientConversationType(conversation) !== null;
+}
+
+function getConversationUpdatedAtValue(
+  conversation: Pick<ConversationLike, 'updatedAt'>,
+): number {
+  return conversation.updatedAt ? new Date(conversation.updatedAt).getTime() : 0;
+}
+
+export function sortPatientConversations<T extends ConversationLike>(conversations: T[]): T[] {
+  return [...conversations].sort((left, right) => {
+    const leftType = getPatientConversationType(left);
+    const rightType = getPatientConversationType(right);
+
+    if (leftType !== rightType) {
+      if (leftType === 'patient-hospital') return -1;
+      if (rightType === 'patient-hospital') return 1;
+      if (leftType === 'patient-admin') return 1;
+      if (rightType === 'patient-admin') return -1;
+    }
+
+    return getConversationUpdatedAtValue(right) - getConversationUpdatedAtValue(left);
+  });
+}
+
+export function getPreferredPatientConversationId<T extends Pick<ConversationLike, 'id' | 'type' | 'category'>>(
+  conversations: T[],
+  activeConversationId?: string | null,
+): string | null {
+  if (
+    activeConversationId
+    && conversations.some((conversation) => conversation.id === activeConversationId)
+  ) {
+    return activeConversationId;
+  }
+
+  const hospitalConversation = conversations.find(isHospitalPatientConversation);
+  if (hospitalConversation) {
+    return hospitalConversation.id;
+  }
+
+  const adminConversation = conversations.find(isAdminPatientConversation);
+  return adminConversation?.id ?? conversations[0]?.id ?? null;
+}
+
+export function getPatientConversationTitle(
+  conversation: Pick<ConversationLike, 'type' | 'category' | 'hospitalName' | 'title'>,
+): string {
+  if (isAdminPatientConversation(conversation)) {
+    return 'Medora Support';
+  }
+
+  return conversation.hospitalName ?? conversation.title ?? 'Hospital';
+}
+
+export function getPatientConversationThreadLabel(
+  conversation: Pick<ConversationLike, 'type' | 'category'>,
+): string {
+  return isAdminPatientConversation(conversation) ? 'Admin thread' : 'Hospital thread';
+}
+
+function normalizeConversation(rawConversation: ConversationLike): Conversation | null {
+  const type = getPatientConversationType(rawConversation);
+  if (!type) {
+    return null;
+  }
+
+  const lastMessage = rawConversation.lastMessage
+    ?? (
+      rawConversation.lastMessagePreview && rawConversation.lastMessageAt
+        ? {
+            content: rawConversation.lastMessagePreview,
+            createdAt: rawConversation.lastMessageAt,
+          }
+        : undefined
+    );
+
+  return {
+    id: rawConversation.id,
+    caseId: rawConversation.caseId,
+    type,
+    category: normalizeConversationToken(rawConversation.category) ?? undefined,
+    title: rawConversation.title,
+    hospitalId: rawConversation.hospitalId,
+    hospitalName: rawConversation.hospitalName ?? (isHospitalPatientConversation(rawConversation)
+      ? rawConversation.title
+      : undefined),
+    unreadCount: rawConversation.unreadCount ?? 0,
+    lastMessage,
+    updatedAt: rawConversation.updatedAt ?? rawConversation.lastMessageAt,
+  };
+}
+
+export function normalizePatientMessage(rawMessage: MessageLike): Message {
+  const senderRole = normalizeConversationToken(rawMessage.senderRole);
+  const role = rawMessage.role
+    ?? (senderRole === 'PATIENT'
+      ? 'patient'
+      : senderRole === 'SYSTEM'
+        ? 'system'
+        : 'admin');
+  const senderType = rawMessage.senderType
+    ?? (senderRole === 'PATIENT'
+      ? 'patient'
+      : senderRole === 'SYSTEM'
+        ? 'system'
+        : senderRole === 'HOSPITAL'
+          ? 'hospital'
+          : undefined);
+
+  return {
+    id: rawMessage.id,
+    conversationId: rawMessage.conversationId,
+    role,
+    senderType,
+    senderRole: senderRole ?? undefined,
+    content: rawMessage.content,
+    createdAt: rawMessage.createdAt,
+    attachments: rawMessage.attachments,
+  };
+}
+
+function normalizePatientMessages(raw: MessageListResponse | MessageLike[]): { messages: Message[] } {
+  const records = Array.isArray(raw)
+    ? raw
+    : raw.messages ?? raw.data ?? [];
+
+  return {
+    messages: records.map((message) => normalizePatientMessage(message)),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -198,6 +427,10 @@ export const crmApi = {
       caseId: string;
       restoreToken?: string;
       nextStep?: string;
+      widgetChatTarget?: {
+        kind: 'CHATBOT_SESSION';
+        sessionId: string;
+      } | null;
       conversations?: Array<{ id: string; type: string }>;
     }>('/onboarding/init', {
       method: 'POST',
@@ -232,8 +465,14 @@ export const crmApi = {
    */
   getConversations: (): Promise<Conversation[]> =>
     request<Conversation[] | ConversationsResponse>('/conversations').then((raw) => {
-      if (Array.isArray(raw)) return raw;
-      return (raw as ConversationsResponse).conversations ?? [];
+      const conversations = Array.isArray(raw)
+        ? raw
+        : (raw as ConversationsResponse).conversations ?? [];
+
+      return conversations.flatMap((conversation) => {
+        const normalized = normalizeConversation(conversation);
+        return normalized ? [normalized] : [];
+      });
     }),
   getCases: () => request<any>('/cases'),
   getCaseDetail: (id: string) => request<any>(`/cases/${id}`),
@@ -243,7 +482,8 @@ export const crmApi = {
     if (params?.limit) qs.set('limit', String(params.limit));
     if (params?.after) qs.set('after', params.after);
     const query = qs.toString();
-    return request<any>(`/conversations/${convId}/messages${query ? `?${query}` : ''}`);
+    return request<MessageListResponse | MessageLike[]>(`/conversations/${convId}/messages${query ? `?${query}` : ''}`)
+      .then((raw) => normalizePatientMessages(raw));
   },
   sendMessage: (
     convId: string,

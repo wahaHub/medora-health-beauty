@@ -1,19 +1,29 @@
-import type { Conversation } from '../../services/crmApiClient';
+import {
+  getPatientConversationThreadLabel,
+  getPatientConversationTitle,
+  isAdminPatientConversation,
+  type Conversation,
+} from '../../services/crmApiClient';
 
 interface ConversationListProps {
   conversations: Conversation[];
   activeId: string | null;
   onSelect: (conv: Conversation) => void;
+  variant?: 'sidebar' | 'switcher';
 }
 
 /**
  * ConversationList
  *
- * Renders a scrollable list of conversations. The admin conversation
- * (`type === 'patient-admin'`) is expected to already be sorted first by the
- * caller (PatientMessagePanel). It receives a display label of 'Medora Support'.
+ * Renders either a sidebar list or a compact horizontal session switcher for
+ * the current case's admin + hospital threads.
  */
-export function ConversationList({ conversations, activeId, onSelect }: ConversationListProps) {
+export function ConversationList({
+  conversations,
+  activeId,
+  onSelect,
+  variant = 'sidebar',
+}: ConversationListProps) {
   if (conversations.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-stone-400 text-sm px-4 text-center">
@@ -22,14 +32,65 @@ export function ConversationList({ conversations, activeId, onSelect }: Conversa
     );
   }
 
+  if (variant === 'switcher') {
+    return (
+      <div
+        className="border-b border-stone-200 bg-white px-3 py-3"
+        data-testid="compact-session-switcher"
+      >
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+              Sessions
+            </p>
+            <p className="text-xs text-stone-500">
+              Switch between your support thread and hospital threads for this case.
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {conversations.map((conv) => {
+            const isActive = conv.id === activeId;
+            const displayName = getPatientConversationTitle(conv);
+
+            return (
+              <button
+                key={conv.id}
+                onClick={() => onSelect(conv)}
+                className={`min-w-[10rem] shrink-0 rounded-2xl border px-3 py-2 text-left transition-colors ${
+                  isActive
+                    ? 'border-gold-300 bg-gold-50 text-gold-900'
+                    : 'border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-stone-100'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">{displayName}</p>
+                    <p className="mt-0.5 text-[11px] text-stone-500">
+                      {getPatientConversationThreadLabel(conv)}
+                    </p>
+                  </div>
+                  {(conv.unreadCount ?? 0) > 0 && (
+                    <span className="mt-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-gold-600 px-1.5 text-[10px] text-white">
+                      {conv.unreadCount}
+                    </span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col overflow-y-auto">
+    <div className="flex flex-col overflow-y-auto" data-testid="sidebar-session-list">
       {conversations.map((conv) => {
         const isActive = conv.id === activeId;
-        const isAdmin = conv.type === 'patient-admin';
-        const displayName = isAdmin ? 'Medora Support' : (conv.hospitalName ?? 'Hospital');
-        const lastMessageText =
-          conv.lastMessage?.content ?? undefined;
+        const isAdmin = isAdminPatientConversation(conv);
+        const displayName = getPatientConversationTitle(conv);
+        const lastMessageText = conv.lastMessage?.content ?? undefined;
 
         return (
           <button
@@ -49,9 +110,9 @@ export function ConversationList({ conversations, activeId, onSelect }: Conversa
                 </span>
               )}
             </div>
-            {isAdmin && (
-              <p className="text-[10px] text-gold-600/70 mb-0.5">Admin thread</p>
-            )}
+            <p className={`text-[10px] mb-0.5 ${isAdmin ? 'text-gold-600/70' : 'text-stone-400'}`}>
+              {getPatientConversationThreadLabel(conv)}
+            </p>
             {lastMessageText && (
               <p className="text-xs text-stone-500 truncate">{lastMessageText}</p>
             )}

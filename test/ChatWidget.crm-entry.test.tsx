@@ -83,6 +83,9 @@ describe('ChatWidget CRM-backed entry shell', () => {
     patientEntryState.closeWidget.mockImplementation(() => {
       patientEntryState.isWidgetOpen = false;
     });
+    patientEntryState.setActiveConversationId.mockImplementation((id: string | null) => {
+      patientEntryState.activeConversationId = id;
+    });
   });
 
   it('hides the floating widget on /login', () => {
@@ -117,6 +120,15 @@ describe('ChatWidget CRM-backed entry shell', () => {
     patientEntryState.isWidgetOpen = true;
     conversationsState.data = [
       {
+        id: 'hospital-conv',
+        caseId: 'case-1',
+        type: 'patient-hospital',
+        hospitalName: 'Beijing United',
+        unreadCount: 0,
+        updatedAt: '2026-04-18T00:00:00.000Z',
+        lastMessage: { content: 'Hospital follow-up', createdAt: '2026-04-18T00:00:00.000Z' },
+      },
+      {
         id: 'admin-conv',
         caseId: 'case-1',
         type: 'patient-admin',
@@ -142,6 +154,11 @@ describe('ChatWidget CRM-backed entry shell', () => {
       </MemoryRouter>,
     );
 
+    expect(screen.getByTestId('compact-session-switcher')).toBeInTheDocument();
+    expect(screen.queryByTestId('sidebar-session-list')).toBeNull();
+    expect(patientEntryState.setActiveConversationId).toHaveBeenCalledWith('hospital-conv');
+    expect(screen.getByRole('button', { name: /beijing united/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /medora support/i })).toBeInTheDocument();
     expect(screen.getAllByText('Latest CRM message').length).toBeGreaterThan(0);
     expect(screen.getByRole('link', { name: /full workspace/i })).toHaveAttribute('href', '/dashboard/messages');
     expect(screen.queryByRole('button', { name: /open messages/i })).toBeNull();
@@ -151,6 +168,15 @@ describe('ChatWidget CRM-backed entry shell', () => {
   it('opens as a larger panel, can maximize to modal, then minimize back to panel', () => {
     patientEntryState.phase = 'messages-ready';
     conversationsState.data = [
+      {
+        id: 'hospital-conv',
+        caseId: 'case-1',
+        type: 'patient-hospital',
+        hospitalName: 'Shanghai Ninth',
+        unreadCount: 0,
+        updatedAt: '2026-04-18T00:00:00.000Z',
+        lastMessage: { content: 'Hospital follow-up', createdAt: '2026-04-18T00:00:00.000Z' },
+      },
       {
         id: 'admin-conv',
         caseId: 'case-1',
@@ -175,13 +201,18 @@ describe('ChatWidget CRM-backed entry shell', () => {
 
     expect(screen.getByTestId('chat-window')).toHaveAttribute('data-chat-display-mode', 'panel');
     expect(screen.getByRole('button', { name: /maximize chat/i })).toBeInTheDocument();
+    expect(screen.getByTestId('compact-session-switcher')).toBeInTheDocument();
+    expect(screen.queryByTestId('sidebar-session-list')).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: /maximize chat/i }));
     expect(screen.getByTestId('chat-window')).toHaveAttribute('data-chat-display-mode', 'modal');
     expect(screen.getByRole('button', { name: /minimize chat/i })).toBeInTheDocument();
+    expect(screen.getByTestId('sidebar-session-list')).toBeInTheDocument();
+    expect(screen.queryByTestId('compact-session-switcher')).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: /minimize chat/i }));
     expect(screen.getByTestId('chat-window')).toHaveAttribute('data-chat-display-mode', 'panel');
+    expect(screen.getByTestId('compact-session-switcher')).toBeInTheDocument();
   });
 
   it('uses the mobile two-state shell without a maximize button', () => {

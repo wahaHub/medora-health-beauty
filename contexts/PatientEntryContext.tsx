@@ -18,7 +18,12 @@ import {
   type ReactNode,
 } from 'react';
 import { usePatientAuth } from '../contexts/PatientAuthContext';
-import { crmApi } from '../services/crmApiClient';
+import {
+  crmApi,
+  getPatientConversationType,
+  getPreferredPatientConversationId,
+  isFormalPatientConversation,
+} from '../services/crmApiClient';
 import {
   clearBootstrapErrorMarker,
   clearHistoryAfterSuccessfulImport,
@@ -107,7 +112,7 @@ export interface PatientEntryContextValue {
   isPanelOpen: boolean;
   /** Non-null when phase === 'bootstrap-error' */
   bootstrapError: string | null;
-  /** Active formal conversation (admin channel) */
+  /** Active formal conversation for the current case */
   activeConversationId: string | null;
   /** Import status for pre-bootstrap history */
   importStatus: PatientEntryImportStatus;
@@ -207,16 +212,6 @@ function createEmptyProfileDraft(): PatientProfileDraft {
     category: '',
     procedureId: '',
   };
-}
-
-function identifyAdminConversation(
-  conversations: FormalConversationRef[],
-): FormalConversationRef | null {
-  return (
-    conversations.find(
-      (c) => c.type === 'patient-admin' || c.category === 'ADMIN_PATIENT',
-    ) ?? null
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -333,19 +328,23 @@ export function PatientEntryProvider({ children }: { children: ReactNode }) {
       importStatus?: PatientEntryImportStatus;
       importError?: string | null;
     }): boolean => {
-      const adminConv = identifyAdminConversation(input.conversations);
-      if (!adminConv) {
+      const preferredConversationId = getPreferredPatientConversationId(
+        input.conversations,
+        activeConversationId,
+      );
+
+      if (!preferredConversationId) {
         moveToBootstrapError(
           input.patientId,
           input.caseId,
-          'Patient admin conversation not found',
+          'Patient conversations not found',
         );
         return false;
       }
 
       clearBootstrapErrorMarker(input.patientId, input.caseId);
       setPhase('messages-ready');
-      setActiveConversationIdState(adminConv.id);
+      setActiveConversationIdState(preferredConversationId);
       setCaseId(input.caseId);
       setMatchedHospitalsState([]);
       setSelectedHospitalIdsState([]);
@@ -357,7 +356,7 @@ export function PatientEntryProvider({ children }: { children: ReactNode }) {
       );
       return true;
     },
-    [moveToBootstrapError],
+    [activeConversationId, moveToBootstrapError],
   );
 
   const applyOnboardingResult = useCallback(
@@ -464,21 +463,23 @@ export function PatientEntryProvider({ children }: { children: ReactNode }) {
           const records = await crmApi.getConversations();
           if (cancelled) return;
 
-          const list = records as Array<{ id: string; caseId?: string; category?: string }>;
+          const list = records as Array<{
+            id: string;
+            caseId?: string;
+            category?: string;
+            type?: string;
+          }>;
 
           conversations = list
             .filter(
               (c) =>
                 c.caseId === patient.caseId &&
-                (c.category === 'ADMIN_PATIENT' || c.category === 'HOSPITAL_PATIENT'),
+                isFormalPatientConversation(c),
             )
             .map((c) => ({
               id: c.id,
               category: c.category,
-              type:
-                c.category === 'ADMIN_PATIENT'
-                  ? ('patient-admin' as const)
-                  : ('patient-hospital' as const),
+              type: getPatientConversationType(c)!,
             }));
         } catch (err) {
           if (cancelled) return;

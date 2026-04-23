@@ -6,7 +6,11 @@ import { usePatientConversations } from '../../hooks/usePatientConversations';
 import { PanelHeader } from './PanelHeader';
 import { ConversationList } from './ConversationList';
 import { ChatView } from './ChatView';
-import type { Conversation } from '../../services/crmApiClient';
+import {
+  getPreferredPatientConversationId,
+  sortPatientConversations,
+  type Conversation,
+} from '../../services/crmApiClient';
 
 /**
  * PatientMessagePanel
@@ -16,8 +20,8 @@ import type { Conversation } from '../../services/crmApiClient';
  * NOT by the legacy MessagePanelContext. This ensures a single source of truth
  * for the phase machine.
  *
- * The admin conversation (`type === 'patient-admin'`) is always pinned first
- * and selected by default (driven by `activeConversationId` from context).
+ * The full workspace keeps a left sidebar so patients can see all formal
+ * sessions for the current case at once.
  */
 export function PatientMessagePanel() {
   const navigate = useNavigate();
@@ -32,28 +36,22 @@ export function PatientMessagePanel() {
 
   const { data: conversations = [], isLoading } = usePatientConversations();
 
-  // Sort: admin conversation first, then hospital conversations by updatedAt desc.
   const sortedConversations = useMemo<Conversation[]>(() => {
-    const adminConvs = conversations.filter((c) => c.type === 'patient-admin');
-    const hospitalConvs = conversations
-      .filter((c) => c.type !== 'patient-admin')
-      .sort((a, b) => {
-        const aTime = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-        const bTime = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
-        return bTime - aTime;
-      });
-    return [...adminConvs, ...hospitalConvs];
+    return sortPatientConversations(conversations);
   }, [conversations]);
 
-  // Auto-select the first conversation (admin) when panel becomes ready.
+  const visibleConversations = useMemo(
+    () => (
+      caseId
+        ? sortedConversations.filter((conversation) => !conversation.caseId || conversation.caseId === caseId)
+        : sortedConversations
+    ),
+    [caseId, sortedConversations],
+  );
+
   const defaultConversationId = useMemo(() => {
-    if (activeConversationId && conversations.some((c) => c.id === activeConversationId)) {
-      return activeConversationId;
-    }
-    // Prefer admin conversation, fall back to first available.
-    const adminConv = sortedConversations.find((c) => c.type === 'patient-admin');
-    return adminConv?.id ?? sortedConversations[0]?.id ?? null;
-  }, [activeConversationId, conversations, sortedConversations]);
+    return getPreferredPatientConversationId(visibleConversations, activeConversationId);
+  }, [activeConversationId, visibleConversations]);
 
   useEffect(() => {
     if (defaultConversationId && defaultConversationId !== activeConversationId) {
@@ -62,17 +60,12 @@ export function PatientMessagePanel() {
   }, [defaultConversationId, activeConversationId, setActiveConversationId]);
 
   const activeConversation = useMemo(
-    () => sortedConversations.find((c) => c.id === (activeConversationId ?? defaultConversationId)) ?? null,
-    [sortedConversations, activeConversationId, defaultConversationId],
+    () => visibleConversations.find((c) => c.id === (activeConversationId ?? defaultConversationId)) ?? null,
+    [visibleConversations, activeConversationId, defaultConversationId],
   );
 
   // Only render the panel when phase is messages-ready and the panel is open.
   if (phase !== 'messages-ready' || !isPanelOpen) return null;
-
-  // Filter conversations to the current case when caseId is known.
-  const visibleConversations = caseId
-    ? sortedConversations.filter((c) => !c.caseId || c.caseId === caseId)
-    : sortedConversations;
 
   return (
     <div className="fixed inset-0 z-[9998] flex items-center justify-center">
@@ -120,6 +113,7 @@ export function PatientMessagePanel() {
                 conversations={visibleConversations}
                 activeId={activeConversationId ?? defaultConversationId ?? null}
                 onSelect={(conv) => setActiveConversationId(conv.id)}
+                variant="sidebar"
               />
             </div>
 
