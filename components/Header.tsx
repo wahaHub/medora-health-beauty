@@ -6,7 +6,6 @@ import { useTranslation } from '../hooks/useTranslation';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePatientAuth } from '../contexts/PatientAuthContext';
 import { useSurgeonsList } from '../hooks/useData';
-import { usePatientAuth } from '../contexts/PatientAuthContext';
 import procedureNames from '../i18n/procedureNames.json';
 
 interface SubMenuItem {

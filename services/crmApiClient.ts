@@ -64,6 +64,9 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
   if (!headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
+  if (!headers.has('x-medora-site')) {
+    headers.set('x-medora-site', 'beauty');
+  }
 
   const res = await fetch(buildRequestUrl(path), {
     ...options,
