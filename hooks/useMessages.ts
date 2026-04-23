@@ -22,8 +22,12 @@ export function useMessages(conversationId: string) {
   useEffect(() => {
     const unsub = subscribe('new_message', (message: any) => {
       queryClient.setQueryData(queryKey, (old: any) => {
-        if (!old) return old;
-        return { ...old, messages: [...(old.messages ?? []), normalizePatientMessage(message)] };
+        const normalized = normalizePatientMessage(message);
+        if (!old) return { messages: [normalized] };
+        const list = old.messages ?? old.data ?? (Array.isArray(old) ? old : []);
+        const next = Array.isArray(list) ? [...list, normalized] : [normalized];
+        if (Array.isArray(old)) return next;
+        return { ...old, messages: next, data: next };
       });
     });
     return unsub;

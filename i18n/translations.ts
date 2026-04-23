@@ -1134,7 +1134,7 @@ export const translations = {
     // Surgeon Profile Page
     surgeonNotFound: 'Cirujano No Encontrado',
     surgeonNotFoundDesc: 'El cirujano que busca no existe.',
-    viewAllSurgeons: 'Ver Todos los Cirujanos',
+    viewAllSurgeonsFull: 'Ver Todos los Cirujanos',
     loadingSurgeonProfile: 'Cargando perfil del cirujano...',
     surgicalVolumeHighlights: 'Volumen Quirúrgico Destacado',
     boardCertifications: 'Certificaciones',
@@ -1507,7 +1507,7 @@ export const translations = {
     // Surgeon Profile Page
     surgeonNotFound: 'Chirurgien Non Trouvé',
     surgeonNotFoundDesc: 'Le chirurgien que vous recherchez n\'existe pas.',
-    viewAllSurgeons: 'Voir Tous les Chirurgiens',
+    viewAllSurgeonsFull: 'Voir Tous les Chirurgiens',
     loadingSurgeonProfile: 'Chargement du profil...',
     surgicalVolumeHighlights: 'Volume Chirurgical',
     boardCertifications: 'Certifications',
@@ -1881,7 +1881,7 @@ export const translations = {
     // Surgeon Profile Page
     surgeonNotFound: 'Chirurg Nicht Gefunden',
     surgeonNotFoundDesc: 'Der gesuchte Chirurg existiert nicht.',
-    viewAllSurgeons: 'Alle Chirurgen Anzeigen',
+    viewAllSurgeonsFull: 'Alle Chirurgen Anzeigen',
     loadingSurgeonProfile: 'Profil wird geladen...',
     surgicalVolumeHighlights: 'Operationsvolumen',
     boardCertifications: 'Zertifizierungen',
@@ -2255,7 +2255,7 @@ export const translations = {
     // Surgeon Profile Page
     surgeonNotFound: 'Хирург Не Найден',
     surgeonNotFoundDesc: 'Искомый хирург не существует.',
-    viewAllSurgeons: 'Все Хирурги',
+    viewAllSurgeonsFull: 'Все Хирурги',
     loadingSurgeonProfile: 'Загрузка профиля...',
     surgicalVolumeHighlights: 'Объём Операций',
     boardCertifications: 'Сертификаты',
@@ -2629,7 +2629,7 @@ export const translations = {
     // Surgeon Profile Page
     surgeonNotFound: 'الجراح غير موجود',
     surgeonNotFoundDesc: 'الجراح الذي تبحث عنه غير موجود.',
-    viewAllSurgeons: 'عرض جميع الجراحين',
+    viewAllSurgeonsFull: 'عرض جميع الجراحين',
     loadingSurgeonProfile: 'جاري تحميل الملف الشخصي...',
     surgicalVolumeHighlights: 'حجم العمليات الجراحية',
     boardCertifications: 'الشهادات',
@@ -3003,7 +3003,7 @@ export const translations = {
     // Surgeon Profile Page
     surgeonNotFound: 'Không Tìm Thấy Bác Sĩ',
     surgeonNotFoundDesc: 'Bác sĩ bạn đang tìm không tồn tại.',
-    viewAllSurgeons: 'Xem Tất Cả Bác Sĩ',
+    viewAllSurgeonsFull: 'Xem Tất Cả Bác Sĩ',
     loadingSurgeonProfile: 'Đang tải hồ sơ...',
     surgicalVolumeHighlights: 'Số Lượng Phẫu Thuật',
     boardCertifications: 'Chứng Chỉ',
@@ -3388,7 +3388,7 @@ export const translations = {
     // Surgeon Profile Page
     surgeonNotFound: 'Dokter Bedah Tidak Ditemukan',
     surgeonNotFoundDesc: 'Dokter bedah yang Anda cari tidak ada.',
-    viewAllSurgeons: 'Lihat Semua Dokter Bedah',
+    viewAllSurgeonsFull: 'Lihat Semua Dokter Bedah',
     loadingSurgeonProfile: 'Memuat profil...',
     surgicalVolumeHighlights: 'Volume Bedah',
     boardCertifications: 'Sertifikasi',

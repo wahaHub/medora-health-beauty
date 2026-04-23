@@ -4,7 +4,10 @@ import { crmApi } from '../../services/crmApiClient';
 
 interface MessageInputProps {
   conversationId: string;
-  onMessageSent?: () => void;
+  onMessageSent?: (message: any) => void;
+  placeholder?: string;
+  draftValue?: string;
+  onDraftChange?: (value: string) => void;
 }
 
 type UploadedAttachment = {
@@ -14,7 +17,10 @@ type UploadedAttachment = {
   storageKey: string;
 };
 
-async function uploadAttachment(conversationId: string, file: File): Promise<UploadedAttachment> {
+async function uploadAttachment(
+  conversationId: string,
+  file: File,
+): Promise<UploadedAttachment> {
   const init = await crmApi.initConversationAttachmentUpload({
     conversationId,
     fileName: file.name,
@@ -37,7 +43,13 @@ async function uploadAttachment(conversationId: string, file: File): Promise<Upl
   return init.asset;
 }
 
-export function MessageInput({ conversationId, onMessageSent }: MessageInputProps) {
+export function MessageInput({
+  conversationId,
+  onMessageSent,
+  placeholder = 'Type a message...',
+  draftValue,
+  onDraftChange,
+}: MessageInputProps) {
   const [content, setContent] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
@@ -45,8 +57,17 @@ export function MessageInput({ conversationId, onMessageSent }: MessageInputProp
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const value = draftValue ?? content;
+
+  const syncValue = (nextValue: string) => {
+    if (draftValue === undefined) {
+      setContent(nextValue);
+    }
+    onDraftChange?.(nextValue);
+  };
+
   const resetComposer = () => {
-    setContent('');
+    syncValue('');
     setSelectedFiles([]);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -57,25 +78,35 @@ export function MessageInput({ conversationId, onMessageSent }: MessageInputProp
   };
 
   const handleSend = async () => {
-    const text = content.trim();
+    const text = value.trim();
     if ((!text && selectedFiles.length === 0) || sending) return;
 
     setSending(true);
     setErrorMessage(null);
     try {
-      const attachments = await Promise.all(
-        selectedFiles.map((file) => uploadAttachment(conversationId, file)),
-      );
-      await crmApi.sendMessage(conversationId, text, {
-        attachments: attachments.length > 0 ? attachments : undefined,
-        messageType: attachments.length > 0
-          ? (selectedFiles.every((file) => file.type.startsWith('image/')) ? 'IMAGE' : 'FILE')
-          : 'TEXT',
-      });
+      let newMessage;
+      if (selectedFiles.length > 0) {
+        const attachments = await Promise.all(
+          selectedFiles.map((file) => uploadAttachment(conversationId, file)),
+        );
+        newMessage = await crmApi.sendMessage(conversationId, text, {
+          attachments: attachments.length > 0 ? attachments : undefined,
+          messageType:
+            attachments.length > 0
+              ? selectedFiles.every((file) => file.type.startsWith('image/'))
+                ? 'IMAGE'
+                : 'FILE'
+              : 'TEXT',
+        });
+      } else {
+        newMessage = await crmApi.sendMessage(conversationId, text);
+      }
       resetComposer();
-      onMessageSent?.();
+      onMessageSent?.(newMessage);
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to send message');
+      setErrorMessage(
+        error instanceof Error ? error.message : 'Failed to send message',
+      );
     } finally {
       setSending(false);
     }
@@ -89,7 +120,8 @@ export function MessageInput({ conversationId, onMessageSent }: MessageInputProp
   };
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(e.target.value);
+    syncValue(e.target.value);
+    // Auto-resize
     const el = e.target;
     el.style.height = 'auto';
     el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
@@ -147,19 +179,18 @@ export function MessageInput({ conversationId, onMessageSent }: MessageInputProp
         </button>
         <textarea
           ref={textareaRef}
-          value={content}
+          value={value}
           onChange={handleInput}
           onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
+          placeholder={placeholder}
           rows={1}
           className="flex-1 bg-transparent outline-none text-sm text-stone-700 placeholder-stone-400 resize-none max-h-[120px]"
         />
         <button
-          type="button"
-          onClick={() => void handleSend()}
-          disabled={(!content.trim() && selectedFiles.length === 0) || sending}
+          onClick={handleSend}
+          disabled={(!value.trim() && selectedFiles.length === 0) || sending}
           className={`p-2 rounded-full transition-colors shrink-0 ${
-            content.trim() || selectedFiles.length > 0
+            value.trim() || selectedFiles.length > 0
               ? 'bg-gold-600 text-white hover:bg-gold-700'
               : 'bg-stone-200 text-stone-400'
           }`}
