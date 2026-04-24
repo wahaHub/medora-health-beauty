@@ -3,28 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Award, GraduationCap, Clock, Loader2 } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useConsultation } from '../contexts/ConsultationContext';
-
-interface Surgeon {
-  surgeon_id: string;
-  name: string;
-  title: string;
-  specialties: string[];
-  experience_years: number;
-  image_url: string | null;
-  images?: {
-    hero?: string;
-    [key: string]: string | undefined;
-  };
-}
-
-interface SurgeonsAPIResponse {
-  success: boolean;
-  data: {
-    surgeonsBySpecialty: { [key: string]: Surgeon[] };
-    allSpecialties: string[];
-    totalSurgeons: number;
-  };
-}
+import { fetchSurgeonsData, type Surgeon } from '../services/surgeons';
 
 const AllSurgeons: React.FC = () => {
   const navigate = useNavigate();
@@ -46,19 +25,8 @@ const AllSurgeons: React.FC = () => {
     const fetchSurgeons = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/surgeons');
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch surgeons data');
-        }
-
-        const result: SurgeonsAPIResponse = await response.json();
-
-        if (result.success) {
-          setSurgeonsData(result.data);
-        } else {
-          throw new Error('API returned unsuccessful response');
-        }
+        const data = await fetchSurgeonsData();
+        setSurgeonsData(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
         console.error('Error fetching surgeons:', err);

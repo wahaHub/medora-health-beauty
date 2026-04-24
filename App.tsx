@@ -35,6 +35,7 @@ import SearchResults from './pages/SearchResults';
 import HospitalDetail from './pages/HospitalDetail';
 import HospitalGallery from './pages/HospitalGallery';
 import ConsultationSurvey from './pages/ConsultationSurvey';
+import DashboardRoute from './pages/dashboard/DashboardRoute';
 import DashboardLayout from './pages/dashboard/DashboardLayout';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import MessagesPage from './pages/dashboard/MessagesPage';
@@ -206,7 +207,7 @@ function App() {
               <Route path="/packages" element={<ProtectedRoute><PackagesCatalog /></ProtectedRoute>} />
 
               {/* Dashboard routes (no marketing Header/Footer) */}
-              <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+              <Route path="/dashboard" element={<DashboardRoute><DashboardLayout /></DashboardRoute>}>
                 {/* Phase 1: 3 primary tabs */}
                 <Route index element={<DashboardHome />} />
                 <Route path="quotes" element={<QuotesPage />} />

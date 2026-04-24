@@ -4,8 +4,8 @@ import { Menu, X } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from '../hooks/useTranslation';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useSurgeonsList } from '../hooks/useData';
 import { usePatientAuth } from '../contexts/PatientAuthContext';
+import { useSurgeonsList } from '../hooks/useData';
 import procedureNames from '../i18n/procedureNames.json';
 
 interface SubMenuItem {
@@ -415,6 +415,20 @@ const Header: React.FC = () => {
           ))}
         </nav>
 
+        {/* My Dashboard - authenticated only */}
+        {isPatientAuthenticated && (
+          <div className="hidden lg:block">
+            <button
+              onClick={() => { navigate('/dashboard'); window.scrollTo(0, 0); }}
+              className={`text-sm tracking-[0.1em] font-medium uppercase transition-colors ${
+                hasWhiteBg ? 'text-gold-600 hover:text-gold-700' : 'text-gold-300 hover:text-gold-200'
+              }`}
+            >
+              My Dashboard
+            </button>
+          </div>
+        )}
+
         {/* Utility Controls */}
         <div className="hidden lg:flex shrink-0 items-center gap-3">
           <LanguageSelector isTransparent={!hasWhiteBg} compact />
@@ -505,6 +519,14 @@ const Header: React.FC = () => {
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 bg-white z-40 pt-24 px-6 overflow-y-auto">
           <div className="flex flex-col space-y-6">
+            {isPatientAuthenticated && (
+              <button
+                onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); window.scrollTo(0, 0); }}
+                className="text-gold-600 text-xl font-serif font-bold text-left"
+              >
+                My Dashboard
+              </button>
+            )}
             <div className="flex items-center justify-between gap-3 border-b border-stone-200 pb-5">
               <LanguageSelector compact />
               {isPatientAuthLoading ? (

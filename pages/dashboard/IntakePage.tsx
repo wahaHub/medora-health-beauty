@@ -159,7 +159,7 @@ export default function IntakePage() {
   const { patient } = usePatientAuth();
   const { data: casesData, isLoading: casesLoading } = usePatientCases();
   const requestedCaseId = searchParams.get('caseId') ?? undefined;
-  const cases = casesData?.cases ?? [];
+  const cases = Array.isArray(casesData) ? casesData : (casesData?.cases ?? []);
   const fallbackCaseId = patient?.caseId ?? cases[0]?.id;
   const caseId = requestedCaseId ?? fallbackCaseId;
 

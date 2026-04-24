@@ -291,7 +291,7 @@ const SurgeonProfile: React.FC = () => {
             onClick={() => navigate('/surgeons')}
             className="bg-navy-900 text-white px-8 py-3 rounded-lg hover:bg-navy-800 transition-colors"
           >
-            {t('viewAllSurgeons')}
+            {t('viewAllSurgeonsFull')}
           </button>
         </div>
       </div>
@@ -759,7 +759,7 @@ const SurgeonProfile: React.FC = () => {
               onClick={() => navigate('/surgeons')}
               className="bg-transparent border-2 border-white text-white px-12 py-4 uppercase tracking-[0.15em] text-sm font-bold hover:bg-white hover:text-navy-900 transition-colors"
             >
-              {t('viewAllSurgeons')}
+              {t('viewAllSurgeonsFull')}
             </button>
           </div>
         </div>

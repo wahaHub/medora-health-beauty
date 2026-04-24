@@ -218,6 +218,8 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
 
     const bootstrap = async () => {
       if (sessionStateRef.current.initialBootstrapActive) {
+        // StrictMode double-mount guard: ensure we don't leave isLoading stuck
+        setIsLoading(false);
         return;
       }
 
@@ -227,8 +229,8 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
       setError(null);
 
       try {
-        const { pathname, search } = initialLocationRef.current;
-        const token = pathname === '/dashboard'
+        const { pathname, search } = location;
+        const token = pathname.startsWith('/dashboard')
           ? new URLSearchParams(search).get('token')
           : null;
 
