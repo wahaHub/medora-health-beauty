@@ -252,6 +252,17 @@ This means:
 
 Same email across both sites must not imply a shared patient session.
 
+Route headers alone are not enough to enforce this boundary. CRM must also make the application layer site-aware so global email/token lookups cannot collapse Beauty and China into one identity.
+
+The following CRM use cases are explicit enforcement points:
+
+- `medical-crm-v2/packages/application/src/use-cases/patient-onboarding/init-onboarding.use-case.ts`
+- `medical-crm-v2/packages/application/src/use-cases/patient-auth/send-patient-login-link.use-case.ts`
+- `medical-crm-v2/packages/application/src/use-cases/patient-auth/verify-magic-link.use-case.ts`
+- `medical-crm-v2/packages/application/src/use-cases/patient-auth/restore-guest-session.use-case.ts`
+
+Those use cases must receive the site context from the route boundary and resolve onboarding, login-link delivery, magic-link verification, and guest restore artifacts inside that site namespace only.
+
 ### 3. Chatbot routing
 
 Chatbot requests from both sites should use the same CRM engine and public contract, but CRM must route by site context to select the correct:
@@ -294,6 +305,16 @@ Example:
 - `x-medora-site: china`
 
 This keeps brand context stable and prevents accidental misuse.
+
+The Beauty proxy must forward auth traffic intact:
+
+- preserve the upstream path
+- preserve the query string
+- forward request cookies
+- forward CRM `Set-Cookie` headers back to the browser
+- preserve upstream response status and body
+
+Without that, login and restore flows will break even if the site header is correct.
 
 ## Implementation Direction
 
@@ -406,6 +427,14 @@ Beauty already has an older patient stack. Partial reuse is useful, but mixing o
 ### 3. Silent brand drift
 
 If site context is optional or weakly enforced, Beauty may accidentally reuse China copy or matching behavior. This should be treated as a correctness bug, not a cosmetic issue.
+
+### 4. Browser recovery-state leakage
+
+China must not keep auto-migrating Beauty's legacy `medora.patient.restoreToken` key from browser storage. If a one-time migration is required, it must be quarantined and explicit so Beauty and China do not share recovery state in one browser.
+
+### 5. Cross-origin header drift
+
+Because China production calls CRM cross-origin via `VITE_CRM_API_BASE_URL`, CRM CORS must allow the `x-medora-site` header. If that allow-list is missed, preflight will fail before site context ever reaches CRM.
 
 ## Non-Goals
 

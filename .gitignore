@@ -7,9 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Dependencies and build output
+node_modules/
+dist/
+dist-ssr/
 *.local
 
 # Editor directories and files
@@ -33,10 +34,17 @@ dist-ssr
 crash.log
 crash.*.log
 
-# Environment variables
+# Environment variables and local secrets
 .env
-.env.local
-.env.production.local
+.env.*
+!.env.example
+!.env.template
+!.env.sample
+*.env
+*.env.*
+!.env.example
+!.env.template
+!.env.sample
 
 # Admin Console
 admin/uploads/
@@ -56,7 +64,6 @@ photos/
 # Generated data (already in Supabase)
 scripts/data/
 translations/
-.claude/settings.local.json
 
 # Separate projects (have their own git repos)
 medical-crm/
@@ -66,10 +73,20 @@ medical-crm-v2-deploy/
 medical-crm-v2-deploy-clean/
 medical-crm-v2-deploy-live/
 medical-crm-v2-smoke-deploy/
-.gstack/
 
 # Tool/agent working directories
+.claude/
+.deploy-worktrees/
 .superpowers/
 .codex-worktrees/
+.gstack/
 codex-post-review/
 comparison/
+.worktrees/
+.wrangler/
+.vercel/
+
+# Archive buckets that should stay local only
+archive/external-projects/
+archive/runtime-artifacts/
+archive/tooling/

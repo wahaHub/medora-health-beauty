@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 
-import { HospitalCards } from '../components/chat/HospitalCards';
+import { HospitalCards } from '@/components/chat/HospitalCards';
 
 const patientEntryState = vi.hoisted(() => ({
   caseId: 'case-1',
@@ -32,16 +32,16 @@ const crmApiState = vi.hoisted(() => ({
   getConversations: vi.fn(),
 }));
 
-vi.mock('../hooks/usePatientEntry', () => ({
+vi.mock('@/hooks/usePatientEntry', () => ({
   usePatientEntry: () => patientEntryState,
 }));
 
-vi.mock('../contexts/PatientAuthContext', () => ({
+vi.mock('@/contexts/PatientAuthContext', () => ({
   usePatientAuth: () => patientAuthState,
 }));
 
-vi.mock('../services/crmApiClient', async () => {
-  const actual = await vi.importActual<typeof import('../services/crmApiClient')>('../services/crmApiClient');
+vi.mock('@/services/crmApiClient', async () => {
+  const actual = await vi.importActual<typeof import('@/services/crmApiClient')>('@/services/crmApiClient');
   return {
     ...actual,
     crmApi: crmApiState,

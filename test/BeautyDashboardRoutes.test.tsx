@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import DashboardLayout from '../pages/dashboard/DashboardLayout';
+import DashboardLayout from '@/pages/dashboard/DashboardLayout';
 
 const patientAuthState = vi.hoisted(() => ({
   patient: { id: 'patient-1', name: 'Beauty Patient' },
@@ -13,11 +13,11 @@ const patientCasesState = vi.hoisted(() => ({
   data: { cases: [] },
 }));
 
-vi.mock('../contexts/PatientAuthContext', () => ({
+vi.mock('@/contexts/PatientAuthContext', () => ({
   usePatientAuth: () => patientAuthState,
 }));
 
-vi.mock('../hooks/usePatientCases', () => ({
+vi.mock('@/hooks/usePatientCases', () => ({
   usePatientCases: () => patientCasesState,
 }));
 

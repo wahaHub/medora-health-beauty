@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-import ChatWidget from '../components/ChatWidget';
+import ChatWidget from '@/components/ChatWidget';
 
 const patientEntryState = vi.hoisted(() => ({
   isWidgetOpen: false,
@@ -31,23 +31,23 @@ const messagesState = vi.hoisted(() => ({
   refetch: vi.fn(),
 }));
 
-vi.mock('../hooks/usePatientEntry', () => ({
+vi.mock('@/hooks/usePatientEntry', () => ({
   usePatientEntry: () => patientEntryState,
 }));
 
-vi.mock('../contexts/PatientAuthContext', () => ({
+vi.mock('@/contexts/PatientAuthContext', () => ({
   usePatientAuth: () => patientAuthState,
 }));
 
-vi.mock('../hooks/usePatientConversations', () => ({
+vi.mock('@/hooks/usePatientConversations', () => ({
   usePatientConversations: () => conversationsState,
 }));
 
-vi.mock('../hooks/useMessages', () => ({
+vi.mock('@/hooks/useMessages', () => ({
   useMessages: () => messagesState,
 }));
 
-vi.mock('../components/chat/OnboardingFlow', () => ({
+vi.mock('@/components/chat/OnboardingFlow', () => ({
   OnboardingFlow: () => <div data-testid="onboarding-shell">Onboarding shell</div>,
 }));
 

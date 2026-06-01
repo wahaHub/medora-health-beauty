@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { MessageInput } from '../components/messaging/MessageInput';
+import { MessageInput } from '@/components/messaging/MessageInput';
 
 const crmApiState = vi.hoisted(() => ({
   initConversationAttachmentUpload: vi.fn(),
   sendMessage: vi.fn(),
 }));
 
-vi.mock('../services/crmApiClient', async () => {
-  const actual = await vi.importActual<typeof import('../services/crmApiClient')>('../services/crmApiClient');
+vi.mock('@/services/crmApiClient', async () => {
+  const actual = await vi.importActual<typeof import('@/services/crmApiClient')>('@/services/crmApiClient');
   return {
     ...actual,
     crmApi: crmApiState,

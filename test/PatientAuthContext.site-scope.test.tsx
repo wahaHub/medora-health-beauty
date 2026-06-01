@@ -3,12 +3,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { PatientAuthProvider, usePatientAuth } from '../contexts/PatientAuthContext';
+import { PatientAuthProvider, usePatientAuth } from '@/contexts/PatientAuthContext';
 import {
   ApiError,
   request,
   RESTORE_TOKEN_STORAGE_KEY,
-} from '../services/crmApiClient';
+} from '@/services/crmApiClient';
 
 const crmApiMock = vi.hoisted(() => ({
   getMe: vi.fn(),
@@ -18,8 +18,8 @@ const crmApiMock = vi.hoisted(() => ({
   logout: vi.fn(),
 }));
 
-vi.mock('../services/crmApiClient', async () => {
-  const actual = await vi.importActual<typeof import('../services/crmApiClient')>('../services/crmApiClient');
+vi.mock('@/services/crmApiClient', async () => {
+  const actual = await vi.importActual<typeof import('@/services/crmApiClient')>('@/services/crmApiClient');
   return {
     ...actual,
     crmApi: crmApiMock,

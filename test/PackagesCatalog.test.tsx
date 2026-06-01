@@ -12,28 +12,28 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { ProtectedRoute } from '../components/ProtectedRoute';
-import PackagesCatalog from '../pages/PackagesCatalog';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
+import PackagesCatalog from '@/pages/PackagesCatalog';
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
-vi.mock('../contexts/PatientAuthContext', () => ({
+vi.mock('@/contexts/PatientAuthContext', () => ({
   usePatientAuth: vi.fn(),
   PatientAuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock('../hooks/usePatientPhase2', () => ({
+vi.mock('@/hooks/usePatientPhase2', () => ({
   usePatientPackages: vi.fn(),
   useCreatePatientOrder: vi.fn(),
   useCreatePaymentIntent: vi.fn(),
 }));
 
-import { usePatientAuth } from '../contexts/PatientAuthContext';
+import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import {
   usePatientPackages,
   useCreatePatientOrder,
   useCreatePaymentIntent,
-} from '../hooks/usePatientPhase2';
+} from '@/hooks/usePatientPhase2';
 
 const mockUsePatientAuth = usePatientAuth as ReturnType<typeof vi.fn>;
 const mockUsePatientPackages = usePatientPackages as ReturnType<typeof vi.fn>;

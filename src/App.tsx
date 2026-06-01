@@ -1,0 +1,238 @@
+import React from 'react';
+import { Routes, Route, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { LanguageProvider } from '@/contexts/LanguageContext';
+import { ConsultationProvider } from '@/contexts/ConsultationContext';
+import Header from '@/components/Header';
+import Intro from '@/components/Intro';
+import ConsultationModal from '@/components/ConsultationModal';
+import Partnership from '@/components/Partnership';
+import Categories from '@/components/Categories';
+import TeamIntro from '@/components/TeamIntro';
+import Doctors from '@/components/Doctors';
+import TravelProgram from '@/components/TravelProgram';
+import Testimonials from '@/components/Testimonials';
+import GalleryCTA from '@/components/GalleryCTA';
+import Contact from '@/components/Contact';
+import Footer from '@/components/Footer';
+import ChatWidget from '@/components/ChatWidget';
+import { PatientMessagePanel } from '@/components/messaging/PatientMessagePanel';
+import { MessagePanelProvider } from '@/contexts/MessagePanelContext';
+import { PatientAuthProvider } from '@/contexts/PatientAuthContext';
+import { PatientEntryProvider } from '@/contexts/PatientEntryContext';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
+import ProcedureDetail from '@/pages/ProcedureDetail';
+import CaseDetail from '@/pages/CaseDetail';
+import OurTeam from '@/pages/OurTeam';
+import AllSurgeons from '@/pages/AllSurgeons';
+import Gallery from '@/pages/Gallery';
+import ProcedureGallery from '@/pages/ProcedureGallery';
+import TravelPage from '@/pages/TravelPage';
+import ReviewsPage from '@/pages/ReviewsPage';
+import SurgeonProfile from '@/pages/SurgeonProfile';
+import PatientForm from '@/pages/PatientForm';
+import ProceduresList from '@/pages/ProceduresList';
+import SearchResults from '@/pages/SearchResults';
+import HospitalDetail from '@/pages/HospitalDetail';
+import HospitalGallery from '@/pages/HospitalGallery';
+import ConsultationSurvey from '@/pages/ConsultationSurvey';
+import DashboardRoute from '@/pages/dashboard/DashboardRoute';
+import DashboardLayout from '@/pages/dashboard/DashboardLayout';
+import DashboardHome from '@/pages/dashboard/DashboardHome';
+import MessagesPage from '@/pages/dashboard/MessagesPage';
+import QuotesPage from '@/pages/dashboard/QuotesPage';
+import IntakePage from '@/pages/dashboard/IntakePage';
+import AccountPage from '@/pages/dashboard/AccountPage';
+import LoginPage from '@/pages/dashboard/LoginPage';
+import TicketsPage from '@/pages/dashboard/TicketsPage';
+import OrdersPage from '@/pages/dashboard/OrdersPage';
+import JourneyPage from '@/pages/dashboard/JourneyPage';
+import AiSummaryPage from '@/pages/dashboard/AiSummaryPage';
+import PackagesCatalog from '@/pages/PackagesCatalog';
+import VideoCases from '@/pages/VideoCases';
+
+// Home page component
+function HomePage() {
+  const navigate = useNavigate();
+
+  const handleNavigate = (page: string) => {
+    navigate(`/${page}`);
+    window.scrollTo(0, 0);
+  };
+
+  return (
+    <>
+      <Intro />
+      <Partnership />
+      <Categories />
+      <TeamIntro />
+      <Doctors />
+      <TravelProgram />
+      <Testimonials />
+      <GalleryCTA onNavigate={handleNavigate} />
+      <Contact />
+    </>
+  );
+}
+
+// Procedure Detail Wrapper
+function ProcedureDetailWrapper() {
+  const { procedureName } = useParams<{ procedureName: string }>();
+  const navigate = useNavigate();
+
+  return (
+    <ProcedureDetail
+      procedureName={procedureName || 'Chin Augmentation'}
+      onBack={() => {
+        navigate('/');
+        window.scrollTo(0, 0);
+      }}
+      onCaseClick={(caseId) => {
+        // 使用 encodeURIComponent 确保包含 / 的名称也能正确编码
+        navigate(`/procedure/${encodeURIComponent(procedureName || '')}/case/${caseId}`);
+        window.scrollTo(0, 0);
+      }}
+    />
+  );
+}
+
+// Case Detail Wrapper
+function CaseDetailWrapper() {
+  const { procedureName, caseId, '*': wildcardPath } = useParams<{ procedureName: string; caseId: string; '*': string }>();
+  const navigate = useNavigate();
+
+  // 处理通配符路由：从 URL 路径中提取 procedure 名称
+  // 对于 /procedure/Temples Lift / Temporofrontal Lift/case/1001510
+  // wildcardPath 会是完整路径，需要提取出 procedure 名称
+  let actualProcedureName = procedureName;
+  if (!procedureName && wildcardPath) {
+    // 从通配符路径中提取 procedure 名称（去掉最后的 /case/xxx）
+    const match = window.location.pathname.match(/\/procedure\/(.+)\/case\//);
+    if (match) {
+      actualProcedureName = decodeURIComponent(match[1]);
+    }
+  }
+
+  return (
+    <CaseDetail
+      caseId={caseId || '1001510'}
+      procedureName={actualProcedureName || 'Chin Augmentation'}
+      onBack={() => {
+        navigate(`/procedure/${encodeURIComponent(actualProcedureName || '')}`);
+        window.scrollTo(0, 0);
+      }}
+    />
+  );
+}
+
+// Gallery Wrapper
+function GalleryWrapper() {
+  const navigate = useNavigate();
+
+  return (
+    <Gallery
+      onNavigate={(proc) => {
+        navigate(`/procedure/${encodeURIComponent(proc)}`);
+        window.scrollTo(0, 0);
+      }}
+    />
+  );
+}
+
+// Procedure Gallery Wrapper
+function ProcedureGalleryWrapper() {
+  const { procedureName } = useParams<{ procedureName: string }>();
+  const navigate = useNavigate();
+
+  return (
+    <ProcedureGallery
+      procedureName={procedureName}
+      onBack={() => {
+        navigate(`/procedure/${encodeURIComponent(procedureName || '')}`);
+        window.scrollTo(0, 0);
+      }}
+      onCaseClick={(caseId) => {
+        navigate(`/procedure/${encodeURIComponent(procedureName || '')}/case/${caseId}`);
+        window.scrollTo(0, 0);
+      }}
+    />
+  );
+}
+
+// Marketing layout with Header, Footer, and ConsultationModal
+function MarketingLayout() {
+  return (
+    <ConsultationProvider>
+      <div className="min-h-screen flex flex-col font-sans selection:bg-gold-200 selection:text-navy-900">
+        <Header />
+        <main className="flex-grow">
+          <Outlet />
+        </main>
+        <Footer />
+        <ConsultationModal />
+      </div>
+    </ConsultationProvider>
+  );
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <PatientAuthProvider>
+        <PatientEntryProvider>
+          <MessagePanelProvider>
+            <Routes>
+              {/* Marketing routes */}
+              <Route element={<MarketingLayout />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/team" element={<OurTeam />} />
+                <Route path="/surgeons" element={<AllSurgeons />} />
+                <Route path="/gallery" element={<GalleryWrapper />} />
+                <Route path="/travel" element={<TravelPage />} />
+                <Route path="/reviews" element={<ReviewsPage />} />
+                <Route path="/patient-form" element={<PatientForm />} />
+                <Route path="/search" element={<SearchResults />} />
+                <Route path="/get-quote" element={<ConsultationSurvey />} />
+                <Route path="/video-cases" element={<VideoCases />} />
+                <Route path="/hospital/:hospitalSlug" element={<HospitalDetail />} />
+                <Route path="/hospital/:hospitalSlug/gallery" element={<HospitalGallery />} />
+                <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
+                <Route path="/procedures/:category" element={<ProceduresList />} />
+                <Route path="/procedure/:procedureName" element={<ProcedureDetailWrapper />} />
+                <Route path="/procedure/:procedureName/gallery" element={<ProcedureGalleryWrapper />} />
+                <Route path="/procedure/:procedureName/case/:caseId" element={<CaseDetailWrapper />} />
+                {/* 通配符路由：处理包含 / 的 procedure 名称 */}
+                <Route path="/procedure/*/case/:caseId" element={<CaseDetailWrapper />} />
+              </Route>
+
+              {/* Standalone pages */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/packages" element={<ProtectedRoute><PackagesCatalog /></ProtectedRoute>} />
+
+              {/* Dashboard routes (no marketing Header/Footer) */}
+              <Route path="/dashboard" element={<DashboardRoute><DashboardLayout /></DashboardRoute>}>
+                {/* Phase 1: 3 primary tabs */}
+                <Route index element={<DashboardHome />} />
+                <Route path="quotes" element={<QuotesPage />} />
+                <Route path="messages" element={<MessagesPage />} />
+                {/* Phase 2: 4 additional tabs */}
+                <Route path="tickets" element={<TicketsPage />} />
+                <Route path="orders" element={<OrdersPage />} />
+                <Route path="journey" element={<JourneyPage />} />
+                <Route path="ai-summary" element={<AiSummaryPage />} />
+                {/* Nested routes — accessible but not top-level nav tabs */}
+                <Route path="intake" element={<IntakePage />} />
+                <Route path="account" element={<AccountPage />} />
+              </Route>
+            </Routes>
+
+            {/* Floating components (visible on all pages) */}
+            <ChatWidget />
+            <PatientMessagePanel />
+          </MessagePanelProvider>
+        </PatientEntryProvider>
+      </PatientAuthProvider>
+    </LanguageProvider>
+  );
+}
+
+export default App;

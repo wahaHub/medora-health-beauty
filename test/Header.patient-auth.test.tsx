@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-import Header from '../components/Header';
+import Header from '@/components/Header';
 
 const patientAuthState = vi.hoisted(() => ({
   isAuthenticated: false,
@@ -10,11 +10,11 @@ const patientAuthState = vi.hoisted(() => ({
   patient: null,
 }));
 
-vi.mock('../contexts/PatientAuthContext', () => ({
+vi.mock('@/contexts/PatientAuthContext', () => ({
   usePatientAuth: () => patientAuthState,
 }));
 
-vi.mock('../hooks/useTranslation', () => ({
+vi.mock('@/hooks/useTranslation', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const dictionary: Record<string, string> = {
@@ -32,7 +32,7 @@ vi.mock('../hooks/useTranslation', () => ({
   }),
 }));
 
-vi.mock('../contexts/LanguageContext', () => ({
+vi.mock('@/contexts/LanguageContext', () => ({
   useLanguage: () => ({
     currentLanguage: 'en',
     setLanguage: vi.fn(),
@@ -43,7 +43,7 @@ vi.mock('../contexts/LanguageContext', () => ({
   }),
 }));
 
-vi.mock('../hooks/useData', () => ({
+vi.mock('@/hooks/useData', () => ({
   useSurgeonsList: () => ({
     data: { surgeons: [] },
     isLoading: false,

@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { PatientEntryProvider, type PatientEntryContextValue } from '../contexts/PatientEntryContext';
-import { usePatientEntry } from '../hooks/usePatientEntry';
+import { PatientEntryProvider, type PatientEntryContextValue } from '@/contexts/PatientEntryContext';
+import { usePatientEntry } from '@/hooks/usePatientEntry';
 
 const patientAuthState = vi.hoisted(() => ({
   patient: null as { id: string; caseId?: string; nextStep?: 'select-hospitals' | 'messages-ready' } | null,
@@ -12,12 +12,12 @@ const crmApiState = vi.hoisted(() => ({
   getConversations: vi.fn(),
 }));
 
-vi.mock('../contexts/PatientAuthContext', () => ({
+vi.mock('@/contexts/PatientAuthContext', () => ({
   usePatientAuth: () => patientAuthState,
 }));
 
-vi.mock('../services/crmApiClient', async () => {
-  const actual = await vi.importActual<typeof import('../services/crmApiClient')>('../services/crmApiClient');
+vi.mock('@/services/crmApiClient', async () => {
+  const actual = await vi.importActual<typeof import('@/services/crmApiClient')>('@/services/crmApiClient');
 
   return {
     ...actual,

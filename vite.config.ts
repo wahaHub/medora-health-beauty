@@ -9,6 +9,10 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
+        allowedHosts: [
+          'commissions-needs-roman-face.trycloudflare.com',
+          '.trycloudflare.com',
+        ],
         proxy: {
           '/api/patient': {
             target: 'http://localhost:3001',
@@ -37,7 +41,7 @@ export default defineConfig(({ mode }) => {
       },
       resolve: {
         alias: {
-          '@': path.resolve(__dirname, '.'),
+          '@': path.resolve(__dirname, 'src'),
         }
       }
     };

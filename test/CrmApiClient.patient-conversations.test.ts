@@ -11,7 +11,7 @@ describe('crmApiClient patient conversation normalization', () => {
   });
 
   it('preserves senderRole without coercing admin or ai replies into hospital senderType', async () => {
-    const mod = await import('../services/crmApiClient');
+    const mod = await import('@/services/crmApiClient');
 
     expect(
       mod.normalizePatientMessage({
@@ -78,7 +78,7 @@ describe('crmApiClient patient conversation normalization', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const mod = await import('../services/crmApiClient');
+    const mod = await import('@/services/crmApiClient');
     const conversations = await mod.crmApi.getConversations();
 
     expect(conversations).toEqual([

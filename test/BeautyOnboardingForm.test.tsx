@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { ContactInfoStep } from '../components/chat/ContactInfoStep';
+import { ContactInfoStep } from '@/components/chat/ContactInfoStep';
 
 const patientAuthState = vi.hoisted(() => ({
   bootstrapSession: vi.fn(async (session: unknown) => session),
@@ -32,16 +32,16 @@ const crmApiState = vi.hoisted(() => ({
   initOnboarding: vi.fn(),
 }));
 
-vi.mock('../contexts/PatientAuthContext', () => ({
+vi.mock('@/contexts/PatientAuthContext', () => ({
   usePatientAuth: () => patientAuthState,
 }));
 
-vi.mock('../hooks/usePatientEntry', () => ({
+vi.mock('@/hooks/usePatientEntry', () => ({
   usePatientEntry: () => patientEntryState,
 }));
 
-vi.mock('../services/crmApiClient', async () => {
-  const actual = await vi.importActual<typeof import('../services/crmApiClient')>('../services/crmApiClient');
+vi.mock('@/services/crmApiClient', async () => {
+  const actual = await vi.importActual<typeof import('@/services/crmApiClient')>('@/services/crmApiClient');
   return {
     ...actual,
     crmApi: crmApiState,

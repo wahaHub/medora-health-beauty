@@ -18,7 +18,7 @@ describe('Beauty CRM client request paths', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const mod = await import('../services/crmApiClient');
+    const mod = await import('@/services/crmApiClient');
     await mod.request('/me');
 
     expect(fetchMock).toHaveBeenCalledWith(
@@ -39,7 +39,7 @@ describe('Beauty CRM client request paths', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const mod = await import('../services/crmApiClient');
+    const mod = await import('@/services/crmApiClient');
     await mod.request('/me');
 
     expect(fetchMock).toHaveBeenCalledWith(
