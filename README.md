@@ -43,10 +43,8 @@ src/
 ## Data And Migrations
 
 - `migrations/000_supabase_current_schema_snapshot.sql` is the current Supabase `public` schema dump generated from the live project.
-- `migrations/000_supabase_public_schema_openapi_snapshot.sql` is a lighter OpenAPI-derived snapshot kept for comparison and fallback context.
 - Legacy hand-written migrations and temp seed files live under `archive/migrations-legacy/`.
 - `npm run db:snapshot` loads `.env` and writes a fresh Supabase schema snapshot using `scripts/dump-supabase-schema.sh`.
-- `npm run db:snapshot:openapi` regenerates the OpenAPI-derived snapshot without direct Postgres schema metadata.
 
 ## Environment Files
 
@@ -80,7 +78,6 @@ npm run dev
 npm run build
 npm test
 npm run db:snapshot
-npm run db:snapshot:openapi
 npm run admin
 ```
 

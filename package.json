@@ -10,7 +10,6 @@
     "build": "npm run build:css && vite build",
     "preview": "vite preview",
     "db:snapshot": "bash scripts/dump-supabase-schema.sh",
-    "db:snapshot:openapi": "node scripts/dump-supabase-openapi-schema.mjs",
     "admin": "node admin/server.js",
     "test": "vitest run",
     "test:watch": "vitest"

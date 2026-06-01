@@ -34,11 +34,6 @@ Reason: this was Cloudflare/Vercel-era infrastructure state, not the active app 
   - Requires `SUPABASE_DB_URL`, because Supabase service-role API keys cannot run `pg_dump`.
   - Writes to `migrations/000_supabase_current_schema_snapshot.sql` by default.
 
-- `scripts/dump-supabase-openapi-schema.mjs`
-  - Uses `.env` Supabase REST credentials to snapshot the current PostgREST-exposed public schema.
-  - Writes to `migrations/000_supabase_public_schema_openapi_snapshot.sql`.
-  - Useful when the Postgres connection string is unavailable, but not a replacement for `pg_dump`.
-
 ### Archived Script Files
 
 - `archive/scripts-legacy/broken/run-migration.js`
@@ -73,10 +68,9 @@ Those files are not present, so the npm scripts were not valid.
 
 ### Current Baseline
 
-- `migrations/000_supabase_public_schema_openapi_snapshot.sql`
+- `migrations/000_supabase_current_schema_snapshot.sql`
   - Generated from the live Supabase project currently configured in `.env`.
-  - Captures public REST-exposed tables, columns, defaults, primary keys, and visible foreign keys.
-  - Does not include RLS policies, indexes, triggers, functions, grants, or hidden schemas.
+  - Created through Supabase CLI/pg_dump, so it is the authoritative public schema baseline for this repo.
 
 ### Archived Manual Migrations
 
@@ -107,11 +101,10 @@ Those files are not present, so the npm scripts were not valid.
   - Should stay marked as temp/seed, not canonical schema.
 
 - `archive/migrations-legacy/temp-seed/run_seed.py`
-  - Not safe/current: it hardcodes Supabase URL and a service-role key.
-  - This should not be run or kept as active tooling.
+  - Historical seed runner only. It now reads `SUPABASE_SERVICE_KEY` from the environment and should not be treated as active tooling.
 
 ## Bottom Line
 
-`migrations/` now has a live Supabase-derived baseline from OpenAPI. It is cleaner than the old manual migration chain, but a full authoritative baseline still requires a real Postgres dump via `SUPABASE_DB_URL`.
+`migrations/` now has a live Supabase-derived baseline from pg_dump. It replaces the old manual migration chain as the current schema reference.
 
-`scripts/` is now limited to current maintenance data and two currency-check/update helpers. Legacy generators, broken migration runner, and caches have been moved to `archive/scripts-legacy/`.
+`scripts/` is now limited to current maintenance data, two currency-check/update helpers, and the Supabase pg_dump snapshot helper. Legacy generators, broken migration runner, and caches have been moved to `archive/scripts-legacy/`.
