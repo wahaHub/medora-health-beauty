@@ -309,4 +309,26 @@ describe('Beauty patient proxy', () => {
       }),
     );
   });
+
+  it.each([
+    '../api/patient/session/restore.js',
+    '../api/patient/cases/[caseId].js',
+    '../api/patient/cases/[caseId]/quote.js',
+    '../api/patient/cases/[caseId]/quote/accept.js',
+    '../api/patient/cases/[caseId]/quote/reject.js',
+    '../api/patient/cases/[caseId]/ai-summary.js',
+    '../api/patient/cases/[caseId]/intake-response.js',
+    '../api/patient/cases/[caseId]/intake-template.js',
+    '../api/patient/tickets/[ticketId].js',
+    '../api/patient/tickets/[ticketId]/replies.js',
+    '../api/patient/orders/[orderId].js',
+    '../api/patient/orders/[orderId]/payment-intents.js',
+    '../api/patient/packages/[packageId].js',
+    '../api/patient/sessions/[sessionId]/process-confirmation.js',
+    '../api/patient/sessions/[sessionId]/chat/events.js',
+  ])('exports the shared proxy handler for nested Vercel route %s', async (modulePath) => {
+    const mod = await import(modulePath);
+
+    expect(mod.default).toBe(handler);
+  });
 });
