@@ -2,6 +2,8 @@
 .vercel
 node_modules
 dist
+archive
+wechat_liyuan_cases
 
 .env
 .env.*

@@ -223,4 +223,90 @@ describe('Beauty patient proxy', () => {
       }),
     );
   });
+
+  it('preserves business query params when Vercel rewrite injects path into the URL', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: vi.fn().mockResolvedValue('{"ok":true}'),
+      headers: {
+        get: (name: string) => (name.toLowerCase() === 'content-type' ? 'application/json' : null),
+      },
+    });
+
+    global.fetch = fetchMock as typeof fetch;
+    const originalVercel = process.env.VERCEL;
+    const originalCrmApiBaseUrl = process.env.CRM_API_BASE_URL;
+    process.env.VERCEL = '1';
+    delete process.env.CRM_API_BASE_URL;
+
+    const req: MockRequest = {
+      method: 'GET',
+      query: { path: 'procedures', category: 'hair' } as MockRequest['query'] & { category: string },
+      headers: {},
+      url: '/api/patient/[...path]?path=procedures',
+    };
+    const res = createResponseRecorder();
+
+    try {
+      await handler(req as never, res as never);
+    } finally {
+      process.env.VERCEL = originalVercel;
+      if (typeof originalCrmApiBaseUrl === 'string') {
+        process.env.CRM_API_BASE_URL = originalCrmApiBaseUrl;
+      } else {
+        delete process.env.CRM_API_BASE_URL;
+      }
+    }
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://crmapi.medicaltourismchina.health/api/patient/procedures?category=hair',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+  });
+
+  it('derives the upstream path from the URL when Vercel does not expose catch-all params', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: vi.fn().mockResolvedValue('{"procedures":[]}'),
+      headers: {
+        get: (name: string) => (name.toLowerCase() === 'content-type' ? 'application/json' : null),
+      },
+    });
+
+    global.fetch = fetchMock as typeof fetch;
+    const originalVercel = process.env.VERCEL;
+    const originalCrmApiBaseUrl = process.env.CRM_API_BASE_URL;
+    process.env.VERCEL = '1';
+    delete process.env.CRM_API_BASE_URL;
+
+    const req: MockRequest = {
+      method: 'GET',
+      query: { path: [] },
+      headers: {},
+      url: '/api/patient/procedures?category=hair',
+    };
+    const res = createResponseRecorder();
+
+    try {
+      await handler(req as never, res as never);
+    } finally {
+      process.env.VERCEL = originalVercel;
+      if (typeof originalCrmApiBaseUrl === 'string') {
+        process.env.CRM_API_BASE_URL = originalCrmApiBaseUrl;
+      } else {
+        delete process.env.CRM_API_BASE_URL;
+      }
+    }
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://crmapi.medicaltourismchina.health/api/patient/procedures?category=hair',
+      expect.objectContaining({
+        method: 'GET',
+      }),
+    );
+  });
 });

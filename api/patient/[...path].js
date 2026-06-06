@@ -15,14 +15,32 @@ function getCrmApiBaseUrl() {
 }
 
 function getUpstreamUrl(req) {
+  const requestUrl = new URL(req.url || '/api/patient', 'http://localhost');
   const rawPath = req.query?.path;
   const pathParts = Array.isArray(rawPath)
     ? rawPath
     : typeof rawPath === 'string' && rawPath.length > 0
       ? [rawPath]
       : [];
-  const path = pathParts.join('/');
-  const search = new URL(req.url || '/api/patient', 'http://localhost').search;
+  const fallbackPath = requestUrl.pathname.replace(/^\/api\/patient\/?/, '');
+  const path = pathParts.length > 0 ? pathParts.join('/') : fallbackPath;
+  const searchParams = new URLSearchParams(requestUrl.search);
+  searchParams.delete('path');
+
+  for (const [name, value] of Object.entries(req.query || {})) {
+    if (name === 'path' || searchParams.has(name) || typeof value === 'undefined') continue;
+
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        searchParams.append(name, item);
+      }
+      continue;
+    }
+
+    searchParams.set(name, value);
+  }
+
+  const search = searchParams.toString() ? `?${searchParams.toString()}` : '';
   return `${getCrmApiBaseUrl()}/api/patient/${path}${search}`;
 }
 
