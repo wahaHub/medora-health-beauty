@@ -424,7 +424,17 @@ export const crmApi = {
   getProcedures: (category?: string) =>
     request<any>(`/procedures${category ? `?category=${category}` : ''}`),
   getDestinations: () => request<any>('/destinations'),
-  initOnboarding: (data: { email: string; name: string; phone: string; disease?: string; destination?: string; preferredLanguage?: string; captchaToken?: string }) =>
+  initOnboarding: (data: {
+    email: string;
+    name: string;
+    phone: string;
+    disease?: string;
+    procedureId?: string;
+    category?: string;
+    destination?: string;
+    preferredLanguage?: string;
+    captchaToken?: string;
+  }) =>
     request<{
       patientId: string;
       caseId: string;

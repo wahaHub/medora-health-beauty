@@ -24,14 +24,14 @@ export type ChatWindowDisplayMode = 'panel' | 'modal' | 'mobile-panel';
 
 function getShellClasses(displayMode: ChatWindowDisplayMode) {
   if (displayMode === 'modal') {
-    return 'relative flex h-[min(88dvh,52rem)] w-[min(72rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[32px] border border-stone-200 bg-white shadow-[0_34px_120px_rgba(15,23,42,0.28)]';
+    return 'relative flex h-[min(88dvh,56rem)] w-[min(72rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_34px_120px_rgba(15,23,42,0.28)]';
   }
 
   if (displayMode === 'mobile-panel') {
-    return 'fixed inset-x-3 bottom-3 top-3 z-[9999] flex flex-col overflow-hidden rounded-[28px] border border-stone-200 bg-white shadow-[0_28px_80px_rgba(15,23,42,0.24)] animate-fade-in-up';
+    return 'fixed inset-x-3 bottom-3 top-3 z-[9999] flex flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_28px_80px_rgba(15,23,42,0.24)] animate-fade-in-up';
   }
 
-  return 'fixed bottom-5 right-5 z-[9999] flex h-[min(80dvh,46rem)] w-[min(35rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-[28px] border border-stone-200 bg-white shadow-[0_28px_80px_rgba(15,23,42,0.24)] animate-fade-in-up sm:bottom-6 sm:right-6 sm:w-[min(38rem,calc(100vw-2rem))]';
+  return 'fixed bottom-5 right-5 z-[9999] flex h-[min(84dvh,50rem)] w-[min(38rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_28px_80px_rgba(15,23,42,0.24)] animate-fade-in-up sm:bottom-6 sm:right-6 sm:w-[min(40rem,calc(100vw-2rem))]';
 }
 
 function ChatHeader(props: {
@@ -43,11 +43,11 @@ function ChatHeader(props: {
   const { displayMode, onClose, onMaximize, onMinimize } = props;
 
   return (
-    <div className="bg-navy-900 px-4 py-3 flex items-center justify-between shrink-0">
+    <div className="bg-gradient-to-r from-teal-700 to-sky-700 px-4 py-3 flex items-center justify-between shrink-0">
       <div className="min-w-0">
         <h3 className="truncate text-white font-serif tracking-wide text-lg">Medora Beauty</h3>
         <p className="mt-0.5 text-[11px] uppercase tracking-[0.18em] text-sage-200/80">
-          Patient concierge chat
+          CRM v2 patient concierge
         </p>
       </div>
       <div className="ml-4 flex items-center gap-1.5">

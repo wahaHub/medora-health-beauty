@@ -99,6 +99,30 @@ describe('ChatWidget CRM-backed entry shell', () => {
     expect(screen.queryByTestId('onboarding-shell')).toBeNull();
   });
 
+  it('keeps the floating widget available on the authenticated dashboard workspace', () => {
+    patientAuthState.isAuthenticated = true;
+
+    render(
+      <MemoryRouter initialEntries={['/dashboard']}>
+        <ChatWidget />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('button', { name: /open chat/i })).toBeInTheDocument();
+  });
+
+  it('hides the floating widget on the unauthenticated dashboard workspace', () => {
+    patientAuthState.isAuthenticated = false;
+
+    render(
+      <MemoryRouter initialEntries={['/dashboard']}>
+        <ChatWidget />
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByRole('button', { name: /open chat/i })).toBeNull();
+  });
+
   it.each(['collect-profile', 'select-hospitals', 'bootstrap-error'] as const)(
     'keeps the onboarding shell for %s',
     (phase) => {

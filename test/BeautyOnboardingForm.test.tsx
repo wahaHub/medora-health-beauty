@@ -65,7 +65,9 @@ describe('Beauty widget onboarding form', () => {
         ? [{ id: 'rhinoplasty', name: 'Rhinoplasty' }]
         : category === 'body'
           ? [{ id: 'liposuction', name: 'Liposuction' }]
-          : [{ id: 'botox', name: 'Botox' }],
+          : category === 'hair'
+            ? [{ id: 'hair-transplant', name: 'Hair Transplant' }]
+            : [{ id: 'botox', name: 'Botox' }],
     }));
     crmApiState.getDestinations.mockResolvedValue({
       destinations: ['South Korea', 'Thailand'],
@@ -88,6 +90,8 @@ describe('Beauty widget onboarding form', () => {
 
     expect(screen.getByRole('combobox', { name: 'Destination' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Submit details' })).toBeInTheDocument();
+    expect(crmApiState.getProcedures).toHaveBeenCalledWith('hair');
+    expect(screen.getByRole('option', { name: 'Hair Transplant' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Find My Hospitals' })).toBeNull();
   });
 

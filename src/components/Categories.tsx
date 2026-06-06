@@ -12,9 +12,10 @@ interface CategoryProps {
   theme: 'light' | 'dark' | 'warm';
   align: 'left' | 'right';
   id: string;
+  videoSrc?: string;
 }
 
-const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description, items, image, theme, align, id }) => {
+const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description, items, image, theme, align, id, videoSrc }) => {
   const { t } = useTranslation();
   const isDark = theme === 'dark';
   
@@ -53,7 +54,7 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
     <div id={id} className="relative min-h-[700px] md:h-screen max-h-[900px] flex items-center overflow-hidden">
       {/* 1. Background Image/Video Layer */}
       <div className="absolute inset-0 z-0">
-        {id === 'face' ? (
+        {videoSrc ? (
           <video
             autoPlay
             muted
@@ -63,31 +64,7 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
               align === 'left' ? 'object-[80%_center]' : 'object-[20%_center]'
             }`}
           >
-            <source src="https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/face.mp4" type="video/mp4" />
-          </video>
-        ) : id === 'body' ? (
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className={`w-full h-full object-cover ${
-              align === 'left' ? 'object-[80%_center]' : 'object-[20%_center]'
-            }`}
-          >
-            <source src="https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/body.mp4" type="video/mp4" />
-          </video>
-        ) : id === 'nonsurgical' ? (
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className={`w-full h-full object-cover ${
-              align === 'left' ? 'object-[80%_center]' : 'object-[20%_center]'
-            }`}
-          >
-            <source src="https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/non-surgical.mp4" type="video/mp4" />
+            <source src={videoSrc} type="video/mp4" />
           </video>
         ) : (
           <img
@@ -156,6 +133,7 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
             {id === 'face' && t('exploreFace')}
             {id === 'body' && t('exploreBody')}
             {id === 'nonsurgical' && t('exploreNonsurgical')}
+            {id === 'hair' && t('exploreHair')}
           </button>
         </div>
       </div>
@@ -177,6 +155,7 @@ const Categories: React.FC = () => {
       description: t('categoryFaceDescription'),
       items: [t('categoryFaceItem1'), t('categoryFaceItem2'), t('categoryFaceItem3'), t('categoryFaceItem4')],
       image: faceImage,
+      videoSrc: 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/face.mp4',
       theme: 'warm', // Light Sage Gradient
       align: 'left'
     },
@@ -187,6 +166,7 @@ const Categories: React.FC = () => {
       description: t('categoryBodyDescription'),
       items: [t('categoryBodyItem1'), t('categoryBodyItem2'), t('categoryBodyItem3'), t('categoryBodyItem4')],
       image: bodyImage,
+      videoSrc: 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/body.mp4',
       theme: 'warm', // Light Sage Gradient
       align: 'right'
     },
@@ -197,7 +177,19 @@ const Categories: React.FC = () => {
       description: t('categoryNonsurgicalDescription'),
       items: [t('categoryNonsurgicalItem1'), t('categoryNonsurgicalItem2'), t('categoryNonsurgicalItem3'), t('categoryNonsurgicalItem4')],
       image: nonSurgicalImage,
+      videoSrc: 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/non-surgical.mp4',
       theme: 'warm', // Dark Forest Gradient
+      align: 'left'
+    },
+    {
+      id: "hair",
+      title: t('categoryHair'),
+      subtitle: t('categoryHairSubtitle'),
+      description: t('categoryHairDescription'),
+      items: [t('categoryHairItem1'), t('categoryHairItem2'), t('categoryHairItem3'), t('categoryHairItem4')],
+      image: nonSurgicalImage,
+      videoSrc: '/homepage/hair.mp4',
+      theme: 'warm',
       align: 'left'
     }
   ];
