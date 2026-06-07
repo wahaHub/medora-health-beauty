@@ -127,4 +127,50 @@ describe('Beauty widget onboarding form', () => {
       procedureId: 'rhinoplasty',
     }));
   });
+
+  it('lands directly in messages-ready when CRM returns a widget chat session', async () => {
+    crmApiState.initOnboarding.mockResolvedValueOnce({
+      patientId: 'patient-1',
+      caseId: 'case-1',
+      restoreToken: 'restore-token-1',
+      nextStep: 'select-hospitals',
+      widgetChatTarget: {
+        kind: 'CHATBOT_SESSION',
+        sessionId: 'widget-chat:patient-1:case-1',
+      },
+    });
+
+    const view = render(<ContactInfoStep />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('combobox', { name: 'Condition / Procedure' })).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Condition / Procedure' }), {
+      target: { value: 'hair-transplant' },
+    });
+    view.rerender(<ContactInfoStep />);
+    fireEvent.change(screen.getByRole('combobox', { name: 'Destination' }), {
+      target: { value: 'Thailand' },
+    });
+    view.rerender(<ContactInfoStep />);
+    fireEvent.click(screen.getByRole('button', { name: 'Submit details' }));
+
+    await waitFor(() => {
+      expect(patientAuthState.bootstrapSession).toHaveBeenCalledWith(expect.objectContaining({
+        nextStep: 'messages-ready',
+      }));
+    });
+
+    expect(patientEntryState.applyOnboardingResult).toHaveBeenCalledWith(expect.objectContaining({
+      nextStep: 'messages-ready',
+      conversations: [
+        {
+          id: 'widget-chat:patient-1:case-1',
+          type: 'patient-admin',
+          category: 'ADMIN_PATIENT',
+        },
+      ],
+    }));
+  });
 });

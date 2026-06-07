@@ -122,6 +122,7 @@ export type PatientSessionBootstrap = VerifyTokenResponse;
 
 export interface Conversation {
   id: string;
+  sessionId?: string;
   caseId?: string;
   /** Discriminator: admin ↔ patient vs. hospital ↔ patient */
   type: 'patient-admin' | 'patient-hospital';
@@ -140,7 +141,7 @@ export interface Conversation {
 
 export interface Message {
   id: string;
-  conversationId: string;
+  conversationId?: string | null;
   /** Who sent the message */
   role: 'patient' | 'admin' | 'system';
   /** Maps to senderType used in MessageList component */
@@ -161,12 +162,28 @@ export interface MessageAttachment {
 }
 
 export interface ConversationsResponse {
-  conversations: Conversation[];
+  conversations?: Conversation[];
+  sessions?: Array<{
+    sessionId: string;
+    caseId: string | null;
+    type: 'CARE_TEAM' | 'HOSPITAL';
+    title?: string | null;
+    hospitalId?: string | null;
+    hospitalName?: string | null;
+    unreadCount?: number;
+    lastMessagePreview?: string | null;
+    lastMessageAt?: string | null;
+    updatedAt?: string;
+  }>;
+  meta?: {
+    chatAuthority?: string | null;
+  };
 }
 
 type ConversationLike = {
-  id: string;
-  caseId?: string;
+  id?: string;
+  sessionId?: string;
+  caseId?: string | null;
   type?: string;
   category?: string;
   title?: string;
@@ -184,7 +201,7 @@ type ConversationLike = {
 
 type MessageLike = {
   id: string;
-  conversationId: string;
+  conversationId?: string | null;
   role?: 'patient' | 'admin' | 'system';
   senderType?: 'patient' | 'hospital' | 'system';
   senderRole?: string;
@@ -210,6 +227,7 @@ export function getPatientConversationType(
   if (
     normalizedType === 'PATIENT_ADMIN'
     || normalizedType === 'ADMIN_PATIENT'
+    || normalizedType === 'CARE_TEAM'
   ) {
     return 'patient-admin';
   }
@@ -217,6 +235,7 @@ export function getPatientConversationType(
   if (
     normalizedType === 'PATIENT_HOSPITAL'
     || normalizedType === 'HOSPITAL_PATIENT'
+    || normalizedType === 'HOSPITAL'
   ) {
     return 'patient-hospital';
   }
@@ -317,7 +336,8 @@ export function getPatientConversationThreadLabel(
 
 function normalizeConversation(rawConversation: ConversationLike): Conversation | null {
   const type = getPatientConversationType(rawConversation);
-  if (!type) {
+  const id = rawConversation.id ?? rawConversation.sessionId;
+  if (!type || !id) {
     return null;
   }
 
@@ -332,8 +352,9 @@ function normalizeConversation(rawConversation: ConversationLike): Conversation 
     );
 
   return {
-    id: rawConversation.id,
-    caseId: rawConversation.caseId,
+    id,
+    sessionId: rawConversation.sessionId,
+    caseId: rawConversation.caseId ?? undefined,
     type,
     category: normalizeConversationToken(rawConversation.category) ?? undefined,
     title: rawConversation.title,
@@ -384,6 +405,42 @@ function normalizePatientMessages(raw: MessageListResponse | MessageLike[]): { m
   return {
     messages: records.map((message) => normalizePatientMessage(message)),
   };
+}
+
+function normalizeSessionSummary(session: NonNullable<ConversationsResponse['sessions']>[number]): ConversationLike {
+  return {
+    id: session.sessionId,
+    sessionId: session.sessionId,
+    caseId: session.caseId,
+    type: session.type,
+    category: session.type === 'CARE_TEAM' ? 'ADMIN_PATIENT' : 'HOSPITAL_PATIENT',
+    title: session.title ?? undefined,
+    hospitalId: session.hospitalId ?? undefined,
+    hospitalName: session.hospitalName ?? undefined,
+    unreadCount: session.unreadCount,
+    lastMessagePreview: session.lastMessagePreview ?? undefined,
+    lastMessageAt: session.lastMessageAt ?? undefined,
+    updatedAt: session.updatedAt,
+  };
+}
+
+function normalizeConversationsResponse(raw: Conversation[] | ConversationsResponse): Conversation[] {
+  const records = Array.isArray(raw)
+    ? raw
+    : raw.conversations ?? raw.sessions?.map(normalizeSessionSummary) ?? [];
+
+  return records.flatMap((conversation) => {
+    const normalized = normalizeConversation(conversation);
+    return normalized ? [normalized] : [];
+  });
+}
+
+function encodePathSegment(value: string): string {
+  return encodeURIComponent(value);
+}
+
+function isWidgetChatSessionId(value: string): boolean {
+  return value.startsWith('widget-chat:');
 }
 
 // ---------------------------------------------------------------------------
@@ -477,16 +534,7 @@ export const crmApi = {
    * array directly, or wrapped in `{ conversations: [...] }`.
    */
   getConversations: (): Promise<Conversation[]> =>
-    request<Conversation[] | ConversationsResponse>('/conversations').then((raw) => {
-      const conversations = Array.isArray(raw)
-        ? raw
-        : (raw as ConversationsResponse).conversations ?? [];
-
-      return conversations.flatMap((conversation) => {
-        const normalized = normalizeConversation(conversation);
-        return normalized ? [normalized] : [];
-      });
-    }),
+    request<Conversation[] | ConversationsResponse>('/conversations').then(normalizeConversationsResponse),
   getCases: () => request<any>('/cases'),
   getCaseDetail: (id: string) => request<any>(`/cases/${id}`),
   getMessages: (convId: string, params?: { cursor?: string; limit?: number; after?: string }) => {
@@ -495,7 +543,7 @@ export const crmApi = {
     if (params?.limit) qs.set('limit', String(params.limit));
     if (params?.after) qs.set('after', params.after);
     const query = qs.toString();
-    return request<MessageListResponse | MessageLike[]>(`/conversations/${convId}/messages${query ? `?${query}` : ''}`)
+    return request<MessageListResponse | MessageLike[]>(`/sessions/${encodePathSegment(convId)}/messages${query ? `?${query}` : ''}`)
       .then((raw) => normalizePatientMessages(raw));
   },
   sendMessage: (
@@ -511,14 +559,27 @@ export const crmApi = {
       }>;
     },
   ) =>
-    request<any>(`/conversations/${convId}/messages`, {
-      method: 'POST',
-      body: JSON.stringify({
-        content,
-        ...(options?.messageType ? { messageType: options.messageType } : {}),
-        ...(options?.attachments ? { attachments: options.attachments } : {}),
-      }),
-    }),
+    isWidgetChatSessionId(convId)
+      ? request<any>(`/sessions/${encodePathSegment(convId)}/chat/events`, {
+          method: 'POST',
+          body: JSON.stringify({
+            eventType: 'TEXT_MESSAGE_SUBMITTED',
+            locale: 'en',
+            payload: {
+              content,
+              ...(options?.messageType ? { messageType: options.messageType } : {}),
+              ...(options?.attachments ? { attachments: options.attachments } : {}),
+            },
+          }),
+        })
+      : request<any>(`/sessions/${encodePathSegment(convId)}/messages`, {
+          method: 'POST',
+          body: JSON.stringify({
+            content,
+            ...(options?.messageType ? { messageType: options.messageType } : {}),
+            ...(options?.attachments ? { attachments: options.attachments } : {}),
+          }),
+        }),
   initConversationAttachmentUpload: (data: {
     conversationId: string;
     fileName: string;

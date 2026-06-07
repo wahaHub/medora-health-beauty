@@ -131,8 +131,20 @@ export function ContactInfoStep() {
         preferredLanguage: 'en',
       });
 
+      const widgetConversation = result.widgetChatTarget?.kind === 'CHATBOT_SESSION'
+        ? [{
+            id: result.widgetChatTarget.sessionId,
+            type: 'patient-admin' as const,
+            category: 'ADMIN_PATIENT',
+          }]
+        : [];
+      const conversations = result.conversations?.length
+        ? result.conversations
+        : widgetConversation;
       const nextStep: 'select-hospitals' | 'messages-ready' =
-        (result.nextStep as 'select-hospitals' | 'messages-ready') ?? 'select-hospitals';
+        widgetConversation.length > 0
+          ? 'messages-ready'
+          : ((result.nextStep as 'select-hospitals' | 'messages-ready') ?? 'messages-ready');
 
       bootstrapSession({
         patientId: result.patientId,
@@ -147,7 +159,7 @@ export function ContactInfoStep() {
         patientId: result.patientId,
         caseId: result.caseId,
         nextStep,
-        conversations: result.conversations,
+        conversations,
       });
     } catch (err: any) {
       setError(err.message ?? 'Something went wrong');
