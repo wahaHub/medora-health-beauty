@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, Sparkles, X } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -45,6 +45,22 @@ interface Surgeon {
   specialties: string[];
   experience_years: number | null;
   image_url: string | null;
+  images?: {
+    hero?: string;
+    [key: string]: string | undefined;
+  } | null;
+}
+
+const doctorFallbackImages = [
+  'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=1200&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=1200&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1594824476967-48c8b964ac31?q=80&w=1200&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=1200&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1589992896844-9b720813d1cb?q=80&w=1200&auto=format&fit=crop',
+];
+
+function getSurgeonImage(surgeon: Surgeon, index: number) {
+  return surgeon.images?.hero || surgeon.image_url || doctorFallbackImages[index % doctorFallbackImages.length];
 }
 
 const Header: React.FC = () => {
@@ -57,9 +73,12 @@ const Header: React.FC = () => {
   const [isAtTop, setIsAtTop] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
+  const [doctorCarouselPage, setDoctorCarouselPage] = useState(0);
+  const [isDoctorCarouselPaused, setIsDoctorCarouselPaused] = useState(false);
+  const doctorsHospitalsLabel = currentLanguage === 'zh' ? '医生' : 'DOCTORS';
 
   // Fetch surgeons using React Query hook
-  const shouldLoadSurgeons = hoveredNav === t('navAbout');
+  const shouldLoadSurgeons = hoveredNav === doctorsHospitalsLabel;
   const { data: surgeonsData, isLoading: surgeonsLoading } = useSurgeonsList({ enabled: shouldLoadSurgeons });
 
   // Use the already-unique, already-sorted surgeons list from the query.
@@ -67,6 +86,17 @@ const Header: React.FC = () => {
   const surgeons = useMemo(() => {
     return (surgeonsData?.surgeons || []) as Surgeon[];
   }, [surgeonsData]);
+  const featuredDropdownDoctors = useMemo(() => {
+    return surgeons
+      .filter((surgeon) => surgeon.name.trim().toLowerCase().startsWith('dr.'));
+  }, [surgeons]);
+  const featuredDoctorPages = useMemo(() => {
+    const pages: Surgeon[][] = [];
+    for (let index = 0; index < featuredDropdownDoctors.length; index += 10) {
+      pages.push(featuredDropdownDoctors.slice(index, index + 10));
+    }
+    return pages;
+  }, [featuredDropdownDoctors]);
 
   // Helper function to translate procedure/menu item names
   const translateLabel = (englishLabel: string): string => {
@@ -87,6 +117,27 @@ const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    setDoctorCarouselPage(0);
+    setIsDoctorCarouselPaused(false);
+  }, [hoveredNav, featuredDoctorPages.length]);
+
+  useEffect(() => {
+    if (
+      hoveredNav !== doctorsHospitalsLabel ||
+      isDoctorCarouselPaused ||
+      featuredDoctorPages.length <= 1
+    ) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setDoctorCarouselPage((currentPage) => (currentPage + 1) % featuredDoctorPages.length);
+    }, 3500);
+
+    return () => window.clearInterval(timer);
+  }, [doctorsHospitalsLabel, featuredDoctorPages.length, hoveredNav, isDoctorCarouselPaused]);
 
   const handleLinkClick = (e: React.MouseEvent, pageName: string, isMenuLink: boolean, href?: string) => {
     e.preventDefault();
@@ -125,16 +176,19 @@ const Header: React.FC = () => {
       window.scrollTo(0, 0);
     } else {
       // Basic anchor scrolling for home page sections (ABOUT, CONTACT, etc.)
+      const targetId = href?.startsWith('#')
+        ? href.slice(1)
+        : pageName.toLowerCase().replace('#', '');
       if (location.pathname !== '/') {
         navigate('/');
         setTimeout(() => {
-          const element = document.getElementById(pageName.toLowerCase().replace('#', ''));
+          const element = document.getElementById(targetId);
           if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
           }
         }, 100);
       } else {
-        const element = document.getElementById(pageName.toLowerCase().replace('#', ''));
+        const element = document.getElementById(targetId);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
         } else {
@@ -172,7 +226,7 @@ const Header: React.FC = () => {
 
   const navItems: NavItem[] = [
     {
-      name: t('navAbout'),
+      name: doctorsHospitalsLabel,
       href: '#about',
       columns: [
         surgeonColumn1,
@@ -363,7 +417,7 @@ const Header: React.FC = () => {
   const hasWhiteBg = isScrolled || Boolean(hoveredNav) || (!hasDarkHero && isAtTop);
   const authHref = isPatientAuthenticated ? '/dashboard' : '/login';
   const authLabel = isPatientAuthLoading ? 'Account' : isPatientAuthenticated ? 'Dashboard' : 'Login';
-  const authButtonClass = `px-4 xl:px-6 py-2 rounded-sm text-xs xl:text-sm tracking-wider xl:tracking-widest uppercase transition-colors flex items-center justify-center border whitespace-nowrap ${
+  const authButtonClass = `px-4 xl:px-6 py-2.5 rounded-none text-xs xl:text-sm tracking-[0.14em] uppercase transition-colors flex items-center justify-center border whitespace-nowrap ${
     hasWhiteBg
       ? 'border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white'
       : 'border-white text-white hover:bg-white hover:text-navy-900'
@@ -376,24 +430,24 @@ const Header: React.FC = () => {
       }`}
       onMouseLeave={() => setHoveredNav(null)}
     >
-      <div className={`container mx-auto px-6 flex justify-between items-center relative z-50 ${isScrolled || hoveredNav ? 'h-20' : 'h-24'}`}>
+      <div className={`w-full px-6 flex justify-between items-center relative z-50 ${isScrolled || hoveredNav ? 'h-20' : 'h-24'}`}>
         {/* Logo - Single Line */}
         <div 
           className={`z-50 transition-colors duration-300 cursor-pointer flex items-baseline gap-3 group shrink-0`}
           onClick={(e) => handleLinkClick(e, 'intro', false)}
         >
-          <span className={`font-serif text-lg lg:text-xl tracking-widest font-bold transition-colors ${
+          <span className={`font-serif text-lg lg:text-xl tracking-[0.14em] font-bold transition-colors ${
             hasWhiteBg ? 'text-navy-900 group-hover:text-gold-600' : 'text-white group-hover:text-gold-300'
           }`}>
             MEDORA HEALTH
           </span>
-          <span className="text-[10px] lg:text-xs uppercase tracking-[0.2em] text-gold-500 group-hover:text-navy-900 transition-colors font-medium">
+          <span className="text-[10px] lg:text-xs uppercase tracking-[0.18em] text-[#bf8755] group-hover:text-navy-900 transition-colors font-semibold">
             : BEAUTY
           </span>
         </div>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex h-full items-center">
+        <nav className="hidden lg:flex h-full min-w-0 flex-1 items-center justify-center">
           {navItems.map((link) => (
             <div 
               key={link.name} 
@@ -403,13 +457,13 @@ const Header: React.FC = () => {
               <a
                 href={link.href}
                 onClick={(e) => handleLinkClick(e, link.name, false, link.href)}
-                className={`text-sm tracking-[0.1em] font-medium uppercase transition-colors relative
-                  ${hasWhiteBg ? 'text-stone-600 hover:text-gold-600' : 'text-white hover:text-gold-300'}
-                  ${hoveredNav === link.name ? 'text-gold-600' : ''}`}
+                className={`whitespace-nowrap text-sm tracking-[0.1em] font-medium uppercase transition-colors relative
+                  ${hasWhiteBg ? 'text-stone-600 hover:text-[#a77749]' : 'text-white hover:text-[#c99963]'}
+                  ${hoveredNav === link.name ? 'text-[#a77749]' : ''}`}
               >
                 {link.name}
                 {/* Underline effect */}
-                <span className={`absolute bottom-[-4px] left-0 w-full h-[2px] bg-gold-600 transform scale-x-0 transition-transform duration-300 ${hoveredNav === link.name ? 'scale-x-100' : 'group-hover:scale-x-100'}`}></span>
+                <span className={`absolute bottom-[-6px] left-0 w-full h-[2px] bg-[#a77749] transform scale-x-0 transition-transform duration-300 ${hoveredNav === link.name ? 'scale-x-100' : 'group-hover:scale-x-100'}`}></span>
               </a>
             </div>
           ))}
@@ -462,54 +516,153 @@ const Header: React.FC = () => {
         link.columns && (
           <div 
             key={`${link.name}-dropdown`}
-            className={`absolute top-full left-0 w-full bg-forest-gradient text-white overflow-y-auto transition-all duration-300 ease-in-out z-40 border-t border-white/10 ${
+            className={`absolute top-full left-0 w-full bg-[#073a31] text-white overflow-y-auto transition-all duration-300 ease-in-out z-40 border-t border-[#d8d2c7]/25 ${
               hoveredNav === link.name ? 'max-h-[800px] opacity-100 visible' : 'max-h-0 opacity-0 invisible'
             }`}
             onMouseEnter={() => setHoveredNav(link.name)}
             onMouseLeave={() => setHoveredNav(null)}
           >
-            <div className="container mx-auto px-6 py-12">
-              <div className="flex flex-col lg:flex-row gap-12">
-                {/* Left Decoration / Image */}
-                <div className="lg:w-1/4 border-r border-white/10 pr-8 hidden lg:block">
-                   <div className="font-serif text-8xl text-sage-300 italic opacity-30">
-                     {link.name.charAt(0)}
-                   </div>
-                   <h3 className="text-gold-500 tracking-[0.2em] uppercase mt-4 text-xl">
-                     {link.name === 'ABOUT' ? 'Our Practice' : link.name}
-                   </h3>
-                </div>
-
-                {/* Columns */}
-                <div className="lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {link.columns.map((col, colIdx) => (
-                    <div key={colIdx} className="space-y-4">
-                      {col.map((item, itemIdx) => (
-                        <div key={itemIdx} className="group/item">
-                          {item.isHeader ? (
-                            <span className="block text-white text-sm font-medium tracking-wide mb-3 mt-4 first:mt-0">
-                              {translateLabel(item.label)}
-                            </span>
-                          ) : (
-                            <a
-                              href={item.href || "#"}
-                              onClick={(e) => handleLinkClick(e, item.label, true, item.href)}
-                              className={`block transition-colors hover:text-gold-500 ${
-                                item.isSub
-                                  ? 'pl-4 text-sage-300 text-sm flex items-center'
-                                  : 'text-sage-200 text-sm tracking-wide font-light'
-                              }`}
-                            >
-                              {item.isSub && <span className="inline-block w-1 h-1 rounded-full bg-gold-600 mr-2 opacity-60 group-hover/item:opacity-100 transition-opacity"></span>}
-                              {translateLabel(item.label)}
-                            </a>
-                          )}
-                        </div>
-                      ))}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_8%_18%,rgba(176,126,76,0.18),transparent_30%),radial-gradient(circle_at_70%_50%,rgba(16,91,78,0.34),transparent_38%),linear-gradient(90deg,rgba(2,34,29,0.20),transparent_30%,rgba(2,30,27,0.24))] pointer-events-none" />
+            <div className="absolute inset-y-8 left-6 hidden w-px bg-[#d0b083]/20 xl:block" />
+            <div className="absolute inset-y-8 right-6 hidden w-px bg-[#d0b083]/20 xl:block" />
+            <div className="container relative mx-auto px-6 py-8 lg:py-10">
+              {link.name === doctorsHospitalsLabel ? (
+                <div className="grid gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[16.5rem_minmax(0,1fr)]">
+                  <aside className="hidden border-r border-[#d0b083]/20 pr-10 lg:block">
+                    <div className="mb-8 flex items-center gap-3">
+                      <span className="font-serif text-[6.9rem] leading-none text-[#f3f0e8] drop-shadow-[0_2px_2px_rgba(0,0,0,0.32)]">M</span>
+                      <Sparkles className="mt-10 text-[#c4935b]" size={22} strokeWidth={1.35} />
                     </div>
-                  ))}
+                    <div className="font-serif text-[2.45rem] uppercase leading-[1.22] tracking-[0.2em] text-[#c4935b]">
+                      Meet Our<br />Experts
+                    </div>
+                    <div className="mt-7 h-[3px] w-14 bg-[#c4935b]" />
+                  </aside>
+
+                  <div className="min-w-0 pt-1">
+                    <div className="mb-5 flex items-center justify-between gap-4">
+                      <h3 className="font-sans text-sm font-medium uppercase tracking-[0.1em] text-[#c4935b]">
+                        Featured Doctors
+                      </h3>
+                      <a
+                        href="/surgeons"
+                        onClick={(event) => handleLinkClick(event, 'View All Doctors →', true, '/surgeons')}
+                        className="font-sans text-sm font-medium uppercase tracking-[0.1em] text-[#c4935b] transition-colors hover:text-[#f0d3a9]"
+                      >
+                        View All Doctors <span aria-hidden>→</span>
+                      </a>
+                    </div>
+
+                    {surgeonsLoading ? (
+                      <div className="rounded-[5px] border border-[#73958c]/45 bg-[#0b443a]/55 p-8 text-center text-[#c9d5d1]">
+                        Loading doctors...
+                      </div>
+                    ) : featuredDoctorPages.length === 0 ? (
+                      <div className="rounded-[5px] border border-[#73958c]/45 bg-[#0b443a]/55 p-8 text-center text-[#c9d5d1]">
+                        No doctors found.
+                      </div>
+                    ) : (
+                      <div
+                        className="relative overflow-hidden"
+                        onMouseEnter={() => setIsDoctorCarouselPaused(true)}
+                        onMouseLeave={() => setIsDoctorCarouselPaused(false)}
+                      >
+                        {featuredDoctorPages.map((doctorPage, pageIndex) => (
+                          <div
+                            key={pageIndex}
+                            className={`grid w-full grid-cols-1 gap-4 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:grid-cols-2 lg:grid-cols-5 ${
+                              pageIndex === doctorCarouselPage ? 'relative' : 'absolute inset-x-0 top-0'
+                            }`}
+                            style={{ transform: `translateX(${(pageIndex - doctorCarouselPage) * 100}%)` }}
+                            aria-hidden={pageIndex !== doctorCarouselPage}
+                          >
+                            {doctorPage.map((surgeon, index) => {
+                              const imageIndex = pageIndex * 10 + index;
+
+                              return (
+                                <a
+                                  key={surgeon.surgeon_id}
+                                  href={`/surgeon/${surgeon.surgeon_id}`}
+                                  onClick={(event) => handleLinkClick(event, surgeon.name, true, `/surgeon/${surgeon.surgeon_id}`)}
+                                  className="group flex h-full flex-col rounded-[5px] border border-[#66897f]/50 bg-[#0b443a]/62 p-2 text-left shadow-[0_18px_46px_rgba(2,37,32,0.22),inset_0_0_0_1px_rgba(255,255,255,0.025)] transition-colors hover:border-[#c4935b]/70 hover:bg-[#0d4a40]/72"
+                                >
+                                  <div className="aspect-[1.55] overflow-hidden rounded-[3px] bg-[#d8d3ca]">
+                                    <img
+                                      src={getSurgeonImage(surgeon, imageIndex)}
+                                      alt={surgeon.name}
+                                      className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                                      loading="lazy"
+                                      onError={(event) => {
+                                        event.currentTarget.src = doctorFallbackImages[imageIndex % doctorFallbackImages.length];
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="flex flex-1 flex-col px-1.5 pb-2 pt-2.5">
+                                    <h4 className="font-sans line-clamp-2 min-h-[2.15rem] text-[16px] font-medium leading-[1.08] text-[#f5f4ee]">
+                                      {surgeon.name}
+                                    </h4>
+                                    <p className="mt-1 font-sans line-clamp-1 text-[13px] font-normal leading-[1.35] text-[#c6d3cf]">
+                                      {surgeon.specialties?.[0] || 'Plastic Surgery'}
+                                    </p>
+                                    <p className="mt-0.5 font-sans line-clamp-1 text-xs font-normal leading-[1.35] text-[#aebdb8]">
+                                      {surgeon.title || 'Medora Health : Beauty'}
+                                    </p>
+                                    <span className="mt-auto pt-3 font-sans text-[13px] font-medium text-[#c4935b]">
+                                      View Profile <span aria-hidden>→</span>
+                                    </span>
+                                  </div>
+                                </a>
+                              );
+                            })}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="flex flex-col lg:flex-row gap-12">
+                  {/* Left Decoration / Image */}
+                  <div className="lg:w-1/4 border-r border-white/10 pr-8 hidden lg:block">
+                    <div className="font-serif text-8xl text-sage-300 italic opacity-30">
+                      {link.name.charAt(0)}
+                    </div>
+                    <h3 className="text-gold-500 tracking-[0.2em] uppercase mt-4 text-xl">
+                      {link.name}
+                    </h3>
+                  </div>
+
+                  {/* Columns */}
+                  <div className="lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {link.columns.map((col, colIdx) => (
+                      <div key={colIdx} className="space-y-4">
+                        {col.map((item, itemIdx) => (
+                          <div key={itemIdx} className="group/item">
+                            {item.isHeader ? (
+                              <span className="block text-white text-sm font-medium tracking-wide mb-3 mt-4 first:mt-0">
+                                {translateLabel(item.label)}
+                              </span>
+                            ) : (
+                              <a
+                                href={item.href || "#"}
+                                onClick={(e) => handleLinkClick(e, item.label, true, item.href)}
+                                className={`block transition-colors hover:text-gold-500 ${
+                                  item.isSub
+                                    ? 'pl-4 text-sage-300 text-sm flex items-center'
+                                    : 'text-sage-200 text-sm tracking-wide font-light'
+                                }`}
+                              >
+                                {item.isSub && <span className="inline-block w-1 h-1 rounded-full bg-gold-600 mr-2 opacity-60 group-hover/item:opacity-100 transition-opacity"></span>}
+                                {translateLabel(item.label)}
+                              </a>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )
@@ -560,9 +713,9 @@ const Header: React.FC = () => {
                   <div className="mt-4 pl-4 border-l-2 border-gold-200 space-y-3">
                     {(() => {
                       const allItems = link.columns.flat().filter(item => !item.isHeader);
-                      // For ABOUT section - show only "View All Doctors" link
-                      if (link.name === t('navAbout')) {
-                        return allItems.filter(item => item.href === '/surgeons' || item.href === '/reviews').map((item, idx) => (
+                      // For Doctors & Hospitals section - show key directory links.
+                      if (link.name === doctorsHospitalsLabel) {
+                        return allItems.filter(item => item.href === '/surgeons' || item.href === '/search?type=hospitals' || item.href === '/reviews').map((item, idx) => (
                           <div
                             key={idx}
                             className="text-stone-600 text-sm font-medium"
