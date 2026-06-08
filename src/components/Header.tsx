@@ -97,8 +97,11 @@ const Header: React.FC = () => {
     return (surgeonsData?.surgeons || []) as Surgeon[];
   }, [surgeonsData]);
   const featuredDropdownDoctors = useMemo(() => {
-    return surgeons
-      .filter((surgeon) => surgeon.name.trim().toLowerCase().startsWith('dr.'));
+    const drPrefixedSurgeons = surgeons.filter((surgeon) =>
+      surgeon.name.trim().toLowerCase().startsWith('dr.')
+    );
+
+    return drPrefixedSurgeons.length > 0 ? drPrefixedSurgeons : surgeons;
   }, [surgeons]);
   const featuredDoctorPages = useMemo(() => {
     const pages: Surgeon[][] = [];
@@ -351,6 +354,9 @@ const Header: React.FC = () => {
   // On pages with dark hero sections, header should be transparent at top
   // On home page and other pages, header is white at top
   const hasWhiteBg = isScrolled || Boolean(hoveredNav) || (!hasDarkHero && isAtTop);
+  const navLinkClass = `whitespace-nowrap font-sans text-sm font-medium uppercase leading-none tracking-[0.1em] transition-colors relative ${
+    hasWhiteBg ? 'text-stone-600 hover:text-[#a77749]' : 'text-white hover:text-[#c99963]'
+  }`;
   const authHref = isPatientAuthenticated ? '/dashboard' : '/login';
   const authLabel = isPatientAuthLoading ? 'Account' : isPatientAuthenticated ? 'Dashboard' : 'Login';
   const authButtonClass = `px-4 xl:px-6 py-2.5 rounded-none text-xs xl:text-sm tracking-[0.14em] uppercase transition-colors flex items-center justify-center border whitespace-nowrap ${
@@ -388,14 +394,12 @@ const Header: React.FC = () => {
             <div 
               key={link.name} 
               className="h-full flex items-center group px-4 cursor-pointer"
-              onMouseEnter={() => link.columns ? setHoveredNav(link.name) : setHoveredNav(null)}
+              onMouseEnter={() => (link.columns || link.procedureSections) ? setHoveredNav(link.name) : setHoveredNav(null)}
             >
               <a
                 href={link.href}
                 onClick={(e) => handleLinkClick(e, link.name, false, link.href)}
-                className={`whitespace-nowrap text-sm tracking-[0.1em] font-medium uppercase transition-colors relative
-                  ${hasWhiteBg ? 'text-stone-600 hover:text-[#a77749]' : 'text-white hover:text-[#c99963]'}
-                  ${hoveredNav === link.name ? 'text-[#a77749]' : ''}`}
+                className={`${navLinkClass} ${hoveredNav === link.name ? 'text-[#a77749]' : ''}`}
               >
                 {link.name}
                 {/* Underline effect */}
