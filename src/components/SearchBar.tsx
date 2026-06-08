@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ChevronDown } from 'lucide-react';
+import { BadgeCheck, ChevronDown, LockKeyhole, Search, ShieldCheck } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import procedureNames from '@/i18n/procedureNames.json';
@@ -211,11 +211,26 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     setShowPriceDropdown(false);
   };
 
+  const filterButtonClass = `w-full bg-white/[0.07] text-white py-4 px-4
+                         border border-transparent hover:bg-white/[0.095] focus:outline-none
+                         focus-visible:ring-2 focus-visible:ring-[#d0a36b]/70
+                         transition-all duration-300 flex items-center justify-between gap-2 text-sm
+                         shadow-[inset_0_1px_0_rgba(255,255,255,0.045),inset_0_-1px_0_rgba(208,163,107,0.025)] backdrop-blur-md`;
+
   return (
-    <div className="w-full max-w-4xl mx-auto relative z-50">
-      {/* Main Search Container - Glass morphism effect */}
-      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2 shadow-2xl border border-white/20">
-        <div className="flex flex-col lg:flex-row gap-2">
+    <div className="relative z-50 mx-auto w-full max-w-5xl">
+      <div className="pointer-events-none absolute -inset-5 rounded-[2rem] bg-[#d0a36b]/26 blur-2xl" />
+      <div className="pointer-events-none absolute -inset-1 rounded-[1.8rem] shadow-[0_0_34px_rgba(208,163,107,0.38),0_0_92px_rgba(208,163,107,0.24)]" />
+
+      <div className="relative overflow-visible rounded-[1.55rem] border border-transparent bg-[#07120f]/[0.24] p-3 shadow-[0_24px_80px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.045),inset_0_-1px_0_rgba(244,216,164,0.035)] backdrop-blur-2xl">
+        <div className="pointer-events-none absolute inset-0 rounded-[1.55rem] bg-gradient-to-b from-white/[0.045] via-white/[0.012] to-[#07120f]/[0.10]" />
+        <div className="pointer-events-none absolute inset-x-14 top-0 h-px bg-gradient-to-r from-transparent via-[#ffe5b5]/10 to-transparent" />
+        <div className="relative z-10 flex flex-col gap-3 lg:flex-row lg:items-stretch">
+          <div className="hidden shrink-0 items-center justify-center lg:flex">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-transparent bg-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.045),0_0_24px_rgba(208,163,107,0.18)] backdrop-blur-md">
+              <Search size={27} className="text-[#f3dcc0]" strokeWidth={1.65} />
+            </div>
+          </div>
 
           {/* Procedure Dropdown */}
           <div className="flex-1 relative" ref={procedureRef}>
@@ -225,13 +240,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                 setShowCountryDropdown(false);
                 setShowPriceDropdown(false);
               }}
-              className="w-full bg-white/10 text-white rounded-xl py-4 px-4
-                         border border-white/10 hover:border-white/30 focus:outline-none
-                         transition-all flex items-center justify-between gap-2 text-sm"
+                className={`${filterButtonClass} rounded-xl lg:rounded-l-xl lg:rounded-r-none`}
             >
               <div className="flex items-center gap-3">
-                <Search size={20} className="text-white/60" />
-                <span className={procedure ? 'text-white' : 'text-white/60'}>
+                <Search size={20} className="text-[#f3dcc0] lg:hidden" strokeWidth={1.65} />
+                <span className={procedure ? 'text-white' : 'text-[#e7e1d7]/78'}>
                   {getProcedureLabel()}
                 </span>
               </div>
@@ -239,14 +252,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             </button>
 
             {showProcedureDropdown && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a2f28]/95 backdrop-blur-lg rounded-xl
-                             border border-white/20 shadow-2xl z-[100] overflow-hidden max-h-80 overflow-y-auto">
-                {categorizedProcedures.map((category, categoryIndex) => (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-[#101d18]/96 backdrop-blur-lg rounded-xl
+                             border border-[#e1c28e]/28 shadow-[0_24px_64px_rgba(0,0,0,0.44),0_0_34px_rgba(208,163,107,0.18)] z-[100] overflow-hidden max-h-80 overflow-y-auto">
+                {categorizedProcedures.map((category) => (
                   <div key={category.category}>
                     {/* Category Header (skip for 'all') */}
                     {category.category !== 'all' && (
-                      <div className="sticky top-0 bg-[#0f201b] px-4 py-2 border-b border-white/10">
-                        <span className="text-gold-400 text-xs font-bold uppercase tracking-wider">
+                      <div className="sticky top-0 bg-[#07120f] px-4 py-2 border-b border-[#e1c28e]/16">
+                        <span className="text-[#d0a36b] text-xs font-bold uppercase tracking-wider">
                           {category.label}
                         </span>
                       </div>
@@ -261,7 +274,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                         }}
                         className={`w-full text-left px-4 py-3 text-sm transition-colors
                                   ${procedure === p.value
-                                    ? 'bg-gold-500/20 text-gold-400'
+                                    ? 'bg-[#d0a36b]/20 text-[#f5d49b]'
                                     : 'text-white/80 hover:bg-white/10'}
                                   ${category.category !== 'all' ? 'pl-6' : ''}`}
                       >
@@ -275,7 +288,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           </div>
 
           {/* Filters Row */}
-          <div className="flex flex-col sm:flex-row gap-2 lg:flex-row">
+          <div className="flex flex-col gap-3 sm:flex-row lg:flex-row lg:gap-0">
 
             {/* Country Dropdown */}
             <div className="relative min-w-[160px]" ref={countryRef}>
@@ -285,19 +298,17 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                   setShowProcedureDropdown(false);
                   setShowPriceDropdown(false);
                 }}
-                className="w-full bg-white/10 text-white rounded-xl py-4 px-4
-                           border border-white/10 hover:border-white/30 focus:outline-none
-                           transition-all flex items-center justify-between gap-2 text-sm"
+                className={`${filterButtonClass} rounded-xl lg:rounded-none`}
               >
-                <span className={country ? 'text-white' : 'text-white/60'}>
+                <span className={country ? 'text-white' : 'text-[#e7e1d7]/78'}>
                   {getCountryLabel()}
                 </span>
                 <ChevronDown size={16} className={`transition-transform ${showCountryDropdown ? 'rotate-180' : ''}`} />
               </button>
 
               {showCountryDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a2f28]/95 backdrop-blur-lg rounded-xl
-                               border border-white/20 shadow-2xl z-[100] overflow-hidden max-h-60 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-[#101d18]/96 backdrop-blur-lg rounded-xl
+                               border border-[#e1c28e]/28 shadow-[0_24px_64px_rgba(0,0,0,0.44),0_0_34px_rgba(208,163,107,0.18)] z-[100] overflow-hidden max-h-60 overflow-y-auto">
                   {countries.map((c) => (
                     <button
                       key={c.value}
@@ -307,7 +318,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                       }}
                       className={`w-full text-left px-4 py-3 text-sm transition-colors
                                 ${country === c.value
-                                  ? 'bg-gold-500/20 text-gold-400'
+                                  ? 'bg-[#d0a36b]/20 text-[#f5d49b]'
                                   : 'text-white/80 hover:bg-white/10'}`}
                     >
                       {c.label}
@@ -325,19 +336,17 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                   setShowProcedureDropdown(false);
                   setShowCountryDropdown(false);
                 }}
-                className="w-full bg-white/10 text-white rounded-xl py-4 px-4
-                           border border-white/10 hover:border-white/30 focus:outline-none
-                           transition-all flex items-center justify-between gap-2 text-sm"
+                className={`${filterButtonClass} rounded-xl lg:rounded-l-none lg:rounded-r-xl`}
               >
-                <span className={priceRange ? 'text-white' : 'text-white/60'}>
+                <span className={priceRange ? 'text-white' : 'text-[#e7e1d7]/78'}>
                   {getPriceLabel()}
                 </span>
                 <ChevronDown size={16} className={`transition-transform ${showPriceDropdown ? 'rotate-180' : ''}`} />
               </button>
 
               {showPriceDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a2f28]/95 backdrop-blur-lg rounded-xl
-                               border border-white/20 shadow-2xl z-[100] overflow-hidden">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-[#101d18]/96 backdrop-blur-lg rounded-xl
+                               border border-[#e1c28e]/28 shadow-[0_24px_64px_rgba(0,0,0,0.44),0_0_34px_rgba(208,163,107,0.18)] z-[100] overflow-hidden">
                   {priceRanges.map((p) => (
                     <button
                       key={p.value}
@@ -347,7 +356,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                       }}
                       className={`w-full text-left px-4 py-3 text-sm transition-colors
                                 ${priceRange === p.value
-                                  ? 'bg-gold-500/20 text-gold-400'
+                                  ? 'bg-[#d0a36b]/20 text-[#f5d49b]'
                                   : 'text-white/80 hover:bg-white/10'}`}
                     >
                       {p.label}
@@ -360,13 +369,29 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             {/* Search Button */}
             <button
               onClick={handleSearch}
-              className="bg-[#8b5e3c] hover:bg-[#6d4a2f] text-white px-8 py-4 rounded-xl
-                         uppercase tracking-[0.15em] text-xs font-bold transition-all hover:scale-105
-                         shadow-lg flex items-center justify-center gap-2 whitespace-nowrap"
+              className="group relative overflow-hidden rounded-xl border border-[#f4d8a4]/45 bg-gradient-to-b from-[#c79a62] to-[#8b5e3c] px-8 py-4 text-xs font-bold uppercase tracking-[0.18em] text-white shadow-[0_0_28px_rgba(208,163,107,0.52),inset_0_1px_0_rgba(255,255,255,0.24)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_46px_rgba(208,163,107,0.72),inset_0_1px_0_rgba(255,255,255,0.30)] active:translate-y-0 lg:ml-3 lg:px-9"
             >
-              <Search size={16} />
-              {t('searchButton')}
+              <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
+              <span className="relative flex items-center justify-center gap-3 whitespace-nowrap">
+                <Search size={16} />
+                {t('searchCasesButton')}
+              </span>
             </button>
+          </div>
+        </div>
+
+        <div className="relative z-10 mt-5 hidden border-t border-[#d0a36b]/6 pt-4 text-[#f0ebe2]/90 md:grid md:grid-cols-3">
+          <div className="flex items-center justify-center gap-3 text-xs">
+            <ShieldCheck size={17} className="text-[#d0a36b]" strokeWidth={1.5} />
+            <span>{t('trustVerifiedDoctors')}</span>
+          </div>
+          <div className="flex items-center justify-center gap-3 border-x border-[#d0a36b]/8 text-xs">
+            <BadgeCheck size={17} className="text-[#d0a36b]" strokeWidth={1.5} />
+            <span>{t('trustRealResults')}</span>
+          </div>
+          <div className="flex items-center justify-center gap-3 text-xs">
+            <LockKeyhole size={16} className="text-[#d0a36b]" strokeWidth={1.5} />
+            <span>{t('trustPrivateSecure')}</span>
           </div>
         </div>
       </div>

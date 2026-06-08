@@ -123,9 +123,8 @@ describe('Beauty widget onboarding form', () => {
       }));
     });
 
-    expect(crmApiState.initOnboarding).not.toHaveBeenCalledWith(expect.objectContaining({
-      procedureId: 'rhinoplasty',
-    }));
+    const payload = crmApiState.initOnboarding.mock.calls[0][0] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty('procedureId');
   });
 
   it('lands directly in messages-ready when CRM returns a widget chat session', async () => {

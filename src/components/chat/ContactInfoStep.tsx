@@ -22,12 +22,6 @@ const PROCEDURE_GROUPS: Array<{ category: string; label: string }> = [
   { category: 'hair', label: 'Hair' },
 ];
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-function getOnboardingProcedureId(procedureId: string): string | undefined {
-  return UUID_PATTERN.test(procedureId) ? procedureId : undefined;
-}
-
 export function ContactInfoStep() {
   const { bootstrapSession } = usePatientAuth();
   const { profileDraft, patchProfileDraft, applyOnboardingResult } = usePatientEntry();
@@ -125,7 +119,6 @@ export function ContactInfoStep() {
         email: profileDraft.email,
         phone: profileDraft.phone,
         disease: profileDraft.disease,
-        procedureId: getOnboardingProcedureId(profileDraft.procedureId),
         category: profileDraft.category || undefined,
         destination: profileDraft.destination,
         preferredLanguage: 'en',

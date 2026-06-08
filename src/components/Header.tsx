@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, Sparkles, X } from 'lucide-react';
+import { ArrowRight, BicepsFlexed, Droplet, Menu, ScanFace, Sparkles, Waves, X } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -15,10 +15,19 @@ interface SubMenuItem {
   href?: string;
 }
 
+interface ProcedureMenuSection {
+  title: string;
+  route: 'face' | 'body' | 'nonsurgical' | 'hair';
+  icon: React.ComponentType<{ className?: string; size?: number; strokeWidth?: number }>;
+  items: SubMenuItem[];
+  viewAllLabel: string;
+}
+
 interface NavItem {
   name: string;
   href: string;
   columns?: SubMenuItem[][]; // Array of columns, each column is an array of items
+  procedureSections?: ProcedureMenuSection[];
 }
 
 // Type for procedure names translation
@@ -76,6 +85,7 @@ const Header: React.FC = () => {
   const [doctorCarouselPage, setDoctorCarouselPage] = useState(0);
   const [isDoctorCarouselPaused, setIsDoctorCarouselPaused] = useState(false);
   const doctorsHospitalsLabel = currentLanguage === 'zh' ? '医生' : 'DOCTORS';
+  const proceduresLabel = currentLanguage === 'zh' ? '项目' : 'PROCEDURES';
 
   // Fetch surgeons using React Query hook
   const shouldLoadSurgeons = hoveredNav === doctorsHospitalsLabel;
@@ -224,6 +234,66 @@ const Header: React.FC = () => {
         { label: 'Patient Reviews', isSub: false, href: '/reviews' }
       ];
 
+  const procedureSections: ProcedureMenuSection[] = [
+    {
+      title: 'Face',
+      route: 'face',
+      icon: ScanFace,
+      viewAllLabel: 'View all Face Procedures',
+      items: [
+        { label: 'Eyelid Surgery', isSub: true },
+        { label: 'Rhinoplasty', isSub: true },
+        { label: 'Revision Rhinoplasty', isSub: true },
+        { label: 'Nose Tip Refinement', isSub: true },
+        { label: 'Facelift', isSub: true },
+        { label: 'Mini Facelift', isSub: true },
+        { label: 'Neck Lift', isSub: true },
+        { label: 'Brow Lift', isSub: true },
+        { label: 'Facial Contouring', isSub: true }
+      ]
+    },
+    {
+      title: 'Body',
+      route: 'body',
+      icon: BicepsFlexed,
+      viewAllLabel: 'View all Body Procedures',
+      items: [
+        { label: 'Liposuction', isSub: true },
+        { label: 'Tummy Tuck', isSub: true },
+        { label: 'Breast Surgery', isSub: true },
+        { label: 'Body Contouring', isSub: true },
+        { label: 'Fat Transfer', isSub: true }
+      ]
+    },
+    {
+      title: 'Skin & Injectables',
+      route: 'nonsurgical',
+      icon: Droplet,
+      viewAllLabel: 'View all Non-Surgical Procedures',
+      items: [
+        { label: 'BOTOX® & Neurotoxins', isSub: true },
+        { label: 'Dermal Fillers', isSub: true },
+        { label: 'Skin Tightening', isSub: true },
+        { label: 'Skin Resurfacing', isSub: true },
+        { label: 'Laser Treatments', isSub: true },
+        { label: 'Fat Dissolving Injections', isSub: true },
+        { label: 'PRP Rejuvenation', isSub: true }
+      ]
+    },
+    {
+      title: 'Hair Restoration',
+      route: 'hair',
+      icon: Waves,
+      viewAllLabel: 'View all Hair Procedures',
+      items: [
+        { label: 'Hair Restoration', isSub: true },
+        { label: 'Hair Transplant', isSub: true },
+        { label: 'PRP Hair Treatment', isSub: true },
+        { label: 'Hairline Restoration', isSub: true }
+      ]
+    }
+  ];
+
   const navItems: NavItem[] = [
     {
       name: doctorsHospitalsLabel,
@@ -235,148 +305,14 @@ const Header: React.FC = () => {
       ]
     },
     {
-      name: t('navFace'),
-      href: '#face',
-      columns: [
-        [
-          // 1. 面部整形手术 (Facial Surgery)
-          { label: 'Eye Surgery', isHeader: true },
-          { label: 'Eyelid Surgery', isSub: true },
-          { label: 'Nose Surgery', isHeader: true },
-          { label: 'Rhinoplasty', isSub: true },
-          { label: 'Revision Rhinoplasty', isSub: true },
-          { label: 'Nose Tip Refinement', isSub: true },
-          { label: 'Facelift Surgery', isHeader: true },
-          { label: 'Facelift', isSub: true },
-          { label: 'Mini Facelift', isSub: true },
-          { label: 'Midface Lift (Mid Facelift)', isSub: true },
-          { label: 'Neck Lift', isSub: true },
-          { label: 'Deep Neck Contouring', isSub: true },
-          { label: 'Brow Lift', isSub: true },
-          { label: 'Temples Lift / Temporofrontal Lift', isSub: true },
-          { label: 'Forehead Reduction Surgery', isSub: true },
-          { label: 'Facial Contouring', isHeader: true },
-          { label: 'Cheek Augmentation', isSub: true },
-          { label: 'Chin Augmentation', isSub: true },
-          { label: 'Jawline Contouring', isSub: true },
-          { label: 'Zygomatic Arch Contouring', isSub: true },
-          { label: 'Other Facial Surgery', isHeader: true },
-          { label: 'Otoplasty (Ear Pinning)', isSub: true },
-          { label: 'Buccal Fat Removal', isSub: true }
-        ],
-        [
-          // 2. 皮肤和注射类 (Skin & Injectables)
-          { label: 'Skin Tightening & Resurfacing', isHeader: true },
-          { label: 'Renuvion® Skin Tightening Treatment', isSub: true },
-          { label: 'Laser Liposuction', isSub: true },
-          { label: 'Skin Resurfacing', isSub: true },
-          { label: 'Microdermabrasion', isSub: true },
-          { label: 'Injectables & Regenerative', isHeader: true },
-          { label: 'Facial Injectables', isSub: true },
-          { label: 'BOTOX® & Neurotoxins', isSub: true },
-          { label: 'Dermal Fillers', isSub: true },
-          { label: 'Fat Dissolving Injections', isSub: true },
-          { label: 'Fat Transfer (Facial Fat Grafting)', isSub: true },
-          { label: 'Facial Rejuvenation with PRP', isSub: true },
-          { label: 'Lip Filler', isSub: true },
-          { label: 'Lip Injections', isSub: true },
-          { label: 'Lip Augmentation', isSub: true },
-          { label: 'Lip Lift', isSub: true }
-        ],
-        [
-          // 3. 颈部整形 (Neck Surgery)
-          { label: 'Neck Surgery', isHeader: true },
-          { label: 'Neck Liposuction', isSub: true },
-          { label: 'Neck Tightening', isSub: true },
-          { label: 'Platysmaplasty', isSub: true },
-          { label: 'Cervicoplasty', isSub: true },
-          // 4. 头发恢复 (Hair Restoration)
-          { label: 'Hair Restoration', isHeader: true },
-          { label: 'Hair Restoration', isSub: true },
-          // 5. 其他整形 (Other Procedures)
-          { label: 'Other Procedures', isHeader: true },
-          { label: 'Mohs Skin Cancer Reconstruction', isSub: true },
-          { label: 'Facial Implants', isSub: true },
-          { label: 'Submalar Implants', isSub: true }
-        ]
-      ]
-    },
-    { 
-      name: t('navBody'), 
-      href: '#body',
-      columns: [
-        [
-          { label: 'Core Body Contouring', isHeader: true },
-          { label: 'Liposuction', isSub: true },
-          { label: 'Tummy Tuck', isSub: true },
-          { label: 'Mommy Makeover', isSub: true },
-          { label: 'Scar Reduction & Revision', isSub: true },
-          { label: 'Renuvion® Skin Tightening Treatment', isSub: true },
-          { label: 'Weight Loss Injections', isSub: true },
-          { label: 'Arms / Legs / Back', isHeader: true },
-          { label: 'Arm Lift', isSub: true },
-          { label: 'Thigh Lift', isSub: true },
-          { label: 'Bra Line Back Lift', isSub: true },
-          { label: 'After Weight Loss / Body Lifts', isHeader: true },
-          { label: 'Body Contouring After Weight Loss', isSub: true },
-          { label: 'Lower Body Lift / 360 Body Lift', isSub: true },
-          { label: 'Upper Body Lift', isSub: true },
-          { label: 'Panniculectomy', isSub: true },
-          { label: 'Mons Pubis Reduction / Lift', isSub: true }
-        ],
-        [
-          { label: 'Breast / Chest', isHeader: true },
-          { label: 'Breast Augmentation', isSub: true },
-          { label: 'Breast Lift', isSub: true },
-          { label: 'Breast Reduction', isSub: true },
-          { label: 'Breast Implant Removal / Exchange & Revision', isSub: true },
-          { label: 'Gynecomastia Surgery', isSub: true },
-          { label: 'Buttocks', isHeader: true },
-          { label: 'Brazilian Butt Lift (BBL)', isSub: true },
-          { label: 'Buttock Lift', isSub: true }
-        ],
-        [
-          { label: 'Intimate', isHeader: true },
-          { label: 'Labiaplasty', isSub: true },
-          { label: 'Cellulite', isHeader: true },
-          { label: 'Avéli® Cellulite Treatment', isSub: true }
-        ]
-      ]
-    },
-    { 
-      name: t('navNonSurgical'), 
-      href: '#nonsurgical',
-      columns: [
-        [
-          { label: 'Injectables', isHeader: true },
-          { label: 'BOTOX® Cosmetic', isSub: true },
-          { label: 'BOTOX® & Neurotoxins', isSub: true },
-          { label: 'Dermal Fillers', isSub: true },
-          { label: 'Lip Injections', isSub: true },
-          { label: 'Lip Filler', isSub: true },
-          { label: 'Cellulite', isHeader: true },
-          { label: 'Avéli® Cellulite Treatment', isSub: true },
-          { label: 'Skin Tightening', isHeader: true },
-          { label: 'Non-surgical Skin Tightening', isSub: true }
-        ],
-        [
-          { label: 'Resurfacing / Skin Renewal', isHeader: true },
-          { label: 'Chemical Peels', isSub: true },
-          { label: 'Skin Resurfacing', isSub: true },
-          { label: 'Laser Skin Resurfacing', isSub: true },
-          { label: 'Microdermabrasion', isSub: true },
-          { label: 'Light / Laser-Based Skin Treatments', isHeader: true },
-          { label: 'IPL / Photofacial', isSub: true }
-        ],
-        [
-          { label: 'Hair Removal', isHeader: true },
-          { label: 'Laser Hair Removal', isSub: true },
-          { label: 'Collagen / Regenerative', isHeader: true },
-          { label: 'Collagen Stimulators / Non-HA Fillers', isSub: true },
-          { label: 'Microneedling', isSub: true },
-          { label: 'PRP / PRF', isSub: true }
-        ]
-      ]
+      name: proceduresLabel,
+      href: '/procedures/face',
+      procedureSections,
+      columns: procedureSections.map((section) => [
+        { label: section.title, isHeader: true, href: `/procedures/${section.route}` },
+        ...section.items,
+        { label: section.viewAllLabel, href: `/procedures/${section.route}` }
+      ])
     },
     { name: t('navGallery'), href: '#gallery' },
     { name: t('navTravel'), href: '#travel' },
@@ -513,7 +449,7 @@ const Header: React.FC = () => {
 
       {/* Mega Menu Dropdowns */}
       {navItems.map((link) => (
-        link.columns && (
+        (link.columns || link.procedureSections) && (
           <div 
             key={`${link.name}-dropdown`}
             className={`absolute top-full left-0 w-full bg-[#073a31] text-white overflow-y-auto transition-all duration-300 ease-in-out z-40 border-t border-[#d8d2c7]/25 ${
@@ -620,6 +556,73 @@ const Header: React.FC = () => {
                     )}
                   </div>
                 </div>
+              ) : link.procedureSections ? (
+                <div className="grid gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[16.5rem_minmax(0,1fr)]">
+                  <aside className="hidden min-h-[31rem] border-r border-[#d0b083]/20 pr-10 lg:flex lg:flex-col">
+                    <div className="mb-8">
+                      <span className="block font-serif text-[7.1rem] italic leading-none text-[#d0a36b] drop-shadow-[0_2px_3px_rgba(0,0,0,0.36)]">
+                        M
+                      </span>
+                      <div className="mt-6 h-[2px] w-20 bg-[#c4935b]" />
+                    </div>
+                    <h3 className="text-[15px] font-semibold uppercase tracking-[0.32em] text-[#c4935b]">
+                      Procedures
+                    </h3>
+                    <p className="mt-9 max-w-[12rem] font-serif text-[1.05rem] leading-[1.65] text-[#d5ded9]">
+                      Advanced aesthetic care. Personalised for you. Performed by trusted experts.
+                    </p>
+                    <div className="mt-auto h-32 opacity-[0.14]">
+                      <div className="h-full w-full rounded-full border border-[#d0b083]/50 blur-[1px]" />
+                    </div>
+                  </aside>
+
+                  <div className="grid min-w-0 gap-8 md:grid-cols-2 xl:grid-cols-4 xl:gap-0">
+                    {link.procedureSections.map((section, sectionIdx) => {
+                      const Icon = section.icon;
+                      return (
+                        <section
+                          key={section.title}
+                          className={`flex min-h-[31rem] flex-col xl:px-9 ${
+                            sectionIdx > 0 ? 'xl:border-l xl:border-[#d0b083]/18' : ''
+                          }`}
+                        >
+                          <div className="mb-7 flex items-end gap-5">
+                            <Icon className="h-12 w-12 text-[#c4935b]" strokeWidth={1.35} />
+                            <div>
+                              <h3 className="font-serif text-[1.7rem] leading-none text-[#f1f0eb] drop-shadow-[0_2px_2px_rgba(0,0,0,0.38)]">
+                                {translateLabel(section.title)}
+                              </h3>
+                              <div className="mt-3 h-[2px] w-16 bg-[#c4935b]" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-0">
+                            {section.items.map((item) => (
+                              <a
+                                key={item.label}
+                                href={item.href || '#'}
+                                onClick={(event) => handleLinkClick(event, item.label, true, item.href)}
+                                className="group/item flex min-h-12 items-center border-b border-[#d0b083]/15 py-3 text-[15px] font-medium leading-tight text-[#d8e0dc] transition-colors hover:text-[#e4bd83]"
+                              >
+                                <span className="mr-4 h-1.5 w-1.5 rounded-full bg-[#c4935b] transition-transform group-hover/item:scale-125" />
+                                {translateLabel(item.label)}
+                              </a>
+                            ))}
+                          </div>
+
+                          <a
+                            href={`/procedures/${section.route}`}
+                            onClick={(event) => handleLinkClick(event, section.viewAllLabel, true, `/procedures/${section.route}`)}
+                            className="mt-auto flex items-center gap-4 pt-8 text-[14px] font-medium text-[#d7ddd9] transition-colors hover:text-[#e4bd83]"
+                          >
+                            <ArrowRight className="h-5 w-5 text-[#c4935b]" strokeWidth={1.7} />
+                            {translateLabel(section.viewAllLabel)}
+                          </a>
+                        </section>
+                      );
+                    })}
+                  </div>
+                </div>
               ) : (
                 <div className="flex flex-col lg:flex-row gap-12">
                   {/* Left Decoration / Image */}
@@ -634,7 +637,7 @@ const Header: React.FC = () => {
 
                   {/* Columns */}
                   <div className="lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {link.columns.map((col, colIdx) => (
+                    {link.columns?.map((col, colIdx) => (
                       <div key={colIdx} className="space-y-4">
                         {col.map((item, itemIdx) => (
                           <div key={itemIdx} className="group/item">
@@ -709,10 +712,12 @@ const Header: React.FC = () => {
                   {link.name}
                 </a>
                 {/* Mobile sub-items - show limited items for better UX */}
-                {link.columns && (
+                {(link.columns || link.procedureSections) && (
                   <div className="mt-4 pl-4 border-l-2 border-gold-200 space-y-3">
                     {(() => {
-                      const allItems = link.columns.flat().filter(item => !item.isHeader);
+                      const allItems = link.procedureSections
+                        ? link.procedureSections.flatMap((section) => section.items)
+                        : (link.columns?.flat().filter(item => !item.isHeader) || []);
                       // For Doctors & Hospitals section - show key directory links.
                       if (link.name === doctorsHospitalsLabel) {
                         return allItems.filter(item => item.href === '/surgeons' || item.href === '/search?type=hospitals' || item.href === '/reviews').map((item, idx) => (
@@ -725,14 +730,8 @@ const Header: React.FC = () => {
                           </div>
                         ));
                       }
-                      // For procedure sections (FACE, BODY, NON-SURGICAL) - show first 6 items + "View More"
-                      if (link.name === t('navFace') || link.name === t('navBody') || link.name === t('navNonSurgical')) {
-                        const limitedItems = allItems.slice(0, 6);
-                        // Determine the category route
-                        let categoryRoute = 'face';
-                        if (link.name === t('navBody')) categoryRoute = 'body';
-                        if (link.name === t('navNonSurgical')) categoryRoute = 'nonsurgical';
-
+                      if (link.procedureSections) {
+                        const limitedItems = link.procedureSections.flatMap((section) => section.items.slice(0, 2));
                         return (
                           <>
                             {limitedItems.map((item, idx) => (
@@ -744,16 +743,16 @@ const Header: React.FC = () => {
                                 {translateLabel(item.label)}
                               </div>
                             ))}
-                            {allItems.length > 6 && (
+                            {allItems.length > limitedItems.length && (
                               <div
                                 className="text-gold-600 text-sm font-medium italic cursor-pointer hover:text-gold-700"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   setMobileMenuOpen(false);
-                                  navigate(`/procedures/${categoryRoute}`);
+                                  navigate('/procedures/face');
                                 }}
                               >
-                                + {allItems.length - 6} more procedures
+                                + {allItems.length - limitedItems.length} more procedures
                               </div>
                             )}
                           </>

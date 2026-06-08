@@ -192,6 +192,12 @@ export const translations = {
     globalAestheticHub: 'Global Aesthetic Hub',
     heroTitle: 'Discover the World\'s Premier Aesthetic Experts and Transformations',
     heroSubtitle: 'From Europe\'s top aesthetic hubs to cutting-edge clinics in Asia and beyond, we curate a global network of trusted professionals committed to delivering life-changing results.',
+    heroCasesTitle: 'Explore Global Beauty Cases',
+    heroCasesSubtitle: 'Browse trusted before-and-after results from selected doctors and clinics.',
+    searchCasesButton: 'Search Cases',
+    trustVerifiedDoctors: 'Verified Doctors & Clinics',
+    trustRealResults: 'Real Before & After Results',
+    trustPrivateSecure: 'Private & Secure',
     introDescriptionLong: 'Explore a world of beauty, expertise, and affordable luxury.',
 
     // Search Bar
@@ -636,6 +642,12 @@ export const translations = {
     centerForPlasticSurgery: '全球医美中心',
     heroTitle: '发现全球顶尖医美专家与蜕变案例',
     heroSubtitle: '从欧洲顶级医美中心到亚洲及全球前沿诊所，我们精心打造值得信赖的全球专业网络，致力于为您带来改变人生的卓越成果。',
+    heroCasesTitle: '探索全球真实医美案例',
+    heroCasesSubtitle: '浏览来自精选医生与诊所的可信术前术后案例。',
+    searchCasesButton: '搜索案例',
+    trustVerifiedDoctors: '认证医生与诊所',
+    trustRealResults: '真实术前术后结果',
+    trustPrivateSecure: '私密且安全',
     introDescriptionLong: '探索美丽、专业与平价奢华的世界。',
 
     // Search Bar
@@ -1028,6 +1040,12 @@ export const translations = {
     centerForPlasticSurgery: 'Centro Estético Global',
     heroTitle: 'Descubre los Mejores Expertos Estéticos y Transformaciones del Mundo',
     heroSubtitle: 'Desde los principales centros estéticos de Europa hasta clínicas de vanguardia en Asia y más allá, curamos una red global de profesionales de confianza comprometidos a entregar resultados que cambian vidas.',
+    heroCasesTitle: 'Explora Casos de Belleza Global',
+    heroCasesSubtitle: 'Explora resultados de antes y después confiables de médicos y clínicas seleccionados.',
+    searchCasesButton: 'Buscar Casos',
+    trustVerifiedDoctors: 'Médicos y Clínicas Verificados',
+    trustRealResults: 'Resultados Reales de Antes y Después',
+    trustPrivateSecure: 'Privado y Seguro',
     introDescriptionLong: 'Explore un mundo de belleza, experiencia y lujo asequible.',
 
     // Search Bar
@@ -1409,6 +1427,12 @@ export const translations = {
     centerForPlasticSurgery: 'Centre Esthétique Mondial',
     heroTitle: 'Découvrez les Meilleurs Experts Esthétiques et Transformations du Monde',
     heroSubtitle: 'Des meilleurs centres esthétiques d\'Europe aux cliniques de pointe en Asie et au-delà, nous constituons un réseau mondial de professionnels de confiance engagés à offrir des résultats qui changent la vie.',
+    heroCasesTitle: 'Explorez les Cas Beauté du Monde',
+    heroCasesSubtitle: 'Parcourez des résultats avant-après fiables de médecins et cliniques sélectionnés.',
+    searchCasesButton: 'Rechercher des Cas',
+    trustVerifiedDoctors: 'Médecins et Cliniques Vérifiés',
+    trustRealResults: 'Vrais Résultats Avant-Après',
+    trustPrivateSecure: 'Privé et Sécurisé',
     introDescriptionLong: 'Explorez un monde de beauté, d\'expertise et de luxe abordable.',
 
     // Search Bar
@@ -1790,6 +1814,12 @@ export const translations = {
     centerForPlasticSurgery: 'Globales Ästhetikzentrum',
     heroTitle: 'Entdecken Sie die Besten Ästhetischen Experten und Verwandlungen der Welt',
     heroSubtitle: 'Von Europas führenden Ästhetikzentren bis hin zu hochmodernen Kliniken in Asien und darüber hinaus kuratieren wir ein globales Netzwerk vertrauenswürdiger Fachleute, die sich der Erzielung lebensverändernder Ergebnisse verschrieben haben.',
+    heroCasesTitle: 'Globale Beauty-Fälle Entdecken',
+    heroCasesSubtitle: 'Durchsuchen Sie vertrauenswürdige Vorher-Nachher-Ergebnisse ausgewählter Ärzte und Kliniken.',
+    searchCasesButton: 'Fälle Suchen',
+    trustVerifiedDoctors: 'Verifizierte Ärzte und Kliniken',
+    trustRealResults: 'Echte Vorher-Nachher-Ergebnisse',
+    trustPrivateSecure: 'Privat und Sicher',
     introDescriptionLong: 'Entdecken Sie eine Welt der Schönheit, Expertise und erschwinglichen Luxus.',
 
     // Search Bar
@@ -2172,6 +2202,12 @@ export const translations = {
     centerForPlasticSurgery: 'Глобальный Эстетический Центр',
     heroTitle: 'Откройте для Себя Лучших Эстетических Экспертов и Преображения Мира',
     heroSubtitle: 'От ведущих эстетических центров Европы до передовых клиник в Азии и за её пределами — мы формируем глобальную сеть проверенных профессионалов, стремящихся достичь результатов, меняющих жизнь.',
+    heroCasesTitle: 'Изучите Мировые Кейсы Красоты',
+    heroCasesSubtitle: 'Просматривайте проверенные результаты до и после от отобранных врачей и клиник.',
+    searchCasesButton: 'Искать Кейсы',
+    trustVerifiedDoctors: 'Проверенные Врачи и Клиники',
+    trustRealResults: 'Реальные Результаты До и После',
+    trustPrivateSecure: 'Конфиденциально и Безопасно',
     introDescriptionLong: 'Откройте для себя мир красоты, экспертизы и доступной роскоши.',
 
     // Search Bar
@@ -2554,6 +2590,12 @@ export const translations = {
     centerForPlasticSurgery: 'مركز التجميل العالمي',
     heroTitle: 'اكتشف أفضل خبراء التجميل والتحولات في العالم',
     heroSubtitle: 'من أفضل مراكز التجميل في أوروبا إلى العيادات المتطورة في آسيا وما وراءها، نقوم بتنسيق شبكة عالمية من المحترفين الموثوقين الملتزمين بتقديم نتائج تغير الحياة.',
+    heroCasesTitle: 'استكشف حالات الجمال حول العالم',
+    heroCasesSubtitle: 'تصفح نتائج موثوقة قبل وبعد من أطباء وعيادات مختارة.',
+    searchCasesButton: 'بحث عن الحالات',
+    trustVerifiedDoctors: 'أطباء وعيادات موثقة',
+    trustRealResults: 'نتائج حقيقية قبل وبعد',
+    trustPrivateSecure: 'خاص وآمن',
     introDescriptionLong: 'اكتشف عالماً من الجمال والخبرة والفخامة بأسعار معقولة.',
 
     // Search Bar
@@ -2936,6 +2978,12 @@ export const translations = {
     centerForPlasticSurgery: 'Trung Tâm Thẩm Mỹ Toàn Cầu',
     heroTitle: 'Khám Phá Các Chuyên Gia Thẩm Mỹ và Sự Biến Đổi Hàng Đầu Thế Giới',
     heroSubtitle: 'Từ các trung tâm thẩm mỹ hàng đầu châu Âu đến các phòng khám tiên tiến ở châu Á và hơn thế nữa, chúng tôi xây dựng mạng lưới toàn cầu các chuyên gia đáng tin cậy cam kết mang lại kết quả thay đổi cuộc sống.',
+    heroCasesTitle: 'Khám Phá Các Ca Làm Đẹp Toàn Cầu',
+    heroCasesSubtitle: 'Duyệt kết quả trước và sau đáng tin cậy từ các bác sĩ và phòng khám được chọn lọc.',
+    searchCasesButton: 'Tìm Ca Điều Trị',
+    trustVerifiedDoctors: 'Bác Sĩ và Phòng Khám Đã Xác Minh',
+    trustRealResults: 'Kết Quả Trước và Sau Thực Tế',
+    trustPrivateSecure: 'Riêng Tư và An Toàn',
     introDescriptionLong: 'Khám phá thế giới của vẻ đẹp, chuyên môn và sự sang trọng với giá cả phải chăng.',
 
     // Search Bar
@@ -3318,6 +3366,12 @@ export const translations = {
     centerForPlasticSurgery: 'Pusat Estetika Global',
     heroTitle: 'Temukan Pakar Estetika dan Transformasi Terbaik Dunia',
     heroSubtitle: 'Dari pusat estetika terbaik Eropa hingga klinik mutakhir di Asia dan sekitarnya, kami mengkurasi jaringan global profesional terpercaya yang berkomitmen memberikan hasil yang mengubah hidup.',
+    heroCasesTitle: 'Jelajahi Kasus Kecantikan Global',
+    heroCasesSubtitle: 'Telusuri hasil sebelum dan sesudah tepercaya dari dokter dan klinik pilihan.',
+    searchCasesButton: 'Cari Kasus',
+    trustVerifiedDoctors: 'Dokter dan Klinik Terverifikasi',
+    trustRealResults: 'Hasil Sebelum dan Sesudah Nyata',
+    trustPrivateSecure: 'Privat dan Aman',
     introDescriptionLong: 'Jelajahi dunia kecantikan, keahlian, dan kemewahan terjangkau.',
 
     // Search Bar

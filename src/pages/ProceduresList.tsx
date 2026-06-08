@@ -129,6 +129,12 @@ const ProceduresList: React.FC = () => {
       { label: 'Microneedling', category: 'Collagen / Regenerative' },
       { label: 'PRP / PRF', category: 'Collagen / Regenerative' },
     ],
+    hair: [
+      { label: 'Hair Restoration', category: 'Hair Restoration' },
+      { label: 'Hair Transplant', category: 'Hair Restoration' },
+      { label: 'PRP Hair Treatment', category: 'Regenerative Hair' },
+      { label: 'Hairline Restoration', category: 'Hairline Design' },
+    ],
   };
 
   const currentProcedures = proceduresByCategory[category || 'face'] || [];
@@ -141,6 +147,8 @@ const ProceduresList: React.FC = () => {
         return t('navBody');
       case 'nonsurgical':
         return t('navNonSurgical');
+      case 'hair':
+        return 'Hair Restoration';
       default:
         return 'Procedures';
     }
