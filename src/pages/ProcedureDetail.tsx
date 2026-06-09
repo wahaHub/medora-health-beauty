@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight, PlayCircle } from 'lucide-react';
 import { supabase } from '@/services/supabaseClient';
 import type { CompleteProcedureData } from '@/services/supabaseClient';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -9,6 +9,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useConsultation } from '@/contexts/ConsultationContext';
 import procedureNames from '@/i18n/procedureNames.json';
 import { getProcedureImage, getProcedureCaseImage } from '@/utils/imageUtils';
+import { resolveVideoProjectForProcedure } from '@/utils/procedureVideoCases';
 
 interface ProcedureDetailProps {
   procedureName?: string;
@@ -350,6 +351,10 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   };
   
   const displayName = getTranslatedName();
+  const videoProject = resolveVideoProjectForProcedure(procedureName || displayName);
+  const videoGalleryPath = videoProject
+    ? `/procedure/videos?project=${encodeURIComponent(videoProject)}`
+    : `/procedure/videos?procedure=${encodeURIComponent(procedureName || displayName)}`;
 
   return (
     <div className="bg-white animate-fade-in-up spring-scroll-container">
@@ -697,6 +702,13 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                  {t('viewPhotoGallery')}
                </button>
                <button
+                 onClick={() => navigate(videoGalleryPath)}
+                 className="border border-navy-900 text-navy-900 px-10 py-4 uppercase tracking-[0.15em] hover:bg-navy-900 hover:text-white transition-colors text-sm inline-flex items-center justify-center gap-2"
+               >
+                 <PlayCircle size={18} />
+                 View Video Cases
+               </button>
+               <button
                  onClick={() => openConsultation(procedureName)}
                  className="bg-gold-600 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-gold-500 transition-colors text-sm"
                >
@@ -921,6 +933,13 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
                className="bg-navy-900 text-white px-10 py-4 uppercase tracking-[0.15em] hover:bg-navy-800 transition-colors text-sm"
              >
                {t('viewPhotoGallery')}
+             </button>
+             <button
+               onClick={() => navigate(videoGalleryPath)}
+               className="border border-navy-900 text-navy-900 px-10 py-4 uppercase tracking-[0.15em] hover:bg-navy-900 hover:text-white transition-colors text-sm inline-flex items-center justify-center gap-2"
+             >
+               <PlayCircle size={18} />
+               View Video Cases
              </button>
              <button
                onClick={() => openConsultation(procedureName)}

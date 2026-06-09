@@ -349,7 +349,9 @@ const Header: React.FC = () => {
   // Check if on a case detail page or procedure page (which have dark header sections)
   const isCaseDetailPage = location.pathname.includes('/case/');
   const isProcedurePage = location.pathname.includes('/procedure/');
-  const hasDarkHero = isCaseDetailPage || isProcedurePage;
+  const isProcedureVideoGalleryPage =
+    location.pathname === '/procedure/videos' || /^\/procedure\/[^/]+\/videos$/.test(location.pathname);
+  const hasDarkHero = isCaseDetailPage || (isProcedurePage && !isProcedureVideoGalleryPage);
 
   // On pages with dark hero sections, header should be transparent at top
   // On home page and other pages, header is white at top

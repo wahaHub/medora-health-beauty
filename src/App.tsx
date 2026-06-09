@@ -49,6 +49,7 @@ import JourneyPage from '@/pages/dashboard/JourneyPage';
 import AiSummaryPage from '@/pages/dashboard/AiSummaryPage';
 import PackagesCatalog from '@/pages/PackagesCatalog';
 import VideoCases from '@/pages/VideoCases';
+import ProcedureVideoGallery from '@/pages/ProcedureVideoGallery';
 
 // Home page component
 function HomePage() {
@@ -197,8 +198,10 @@ function App() {
                 <Route path="/hospital/:hospitalSlug/gallery" element={<HospitalGallery />} />
                 <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
                 <Route path="/procedures/:category" element={<ProceduresList />} />
+                <Route path="/procedure/videos" element={<ProcedureVideoGallery />} />
                 <Route path="/procedure/:procedureName" element={<ProcedureDetailWrapper />} />
                 <Route path="/procedure/:procedureName/gallery" element={<ProcedureGalleryWrapper />} />
+                <Route path="/procedure/:procedureName/videos" element={<ProcedureVideoGallery />} />
                 <Route path="/procedure/:procedureName/case/:caseId" element={<CaseDetailWrapper />} />
                 {/* 通配符路由：处理包含 / 的 procedure 名称 */}
                 <Route path="/procedure/*/case/:caseId" element={<CaseDetailWrapper />} />
