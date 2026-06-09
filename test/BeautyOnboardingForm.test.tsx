@@ -127,6 +127,32 @@ describe('Beauty widget onboarding form', () => {
     expect(payload).not.toHaveProperty('procedureId');
   });
 
+  it('omits blank optional phone values from onboarding payloads', async () => {
+    patientEntryState.profileDraft.phone = '';
+    const view = render(<ContactInfoStep />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('combobox', { name: 'Condition / Procedure' })).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Condition / Procedure' }), {
+      target: { value: 'rhinoplasty' },
+    });
+    view.rerender(<ContactInfoStep />);
+    fireEvent.change(screen.getByRole('combobox', { name: 'Destination' }), {
+      target: { value: 'South Korea' },
+    });
+    view.rerender(<ContactInfoStep />);
+    fireEvent.click(screen.getByRole('button', { name: 'Submit details' }));
+
+    await waitFor(() => {
+      expect(crmApiState.initOnboarding).toHaveBeenCalled();
+    });
+
+    const payload = crmApiState.initOnboarding.mock.calls[0][0] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty('phone');
+  });
+
   it('lands directly in messages-ready when CRM returns a widget chat session', async () => {
     crmApiState.initOnboarding.mockResolvedValueOnce({
       patientId: 'patient-1',

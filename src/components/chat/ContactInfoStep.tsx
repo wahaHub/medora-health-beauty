@@ -117,7 +117,7 @@ export function ContactInfoStep() {
       const result = await crmApi.initOnboarding({
         name: profileDraft.name,
         email: profileDraft.email,
-        phone: profileDraft.phone,
+        ...(profileDraft.phone.trim() ? { phone: profileDraft.phone.trim() } : {}),
         disease: profileDraft.disease,
         category: profileDraft.category || undefined,
         destination: profileDraft.destination,
