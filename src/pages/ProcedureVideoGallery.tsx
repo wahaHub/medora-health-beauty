@@ -55,11 +55,14 @@ const projectArea: Record<string, string> = {
   'eye-surgery': 'Face',
   'facial-contouring': 'Face',
   'hair-transplant': 'Hair',
-  dental: 'Dental',
   injectables: 'Non-Surgical',
+  'invisalign-clear-aligners': 'Dental',
   'laser-treatments': 'Non-Surgical',
   'nose-surgery': 'Face',
+  'porcelain-veneers': 'Dental',
   'skin-tightening-ns': 'Non-Surgical',
+  'smile-design': 'Dental',
+  'teeth-whitening': 'Dental',
 };
 
 const projectConcern: Record<string, string[]> = {
@@ -68,9 +71,12 @@ const projectConcern: Record<string, string[]> = {
   'eye-surgery': ['Aging', 'Symmetry'],
   'facial-contouring': ['Aging', 'Contour'],
   'hair-transplant': ['Volume Loss'],
-  dental: ['Symmetry', 'Skin Quality'],
   injectables: ['Volume Loss', 'Skin Quality'],
+  'invisalign-clear-aligners': ['Symmetry'],
   'nose-surgery': ['Contour', 'Symmetry'],
+  'porcelain-veneers': ['Symmetry'],
+  'smile-design': ['Symmetry'],
+  'teeth-whitening': ['Skin Quality'],
 };
 
 const translatedProcedureNames = procedureNames as ProcedureNameTranslations;

@@ -423,20 +423,6 @@ const Header: React.FC = () => {
           ))}
         </nav>
 
-        {/* My Dashboard - authenticated only */}
-        {isPatientAuthenticated && (
-          <div className="hidden lg:block">
-            <button
-              onClick={() => { navigate('/dashboard'); window.scrollTo(0, 0); }}
-              className={`text-sm tracking-[0.1em] font-medium uppercase transition-colors ${
-                hasWhiteBg ? 'text-gold-600 hover:text-gold-700' : 'text-gold-300 hover:text-gold-200'
-              }`}
-            >
-              My Dashboard
-            </button>
-          </div>
-        )}
-
         {/* Utility Controls */}
         <div className="hidden lg:flex shrink-0 items-center gap-3">
           <LanguageSelector isTransparent={!hasWhiteBg} compact />
@@ -594,20 +580,20 @@ const Header: React.FC = () => {
                     </div>
                   </aside>
 
-                  <div className="grid min-w-0 gap-8 md:grid-cols-2 xl:grid-cols-5 xl:gap-0">
+                  <div className="grid min-w-0 gap-6 lg:grid-cols-5 lg:gap-0">
                     {link.procedureSections.map((section, sectionIdx) => {
                       const Icon = section.icon;
                       return (
                         <section
                           key={section.title}
-                          className={`flex min-h-[31rem] flex-col xl:px-9 ${
-                            sectionIdx > 0 ? 'xl:border-l xl:border-[#d0b083]/18' : ''
+                          className={`flex min-h-[31rem] flex-col lg:px-5 xl:px-7 2xl:px-9 ${
+                            sectionIdx > 0 ? 'lg:border-l lg:border-[#d0b083]/18' : ''
                           }`}
                         >
-                          <div className="mb-7 flex items-end gap-5">
-                            <Icon className="h-12 w-12 text-[#c4935b]" strokeWidth={1.35} />
+                          <div className="mb-7 flex h-[5.8rem] items-start gap-5">
+                            <Icon className="h-12 w-12 shrink-0 text-[#c4935b]" strokeWidth={1.35} />
                             <div>
-                              <h3 className="font-serif text-[1.7rem] leading-none text-[#f1f0eb] drop-shadow-[0_2px_2px_rgba(0,0,0,0.38)]">
+                              <h3 className="whitespace-nowrap font-serif text-[1.55rem] leading-none text-[#f1f0eb] drop-shadow-[0_2px_2px_rgba(0,0,0,0.38)] 2xl:text-[1.7rem]">
                                 {translateLabel(section.title)}
                               </h3>
                               <div className="mt-3 h-[2px] w-16 bg-[#c4935b]" />
@@ -693,14 +679,6 @@ const Header: React.FC = () => {
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 bg-white z-40 pt-24 px-6 overflow-y-auto">
           <div className="flex flex-col space-y-6">
-            {isPatientAuthenticated && (
-              <button
-                onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); window.scrollTo(0, 0); }}
-                className="text-gold-600 text-xl font-serif font-bold text-left"
-              >
-                My Dashboard
-              </button>
-            )}
             <div className="flex items-center justify-between gap-3 border-b border-stone-200 pb-5">
               <LanguageSelector compact />
               {isPatientAuthLoading ? (

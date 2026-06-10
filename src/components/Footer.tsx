@@ -2,10 +2,28 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Phone, Mail } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useLanguage } from '@/contexts/LanguageContext';
+import procedureNames from '@/i18n/procedureNames.json';
+
+type ProcedureNameTranslations = Record<string, Partial<Record<string, string>>>;
+
+const translatedProcedureNames = procedureNames as ProcedureNameTranslations;
+
+const popularProcedures = [
+  'Rhinoplasty',
+  'Eyelid Surgery',
+  'Liposuction',
+  'Breast Augmentation',
+  'Facial Injectables',
+];
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const navigate = useNavigate();
+
+  const translateProcedureLabel = (label: string) =>
+    translatedProcedureNames[label]?.[currentLanguage] || translatedProcedureNames[label]?.en || label;
 
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -53,11 +71,16 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-serif text-navy-900 text-lg mb-6">{t('footerPopularProcedures')}</h4>
             <ul className="space-y-3 text-sm text-stone-500">
-              <li><button onClick={() => handleNavigate('/procedure/Rhinoplasty')} className="hover:text-gold-600 transition-colors">{t('footerRhinoplasty')}</button></li>
-              <li><button onClick={() => handleNavigate('/procedure/Facelift')} className="hover:text-gold-600 transition-colors">{t('footerFacelift')}</button></li>
-              <li><button onClick={() => handleNavigate('/procedure/Eyelid%20Surgery')} className="hover:text-gold-600 transition-colors">{t('footerEyelidSurgery')}</button></li>
-              <li><button onClick={() => handleNavigate('/procedure/Liposuction')} className="hover:text-gold-600 transition-colors">{t('footerLiposuction')}</button></li>
-              <li><button onClick={() => handleNavigate('/procedure/Brazilian%20Butt%20Lift')} className="hover:text-gold-600 transition-colors">{t('footerBBL')}</button></li>
+              {popularProcedures.map((procedure) => (
+                <li key={procedure}>
+                  <button
+                    onClick={() => handleNavigate(`/procedure/${encodeURIComponent(procedure)}`)}
+                    className="hover:text-gold-600 transition-colors"
+                  >
+                    {translateProcedureLabel(procedure)}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 

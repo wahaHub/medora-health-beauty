@@ -42,10 +42,10 @@ describe('procedure video case helpers', () => {
     expect(resolveVideoProjectForProcedure('Facial Injectables')).toBe('injectables');
     expect(resolveVideoProjectForProcedure('Non-surgical Skin Tightening')).toBe('skin-tightening-ns');
     expect(resolveVideoProjectForProcedure('Hair Restoration')).toBe('hair-transplant');
-    expect(resolveVideoProjectForProcedure('Teeth Whitening')).toBe('dental');
-    expect(resolveVideoProjectForProcedure('Porcelain Veneers')).toBe('dental');
-    expect(resolveVideoProjectForProcedure('Invisalign® / Clear Aligners')).toBe('dental');
-    expect(resolveVideoProjectForProcedure('Smile Design')).toBe('dental');
+    expect(resolveVideoProjectForProcedure('Teeth Whitening')).toBe('teeth-whitening');
+    expect(resolveVideoProjectForProcedure('Porcelain Veneers')).toBe('porcelain-veneers');
+    expect(resolveVideoProjectForProcedure('Invisalign® / Clear Aligners')).toBe('invisalign-clear-aligners');
+    expect(resolveVideoProjectForProcedure('Smile Design')).toBe('smile-design');
   });
 
   it('does not reuse broad video buckets for procedures without matching source data', () => {
@@ -68,7 +68,7 @@ describe('procedure video case helpers', () => {
 
   it('uses a single v4 R2 manifest source', () => {
     expect(getVideoCaseManifestUrl('https://cdn.example.com')).toBe(
-      'https://cdn.example.com/video_cases_v4/manifest.json?v=20260610-v5'
+      'https://cdn.example.com/video_cases_v4/manifest.json?v=20260610-v6'
     );
   });
 

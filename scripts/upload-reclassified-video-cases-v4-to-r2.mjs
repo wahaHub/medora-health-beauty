@@ -66,7 +66,6 @@ function labelFromSlug(slug) {
 const FRONTEND_PROJECTS = {
   buttocks: 'body-contouring',
   'core-contouring': 'body-contouring',
-  dental: 'dental',
   'facelift-surgery': 'facial-contouring',
   hair: 'hair-transplant',
   'injectables-ns': 'injectables',
@@ -74,13 +73,24 @@ const FRONTEND_PROJECTS = {
   'other-facial-surgery': 'facial-contouring',
 };
 
-function frontendProjectFor(item) {
-  const sourceProject = item.subcategory || item.project;
-  return FRONTEND_PROJECTS[sourceProject] || sourceProject;
-}
-
 function isDentalCase(item) {
   return item.subcategory === 'dental' || item.project === 'dental' || item.project === '_out-of-scope/dental';
+}
+
+function dentalProjectFor(item) {
+  const reason = String(item.reason || '').toLowerCase();
+  if (/美白|牙黄|黄牙|whitening/.test(reason)) return 'teeth-whitening';
+  if (/微笑线|微笑|设计|smile/.test(reason)) return 'smile-design';
+  return 'porcelain-veneers';
+}
+
+function frontendProjectFor(item) {
+  if (item.outOfScope && isDentalCase(item)) {
+    return dentalProjectFor(item);
+  }
+
+  const sourceProject = item.subcategory || item.project;
+  return FRONTEND_PROJECTS[sourceProject] || sourceProject;
 }
 
 async function objectExists(key) {
@@ -199,7 +209,7 @@ const manifest = {
   cases: rows,
 };
 
-const outDir = path.join(SOURCE_ROOT, '_r2_v4');
+const outDir = path.join(SOURCE_ROOT, PREFIX === 'video_cases_v4' ? '_r2_v4' : `_${PREFIX}`);
 fs.mkdirSync(outDir, { recursive: true });
 const manifestPath = path.join(outDir, 'manifest.json');
 const csvPath = path.join(outDir, 'manifest.csv');

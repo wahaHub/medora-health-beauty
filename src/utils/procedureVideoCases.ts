@@ -21,8 +21,8 @@ const DIRECT_VIDEO_PROJECT_ALIASES: Record<string, string> = {
   'body contouring': 'body-contouring',
   breast: 'breast',
   'breast augmentation': 'breast',
-  dental: 'dental',
-  'dental aesthetics': 'dental',
+  dental: 'porcelain-veneers',
+  'dental aesthetics': 'porcelain-veneers',
   'double eyelid surgery': 'eye-surgery',
   'eye surgery': 'eye-surgery',
   'eyelid surgery': 'eye-surgery',
@@ -31,19 +31,19 @@ const DIRECT_VIDEO_PROJECT_ALIASES: Record<string, string> = {
   'hair restoration': 'hair-transplant',
   'hair transplant': 'hair-transplant',
   injectables: 'injectables',
-  invisalign: 'dental',
-  'invisalign clear aligners': 'dental',
+  invisalign: 'invisalign-clear-aligners',
+  'invisalign clear aligners': 'invisalign-clear-aligners',
   'laser treatments': 'laser-treatments',
   labiaplasty: 'intimate',
   'non surgical skin tightening': 'skin-tightening-ns',
   rhinoplasty: 'nose-surgery',
   'nose surgery': 'nose-surgery',
-  'porcelain veneers': 'dental',
+  'porcelain veneers': 'porcelain-veneers',
   'skin tightening': 'skin-tightening-ns',
-  'smile design': 'dental',
-  'teeth whitening': 'dental',
-  'tooth whitening': 'dental',
-  veneers: 'dental',
+  'smile design': 'smile-design',
+  'teeth whitening': 'teeth-whitening',
+  'tooth whitening': 'teeth-whitening',
+  veneers: 'porcelain-veneers',
 };
 
 export const formatVideoCaseBytes = (bytes: number) => {
@@ -58,7 +58,7 @@ export const labelFromVideoSlug = (slug: string) =>
     .map((part) => (part === 'and' ? part : part.charAt(0).toUpperCase() + part.slice(1)))
     .join(' ');
 
-export const VIDEO_CASE_MANIFEST_VERSION = '20260610-v5';
+export const VIDEO_CASE_MANIFEST_VERSION = '20260610-v6';
 
 export const getVideoCaseManifestUrl = (baseUrl: string) =>
   `${baseUrl.replace(/\/+$/, '')}/video_cases_v4/manifest.json?v=${VIDEO_CASE_MANIFEST_VERSION}`;
