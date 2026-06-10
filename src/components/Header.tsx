@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowRight, BicepsFlexed, Droplet, Menu, ScanFace, Sparkles, Waves, X } from 'lucide-react';
+import { ArrowRight, BicepsFlexed, Droplet, Menu, ScanFace, Smile, Sparkles, Waves, X } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -17,7 +17,7 @@ interface SubMenuItem {
 
 interface ProcedureMenuSection {
   title: string;
-  route: 'face' | 'body' | 'nonsurgical' | 'hair';
+  route: 'face' | 'body' | 'nonsurgical' | 'hair' | 'dental';
   icon: React.ComponentType<{ className?: string; size?: number; strokeWidth?: number }>;
   items: SubMenuItem[];
   viewAllLabel: string;
@@ -293,6 +293,18 @@ const Header: React.FC = () => {
         { label: 'Hair Transplant', isSub: true },
         { label: 'PRP Hair Treatment', isSub: true },
         { label: 'Hairline Restoration', isSub: true }
+      ]
+    },
+    {
+      title: 'Dental',
+      route: 'dental',
+      icon: Smile,
+      viewAllLabel: 'View all Dental Procedures',
+      items: [
+        { label: 'Teeth Whitening', isSub: true },
+        { label: 'Porcelain Veneers', isSub: true },
+        { label: 'Invisalign® / Clear Aligners', isSub: true },
+        { label: 'Smile Design', isSub: true }
       ]
     }
   ];
@@ -582,7 +594,7 @@ const Header: React.FC = () => {
                     </div>
                   </aside>
 
-                  <div className="grid min-w-0 gap-8 md:grid-cols-2 xl:grid-cols-4 xl:gap-0">
+                  <div className="grid min-w-0 gap-8 md:grid-cols-2 xl:grid-cols-5 xl:gap-0">
                     {link.procedureSections.map((section, sectionIdx) => {
                       const Icon = section.icon;
                       return (

@@ -1505,5 +1505,104 @@
     "ar": "إزالة الشعر",
     "vi": "Triệt Lông",
     "id": "Penghilangan Bulu"
+  },
+  "Dental": {
+    "en": "Dental",
+    "zh": "牙齿",
+    "es": "Dental",
+    "fr": "Dentaire",
+    "de": "Dental",
+    "ru": "Стоматология",
+    "ar": "الأسنان",
+    "vi": "Nha Khoa",
+    "id": "Dental"
+  },
+  "Dental Aesthetics": {
+    "en": "Dental Aesthetics",
+    "zh": "牙齿美学",
+    "es": "Estética Dental",
+    "fr": "Esthétique Dentaire",
+    "de": "Zahnästhetik",
+    "ru": "Эстетическая стоматология",
+    "ar": "تجميل الأسنان",
+    "vi": "Thẩm Mỹ Nha Khoa",
+    "id": "Estetika Dental"
+  },
+  "Orthodontics": {
+    "en": "Orthodontics",
+    "zh": "牙齿矫正",
+    "es": "Ortodoncia",
+    "fr": "Orthodontie",
+    "de": "Kieferorthopädie",
+    "ru": "Ортодонтия",
+    "ar": "تقويم الأسنان",
+    "vi": "Chỉnh Nha",
+    "id": "Ortodonti"
+  },
+  "Smile Makeover": {
+    "en": "Smile Makeover",
+    "zh": "笑容改造",
+    "es": "Transformación de Sonrisa",
+    "fr": "Relooking du Sourire",
+    "de": "Smile Makeover",
+    "ru": "Преображение улыбки",
+    "ar": "تجميل الابتسامة",
+    "vi": "Thiết Kế Lại Nụ Cười",
+    "id": "Transformasi Senyum"
+  },
+  "Teeth Whitening": {
+    "en": "Teeth Whitening",
+    "zh": "牙齿美白",
+    "es": "Blanqueamiento Dental",
+    "fr": "Blanchiment Dentaire",
+    "de": "Zahnaufhellung",
+    "ru": "Отбеливание зубов",
+    "ar": "تبييض الأسنان",
+    "vi": "Tẩy Trắng Răng",
+    "id": "Pemutihan Gigi"
+  },
+  "Porcelain Veneers": {
+    "en": "Porcelain Veneers",
+    "zh": "瓷贴面",
+    "es": "Carillas de Porcelana",
+    "fr": "Facettes en Porcelaine",
+    "de": "Porzellan-Veneers",
+    "ru": "Фарфоровые виниры",
+    "ar": "قشور البورسلين",
+    "vi": "Mặt Dán Sứ",
+    "id": "Veneer Porselen"
+  },
+  "Invisalign® / Clear Aligners": {
+    "en": "Invisalign® / Clear Aligners",
+    "zh": "隐适美® / 隐形矫正",
+    "es": "Invisalign® / Alineadores Transparentes",
+    "fr": "Invisalign® / Aligneurs Transparents",
+    "de": "Invisalign® / Transparente Aligner",
+    "ru": "Invisalign® / Прозрачные элайнеры",
+    "ar": "إنفزلاين® / تقويم شفاف",
+    "vi": "Invisalign® / Khay Niềng Trong Suốt",
+    "id": "Invisalign® / Aligner Transparan"
+  },
+  "Smile Design": {
+    "en": "Smile Design",
+    "zh": "微笑设计",
+    "es": "Diseño de Sonrisa",
+    "fr": "Design du Sourire",
+    "de": "Smile Design",
+    "ru": "Дизайн улыбки",
+    "ar": "تصميم الابتسامة",
+    "vi": "Thiết Kế Nụ Cười",
+    "id": "Desain Senyum"
+  },
+  "View all Dental Procedures": {
+    "en": "View all Dental Procedures",
+    "zh": "查看全部牙齿项目",
+    "es": "Ver todos los procedimientos dentales",
+    "fr": "Voir toutes les procédures dentaires",
+    "de": "Alle Dental-Behandlungen ansehen",
+    "ru": "Смотреть все стоматологические процедуры",
+    "ar": "عرض جميع إجراءات الأسنان",
+    "vi": "Xem tất cả thủ thuật nha khoa",
+    "id": "Lihat semua prosedur dental"
   }
 }

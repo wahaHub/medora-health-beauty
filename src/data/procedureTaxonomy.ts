@@ -1,4 +1,4 @@
-export type ProcedureCategoryKey = 'face' | 'body' | 'nonsurgical' | 'hair';
+export type ProcedureCategoryKey = 'face' | 'body' | 'nonsurgical' | 'hair' | 'dental';
 
 export interface ProcedureItem {
   label: string;
@@ -96,6 +96,12 @@ export const proceduresByCategory: Record<ProcedureCategoryKey, ProcedureItem[]>
     { label: 'Hair Transplant', category: 'Hair Restoration' },
     { label: 'PRP Hair Treatment', category: 'Regenerative Hair' },
     { label: 'Hairline Restoration', category: 'Hairline Design' },
+  ],
+  dental: [
+    { label: 'Teeth Whitening', category: 'Dental Aesthetics' },
+    { label: 'Porcelain Veneers', category: 'Dental Aesthetics' },
+    { label: 'Invisalign® / Clear Aligners', category: 'Orthodontics' },
+    { label: 'Smile Design', category: 'Smile Makeover' },
   ],
 };
 

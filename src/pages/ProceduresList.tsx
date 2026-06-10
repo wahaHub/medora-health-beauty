@@ -50,6 +50,8 @@ const ProceduresList: React.FC = () => {
         return t('navNonSurgical');
       case 'hair':
         return 'Hair Restoration';
+      case 'dental':
+        return t('categoryDental');
       default:
         return 'Procedures';
     }

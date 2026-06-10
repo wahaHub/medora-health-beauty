@@ -120,4 +120,22 @@ describe('Header patient auth CTA', () => {
     expect(selector).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByRole('menu')).toBeNull();
   });
+
+  it('includes the Dental procedures section in the desktop mega menu', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Header />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('heading', { name: 'Dental' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Teeth Whitening' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Porcelain Veneers' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Invisalign® / Clear Aligners' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Smile Design' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'View all Dental Procedures' })).toHaveAttribute(
+      'href',
+      '/procedures/dental',
+    );
+  });
 });
