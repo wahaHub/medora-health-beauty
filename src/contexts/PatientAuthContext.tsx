@@ -249,6 +249,19 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
+        const hasStoredRestoreToken = Boolean(getStoredRestoreToken());
+        const shouldRecoverSession =
+          pathname === '/login' ||
+          pathname === '/packages' ||
+          pathname.startsWith('/dashboard') ||
+          hasStoredRestoreToken;
+
+        if (!shouldRecoverSession) {
+          patientRef.current = null;
+          setPatient(null);
+          return;
+        }
+
         const recovered = await recoverPatientSession();
         if (cancelled) return;
         if (sessionStateRef.current.sessionEpoch !== bootstrapEpoch) {

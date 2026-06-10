@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import { getSupportedProcedureOptions } from '@/data/procedureTaxonomy';
 import {
   filterVideoCasesForProcedure,
   filterVideoCasesForProject,
+  getVideoCaseManifestUrl,
+  paginateVideoCases,
   resolveVideoProjectForProcedure,
   type VideoCase,
 } from '@/utils/procedureVideoCases';
@@ -34,6 +37,13 @@ describe('procedure video case helpers', () => {
     expect(resolveVideoProjectForProcedure('Eyelid Surgery')).toBe('eye-surgery');
   });
 
+  it('maps detailed supported procedures onto the v4 video buckets', () => {
+    expect(resolveVideoProjectForProcedure('Revision Rhinoplasty')).toBe('nose-surgery');
+    expect(resolveVideoProjectForProcedure('Dermal Fillers')).toBe('injectables');
+    expect(resolveVideoProjectForProcedure('Non-surgical Skin Tightening')).toBe('skin-tightening-ns');
+    expect(resolveVideoProjectForProcedure('Hair Restoration')).toBe('hair-transplant');
+  });
+
   it('filters video cases to the procedure project', () => {
     expect(filterVideoCasesForProcedure(cases, 'Eyelid Surgery')).toEqual([cases[0]]);
   });
@@ -44,5 +54,32 @@ describe('procedure video case helpers', () => {
 
   it('returns all video cases when the selected project is all', () => {
     expect(filterVideoCasesForProject(cases, 'all')).toEqual(cases);
+  });
+
+  it('uses a single v4 R2 manifest source', () => {
+    expect(getVideoCaseManifestUrl('https://cdn.example.com')).toBe(
+      'https://cdn.example.com/video_cases_v4/manifest.json?v=20260610-v4'
+    );
+  });
+
+  it('paginates all video cases without dropping the total count', () => {
+    const allCases = Array.from({ length: 41 }, (_, index) => ({
+      ...cases[index % cases.length],
+      id: `case-${index + 1}`,
+      objectKey: `video_cases_v4/all/case-${index + 1}/video.mp4`,
+    }));
+
+    expect(paginateVideoCases(allCases, 2, 18)).toEqual({
+      currentPage: 2,
+      totalPages: 3,
+      totalItems: 41,
+      startItem: 19,
+      endItem: 36,
+      items: allCases.slice(18, 36),
+    });
+  });
+
+  it('exposes the full supported procedure taxonomy for video filters', () => {
+    expect(getSupportedProcedureOptions()).toHaveLength(74);
   });
 });

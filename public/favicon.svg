@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Medora">
+  <rect width="64" height="64" rx="12" fill="#173d31"/>
+  <path d="M16 45V19h6.5L32 35.5 41.5 19H48v26h-5V27.5L34.2 45h-4.4L21 27.5V45h-5Z" fill="#f7f2ea"/>
+  <path d="M22 50h20" stroke="#caa37a" stroke-width="3" stroke-linecap="round"/>
+</svg>

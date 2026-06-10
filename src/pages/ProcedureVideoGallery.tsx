@@ -1,27 +1,57 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ChevronDown, MapPin, Play, Search, Video, X } from 'lucide-react';
+import { getSupportedProcedureOptions } from '@/data/procedureTaxonomy';
 import {
   filterVideoCasesForProject,
   formatVideoCaseBytes,
   getDoctorsForVideoCases,
+  getVideoCaseManifestUrl,
   labelFromVideoSlug,
+  paginateVideoCases,
   resolveVideoProjectForProcedure,
   type VideoCase,
   type VideoCasePayload,
 } from '@/utils/procedureVideoCases';
 
-const areaFilters = ['Face', 'Body', 'Breast', 'Non-Surgical'];
+const areaFilters = ['All', 'Face', 'Body', 'Breast', 'Non-Surgical', 'Hair'];
 const concernFilters = ['Aging', 'Contour', 'Volume Loss', 'Fat', 'Skin Quality', 'Symmetry'];
+const R2_VIDEO_BASE_URL =
+  import.meta.env.VITE_R2_CUSTOM_DOMAIN ||
+  import.meta.env.VITE_R2_PUBLIC_URL ||
+  'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev';
+const VIDEO_CASES_PER_PAGE = 18;
+const areaLabels: Record<string, string> = {
+  face: 'Face',
+  body: 'Body',
+  nonsurgical: 'Non-Surgical',
+  hair: 'Hair',
+};
+
+const areaQueryValues: Record<string, string> = {
+  All: 'all',
+  Face: 'face',
+  Body: 'body',
+  Breast: 'breast',
+  'Non-Surgical': 'nonsurgical',
+  Hair: 'hair',
+};
+
+const areaLabelsByQuery = Object.fromEntries(
+  Object.entries(areaQueryValues).map(([label, value]) => [value, label])
+);
 
 const projectArea: Record<string, string> = {
   'body-contouring': 'Body',
   breast: 'Breast',
+  collagen: 'Non-Surgical',
   'eye-surgery': 'Face',
   'facial-contouring': 'Face',
-  'hair-transplant': 'Face',
+  'hair-transplant': 'Hair',
   injectables: 'Non-Surgical',
+  'laser-treatments': 'Non-Surgical',
   'nose-surgery': 'Face',
+  'skin-tightening-ns': 'Non-Surgical',
 };
 
 const projectConcern: Record<string, string[]> = {
@@ -52,6 +82,13 @@ const durationFromId = (id: string) => {
   return `0${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 };
 
+const getProcedureDisplayArea = (procedure: ReturnType<typeof getSupportedProcedureOptions>[number]) => {
+  if (procedure.area === 'nonsurgical') return 'Non-Surgical';
+  if (procedure.area === 'hair') return 'Hair';
+  if (procedure.category === 'Breast / Chest') return 'Breast';
+  return areaLabels[procedure.area] || 'Face';
+};
+
 export default function ProcedureVideoGallery() {
   const { procedureName: urlProcedureName } = useParams<{ procedureName: string }>();
   const navigate = useNavigate();
@@ -59,16 +96,42 @@ export default function ProcedureVideoGallery() {
   const legacyProcedureName = urlProcedureName ? decodeURIComponent(urlProcedureName) : '';
   const procedureFromQuery = searchParams.get('procedure') || '';
   const projectFromQuery = searchParams.get('project');
+  const areaFromQuery = searchParams.get('area') || 'all';
+  const requestedProcedureName = procedureFromQuery || legacyProcedureName;
+  const requestedProcedureProject = resolveVideoProjectForProcedure(requestedProcedureName);
   const selectedProject =
     projectFromQuery ||
-    resolveVideoProjectForProcedure(procedureFromQuery) ||
-    resolveVideoProjectForProcedure(legacyProcedureName) ||
+    requestedProcedureProject ||
+    (requestedProcedureName ? '__no-video-project' : null) ||
     'all';
 
   const [payload, setPayload] = useState<VideoCasePayload | null>(null);
   const [query, setQuery] = useState('');
   const [doctor, setDoctor] = useState('all');
+  const [page, setPage] = useState(1);
   const [activeCase, setActiveCase] = useState<VideoCase | null>(null);
+  const procedureOptions = useMemo(() => getSupportedProcedureOptions(), []);
+  const selectedProcedureOption = useMemo(
+    () =>
+      requestedProcedureName
+        ? procedureOptions.find((option) => option.label.toLowerCase() === requestedProcedureName.toLowerCase())
+        : null,
+    [procedureOptions, requestedProcedureName]
+  );
+  const inferredArea = selectedProcedureOption
+    ? getProcedureDisplayArea(selectedProcedureOption)
+    : selectedProject !== 'all'
+      ? projectArea[selectedProject] || 'Face'
+      : 'All';
+  const activeArea = areaFromQuery !== 'all' ? areaLabelsByQuery[areaFromQuery] || inferredArea : inferredArea;
+  const activeAreaFilter = areaQueryValues[activeArea] || 'all';
+  const visibleProcedureOptions = useMemo(
+    () =>
+      activeAreaFilter === 'all'
+        ? procedureOptions
+        : procedureOptions.filter((procedure) => areaQueryValues[getProcedureDisplayArea(procedure)] === activeAreaFilter),
+    [activeAreaFilter, procedureOptions]
+  );
 
   useEffect(() => {
     if (!legacyProcedureName) return;
@@ -85,7 +148,7 @@ export default function ProcedureVideoGallery() {
 
   useEffect(() => {
     let active = true;
-    fetch('/video-cases.json')
+    fetch(getVideoCaseManifestUrl(R2_VIDEO_BASE_URL))
       .then((response) => response.json())
       .then((data: VideoCasePayload) => {
         if (active) setPayload(data);
@@ -99,10 +162,16 @@ export default function ProcedureVideoGallery() {
     };
   }, []);
 
-  const projectCases = useMemo(
-    () => filterVideoCasesForProject(payload?.cases || [], selectedProject),
-    [payload, selectedProject]
-  );
+  const projectCases = useMemo(() => {
+    const cases = payload?.cases || [];
+    if (selectedProject !== 'all') {
+      return filterVideoCasesForProject(cases, selectedProject);
+    }
+    if (activeAreaFilter !== 'all') {
+      return cases.filter((item) => areaQueryValues[projectArea[item.project] || 'Face'] === activeAreaFilter);
+    }
+    return cases;
+  }, [activeAreaFilter, payload, selectedProject]);
 
   const doctors = useMemo(() => getDoctorsForVideoCases(projectCases), [projectCases]);
 
@@ -119,26 +188,58 @@ export default function ProcedureVideoGallery() {
     });
   }, [doctor, projectCases, query]);
 
-  const activeArea = selectedProject !== 'all' ? projectArea[selectedProject] || 'Face' : 'All';
-  const activeConcerns = selectedProject !== 'all' ? projectConcern[selectedProject] || ['Contour'] : [];
-  const activeProjectLabel = selectedProject !== 'all' ? labelFromVideoSlug(selectedProject) : 'All Procedures';
+  const paginatedCases = useMemo(
+    () => paginateVideoCases(filteredCases, page, VIDEO_CASES_PER_PAGE),
+    [filteredCases, page]
+  );
 
-  const updateProjectFilter = (project: string) => {
+  useEffect(() => {
+    setPage(1);
+  }, [doctor, query, selectedProject]);
+
+  const activeConcerns = selectedProject !== 'all' ? projectConcern[selectedProject] || ['Contour'] : [];
+  const activeProjectLabel = requestedProcedureName || (selectedProject !== 'all' ? labelFromVideoSlug(selectedProject) : 'All Procedures');
+
+  const updateAreaFilter = (area: string) => {
     const params = new URLSearchParams(searchParams);
+    params.delete('project');
     params.delete('procedure');
-    if (project === 'all') {
-      params.delete('project');
+    const nextArea = areaQueryValues[area] || 'all';
+    if (nextArea === 'all') {
+      params.delete('area');
     } else {
-      params.set('project', project);
+      params.set('area', nextArea);
     }
     setDoctor('all');
+    setPage(1);
+    setSearchParams(params, { replace: false });
+  };
+
+  const updateProcedureFilter = (procedure: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.delete('project');
+    if (procedure === 'all') {
+      params.delete('procedure');
+    } else {
+      params.set('procedure', procedure);
+      const option = procedureOptions.find((item) => item.label === procedure);
+      const nextArea = option ? areaQueryValues[getProcedureDisplayArea(option)] : 'all';
+      if (nextArea === 'all') {
+        params.delete('area');
+      } else {
+        params.set('area', nextArea);
+      }
+    }
+    setDoctor('all');
+    setPage(1);
     setSearchParams(params, { replace: false });
   };
 
   const clearFilters = () => {
     setQuery('');
     setDoctor('all');
-    updateProjectFilter('all');
+    setPage(1);
+    updateProcedureFilter('all');
   };
 
   if (!payload) {
@@ -190,37 +291,6 @@ export default function ProcedureVideoGallery() {
 
             <div className="border-b border-stone-200 py-5">
               <button type="button" className="flex w-full items-center justify-between text-left">
-                <span className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">Procedure Type</span>
-                <ChevronDown size={17} className="text-stone-500" />
-              </button>
-              <div className="mt-4 space-y-3">
-                {payload.projects
-                  .filter((project) => project !== 'clinic-introduction' && project !== 'uncategorized')
-                  .map((project) => {
-                    const active = project === selectedProject;
-                    return (
-                      <button
-                        key={project}
-                        type="button"
-                        onClick={() => updateProjectFilter(project)}
-                        className="flex w-full items-center gap-3 text-left text-sm text-stone-600 transition hover:text-[#173d31]"
-                      >
-                        <span
-                          className={`flex h-5 w-5 items-center justify-center rounded-[3px] border ${
-                            active ? 'border-[#173d31] bg-[#173d31] text-white' : 'border-stone-300 bg-white'
-                          }`}
-                        >
-                          {active && <span className="h-2 w-2 bg-white" />}
-                        </span>
-                        <span className={active ? 'font-semibold text-stone-900' : ''}>{labelFromVideoSlug(project)}</span>
-                      </button>
-                    );
-                  })}
-              </div>
-            </div>
-
-            <div className="border-b border-stone-200 py-5">
-              <button type="button" className="flex w-full items-center justify-between text-left">
                 <span className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">Area</span>
                 <ChevronDown size={17} className="text-stone-500" />
               </button>
@@ -229,10 +299,7 @@ export default function ProcedureVideoGallery() {
                   <button
                     key={area}
                     type="button"
-                    onClick={() => {
-                      const matchingProject = Object.entries(projectArea).find(([, mappedArea]) => mappedArea === area)?.[0];
-                      if (matchingProject) updateProjectFilter(matchingProject);
-                    }}
+                    onClick={() => updateAreaFilter(area)}
                     className={`rounded-full border px-4 py-2 text-xs font-semibold ${
                       area === activeArea
                         ? 'border-[#173d31] bg-[#173d31] text-white'
@@ -242,6 +309,61 @@ export default function ProcedureVideoGallery() {
                     {area}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            <div className="border-b border-stone-200 py-5">
+              <button type="button" className="flex w-full items-center justify-between text-left">
+                <span className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">Procedure Type</span>
+                <ChevronDown size={17} className="text-stone-500" />
+              </button>
+              <div className="mt-4 max-h-[420px] space-y-3 overflow-y-auto pr-2">
+                {activeAreaFilter === 'all' && (
+                  <button
+                    type="button"
+                    onClick={() => updateProcedureFilter('all')}
+                    className="flex w-full items-center gap-3 text-left text-sm text-stone-600 transition hover:text-[#173d31]"
+                  >
+                    <span
+                      className={`flex h-5 w-5 items-center justify-center rounded-[3px] border ${
+                        selectedProject === 'all' ? 'border-[#173d31] bg-[#173d31] text-white' : 'border-stone-300 bg-white'
+                      }`}
+                    >
+                      {selectedProject === 'all' && <span className="h-2 w-2 bg-white" />}
+                    </span>
+                    <span className={selectedProject === 'all' ? 'font-semibold text-stone-900' : ''}>All Procedures</span>
+                  </button>
+                )}
+                {visibleProcedureOptions.map((procedure) => {
+                    const procedureProject = resolveVideoProjectForProcedure(procedure.label);
+                    const active = requestedProcedureName
+                      ? procedure.label.toLowerCase() === requestedProcedureName.toLowerCase()
+                      : Boolean(projectFromQuery && procedureProject === selectedProject);
+                    return (
+                      <button
+                        key={`${procedure.area}-${procedure.label}`}
+                        type="button"
+                        onClick={() => updateProcedureFilter(procedure.label)}
+                        className="flex w-full items-center gap-3 text-left text-sm text-stone-600 transition hover:text-[#173d31]"
+                      >
+                        <span
+                          className={`flex h-5 w-5 items-center justify-center rounded-[3px] border ${
+                            active ? 'border-[#173d31] bg-[#173d31] text-white' : 'border-stone-300 bg-white'
+                          }`}
+                        >
+                          {active && <span className="h-2 w-2 bg-white" />}
+                        </span>
+                        <span className="min-w-0">
+                          <span className={`block truncate ${active ? 'font-semibold text-stone-900' : ''}`}>
+                            {procedure.label}
+                          </span>
+                          <span className="block text-[10px] uppercase tracking-[0.16em] text-stone-400">
+                            {getProcedureDisplayArea(procedure)}
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
               </div>
             </div>
 
@@ -273,7 +395,10 @@ export default function ProcedureVideoGallery() {
               </button>
               <select
                 value={doctor}
-                onChange={(event) => setDoctor(event.target.value)}
+                onChange={(event) => {
+                  setDoctor(event.target.value);
+                  setPage(1);
+                }}
                 className="mt-4 h-11 w-full rounded-full border border-stone-200 bg-white px-4 text-sm text-stone-700 outline-none transition focus:border-[#173d31]"
               >
                 <option value="all">All Doctors</option>
@@ -291,7 +416,10 @@ export default function ProcedureVideoGallery() {
                 <Search size={15} className="text-stone-400" />
                 <input
                   value={query}
-                  onChange={(event) => setQuery(event.target.value)}
+                  onChange={(event) => {
+                    setQuery(event.target.value);
+                    setPage(1);
+                  }}
                   className="min-w-0 flex-1 bg-transparent px-3 text-sm outline-none"
                   placeholder="Doctor or case ID"
                 />
@@ -320,7 +448,11 @@ export default function ProcedureVideoGallery() {
               Video Case Library
             </button>
             <div className="text-sm text-stone-500">
-              Showing <span className="font-semibold text-stone-800">{filteredCases.length}</span> {activeProjectLabel} videos
+              Showing{' '}
+              <span className="font-semibold text-stone-800">
+                {paginatedCases.startItem}-{paginatedCases.endItem}
+              </span>{' '}
+              of <span className="font-semibold text-stone-800">{filteredCases.length}</span> {activeProjectLabel} videos
             </div>
           </div>
 
@@ -333,53 +465,81 @@ export default function ProcedureVideoGallery() {
               </p>
             </div>
           ) : (
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {filteredCases.map((item, index) => (
-                <button
-                  key={item.objectKey}
-                  type="button"
-                  onClick={() => setActiveCase(item)}
-                  className="group overflow-hidden rounded-lg bg-[#16231f] text-left shadow-[0_16px_38px_rgba(25,23,19,0.18)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_55px_rgba(25,23,19,0.24)] active:translate-y-0"
-                  style={{ animationDelay: `${Math.min(index, 9) * 45}ms` }}
-                >
-                  <div className="relative aspect-[1.38] overflow-hidden">
-                    <video
-                      className="h-full w-full object-cover opacity-80 transition duration-700 group-hover:scale-105 group-hover:opacity-95"
-                      src={item.videoUrl}
-                      muted
-                      preload="metadata"
-                      playsInline
-                      onLoadedMetadata={(event) => {
-                        event.currentTarget.currentTime = 0.2;
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#101713] via-[#101713]/20 to-black/10" />
-                    <div className="absolute inset-y-0 left-1/2 w-px bg-white/40" />
-                    <div className="absolute left-4 top-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/85">Before</div>
-                    <div className="absolute right-4 top-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/85">After</div>
-                    <div className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/10 text-white backdrop-blur-sm transition group-hover:scale-110">
-                      <Play size={20} fill="currentColor" />
+            <>
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                {paginatedCases.items.map((item, index) => (
+                  <button
+                    key={item.objectKey}
+                    type="button"
+                    onClick={() => setActiveCase(item)}
+                    className="group overflow-hidden rounded-lg bg-[#16231f] text-left shadow-[0_16px_38px_rgba(25,23,19,0.18)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_55px_rgba(25,23,19,0.24)] active:translate-y-0"
+                    style={{ animationDelay: `${Math.min(index, 9) * 45}ms` }}
+                  >
+                    <div className="relative aspect-[1.38] overflow-hidden">
+                      <video
+                        className="h-full w-full object-cover opacity-80 transition duration-700 group-hover:scale-105 group-hover:opacity-95"
+                        src={item.videoUrl}
+                        muted
+                        preload="metadata"
+                        playsInline
+                        onLoadedMetadata={(event) => {
+                          event.currentTarget.currentTime = 0.2;
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#101713] via-[#101713]/20 to-black/10" />
+                      <div className="absolute inset-y-0 left-1/2 w-px bg-white/40" />
+                      <div className="absolute left-4 top-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/85">Before</div>
+                      <div className="absolute right-4 top-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/85">After</div>
+                      <div className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/10 text-white backdrop-blur-sm transition group-hover:scale-110">
+                        <Play size={20} fill="currentColor" />
+                      </div>
+                      <div className="absolute bottom-16 left-7 right-7">
+                        <h3 className="font-serif text-3xl font-light leading-[1.08] text-white drop-shadow md:text-4xl">
+                          {formatTitle(item)}
+                        </h3>
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 grid grid-cols-[1fr_auto_auto] items-center gap-3 border-t border-white/15 bg-[#111b17]/80 px-4 py-3 text-xs text-white/80 backdrop-blur-sm">
+                        <span className="font-bold uppercase tracking-[0.16em] text-[#caa37a]">{item.projectName}</span>
+                        <span className="flex min-w-0 items-center gap-1 truncate">
+                          <MapPin size={13} />
+                          Medora
+                        </span>
+                        <span className="font-mono">{durationFromId(item.id)}</span>
+                      </div>
                     </div>
-                    <div className="absolute bottom-16 left-7 right-7">
-                      <h3 className="font-serif text-3xl font-light leading-[1.08] text-white drop-shadow md:text-4xl">
-                        {formatTitle(item)}
-                      </h3>
+                    <div className="sr-only">
+                      {item.doctorName} {formatVideoCaseBytes(item.size)}
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 grid grid-cols-[1fr_auto_auto] items-center gap-3 border-t border-white/15 bg-[#111b17]/80 px-4 py-3 text-xs text-white/80 backdrop-blur-sm">
-                      <span className="font-bold uppercase tracking-[0.16em] text-[#caa37a]">{item.projectName}</span>
-                      <span className="flex min-w-0 items-center gap-1 truncate">
-                        <MapPin size={13} />
-                        Medora
-                      </span>
-                      <span className="font-mono">{durationFromId(item.id)}</span>
-                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {paginatedCases.totalPages > 1 && (
+                <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-stone-200 pt-6 sm:flex-row">
+                  <p className="text-sm font-semibold text-stone-500">
+                    Page {paginatedCases.currentPage} of {paginatedCases.totalPages}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPage((value) => Math.max(1, value - 1))}
+                      disabled={paginatedCases.currentPage === 1}
+                      className="h-10 border border-stone-300 px-4 text-xs font-bold uppercase tracking-[0.18em] text-[#173d31] transition hover:border-[#173d31] disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Prev
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPage((value) => Math.min(paginatedCases.totalPages, value + 1))}
+                      disabled={paginatedCases.currentPage === paginatedCases.totalPages}
+                      className="h-10 bg-[#173d31] px-4 text-xs font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[#102a22] disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Next
+                    </button>
                   </div>
-                  <div className="sr-only">
-                    {item.doctorName} {formatVideoCaseBytes(item.size)}
-                  </div>
-                </button>
-              ))}
-            </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
