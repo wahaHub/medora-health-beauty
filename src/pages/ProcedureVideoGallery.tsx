@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ChevronDown, MapPin, Play, Search, Video, X } from 'lucide-react';
+import { ChevronDown, MapPin, Play, Video, X } from 'lucide-react';
 import { getSupportedProcedureOptions } from '@/data/procedureTaxonomy';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslation } from '@/hooks/useTranslation';
+import procedureNames from '@/i18n/procedureNames.json';
 import {
   filterVideoCasesForProject,
   formatVideoCaseBytes,
-  getDoctorsForVideoCases,
   getVideoCaseManifestUrl,
   labelFromVideoSlug,
   paginateVideoCases,
@@ -13,6 +15,9 @@ import {
   type VideoCase,
   type VideoCasePayload,
 } from '@/utils/procedureVideoCases';
+import type { TranslationKey } from '@/i18n/translations';
+
+type ProcedureNameTranslations = Record<string, Partial<Record<string, string>>>;
 
 const areaFilters = ['All', 'Face', 'Body', 'Breast', 'Non-Surgical', 'Hair'];
 const concernFilters = ['Aging', 'Contour', 'Volume Loss', 'Fat', 'Skin Quality', 'Symmetry'];
@@ -64,15 +69,17 @@ const projectConcern: Record<string, string[]> = {
   'nose-surgery': ['Contour', 'Symmetry'],
 };
 
-const formatTitle = (item: VideoCase) => {
+const translatedProcedureNames = procedureNames as ProcedureNameTranslations;
+
+const formatTitle = (item: VideoCase, t: (key: TranslationKey) => string) => {
   const doctor = item.doctorName.replace(/^医院_/, '');
-  if (item.project === 'eye-surgery') return `Natural Eyelid Refresh`;
-  if (item.project === 'nose-surgery') return `Rhinoplasty Patient Story`;
-  if (item.project === 'facial-contouring') return `Facial Contour Result`;
-  if (item.project === 'hair-transplant') return `Hairline Restoration Journey`;
-  if (item.project === 'body-contouring') return `Body Contouring Result`;
-  if (item.project === 'breast') return `Breast Procedure Result`;
-  if (item.project === 'injectables') return `Injectable Refinement`;
+  if (item.project === 'eye-surgery') return t('videoCasesTitleEyelid');
+  if (item.project === 'nose-surgery') return t('videoCasesTitleRhinoplasty');
+  if (item.project === 'facial-contouring') return t('videoCasesTitleFacialContour');
+  if (item.project === 'hair-transplant') return t('videoCasesTitleHairline');
+  if (item.project === 'body-contouring') return t('videoCasesTitleBody');
+  if (item.project === 'breast') return t('videoCasesTitleBreast');
+  if (item.project === 'injectables') return t('videoCasesTitleInjectable');
   return `${doctor} Case Film`;
 };
 
@@ -93,6 +100,8 @@ export default function ProcedureVideoGallery() {
   const { procedureName: urlProcedureName } = useParams<{ procedureName: string }>();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation();
   const legacyProcedureName = urlProcedureName ? decodeURIComponent(urlProcedureName) : '';
   const procedureFromQuery = searchParams.get('procedure') || '';
   const projectFromQuery = searchParams.get('project');
@@ -106,11 +115,19 @@ export default function ProcedureVideoGallery() {
     'all';
 
   const [payload, setPayload] = useState<VideoCasePayload | null>(null);
-  const [query, setQuery] = useState('');
-  const [doctor, setDoctor] = useState('all');
   const [page, setPage] = useState(1);
   const [activeCase, setActiveCase] = useState<VideoCase | null>(null);
   const procedureOptions = useMemo(() => getSupportedProcedureOptions(), []);
+  const translateProcedureLabel = (label: string) =>
+    translatedProcedureNames[label]?.[currentLanguage] || translatedProcedureNames[label]?.en || label;
+  const translateAreaLabel = (area: string) => {
+    if (area === 'All') return t('galleryFilterAll');
+    if (area === 'Face') return t('categoryFace');
+    if (area === 'Body') return t('categoryBody');
+    if (area === 'Breast') return t('categoryBreast');
+    if (area === 'Non-Surgical') return t('categoryNonSurgical');
+    return t('categoryHair');
+  };
   const selectedProcedureOption = useMemo(
     () =>
       requestedProcedureName
@@ -173,20 +190,7 @@ export default function ProcedureVideoGallery() {
     return cases;
   }, [activeAreaFilter, payload, selectedProject]);
 
-  const doctors = useMemo(() => getDoctorsForVideoCases(projectCases), [projectCases]);
-
-  const filteredCases = useMemo(() => {
-    const term = query.trim().toLowerCase();
-    return projectCases.filter((item) => {
-      const doctorMatches = doctor === 'all' || item.doctor === doctor;
-      const searchMatches =
-        !term ||
-        item.id.toLowerCase().includes(term) ||
-        item.doctorName.toLowerCase().includes(term) ||
-        item.projectName.toLowerCase().includes(term);
-      return doctorMatches && searchMatches;
-    });
-  }, [doctor, projectCases, query]);
+  const filteredCases = projectCases;
 
   const paginatedCases = useMemo(
     () => paginateVideoCases(filteredCases, page, VIDEO_CASES_PER_PAGE),
@@ -195,10 +199,16 @@ export default function ProcedureVideoGallery() {
 
   useEffect(() => {
     setPage(1);
-  }, [doctor, query, selectedProject]);
+  }, [selectedProject]);
 
   const activeConcerns = selectedProject !== 'all' ? projectConcern[selectedProject] || ['Contour'] : [];
-  const activeProjectLabel = requestedProcedureName || (selectedProject !== 'all' ? labelFromVideoSlug(selectedProject) : 'All Procedures');
+  const activeProjectLabel = requestedProcedureName
+    ? translateProcedureLabel(requestedProcedureName)
+    : selectedProject !== 'all'
+      ? labelFromVideoSlug(selectedProject)
+      : activeAreaFilter !== 'all'
+        ? translateAreaLabel(activeArea)
+        : t('allProcedures');
 
   const updateAreaFilter = (area: string) => {
     const params = new URLSearchParams(searchParams);
@@ -210,7 +220,6 @@ export default function ProcedureVideoGallery() {
     } else {
       params.set('area', nextArea);
     }
-    setDoctor('all');
     setPage(1);
     setSearchParams(params, { replace: false });
   };
@@ -230,14 +239,11 @@ export default function ProcedureVideoGallery() {
         params.set('area', nextArea);
       }
     }
-    setDoctor('all');
     setPage(1);
     setSearchParams(params, { replace: false });
   };
 
   const clearFilters = () => {
-    setQuery('');
-    setDoctor('all');
     setPage(1);
     updateProcedureFilter('all');
   };
@@ -264,14 +270,14 @@ export default function ProcedureVideoGallery() {
     <div className="bg-[#f7f4ef] text-[#17251f]">
       <section className="px-6 pb-8 pt-28 text-center md:pt-32">
         <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#b8946f]">
-          Real patients. Real results.
+          {t('videoCasesEyebrow')}
         </p>
         <h1 className="mt-4 font-serif text-5xl font-light leading-none text-[#10251e] md:text-7xl">
-          Video Case Gallery
+          {t('videoCasesTitle')}
         </h1>
         <div className="mx-auto mt-5 h-px w-14 bg-[#b8946f]" />
         <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-stone-600 md:text-lg">
-          Discover real patient journeys and procedure videos across the Medora case library.
+          {t('videoCasesDescription')}
         </p>
       </section>
 
@@ -279,19 +285,19 @@ export default function ProcedureVideoGallery() {
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <div className="rounded-lg border border-stone-200 bg-white p-6 shadow-[0_18px_45px_rgba(49,42,32,0.08)]">
             <div className="flex items-center justify-between border-b border-stone-200 pb-4">
-              <h2 className="text-sm font-bold uppercase tracking-[0.22em] text-stone-800">Filter Cases</h2>
+              <h2 className="text-sm font-bold uppercase tracking-[0.22em] text-stone-800">{t('videoCasesFilterCases')}</h2>
               <button
                 type="button"
                 onClick={clearFilters}
                 className="text-xs font-semibold text-[#b8946f] transition hover:text-[#173d31]"
               >
-                Clear All
+                {t('videoCasesClearAll')}
               </button>
             </div>
 
             <div className="border-b border-stone-200 py-5">
               <button type="button" className="flex w-full items-center justify-between text-left">
-                <span className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">Area</span>
+                <span className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">{t('videoCasesArea')}</span>
                 <ChevronDown size={17} className="text-stone-500" />
               </button>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -306,7 +312,7 @@ export default function ProcedureVideoGallery() {
                         : 'border-stone-200 bg-white text-stone-500'
                     }`}
                   >
-                    {area}
+                    {translateAreaLabel(area)}
                   </button>
                 ))}
               </div>
@@ -314,7 +320,7 @@ export default function ProcedureVideoGallery() {
 
             <div className="border-b border-stone-200 py-5">
               <button type="button" className="flex w-full items-center justify-between text-left">
-                <span className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">Procedure Type</span>
+                <span className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">{t('procedureType')}</span>
                 <ChevronDown size={17} className="text-stone-500" />
               </button>
               <div className="mt-4 max-h-[420px] space-y-3 overflow-y-auto pr-2">
@@ -331,7 +337,7 @@ export default function ProcedureVideoGallery() {
                     >
                       {selectedProject === 'all' && <span className="h-2 w-2 bg-white" />}
                     </span>
-                    <span className={selectedProject === 'all' ? 'font-semibold text-stone-900' : ''}>All Procedures</span>
+                    <span className={selectedProject === 'all' ? 'font-semibold text-stone-900' : ''}>{t('allProcedures')}</span>
                   </button>
                 )}
                 {visibleProcedureOptions.map((procedure) => {
@@ -355,10 +361,10 @@ export default function ProcedureVideoGallery() {
                         </span>
                         <span className="min-w-0">
                           <span className={`block truncate ${active ? 'font-semibold text-stone-900' : ''}`}>
-                            {procedure.label}
+                            {translateProcedureLabel(procedure.label)}
                           </span>
                           <span className="block text-[10px] uppercase tracking-[0.16em] text-stone-400">
-                            {getProcedureDisplayArea(procedure)}
+                            {translateAreaLabel(getProcedureDisplayArea(procedure))}
                           </span>
                         </span>
                       </button>
@@ -369,7 +375,7 @@ export default function ProcedureVideoGallery() {
 
             <div className="border-b border-stone-200 py-5">
               <button type="button" className="flex w-full items-center justify-between text-left">
-                <span className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">Concern</span>
+                <span className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">{t('videoCasesConcern')}</span>
                 <ChevronDown size={17} className="text-stone-500" />
               </button>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -382,47 +388,9 @@ export default function ProcedureVideoGallery() {
                         : 'border-stone-200 bg-white text-stone-500'
                     }`}
                   >
-                    {concern}
+                    {t(`videoCasesConcern${concern.replace(/[^A-Za-z]/g, '')}` as TranslationKey)}
                   </span>
                 ))}
-              </div>
-            </div>
-
-            <div className="border-b border-stone-200 py-5">
-              <button type="button" className="flex w-full items-center justify-between text-left">
-                <span className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">Doctor</span>
-                <ChevronDown size={17} className="text-stone-500" />
-              </button>
-              <select
-                value={doctor}
-                onChange={(event) => {
-                  setDoctor(event.target.value);
-                  setPage(1);
-                }}
-                className="mt-4 h-11 w-full rounded-full border border-stone-200 bg-white px-4 text-sm text-stone-700 outline-none transition focus:border-[#173d31]"
-              >
-                <option value="all">All Doctors</option>
-                {doctors.map((item) => (
-                  <option key={item.slug} value={item.slug}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="py-5">
-              <label className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">Search</label>
-              <div className="mt-4 flex h-11 items-center rounded-full border border-stone-200 bg-white px-4">
-                <Search size={15} className="text-stone-400" />
-                <input
-                  value={query}
-                  onChange={(event) => {
-                    setQuery(event.target.value);
-                    setPage(1);
-                  }}
-                  className="min-w-0 flex-1 bg-transparent px-3 text-sm outline-none"
-                  placeholder="Doctor or case ID"
-                />
               </div>
             </div>
 
@@ -430,10 +398,10 @@ export default function ProcedureVideoGallery() {
               type="button"
               className="mt-1 flex h-12 w-full items-center justify-center gap-2 bg-[#173d31] text-xs font-bold uppercase tracking-[0.24em] text-white transition hover:bg-[#102a22] active:translate-y-px"
             >
-              Apply Filters
+              {t('videoCasesApplyFilters')}
             </button>
             <p className="mt-4 text-center text-sm font-semibold text-stone-500">
-              {filteredCases.length} Results
+              {filteredCases.length} {t('results')}
             </p>
           </div>
         </aside>
@@ -445,23 +413,23 @@ export default function ProcedureVideoGallery() {
               onClick={() => navigate('/gallery')}
               className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#173d31] transition hover:text-[#b8946f]"
             >
-              Video Case Library
+              {t('videoCasesLibrary')}
             </button>
             <div className="text-sm text-stone-500">
-              Showing{' '}
+              {t('videoCasesShowing')}{' '}
               <span className="font-semibold text-stone-800">
                 {paginatedCases.startItem}-{paginatedCases.endItem}
               </span>{' '}
-              of <span className="font-semibold text-stone-800">{filteredCases.length}</span> {activeProjectLabel} videos
+              {t('videoCasesOf')} <span className="font-semibold text-stone-800">{filteredCases.length}</span> {activeProjectLabel} {t('videoCasesVideos')}
             </div>
           </div>
 
           {filteredCases.length === 0 ? (
             <div className="flex min-h-[420px] flex-col items-center justify-center rounded-lg border border-dashed border-stone-300 bg-white text-center">
               <Video size={42} className="text-stone-300" />
-              <h3 className="mt-5 font-serif text-3xl text-[#10251e]">No video cases yet</h3>
+              <h3 className="mt-5 font-serif text-3xl text-[#10251e]">{t('videoCasesNoCasesTitle')}</h3>
               <p className="mt-3 max-w-md text-sm leading-6 text-stone-500">
-                No matching videos are available for this procedure filter.
+                {t('videoCasesNoCasesDescription')}
               </p>
             </div>
           ) : (
@@ -488,14 +456,14 @@ export default function ProcedureVideoGallery() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#101713] via-[#101713]/20 to-black/10" />
                       <div className="absolute inset-y-0 left-1/2 w-px bg-white/40" />
-                      <div className="absolute left-4 top-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/85">Before</div>
-                      <div className="absolute right-4 top-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/85">After</div>
+                      <div className="absolute left-4 top-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/85">{t('beforePhotos')}</div>
+                      <div className="absolute right-4 top-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/85">{t('afterPhotos')}</div>
                       <div className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/10 text-white backdrop-blur-sm transition group-hover:scale-110">
                         <Play size={20} fill="currentColor" />
                       </div>
                       <div className="absolute bottom-16 left-7 right-7">
                         <h3 className="font-serif text-3xl font-light leading-[1.08] text-white drop-shadow md:text-4xl">
-                          {formatTitle(item)}
+                          {formatTitle(item, t)}
                         </h3>
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 grid grid-cols-[1fr_auto_auto] items-center gap-3 border-t border-white/15 bg-[#111b17]/80 px-4 py-3 text-xs text-white/80 backdrop-blur-sm">
@@ -517,7 +485,7 @@ export default function ProcedureVideoGallery() {
               {paginatedCases.totalPages > 1 && (
                 <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-stone-200 pt-6 sm:flex-row">
                   <p className="text-sm font-semibold text-stone-500">
-                    Page {paginatedCases.currentPage} of {paginatedCases.totalPages}
+                    {t('videoCasesPage')} {paginatedCases.currentPage} {t('videoCasesOf')} {paginatedCases.totalPages}
                   </p>
                   <div className="flex items-center gap-2">
                     <button
@@ -526,7 +494,7 @@ export default function ProcedureVideoGallery() {
                       disabled={paginatedCases.currentPage === 1}
                       className="h-10 border border-stone-300 px-4 text-xs font-bold uppercase tracking-[0.18em] text-[#173d31] transition hover:border-[#173d31] disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                      Prev
+                      {t('prev')}
                     </button>
                     <button
                       type="button"
@@ -534,7 +502,7 @@ export default function ProcedureVideoGallery() {
                       disabled={paginatedCases.currentPage === paginatedCases.totalPages}
                       className="h-10 bg-[#173d31] px-4 text-xs font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[#102a22] disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                      Next
+                      {t('next')}
                     </button>
                   </div>
                 </div>
@@ -551,7 +519,7 @@ export default function ProcedureVideoGallery() {
               type="button"
               onClick={() => setActiveCase(null)}
               className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full bg-white text-stone-700 shadow-lg transition hover:text-[#173d31]"
-              aria-label="Close video"
+              aria-label={t('videoCasesCloseVideo')}
             >
               <X size={20} />
             </button>
@@ -566,7 +534,7 @@ export default function ProcedureVideoGallery() {
             <div className="grid gap-2 px-1 pt-4 md:grid-cols-[1fr_auto] md:items-end">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#b8946f]">{activeCase.projectName}</p>
-                <h3 className="mt-1 font-serif text-2xl text-[#10251e]">{formatTitle(activeCase)}</h3>
+                <h3 className="mt-1 font-serif text-2xl text-[#10251e]">{formatTitle(activeCase, t)}</h3>
                 <p className="mt-1 text-sm text-stone-500">{activeCase.doctorName}</p>
               </div>
               <p className="font-mono text-xs text-stone-400 md:text-right">{activeCase.id}</p>
