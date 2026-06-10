@@ -76,6 +76,7 @@ medical-crm-v2-smoke-deploy/
 
 # Tool/agent working directories
 .claude/
+.ops/
 .deploy-worktrees/
 .superpowers/
 .codex-worktrees/
