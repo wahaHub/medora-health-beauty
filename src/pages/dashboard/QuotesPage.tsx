@@ -11,15 +11,17 @@ import { useNavigate } from 'react-router-dom';
 import { usePatientCases } from '@/hooks/usePatientCases';
 import { crmApi } from '@/services/crmApiClient';
 import { FileText, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 export default function QuotesPage() {
+  const { dt } = useDashboardTranslation();
   const { data, isLoading, refetch } = usePatientCases();
   const navigate = useNavigate();
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20 text-stone-400">
-        Loading your quotes…
+        {dt('quotesLoading')}
       </div>
     );
   }
@@ -35,19 +37,18 @@ export default function QuotesPage() {
   if (allQuotes.length === 0) {
     return (
       <div>
-        <h1 className="text-2xl font-serif font-bold text-navy-900 mb-6">Quotes</h1>
+        <h1 className="text-2xl font-serif font-bold text-navy-900 mb-6">{dt('dashboardQuotes')}</h1>
         <div className="bg-white rounded-2xl p-12 text-center">
           <FileText className="mx-auto text-stone-300 mb-4" size={48} />
-          <p className="text-stone-500 text-lg">No quotes yet</p>
+          <p className="text-stone-500 text-lg">{dt('quotesNoQuotes')}</p>
           <p className="text-stone-400 text-sm mt-2 max-w-xs mx-auto">
-            Once hospitals review your case, they'll send treatment quotes here for you
-            to review.
+            {dt('quotesNoQuotesDescription')}
           </p>
           <button
             onClick={() => navigate('/dashboard')}
             className="mt-6 px-5 py-2.5 bg-gold-600 text-white rounded-xl text-sm font-medium hover:bg-gold-700 transition-colors"
           >
-            Go to dashboard
+            {dt('quotesGoToDashboard')}
           </button>
         </div>
       </div>
@@ -56,7 +57,7 @@ export default function QuotesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-serif font-bold text-navy-900 mb-6">Quotes</h1>
+      <h1 className="text-2xl font-serif font-bold text-navy-900 mb-6">{dt('dashboardQuotes')}</h1>
       <div className="space-y-6">
         {casesWithQuotes.map((c: any) => (
           <CaseQuoteSection key={c.id} caseData={c} onRefetch={refetch} />
@@ -77,6 +78,7 @@ function CaseQuoteSection({
   caseData: any;
   onRefetch: () => void;
 }) {
+  const { dt } = useDashboardTranslation();
   const [expanded, setExpanded] = useState(true);
   const quotes: any[] = c.quotes ?? [];
   const pendingCount = quotes.filter((q) => q.status === 'PENDING').length;
@@ -91,11 +93,11 @@ function CaseQuoteSection({
         <div className="flex items-center gap-3">
           <span className="text-sm font-mono text-stone-400">{c.caseNumber}</span>
           <span className="text-stone-700 font-medium text-sm">
-            {c.primaryDiagnosis || 'General Consultation'}
+            {c.primaryDiagnosis || dt('caseGeneralConsultation')}
           </span>
           {pendingCount > 0 && (
             <span className="bg-gold-100 text-gold-700 text-xs px-2 py-0.5 rounded-full">
-              {pendingCount} pending
+              {dt('quotesPending', { count: pendingCount })}
             </span>
           )}
         </div>
@@ -126,6 +128,7 @@ function QuoteRow({
   quote: any;
   onRefetch: () => void;
 }) {
+  const { dt } = useDashboardTranslation();
   const [confirming, setConfirming] = useState<'accept' | 'reject' | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -157,7 +160,7 @@ function QuoteRow({
   return (
     <div className="px-6 py-4 flex items-center justify-between gap-4">
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-stone-700 text-sm">{q.hospitalName || 'Hospital Quote'}</p>
+        <p className="font-medium text-stone-700 text-sm">{q.hospitalName || dt('hospitalQuote')}</p>
         <p className="text-xl font-bold text-navy-900 mt-0.5">
           ${q.totalAmount?.toLocaleString() ?? '—'}
         </p>
@@ -174,13 +177,13 @@ function QuoteRow({
               onClick={() => setConfirming('accept')}
               className="flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs hover:bg-green-700"
             >
-              <Check size={12} /> Accept
+              <Check size={12} /> {dt('quotesAccept')}
             </button>
             <button
               onClick={() => setConfirming('reject')}
               className="flex items-center gap-1 px-3 py-1.5 bg-stone-200 text-stone-700 rounded-lg text-xs hover:bg-stone-300"
             >
-              <X size={12} /> Reject
+              <X size={12} /> {dt('quotesReject')}
             </button>
           </>
         )}
@@ -191,16 +194,16 @@ function QuoteRow({
         <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center">
           <div className="bg-white rounded-2xl p-6 max-w-sm mx-4 w-full">
             <p className="text-lg font-medium text-stone-800 mb-2">
-              {confirming === 'accept' ? 'Accept this quote?' : 'Reject this quote?'}
+              {confirming === 'accept' ? dt('quotesAcceptQuestion') : dt('quotesRejectQuestion')}
             </p>
-            <p className="text-stone-500 text-sm mb-6">This action cannot be undone.</p>
+            <p className="text-stone-500 text-sm mb-6">{dt('confirmCannotUndo')}</p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setConfirming(null)}
                 disabled={loading}
                 className="px-4 py-2 text-stone-500 text-sm"
               >
-                Cancel
+                {dt('cancel')}
               </button>
               <button
                 onClick={handleAction}
@@ -211,7 +214,7 @@ function QuoteRow({
                     : 'bg-red-600 hover:bg-red-700'
                 } disabled:opacity-60`}
               >
-                {loading ? 'Processing…' : `Confirm ${confirming}`}
+                {loading ? dt('processing') : confirming === 'accept' ? dt('confirmAccept') : dt('confirmReject')}
               </button>
             </div>
           </div>

@@ -6,8 +6,10 @@ import { useQuote } from '@/hooks/useQuote';
 import { usePatientEntry } from '@/hooks/usePatientEntry';
 import { crmApi } from '@/services/crmApiClient';
 import { MessageCircle, FileText, Info, Check, X, ArrowLeft } from 'lucide-react';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 export default function CaseDetail() {
+  const { dt } = useDashboardTranslation();
   const { caseId } = useParams<{ caseId: string }>();
   const [activeTab, setActiveTab] = useState<'quote' | 'overview'>('overview');
   const { data: caseData, isLoading } = useCaseDetail(caseId!);
@@ -15,11 +17,11 @@ export default function CaseDetail() {
   const { openPanel } = usePatientEntry();
   const navigate = useNavigate();
 
-  if (isLoading) return <div className="text-center py-20 text-stone-400">Loading...</div>;
+  if (isLoading) return <div className="text-center py-20 text-stone-400">{dt('loading')}</div>;
 
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: Info },
-    { id: 'quote', label: 'Quotes', icon: FileText },
+    { id: 'overview', label: dt('caseOverview'), icon: Info },
+    { id: 'quote', label: dt('dashboardQuotes'), icon: FileText },
   ] as const;
 
   return (
@@ -29,19 +31,19 @@ export default function CaseDetail() {
         onClick={() => navigate('/dashboard')}
         className="flex items-center gap-1.5 text-stone-500 hover:text-stone-700 text-sm mb-4"
       >
-        <ArrowLeft size={15} /> Back to dashboard
+        <ArrowLeft size={15} /> {dt('backToDashboard')}
       </button>
 
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-serif font-bold text-navy-900">
-          Case {caseData?.caseNumber}
+          {dt('caseLabel')} {caseData?.caseNumber}
         </h1>
         {/* Messages shortcut — opens PatientMessagePanel */}
         <button
           onClick={openPanel}
           className="flex items-center gap-1.5 px-4 py-2 bg-gold-600 text-white rounded-xl text-sm hover:bg-gold-700 transition-colors"
         >
-          <MessageCircle size={14} /> Messages
+          <MessageCircle size={14} /> {dt('dashboardMessages')}
         </button>
       </div>
 
@@ -66,10 +68,10 @@ export default function CaseDetail() {
       {activeTab === 'overview' && (
         <div className="bg-white rounded-2xl p-6">
           <div className="grid gap-4">
-            <div><span className="text-stone-400 text-sm">Status</span><p className="text-stone-700">{caseData?.assignmentStatus}</p></div>
-            <div><span className="text-stone-400 text-sm">Stage</span><p className="text-stone-700">{caseData?.treatmentStage}</p></div>
-            <div><span className="text-stone-400 text-sm">Diagnosis</span><p className="text-stone-700">{caseData?.primaryDiagnosis || 'N/A'}</p></div>
-            <div><span className="text-stone-400 text-sm">Created</span><p className="text-stone-700">{new Date(caseData?.createdAt).toLocaleDateString()}</p></div>
+            <div><span className="text-stone-400 text-sm">{dt('caseStatus')}</span><p className="text-stone-700">{caseData?.assignmentStatus}</p></div>
+            <div><span className="text-stone-400 text-sm">{dt('caseStage')}</span><p className="text-stone-700">{caseData?.treatmentStage}</p></div>
+            <div><span className="text-stone-400 text-sm">{dt('caseDiagnosis')}</span><p className="text-stone-700">{caseData?.primaryDiagnosis || '—'}</p></div>
+            <div><span className="text-stone-400 text-sm">{dt('caseCreated')}</span><p className="text-stone-700">{new Date(caseData?.createdAt).toLocaleDateString()}</p></div>
           </div>
         </div>
       )}
@@ -78,6 +80,7 @@ export default function CaseDetail() {
 }
 
 function QuoteTab({ caseId, quoteData }: { caseId: string; quoteData: any }) {
+  const { dt } = useDashboardTranslation();
   const [confirming, setConfirming] = useState<{ action: 'accept' | 'reject'; quoteId: string } | null>(null);
   const queryClient = useQueryClient();
 
@@ -96,7 +99,7 @@ function QuoteTab({ caseId, quoteData }: { caseId: string; quoteData: any }) {
   const quotes = quoteData?.quotes ?? [];
 
   if (quotes.length === 0) {
-    return <div className="bg-white rounded-2xl p-12 text-center text-stone-400">No quotes received yet</div>;
+    return <div className="bg-white rounded-2xl p-12 text-center text-stone-400">{dt('quotesNoQuotesReceived')}</div>;
   }
 
   return (
@@ -105,7 +108,7 @@ function QuoteTab({ caseId, quoteData }: { caseId: string; quoteData: any }) {
         <div key={q.id} className="bg-white rounded-2xl p-6">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <p className="font-medium text-stone-700">{q.hospitalName || 'Hospital Quote'}</p>
+              <p className="font-medium text-stone-700">{q.hospitalName || dt('hospitalQuote')}</p>
               <p className="text-2xl font-bold text-navy-900 mt-1">${q.totalAmount?.toLocaleString()}</p>
             </div>
             <span className={`px-3 py-1 rounded-full text-xs ${
@@ -119,11 +122,11 @@ function QuoteTab({ caseId, quoteData }: { caseId: string; quoteData: any }) {
             <div className="flex gap-3 mt-4">
               <button onClick={() => setConfirming({ action: 'accept', quoteId: q.id })}
                 className="flex items-center gap-1 px-4 py-2 bg-green-600 text-white rounded-xl text-sm hover:bg-green-700">
-                <Check size={14} /> Accept
+                <Check size={14} /> {dt('quotesAccept')}
               </button>
               <button onClick={() => setConfirming({ action: 'reject', quoteId: q.id })}
                 className="flex items-center gap-1 px-4 py-2 bg-stone-200 text-stone-700 rounded-xl text-sm hover:bg-stone-300">
-                <X size={14} /> Reject
+                <X size={14} /> {dt('quotesReject')}
               </button>
             </div>
           )}
@@ -135,16 +138,16 @@ function QuoteTab({ caseId, quoteData }: { caseId: string; quoteData: any }) {
         <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center">
           <div className="bg-white rounded-2xl p-6 max-w-sm mx-4">
             <p className="text-lg font-medium text-stone-800 mb-2">
-              {confirming.action === 'accept' ? 'Accept this quote?' : 'Reject this quote?'}
+              {confirming.action === 'accept' ? dt('quotesAcceptQuestion') : dt('quotesRejectQuestion')}
             </p>
-            <p className="text-stone-500 text-sm mb-6">This action cannot be undone.</p>
+            <p className="text-stone-500 text-sm mb-6">{dt('confirmCannotUndo')}</p>
             <div className="flex gap-3 justify-end">
-              <button onClick={() => setConfirming(null)} className="px-4 py-2 text-stone-500 text-sm">Cancel</button>
+              <button onClick={() => setConfirming(null)} className="px-4 py-2 text-stone-500 text-sm">{dt('cancel')}</button>
               <button onClick={handleAction}
                 className={`px-4 py-2 rounded-xl text-white text-sm ${
                   confirming.action === 'accept' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
                 }`}>
-                Confirm {confirming.action}
+                {confirming.action === 'accept' ? dt('confirmAccept') : dt('confirmReject')}
               </button>
             </div>
           </div>

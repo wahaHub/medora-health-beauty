@@ -4,11 +4,13 @@ import { MessageSquare, MessageCircle } from 'lucide-react';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { usePatientEntry } from '@/hooks/usePatientEntry';
 import { usePatientConversations } from '@/hooks/usePatientConversations';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 import { ConversationList } from '@/components/messaging/ConversationList';
 import { ChatView } from '@/components/messaging/ChatView';
 import type { Conversation } from '@/services/crmApiClient';
 
 export default function MessagesPage() {
+  const { dt } = useDashboardTranslation();
   const { patient } = usePatientAuth();
   const { phase, openPanel } = usePatientEntry();
   const navigate = useNavigate();
@@ -17,7 +19,6 @@ export default function MessagesPage() {
 
   const { data: conversations = [], isLoading: listLoading } = usePatientConversations();
 
-  // Sort: admin conversation first, then by updatedAt desc
   const sortedConversations = useMemo<Conversation[]>(() => {
     const admin = conversations.filter((c) => c.type === 'patient-admin');
     const others = conversations
@@ -30,7 +31,6 @@ export default function MessagesPage() {
     return [...admin, ...others];
   }, [conversations]);
 
-  // Determine active conversation
   const [activeConv, setActiveConv] = useState<Conversation | null>(null);
 
   useEffect(() => {
@@ -45,7 +45,6 @@ export default function MessagesPage() {
         return;
       }
     }
-    // Default to admin or first
     const admin = sortedConversations.find((c) => c.type === 'patient-admin');
     setActiveConv(admin ?? sortedConversations[0]);
   }, [sortedConversations, urlConvId]);
@@ -58,22 +57,21 @@ export default function MessagesPage() {
   if (!patient) {
     return (
       <div className="flex items-center justify-center py-24 text-stone-400">
-        Please sign in to view your messages.
+        {dt('loginSignInTitle')}
       </div>
     );
   }
 
   return (
     <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden h-[calc(100vh-180px)] min-h-[480px] flex">
-      {/* Left: Conversation List */}
       <div className="w-full md:w-72 lg:w-80 border-r border-stone-100 flex flex-col shrink-0">
         <div className="px-4 py-3 border-b border-stone-100">
-          <h2 className="text-sm font-semibold text-stone-800">Conversations</h2>
+          <h2 className="text-sm font-semibold text-stone-800">{dt('dashboardMessages')}</h2>
         </div>
         <div className="flex-1 overflow-hidden">
           {listLoading ? (
             <div className="flex items-center justify-center h-full text-stone-400 text-sm">
-              Loading conversations...
+              {dt('loading')}
             </div>
           ) : (
             <ConversationList
@@ -85,7 +83,6 @@ export default function MessagesPage() {
         </div>
       </div>
 
-      {/* Right: Chat Thread */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {activeConv ? (
           <ChatView conversation={activeConv} />
@@ -95,6 +92,7 @@ export default function MessagesPage() {
             phase={phase}
             onStartChat={openPanel}
             onGoHome={() => navigate('/')}
+            dt={dt}
           />
         )}
       </div>
@@ -107,11 +105,13 @@ function EmptyState({
   phase,
   onStartChat,
   onGoHome,
+  dt,
 }: {
   hasConversations: boolean;
   phase: string;
   onStartChat: () => void;
   onGoHome: () => void;
+  dt: (key: string, vars?: Record<string, string | number>) => string;
 }) {
   const isReady = phase === 'messages-ready';
 
@@ -122,10 +122,10 @@ function EmptyState({
           <MessageSquare size={28} className="text-gold-600" />
         </div>
         <h3 className="text-lg font-serif font-semibold text-navy-900 mb-1">
-          No conversation selected
+          {dt('messagesNoConversationSelected')}
         </h3>
         <p className="text-stone-500 text-sm max-w-xs">
-          Select a conversation from the list to start messaging your care team.
+          {dt('messagesSelectConversation')}
         </p>
       </div>
     );
@@ -137,12 +137,12 @@ function EmptyState({
         <MessageCircle size={32} className="text-gold-600" />
       </div>
       <h3 className="text-lg font-serif font-semibold text-navy-900 mb-2">
-        No conversations yet
+        {dt('messagesNoConversationsTitle')}
       </h3>
       <p className="text-stone-500 text-sm max-w-xs mb-6">
         {isReady
-          ? 'Start chatting with your care coordinator or hospitals.'
-          : 'Complete your onboarding to start messaging your care team.'}
+          ? dt('messagesOpenDescription')
+          : dt('messagesOnboardingDescription')}
       </p>
       {isReady ? (
         <button
@@ -150,14 +150,14 @@ function EmptyState({
           className="px-5 py-2.5 bg-gold-600 text-white rounded-xl text-sm font-medium hover:bg-gold-700 transition-colors flex items-center gap-2"
         >
           <MessageCircle size={16} />
-          Start Chatting
+          {dt('dashboardOpenMessages')}
         </button>
       ) : (
         <button
           onClick={onGoHome}
           className="px-5 py-2.5 bg-gold-600 text-white rounded-xl text-sm font-medium hover:bg-gold-700 transition-colors"
         >
-          Get Started
+          {dt('dashboardStartIntake')}
         </button>
       )}
     </div>

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { FileText, Image as ImageIcon } from 'lucide-react';
 import type { Message, MessageAttachment } from '@/services/crmApiClient';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 interface MessageListProps {
   messages: Message[];
@@ -12,13 +13,13 @@ function formatTime(dateStr: string) {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-function formatDate(dateStr: string) {
+function formatDate(dateStr: string, labels: { today: string; yesterday: string }) {
   const d = new Date(dateStr);
   const today = new Date();
-  if (d.toDateString() === today.toDateString()) return 'Today';
+  if (d.toDateString() === today.toDateString()) return labels.today;
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
-  if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+  if (d.toDateString() === yesterday.toDateString()) return labels.yesterday;
   return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
 }
 
@@ -96,6 +97,7 @@ function AttachmentCard({ attachment, isPatient }: { attachment: MessageAttachme
 }
 
 export function MessageList({ messages, isLoading }: MessageListProps) {
+  const { dt } = useDashboardTranslation();
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -115,7 +117,10 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
   return (
     <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
       {messages.map((msg) => {
-        const msgDate = formatDate(msg.createdAt);
+        const msgDate = formatDate(msg.createdAt, {
+          today: dt('messageToday'),
+          yesterday: dt('messageYesterday'),
+        });
         const showDateSep = msgDate !== lastDate;
         lastDate = msgDate;
         const isPatient = msg.senderType === 'patient';

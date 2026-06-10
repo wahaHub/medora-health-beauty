@@ -8,11 +8,7 @@ import {
 } from '@/hooks/usePatientPhase2';
 import { usePatientCases } from '@/hooks/usePatientCases';
 import type { PatientTicketType } from '@/services/patientPhase2Api';
-
-const STATUS_LABEL: Record<string, string> = {
-  OPEN: 'Open', ASSIGNED: 'Assigned', IN_PROGRESS: 'In Progress',
-  PENDING_INFO: 'Pending Info', RESOLVED: 'Resolved', CLOSED: 'Closed',
-};
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 const STATUS_COLOR: Record<string, string> = {
   OPEN: 'bg-blue-100 text-blue-700', ASSIGNED: 'bg-purple-100 text-purple-700',
@@ -26,6 +22,7 @@ const TICKET_TYPES: PatientTicketType[] = [
 ];
 
 export default function TicketsPage() {
+  const { dt } = useDashboardTranslation();
   const { data, isLoading } = usePatientTickets();
   const { data: casesData } = usePatientCases();
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -44,6 +41,14 @@ export default function TicketsPage() {
 
   const tickets = data?.data ?? [];
   const cases = Array.isArray(casesData) ? casesData : (casesData?.cases ?? []);
+  const statusLabel = (status: string) => ({
+    OPEN: dt('ticketsOpen'),
+    ASSIGNED: dt('ticketsAssigned'),
+    IN_PROGRESS: dt('ticketsInProgress'),
+    PENDING_INFO: dt('ticketsPendingInfo'),
+    RESOLVED: dt('ticketsResolved'),
+    CLOSED: dt('ticketsClosed'),
+  }[status] ?? status);
 
   const handleCreate = async () => {
     if (!newTicket.subject || !newTicket.description) return;
@@ -61,15 +66,15 @@ export default function TicketsPage() {
     setReplyContent('');
   };
 
-  if (isLoading) return <div className="text-center py-20 text-stone-400">Loading tickets…</div>;
+  if (isLoading) return <div className="text-center py-20 text-stone-400">{dt('ticketsLoading')}</div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-serif font-bold text-navy-900">Support Tickets</h1>
+        <h1 className="text-2xl font-serif font-bold text-navy-900">{dt('ticketsTitle')}</h1>
         <button onClick={() => setShowCreate(true)}
           className="flex items-center gap-2 bg-gold-600 hover:bg-gold-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">
-          <Plus size={16} /> New Ticket
+          <Plus size={16} /> {dt('ticketsNew')}
         </button>
       </div>
 
@@ -78,8 +83,8 @@ export default function TicketsPage() {
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 w-full max-w-lg space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-navy-900">New Support Ticket</h2>
-              <button onClick={() => setShowCreate(false)}><X size={18} /></button>
+              <h2 className="text-lg font-semibold text-navy-900">{dt('ticketsNew')}</h2>
+              <button aria-label={dt('close')} onClick={() => setShowCreate(false)}><X size={18} /></button>
             </div>
             <select value={newTicket.type} onChange={e => setNewTicket(t => ({ ...t, type: e.target.value as PatientTicketType }))}
               className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm">
@@ -90,22 +95,22 @@ export default function TicketsPage() {
               onChange={e => setNewTicket(t => ({ ...t, caseId: e.target.value }))}
               className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm"
             >
-              <option value="">No linked case</option>
+              <option value="">{dt('noLinkedCase')}</option>
               {cases.map((caseItem: any) => (
                 <option key={caseItem.id} value={caseItem.id}>
                   {caseItem.caseNumber}
                 </option>
               ))}
             </select>
-            <input placeholder="Subject" value={newTicket.subject}
+            <input placeholder={dt('ticketsSubject')} value={newTicket.subject}
               onChange={e => setNewTicket(t => ({ ...t, subject: e.target.value }))}
               className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm" />
-            <textarea placeholder="Describe your issue…" rows={4} value={newTicket.description}
+            <textarea placeholder={dt('ticketsDescribeIssue')} rows={4} value={newTicket.description}
               onChange={e => setNewTicket(t => ({ ...t, description: e.target.value }))}
               className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm resize-none" />
             <button onClick={handleCreate} disabled={createMutation.isPending}
               className="w-full bg-gold-600 hover:bg-gold-700 text-white py-2.5 rounded-xl font-medium transition-colors disabled:opacity-50">
-              {createMutation.isPending ? 'Submitting…' : 'Submit Ticket'}
+              {createMutation.isPending ? dt('processing') : dt('ticketsCreate')}
             </button>
           </div>
         </div>
@@ -116,8 +121,8 @@ export default function TicketsPage() {
         <div className="fixed inset-0 bg-black/40 z-40 flex items-end sm:items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
             <div className="flex items-center justify-between p-6 border-b border-stone-100">
-              <h2 className="font-semibold text-navy-900">{detail.ticket.subject ?? 'Ticket'}</h2>
-              <button onClick={() => setSelectedId(null)}><X size={18} /></button>
+              <h2 className="font-semibold text-navy-900">{detail.ticket.subject ?? dt('ticket')}</h2>
+              <button aria-label={dt('close')} onClick={() => setSelectedId(null)}><X size={18} /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-3">
               <div className="bg-stone-50 rounded-xl p-4 text-sm text-stone-700">{detail.ticket.description}</div>
@@ -131,10 +136,10 @@ export default function TicketsPage() {
             {!['RESOLVED', 'CLOSED'].includes(detail.ticket.status) && (
               <div className="p-4 border-t border-stone-100 flex gap-2">
                 <input value={replyContent} onChange={e => setReplyContent(e.target.value)}
-                  placeholder="Reply…" className="flex-1 border border-stone-200 rounded-xl px-4 py-2 text-sm" />
+                  placeholder={dt('reply')} className="flex-1 border border-stone-200 rounded-xl px-4 py-2 text-sm" />
                 <button onClick={handleReply} disabled={replyMutation.isPending || !replyContent.trim()}
                   className="bg-gold-600 hover:bg-gold-700 text-white px-4 py-2 rounded-xl text-sm transition-colors disabled:opacity-50">
-                  Send
+                  {dt('send')}
                 </button>
               </div>
             )}
@@ -145,7 +150,7 @@ export default function TicketsPage() {
       {tickets.length === 0 ? (
         <div className="bg-white rounded-2xl p-12 text-center">
           <Ticket className="mx-auto text-stone-300 mb-3" size={40} />
-          <p className="text-stone-400">No tickets yet. Open one if you need help.</p>
+          <p className="text-stone-400">{dt('ticketsNoTickets')}</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -157,7 +162,7 @@ export default function TicketsPage() {
                 <p className="text-xs text-stone-400 mt-0.5">{t.type.replace(/_/g, ' ')} · {new Date(t.createdAt).toLocaleDateString()}</p>
               </div>
               <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_COLOR[t.status] ?? 'bg-stone-100 text-stone-500'}`}>
-                {STATUS_LABEL[t.status] ?? t.status}
+                {statusLabel(t.status)}
               </span>
               <ChevronRight size={16} className="text-stone-300 flex-shrink-0" />
             </button>

@@ -5,10 +5,11 @@ import { useMessages } from '@/hooks/useMessages';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 import {
-  getPatientConversationThreadLabel,
   getPatientConversationTitle,
+  isAdminPatientConversation,
   type Conversation,
 } from '@/services/crmApiClient';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 interface ChatViewProps {
   conversation: Pick<Conversation, 'id' | 'type' | 'category' | 'hospitalName' | 'title'>;
@@ -27,6 +28,7 @@ function extractMessages(data: any): any[] {
  * Renders the message thread for a single conversation.
  */
 export function ChatView({ conversation }: ChatViewProps) {
+  const { dt } = useDashboardTranslation();
   const queryClient = useQueryClient();
   const { data, isLoading, refetch } = useMessages(conversation.id);
   const [draft, setDraft] = useState('');
@@ -35,8 +37,12 @@ export function ChatView({ conversation }: ChatViewProps) {
       new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
   );
 
-  const title = getPatientConversationTitle(conversation);
-  const threadLabel = getPatientConversationThreadLabel(conversation);
+  const title = isAdminPatientConversation(conversation)
+    ? dt('messageSupportTitle')
+    : getPatientConversationTitle(conversation);
+  const threadLabel = isAdminPatientConversation(conversation)
+    ? dt('messageAdminThread')
+    : dt('messageHospitalThread');
   const starterPrompts =
     conversation.type === 'patient-admin'
       ? [
@@ -104,7 +110,7 @@ export function ChatView({ conversation }: ChatViewProps) {
       <MessageInput
         conversationId={conversation.id}
         onMessageSent={handleMessageSent}
-        placeholder={`Message ${title}...`}
+        placeholder={dt('messagePlaceholder')}
         draftValue={draft}
         onDraftChange={setDraft}
       />

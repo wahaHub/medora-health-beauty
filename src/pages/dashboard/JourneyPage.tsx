@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { MapPin, Calendar, Plane, Hotel, Car, Heart, FileText } from 'lucide-react';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { usePatientJourney, usePatientMilestones } from '@/hooks/usePatientPhase2';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 const SECTION_ICONS: Record<string, ReactNode> = {
   visa: <FileText size={16} />,
@@ -11,15 +12,8 @@ const SECTION_ICONS: Record<string, ReactNode> = {
   postCare: <Heart size={16} />,
 };
 
-const SECTION_LABELS: Record<string, string> = {
-  visa: 'Visa',
-  insurance: 'Insurance',
-  accommodation: 'Accommodation',
-  transportation: 'Transportation',
-  postCare: 'Post-Operative Care',
-};
-
 export default function JourneyPage() {
+  const { dt } = useDashboardTranslation();
   const { patient } = usePatientAuth();
   const caseId = patient?.caseId ?? null;
 
@@ -27,18 +21,25 @@ export default function JourneyPage() {
   const { data: milestones, isLoading: milestonesLoading } = usePatientMilestones(caseId);
 
   const isLoading = journeyLoading || milestonesLoading;
+  const sectionLabels: Record<string, string> = {
+    visa: dt('journeyVisa'),
+    insurance: dt('journeyInsurance'),
+    accommodation: dt('journeyAccommodation'),
+    transportation: dt('journeyTransportation'),
+    postCare: dt('journeyPostCare'),
+  };
 
   if (!caseId) {
     return (
       <div className="text-center py-20">
         <Plane className="mx-auto text-stone-300 mb-3" size={40} />
-        <p className="text-stone-400">No active case found.</p>
+        <p className="text-stone-400">{dt('noActiveCase')}</p>
       </div>
     );
   }
 
   if (isLoading) {
-    return <div className="text-center py-20 text-stone-400">Loading journey…</div>;
+    return <div className="text-center py-20 text-stone-400">{dt('journeyLoading')}</div>;
   }
 
   const journeySections = journey
@@ -51,12 +52,12 @@ export default function JourneyPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-serif font-bold text-navy-900">My Journey</h1>
+      <h1 className="text-2xl font-serif font-bold text-navy-900">{dt('journeyMyJourney')}</h1>
 
       {/* Journey sections */}
       {journeySections.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-base font-semibold text-stone-700">Travel Details</h2>
+          <h2 className="text-base font-semibold text-stone-700">{dt('journeyTravelDetails')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {journeySections.map((key) => {
               const data = (journey as any)[key];
@@ -64,7 +65,7 @@ export default function JourneyPage() {
                 <div key={key} className="bg-white rounded-2xl p-5 border border-stone-100">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-gold-600">{SECTION_ICONS[key]}</span>
-                    <h3 className="text-sm font-semibold text-stone-800">{SECTION_LABELS[key]}</h3>
+                    <h3 className="text-sm font-semibold text-stone-800">{sectionLabels[key]}</h3>
                   </div>
                   {typeof data === 'object' ? (
                     <ul className="space-y-1">
@@ -89,11 +90,11 @@ export default function JourneyPage() {
 
       {/* Milestones timeline */}
       <section className="space-y-3">
-        <h2 className="text-base font-semibold text-stone-700">Timeline</h2>
+        <h2 className="text-base font-semibold text-stone-700">{dt('journeyTimeline')}</h2>
         {visibleMilestones.length === 0 ? (
           <div className="bg-white rounded-2xl p-12 text-center">
             <Calendar className="mx-auto text-stone-300 mb-3" size={40} />
-            <p className="text-stone-400">No milestones yet. Your coordinator will update your journey here.</p>
+            <p className="text-stone-400">{dt('journeyNoMilestones')}</p>
           </div>
         ) : (
           <div className="relative">
@@ -126,8 +127,8 @@ export default function JourneyPage() {
       {!journey && visibleMilestones.length === 0 && (
         <div className="bg-white rounded-2xl p-12 text-center">
           <MapPin className="mx-auto text-stone-300 mb-3" size={40} />
-          <p className="text-stone-500 font-medium mb-1">Your journey starts here</p>
-          <p className="text-stone-400 text-sm">Travel arrangements and your treatment timeline will appear once your case is confirmed.</p>
+          <p className="text-stone-500 font-medium mb-1">{dt('journeyStartsHere')}</p>
+          <p className="text-stone-400 text-sm">{dt('journeyStartsHereDescription')}</p>
         </div>
       )}
     </div>

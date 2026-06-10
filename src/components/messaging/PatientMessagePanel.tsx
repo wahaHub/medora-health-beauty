@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MessageSquare, ShoppingBag, Package } from 'lucide-react';
 import { usePatientEntry } from '@/hooks/usePatientEntry';
 import { usePatientConversations } from '@/hooks/usePatientConversations';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 import { PanelHeader } from './PanelHeader';
 import { ConversationList } from './ConversationList';
 import { ChatView } from './ChatView';
@@ -25,6 +26,7 @@ import {
  */
 export function PatientMessagePanel() {
   const navigate = useNavigate();
+  const { dt } = useDashboardTranslation();
   const {
     isPanelOpen,
     closePanel,
@@ -82,13 +84,13 @@ export function PatientMessagePanel() {
             onClick={() => { closePanel(); navigate('/packages'); }}
             className="flex items-center gap-1.5 text-xs text-gold-700 font-medium bg-gold-50 hover:bg-gold-100 border border-gold-200 px-3 py-1.5 rounded-lg transition-colors"
           >
-            <Package size={13} /> Browse Packages
+            <Package size={13} /> {dt('browsePackages')}
           </button>
           <button
             onClick={() => { closePanel(); navigate('/dashboard/orders'); }}
             className="flex items-center gap-1.5 text-xs text-stone-600 font-medium bg-white hover:bg-stone-100 border border-stone-200 px-3 py-1.5 rounded-lg transition-colors"
           >
-            <ShoppingBag size={13} /> View Orders
+            <ShoppingBag size={13} /> {dt('viewOrders')}
           </button>
         </div>
 
@@ -102,7 +104,7 @@ export function PatientMessagePanel() {
               <MessageSquare className="w-8 h-8 text-stone-400" />
             </div>
             <p className="text-stone-500 text-sm">
-              No conversations yet. Complete the onboarding to start chatting with hospitals.
+              {dt('messagesNoConversations')}
             </p>
           </div>
         ) : (
@@ -123,7 +125,7 @@ export function PatientMessagePanel() {
                 <ChatView conversation={activeConversation} />
               ) : (
                 <div className="flex-1 flex items-center justify-center text-stone-400 text-sm">
-                  Select a conversation to start messaging.
+                  {dt('messagesSelectConversation')}
                 </div>
               )}
             </div>

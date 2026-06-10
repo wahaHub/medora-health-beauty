@@ -1,9 +1,9 @@
 import {
-  getPatientConversationThreadLabel,
   getPatientConversationTitle,
   isAdminPatientConversation,
   type Conversation,
 } from '@/services/crmApiClient';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -24,10 +24,12 @@ export function ConversationList({
   onSelect,
   variant = 'sidebar',
 }: ConversationListProps) {
+  const { dt } = useDashboardTranslation();
+
   if (conversations.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-stone-400 text-sm px-4 text-center">
-        No conversations yet.
+        {dt('messagesNoConversations')}
       </div>
     );
   }
@@ -41,17 +43,19 @@ export function ConversationList({
         <div className="mb-2 flex items-center justify-between gap-3">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">
-              Sessions
+              {dt('messagesSessions')}
             </p>
             <p className="text-xs text-stone-500">
-              Switch between your support thread and hospital threads for this case.
+              {dt('messagesSwitchThreads')}
             </p>
           </div>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-1">
           {conversations.map((conv) => {
             const isActive = conv.id === activeId;
-            const displayName = getPatientConversationTitle(conv);
+            const isAdmin = isAdminPatientConversation(conv);
+            const displayName = isAdmin ? dt('messageSupportTitle') : getPatientConversationTitle(conv);
+            const threadLabel = isAdmin ? dt('messageAdminThread') : dt('messageHospitalThread');
 
             return (
               <button
@@ -67,7 +71,7 @@ export function ConversationList({
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{displayName}</p>
                     <p className="mt-0.5 text-[11px] text-stone-500">
-                      {getPatientConversationThreadLabel(conv)}
+                      {threadLabel}
                     </p>
                   </div>
                   {(conv.unreadCount ?? 0) > 0 && (
@@ -89,7 +93,8 @@ export function ConversationList({
       {conversations.map((conv) => {
         const isActive = conv.id === activeId;
         const isAdmin = isAdminPatientConversation(conv);
-        const displayName = getPatientConversationTitle(conv);
+        const displayName = isAdmin ? dt('messageSupportTitle') : getPatientConversationTitle(conv);
+        const threadLabel = isAdmin ? dt('messageAdminThread') : dt('messageHospitalThread');
         const lastMessageText = conv.lastMessage?.content ?? undefined;
 
         return (
@@ -111,7 +116,7 @@ export function ConversationList({
               )}
             </div>
             <p className={`text-[10px] mb-0.5 ${isAdmin ? 'text-gold-600/70' : 'text-stone-400'}`}>
-              {getPatientConversationThreadLabel(conv)}
+              {threadLabel}
             </p>
             {lastMessageText && (
               <p className="text-xs text-stone-500 truncate">{lastMessageText}</p>

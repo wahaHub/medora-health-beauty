@@ -9,6 +9,7 @@ import {
 import { usePatientCases } from '@/hooks/usePatientCases';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import type { IntakeQuestion } from '@/services/crmApiClient';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 // ---------------------------------------------------------------------------
 // Question renderer
@@ -22,6 +23,7 @@ interface QuestionFieldProps {
 }
 
 function QuestionField({ question, value, onChange, readOnly }: QuestionFieldProps) {
+  const { dt } = useDashboardTranslation();
   const baseInput =
     'w-full border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-gold-500/50 disabled:bg-stone-50 disabled:text-stone-500';
 
@@ -45,7 +47,7 @@ function QuestionField({ question, value, onChange, readOnly }: QuestionFieldPro
           value={(value as string) ?? ''}
           onChange={(e) => onChange(question.id, e.target.value)}
         >
-          <option value="">Select an option…</option>
+          <option value="">{dt('intakeSelectOption')}</option>
           {(question.options ?? []).map((opt) => (
             <option key={opt} value={opt}>
               {opt}
@@ -83,8 +85,8 @@ function QuestionField({ question, value, onChange, readOnly }: QuestionFieldPro
       const boolVal = value as boolean | null | undefined;
       return (
         <div className="flex gap-4">
-          {(['Yes', 'No'] as const).map((label) => {
-            const isYes = label === 'Yes';
+          {(['yes', 'no'] as const).map((label) => {
+            const isYes = label === 'yes';
             const active = boolVal === isYes;
             return (
               <button
@@ -98,7 +100,7 @@ function QuestionField({ question, value, onChange, readOnly }: QuestionFieldPro
                     : 'border-stone-200 text-stone-600 hover:border-gold-400'
                 } disabled:opacity-60 disabled:cursor-not-allowed`}
               >
-                {label}
+                {label === 'yes' ? dt('yes') : dt('no')}
               </button>
             );
           })}
@@ -121,7 +123,7 @@ function QuestionField({ question, value, onChange, readOnly }: QuestionFieldPro
       if (readOnly) {
         return (
           <p className="text-sm text-stone-500 italic">
-            {value ? String(value) : 'No file uploaded'}
+            {value ? String(value) : dt('intakeNoFileUploaded')}
           </p>
         );
       }
@@ -155,6 +157,7 @@ function QuestionField({ question, value, onChange, readOnly }: QuestionFieldPro
 // ---------------------------------------------------------------------------
 
 export default function IntakePage() {
+  const { dt } = useDashboardTranslation();
   const [searchParams] = useSearchParams();
   const { patient } = usePatientAuth();
   const { data: casesData, isLoading: casesLoading } = usePatientCases();
@@ -198,7 +201,7 @@ export default function IntakePage() {
     try {
       await saveMutation.mutateAsync({ answers, status });
     } catch (err: unknown) {
-      setSaveError(err instanceof Error ? err.message : 'Failed to save. Please try again.');
+      setSaveError(err instanceof Error ? err.message : dt('saveFailed'));
     }
   };
 
@@ -207,21 +210,21 @@ export default function IntakePage() {
   // ---------------------------------------------------------------------------
 
   if (isLoading) {
-    return <div className="text-center py-20 text-stone-400">Loading intake form…</div>;
+    return <div className="text-center py-20 text-stone-400">{dt('intakeLoading')}</div>;
   }
 
   if (templateError || !template) {
     if (!caseId) {
       return (
         <div className="text-center py-20 text-stone-400">
-          No case is available for intake yet.
+          {dt('intakeNoCase')}
         </div>
       );
     }
 
     return (
       <div className="text-center py-20 text-red-400">
-        Unable to load intake form. Please try again later.
+        {dt('intakeUnableToLoad')}
       </div>
     );
   }
@@ -231,13 +234,13 @@ export default function IntakePage() {
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl p-12 text-center">
           <CheckCircle className="mx-auto text-green-500 mb-4" size={48} />
-          <h2 className="text-xl font-serif font-bold text-navy-900 mb-2">Intake Submitted</h2>
+          <h2 className="text-xl font-serif font-bold text-navy-900 mb-2">{dt('intakeSubmitted')}</h2>
           <p className="text-stone-500 mb-6">
-            Your medical intake form has been submitted
-            {intakeResponse?.submittedAt
-              ? ` on ${new Date(intakeResponse.submittedAt).toLocaleDateString()}`
-              : ''}
-            .
+            {dt('intakeSubmittedDescription', {
+              date: intakeResponse?.submittedAt
+                ? dt('submittedOn', { date: new Date(intakeResponse.submittedAt).toLocaleDateString() })
+                : '',
+            })}
           </p>
           <div className="text-left space-y-8">
             {template.sections.map((section) => (
@@ -251,9 +254,9 @@ export default function IntakePage() {
                     const display = Array.isArray(val)
                       ? val.join(', ')
                       : val === true
-                      ? 'Yes'
+                      ? dt('yes')
                       : val === false
-                      ? 'No'
+                      ? dt('no')
                       : (val as string) ?? '—';
                     return (
                       <div key={q.id}>
@@ -277,17 +280,17 @@ export default function IntakePage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-serif font-bold text-navy-900">Medical Intake Form</h1>
+        <h1 className="text-2xl font-serif font-bold text-navy-900">{dt('intakeTitle')}</h1>
         {intakeResponse?.status === 'draft' && (
           <span className="text-xs bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full font-medium">
-            Draft saved
+            {dt('draftSaved')}
           </span>
         )}
       </div>
 
       {template.sections.length === 0 ? (
         <div className="bg-white rounded-2xl p-8 text-center text-stone-400">
-          No intake questions available for this case.
+          {dt('intakeNoQuestions')}
         </div>
       ) : (
         <form
@@ -334,14 +337,14 @@ export default function IntakePage() {
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-stone-200 text-stone-600 text-sm font-medium hover:border-stone-300 transition-colors disabled:opacity-50"
             >
               <Save size={16} />
-              Save Draft
+              {dt('intakeSaveDraft')}
             </button>
             <button
               type="submit"
               disabled={isSaving}
               className="flex-1 bg-gold-600 hover:bg-gold-700 text-white py-2.5 rounded-xl font-medium transition-colors disabled:opacity-50"
             >
-              {isSaving ? 'Saving…' : 'Submit'}
+              {isSaving ? dt('intakeSaving') : dt('intakeSubmit')}
             </button>
           </div>
         </form>

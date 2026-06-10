@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { Paperclip, Send, X } from 'lucide-react';
 import { crmApi } from '@/services/crmApiClient';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 interface MessageInputProps {
   conversationId: string;
@@ -48,12 +49,16 @@ async function uploadAttachment(
 export function MessageInput({
   conversationId,
   onMessageSent,
-  placeholder = 'Type a message...',
+  placeholder,
   draftValue,
   onDraftChange,
-  attachFilesLabel = 'Attach files',
-  sendLabel = 'Send message',
+  attachFilesLabel,
+  sendLabel,
 }: MessageInputProps) {
+  const { dt } = useDashboardTranslation();
+  const effectivePlaceholder = placeholder ?? dt('messagePlaceholder');
+  const effectiveAttachFilesLabel = attachFilesLabel ?? dt('messageAttachFiles');
+  const effectiveSendLabel = sendLabel ?? dt('messageSend');
   const [content, setContent] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
@@ -108,9 +113,7 @@ export function MessageInput({
       resetComposer();
       onMessageSent?.(newMessage);
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : 'Failed to send message',
-      );
+      setErrorMessage(error instanceof Error ? error.message : dt('messageSendFailed'));
     } finally {
       setSending(false);
     }
@@ -170,14 +173,14 @@ export function MessageInput({
           type="file"
           multiple
           className="sr-only"
-          aria-label={attachFilesLabel}
+          aria-label={effectiveAttachFilesLabel}
           onChange={handleFileChange}
         />
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           className="rounded-full p-2 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-700"
-          aria-label={attachFilesLabel}
+          aria-label={effectiveAttachFilesLabel}
         >
           <Paperclip size={16} />
         </button>
@@ -186,7 +189,7 @@ export function MessageInput({
           value={value}
           onChange={handleInput}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={effectivePlaceholder}
           rows={1}
           className="flex-1 bg-transparent outline-none text-sm text-stone-700 placeholder-stone-400 resize-none max-h-[120px]"
         />
@@ -198,7 +201,7 @@ export function MessageInput({
               ? 'bg-gold-600 text-white hover:bg-gold-700'
               : 'bg-stone-200 text-stone-400'
           }`}
-          aria-label={sendLabel}
+          aria-label={effectiveSendLabel}
         >
           <Send size={16} />
         </button>

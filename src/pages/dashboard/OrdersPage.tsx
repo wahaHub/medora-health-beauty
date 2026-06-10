@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ShoppingBag, CreditCard, ChevronRight, X } from 'lucide-react';
 import { usePatientOrders, usePatientOrder, useCreatePaymentIntent } from '@/hooks/usePatientPhase2';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 const STATUS_COLOR: Record<string, string> = {
   PENDING_PAYMENT: 'bg-orange-100 text-orange-700',
@@ -13,6 +14,7 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 export default function OrdersPage() {
+  const { dt } = useDashboardTranslation();
   const [searchParams] = useSearchParams();
   const { data, isLoading } = usePatientOrders();
   const [selectedId, setSelectedId] = useState<string | null>(searchParams.get('orderId'));
@@ -33,33 +35,33 @@ export default function OrdersPage() {
     setPaymentError(null);
     try {
       await paymentMutation.mutateAsync(selectedId);
-      setPaymentResult('Payment preparation is ready for this order. Checkout will consume the payment intent privately.');
+      setPaymentResult(dt('ordersPaymentReady'));
     } catch (e: any) {
-      setPaymentError(e.message ?? 'Failed to initialize payment');
+      setPaymentError(e.message ?? dt('ordersPaymentFailed'));
     }
   };
 
-  if (isLoading) return <div className="text-center py-20 text-stone-400">Loading orders…</div>;
+  if (isLoading) return <div className="text-center py-20 text-stone-400">{dt('ordersLoading')}</div>;
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-serif font-bold text-navy-900">Orders</h1>
+      <h1 className="text-2xl font-serif font-bold text-navy-900">{dt('ordersTitle')}</h1>
 
       {/* Detail modal */}
       {selectedId && order && (
         <div className="fixed inset-0 bg-black/40 z-40 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-semibold text-navy-900">Order #{order.orderNumber}</h2>
-              <button onClick={() => { setSelectedId(null); setPaymentResult(null); }}><X size={18} /></button>
+              <h2 className="font-semibold text-navy-900">{dt('ordersOrder', { number: order.orderNumber })}</h2>
+              <button aria-label={dt('close')} onClick={() => { setSelectedId(null); setPaymentResult(null); }}><X size={18} /></button>
             </div>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-stone-400">Type</span><span className="text-stone-700">{order.type}</span></div>
-              <div className="flex justify-between"><span className="text-stone-400">Amount</span><span className="font-medium text-stone-800">{order.currency} {order.amount}</span></div>
-              <div className="flex justify-between"><span className="text-stone-400">Status</span>
+              <div className="flex justify-between"><span className="text-stone-400">{dt('ordersType')}</span><span className="text-stone-700">{order.type}</span></div>
+              <div className="flex justify-between"><span className="text-stone-400">{dt('ordersAmount')}</span><span className="font-medium text-stone-800">{order.currency} {order.amount}</span></div>
+              <div className="flex justify-between"><span className="text-stone-400">{dt('caseStatus')}</span>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLOR[order.status] ?? 'bg-stone-100 text-stone-500'}`}>{order.status}</span>
               </div>
-              {order.paidAt && <div className="flex justify-between"><span className="text-stone-400">Paid</span><span>{new Date(order.paidAt).toLocaleDateString()}</span></div>}
+              {order.paidAt && <div className="flex justify-between"><span className="text-stone-400">{dt('ordersPaid')}</span><span>{new Date(order.paidAt).toLocaleDateString()}</span></div>}
             </div>
             {order.status === 'PENDING_PAYMENT' && (
               <>
@@ -71,7 +73,7 @@ export default function OrdersPage() {
                     <button onClick={handleInitPayment} disabled={paymentMutation.isPending}
                       className="w-full flex items-center justify-center gap-2 bg-gold-600 hover:bg-gold-700 text-white py-2.5 rounded-xl font-medium transition-colors disabled:opacity-50">
                       <CreditCard size={16} />
-                      {paymentMutation.isPending ? 'Loading…' : 'Pay Now'}
+                      {paymentMutation.isPending ? dt('ordersPreparingPayment') : dt('ordersPayNow')}
                     </button>
                   </>
                 )}
@@ -84,7 +86,7 @@ export default function OrdersPage() {
       {orders.length === 0 ? (
         <div className="bg-white rounded-2xl p-12 text-center">
           <ShoppingBag className="mx-auto text-stone-300 mb-3" size={40} />
-          <p className="text-stone-400">No orders yet.</p>
+          <p className="text-stone-400">{dt('ordersNoOrders')}</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -92,7 +94,7 @@ export default function OrdersPage() {
             <button key={o.id} onClick={() => setSelectedId(o.id)}
               className="w-full bg-white rounded-2xl p-5 flex items-center gap-4 text-left hover:shadow-sm transition-shadow">
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-stone-800">Order #{o.orderNumber}</p>
+                <p className="font-medium text-stone-800">{dt('ordersOrder', { number: o.orderNumber })}</p>
                 <p className="text-xs text-stone-400 mt-0.5">{o.type} · {new Date(o.createdAt).toLocaleDateString()}</p>
               </div>
               <span className="text-sm font-medium text-stone-700">{o.currency} {o.amount}</span>

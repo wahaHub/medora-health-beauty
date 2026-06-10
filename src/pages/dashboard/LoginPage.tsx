@@ -2,8 +2,10 @@ import { useState, type FormEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { crmApi } from '@/services/crmApiClient';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 export default function LoginPage() {
+  const { dt } = useDashboardTranslation();
   const location = useLocation();
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
@@ -22,7 +24,7 @@ export default function LoginPage() {
       await crmApi.sendMagicLink(email);
       setSent(true);
     } catch (err: any) {
-      setError(err.message || 'Failed to send link');
+      setError(err.message || dt('failedToSendLink'));
     } finally {
       setLoading(false);
     }
@@ -32,27 +34,27 @@ export default function LoginPage() {
     <div className="min-h-screen bg-sage-50 flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
         <Link to="/" className="text-stone-400 hover:text-stone-600 flex items-center gap-1 text-sm mb-6">
-          <ArrowLeft size={16} /> Back to site
+          <ArrowLeft size={16} /> {dt('backToSite')}
         </Link>
 
-        <h1 className="text-2xl font-serif font-bold text-navy-900 mb-2">Sign in to your dashboard</h1>
-        <p className="text-stone-500 mb-6">We'll send you a magic link to sign in.</p>
+        <h1 className="text-2xl font-serif font-bold text-navy-900 mb-2">{dt('loginSignInTitle')}</h1>
+        <p className="text-stone-500 mb-6">{dt('loginMagicLinkDescription')}</p>
         {initialError === 'invalid-token' && !error && (
           <p className="text-amber-600 text-sm mb-4">
-            That sign-in link is no longer valid. Request a fresh magic link below.
+            {dt('loginInvalidToken')}
           </p>
         )}
 
         {sent ? (
           <div className="text-center py-8">
             <CheckCircle className="mx-auto text-green-500 mb-4" size={48} />
-            <p className="text-stone-700 text-lg mb-2">Check your email</p>
-            <p className="text-stone-500">We sent a sign-in link to <strong>{email}</strong></p>
+            <p className="text-stone-700 text-lg mb-2">{dt('loginCheckEmail')}</p>
+            <p className="text-stone-500">{dt('loginCheckEmailDescription', { email })}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block text-sm text-stone-600 mb-1">Email address</label>
+              <label className="block text-sm text-stone-600 mb-1">{dt('emailAddress')}</label>
               <div className="relative">
                 <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
                 <input
@@ -71,7 +73,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-gold-600 hover:bg-gold-700 text-white py-2.5 rounded-xl font-medium transition-colors disabled:opacity-50"
             >
-              {loading ? 'Sending...' : 'Send Magic Link'}
+              {loading ? dt('loginSending') : dt('loginSendMagicLink')}
             </button>
           </form>
         )}
