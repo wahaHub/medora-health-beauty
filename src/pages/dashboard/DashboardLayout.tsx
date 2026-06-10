@@ -3,7 +3,6 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import {
   FileText,
   Home,
-  LifeBuoy,
   LogOut,
   MessageSquareMore,
   Route,
@@ -12,47 +11,40 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 import DashboardHome from './DashboardHome';
 import QuotesPage from './QuotesPage';
 import MessagesPage from './MessagesPage';
-import TicketsPage from './TicketsPage';
 import OrdersPage from './OrdersPage';
 import JourneyPage from './JourneyPage';
-import AiSummaryPage from './AiSummaryPage';
 
-type DashboardTab = 'home' | 'quotes' | 'messages' | 'tickets' | 'orders' | 'journey' | 'ai-summary';
+type DashboardTab = 'home' | 'quotes' | 'messages' | 'orders' | 'journey';
 
 const VALID_TABS: DashboardTab[] = [
   'home',
   'quotes',
   'messages',
-  'tickets',
   'orders',
   'journey',
-  'ai-summary',
 ];
 
 const LEGACY_PATH_TO_TAB: Record<string, DashboardTab> = {
   '/dashboard/quotes': 'quotes',
   '/dashboard/messages': 'messages',
-  '/dashboard/tickets': 'tickets',
   '/dashboard/orders': 'orders',
   '/dashboard/journey': 'journey',
-  '/dashboard/ai-summary': 'ai-summary',
 };
 
 const NAV_ITEMS: Array<{
   value: DashboardTab;
-  label: string;
+  labelKey: Parameters<ReturnType<typeof useDashboardTranslation>['dt']>[0];
   icon: ComponentType<{ className?: string }>;
 }> = [
-  { value: 'home', label: 'Home', icon: Home },
-  { value: 'quotes', label: 'Quotes', icon: FileText },
-  { value: 'messages', label: 'Messages', icon: MessageSquareMore },
-  { value: 'tickets', label: 'Tickets', icon: LifeBuoy },
-  { value: 'orders', label: 'Orders', icon: ShoppingBag },
-  { value: 'journey', label: 'Journey', icon: Route },
-  { value: 'ai-summary', label: 'AI Summary', icon: Sparkles },
+  { value: 'home', labelKey: 'dashboardHome', icon: Home },
+  { value: 'quotes', labelKey: 'dashboardQuotes', icon: FileText },
+  { value: 'messages', labelKey: 'dashboardMessages', icon: MessageSquareMore },
+  { value: 'orders', labelKey: 'dashboardOrders', icon: ShoppingBag },
+  { value: 'journey', labelKey: 'dashboardJourney', icon: Route },
 ];
 
 function resolveTab(pathname: string, search: string): DashboardTab {
@@ -75,14 +67,10 @@ function renderQueryTabContent(tab: DashboardTab): ReactNode {
       return <QuotesPage />;
     case 'messages':
       return <MessagesPage />;
-    case 'tickets':
-      return <TicketsPage />;
     case 'orders':
       return <OrdersPage />;
     case 'journey':
       return <JourneyPage />;
-    case 'ai-summary':
-      return <AiSummaryPage />;
     case 'home':
     default:
       return <DashboardHome />;
@@ -95,10 +83,11 @@ function getNavHref(tab: DashboardTab) {
 
 export default function DashboardLayout() {
   const { patient, logout } = usePatientAuth();
+  const { dt } = useDashboardTranslation();
   const location = useLocation();
   const activeTab = resolveTab(location.pathname, location.search);
   const usesLegacyNestedRoute = location.pathname !== '/dashboard' && location.pathname !== '/dashboard/';
-  const patientLabel = patient?.name || patient?.email || patient?.id || 'Patient';
+  const patientLabel = patient?.name || patient?.email || patient?.id || dt('patientFallback');
 
   return (
     <div
@@ -123,12 +112,12 @@ export default function DashboardLayout() {
                 {patientLabel}
               </h1>
               <p className="mt-1 text-sm text-slate-500">
-                Beauty case workspace
+                {dt('beautyCaseWorkspace')}
               </p>
             </div>
 
             <nav
-              aria-label="Patient dashboard"
+              aria-label={dt('dashboardAria')}
               className="-mx-1 flex gap-2 overflow-x-auto pb-1 lg:mx-0 lg:grid lg:gap-1 lg:overflow-visible lg:pb-0"
             >
               {NAV_ITEMS.map((item) => {
@@ -146,7 +135,7 @@ export default function DashboardLayout() {
                     }`}
                   >
                     <Icon className="h-4 w-4" />
-                    {item.label}
+                    {dt(item.labelKey)}
                   </Link>
                 );
               })}
@@ -159,7 +148,7 @@ export default function DashboardLayout() {
               className="inline-flex h-10 items-center justify-start gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 lg:w-full"
             >
               <Home className="h-4 w-4" />
-              Back Home
+              {dt('backHome')}
             </Link>
             <button
               type="button"
@@ -167,7 +156,7 @@ export default function DashboardLayout() {
               onClick={() => void logout()}
             >
               <LogOut className="h-4 w-4" />
-              Sign Out
+              {dt('signOut')}
             </button>
           </div>
         </aside>

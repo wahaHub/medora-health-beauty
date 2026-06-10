@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePatientCases } from '@/hooks/usePatientCases';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { usePatientEntry } from '@/hooks/usePatientEntry';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 import {
   MessageCircle,
   FileText,
@@ -10,14 +11,12 @@ import {
   ClipboardList,
   CheckCircle2,
   Briefcase,
-  Ticket,
   ShoppingBag,
-  AlertCircle,
-  Sparkles,
 } from 'lucide-react';
 
 export default function DashboardHome() {
   const { patient } = usePatientAuth();
+  const { dt } = useDashboardTranslation();
   const { data, isLoading } = usePatientCases();
   const { openPanel } = usePatientEntry();
   const navigate = useNavigate();
@@ -25,7 +24,7 @@ export default function DashboardHome() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20 text-stone-400">
-        Loading your cases...
+        {dt('dashboardLoadingCases')}
       </div>
     );
   }
@@ -39,11 +38,6 @@ export default function DashboardHome() {
       sum + (c.quotes ?? []).filter((q: any) => q.status === 'PENDING').length,
     0,
   );
-  const openTicketsCount = cases.reduce(
-    (sum: number, c: any) =>
-      sum + (c.tickets ?? []).filter((t: any) => t.status === 'OPEN').length,
-    0,
-  );
   const ordersCount = cases.reduce(
     (sum: number, c: any) => sum + (c.orders ?? []).length,
     0,
@@ -55,24 +49,21 @@ export default function DashboardHome() {
 
   return (
     <div className="space-y-8">
-      {/* Greeting */}
       <div>
         <h1 className="text-2xl font-serif font-bold text-navy-900">
-          Welcome back{patient?.name ? `, ${patient.name}` : ''}
+          {dt('dashboardWelcome')}{patient?.name ? `, ${patient.name}` : ''}
         </h1>
         <p className="text-stone-500 mt-1 text-sm">
-          Here's what needs your attention today.
+          {dt('dashboardAttention')}
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left column: Active case + Action items */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Active Case */}
           {activeCase && (
             <section className="bg-white rounded-2xl p-6 border border-stone-100">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-stone-800">Active Case</h2>
+                <h2 className="text-sm font-semibold text-stone-800">{dt('caseOverview')}</h2>
                 <span className="text-xs font-mono text-stone-400 bg-stone-50 px-2 py-0.5 rounded-full">
                   {activeCase.caseNumber}
                 </span>
@@ -81,7 +72,7 @@ export default function DashboardHome() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-stone-700 font-medium">
-                    {activeCase.primaryDiagnosis || 'General Consultation'}
+                    {activeCase.primaryDiagnosis || dt('caseGeneralConsultation')}
                   </p>
                   {activeCase.hospitalName && (
                     <p className="text-stone-500 text-sm mt-0.5">
@@ -92,7 +83,7 @@ export default function DashboardHome() {
                     <StatusBadge status={activeCase.assignmentStatus} />
                     {activeCase.treatmentPhase && (
                       <span className="text-xs text-stone-400">
-                        Phase: {activeCase.treatmentPhase}
+                        {dt('caseStage')}: {activeCase.treatmentPhase}
                       </span>
                     )}
                   </div>
@@ -104,21 +95,21 @@ export default function DashboardHome() {
                       onClick={() => navigate(`/dashboard/intake?caseId=${activeCase.id}`)}
                       className="text-xs bg-gold-600 text-white px-3 py-1.5 rounded-lg hover:bg-gold-700 transition-colors whitespace-nowrap"
                     >
-                      Continue Intake
+                      {dt('dashboardStartIntake')}
                     </button>
                   ) : pendingQuotesCount > 0 ? (
                     <button
                       onClick={() => navigate('/dashboard/quotes')}
                       className="text-xs bg-gold-600 text-white px-3 py-1.5 rounded-lg hover:bg-gold-700 transition-colors whitespace-nowrap"
                     >
-                      Review Quotes
+                      {dt('dashboardViewQuotes')}
                     </button>
                   ) : (
                     <button
                       onClick={openPanel}
                       className="text-xs bg-navy-900 text-white px-3 py-1.5 rounded-lg hover:bg-navy-800 transition-colors whitespace-nowrap"
                     >
-                      Message Team
+                      {dt('dashboardMessageCoordinator')}
                     </button>
                   )}
                 </div>
@@ -126,19 +117,18 @@ export default function DashboardHome() {
             </section>
           )}
 
-          {/* Action Items */}
           {(hasPendingIntake || pendingQuotesCount > 0 || totalUnread > 0) && (
             <section>
               <h2 className="text-xs font-semibold uppercase tracking-wider text-stone-400 mb-3">
-                Action Items
+                {dt('dashboardActionItems')}
               </h2>
               <div className="space-y-2">
                 {hasPendingIntake && (
                   <ActionItem
                     icon={<ClipboardList size={18} className="text-gold-600" />}
-                    label="Complete your intake form"
-                    description="Help your care coordinator match you with the right hospitals."
-                    cta="Start intake"
+                    label={dt('dashboardCompleteIntake')}
+                    description={dt('dashboardCompleteIntakeDesc')}
+                    cta={dt('dashboardStartIntake')}
                     onClick={() => {
                       const c = cases.find(
                         (c: any) => c.assignmentStatus !== 'ASSIGNED' && !c.intakeCompleted,
@@ -150,18 +140,18 @@ export default function DashboardHome() {
                 {pendingQuotesCount > 0 && (
                   <ActionItem
                     icon={<FileText size={18} className="text-navy-700" />}
-                    label={`${pendingQuotesCount} pending quote${pendingQuotesCount > 1 ? 's' : ''}`}
-                    description="Review and accept or decline treatment offers."
-                    cta="View quotes"
+                    label={dt('dashboardReviewQuote')}
+                    description={dt('dashboardReviewQuoteDesc')}
+                    cta={dt('dashboardViewQuotes')}
                     onClick={() => navigate('/dashboard/quotes')}
                   />
                 )}
                 {totalUnread > 0 && (
                   <ActionItem
                     icon={<MessageCircle size={18} className="text-gold-600" />}
-                    label={`${totalUnread} unread message${totalUnread > 1 ? 's' : ''}`}
-                    description="Your coordinator or a hospital has sent you a new message."
-                    cta="Open messages"
+                    label={dt(totalUnread > 1 ? 'dashboardUnreadMessages' : 'dashboardUnreadMessage', { count: totalUnread })}
+                    description={dt('dashboardUnreadDesc')}
+                    cta={dt('dashboardOpenMessages')}
                     onClick={openPanel}
                     urgent
                   />
@@ -170,17 +160,16 @@ export default function DashboardHome() {
             </section>
           )}
 
-          {/* Cases list */}
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-wider text-stone-400 mb-3">
-              Your Cases
+              {dt('dashboardYourCases')}
             </h2>
             {cases.length === 0 ? (
               <div className="bg-white rounded-2xl p-12 text-center border border-stone-100">
                 <FileText className="mx-auto text-stone-300 mb-4" size={48} />
-                <p className="text-stone-500 text-lg">No cases yet</p>
+                <p className="text-stone-500 text-lg">{dt('casesEmpty')}</p>
                 <p className="text-stone-400 mt-2 text-sm">
-                  Click the chat bubble to start finding hospitals.
+                  {dt('casesEmptyDescription')}
                 </p>
               </div>
             ) : (
@@ -193,63 +182,48 @@ export default function DashboardHome() {
           </section>
         </div>
 
-        {/* Right column: Summary stats + Quick links */}
         <div className="space-y-6">
-          {/* Summary Cards */}
           <section className="grid grid-cols-2 gap-3">
             <SummaryCard
               icon={<Briefcase size={18} className="text-navy-700" />}
               value={cases.length}
-              label="Cases"
+              label={dt('caseLabel')}
               onClick={() => navigate('/dashboard')}
             />
             <SummaryCard
               icon={<FileText size={18} className="text-gold-600" />}
               value={pendingQuotesCount}
-              label="Pending Quotes"
+              label={dt('dashboardQuotes')}
               onClick={() => navigate('/dashboard/quotes')}
               highlight={pendingQuotesCount > 0}
             />
             <SummaryCard
-              icon={<Ticket size={18} className="text-stone-500" />}
-              value={openTicketsCount}
-              label="Open Tickets"
-              onClick={() => navigate('/dashboard/tickets')}
-            />
-            <SummaryCard
               icon={<ShoppingBag size={18} className="text-green-600" />}
               value={ordersCount}
-              label="Orders"
+              label={dt('dashboardOrders')}
               onClick={() => navigate('/dashboard/orders')}
             />
           </section>
 
-          {/* Next Steps */}
           <section className="bg-white rounded-2xl p-5 border border-stone-100">
-            <h3 className="text-sm font-semibold text-stone-800 mb-4">Next Steps</h3>
+            <h3 className="text-sm font-semibold text-stone-800 mb-4">{dt('dashboardQuickActions')}</h3>
             <div className="space-y-3">
               <NextStepItem
                 icon={<MessageCircle size={16} className="text-gold-600" />}
-                title="Message your coordinator"
-                description="Ask questions about your treatment or next steps."
+                title={dt('dashboardMessageCoordinator')}
+                description={dt('dashboardMessageCoordinatorDesc')}
                 onClick={openPanel}
               />
               <NextStepItem
                 icon={<FileText size={16} className="text-navy-700" />}
-                title="View all quotes"
-                description="Compare treatment offers from matched hospitals."
+                title={dt('dashboardViewAllQuotes')}
+                description={dt('dashboardViewAllQuotesDesc')}
                 onClick={() => navigate('/dashboard/quotes')}
               />
               <NextStepItem
-                icon={<Sparkles size={16} className="text-purple-500" />}
-                title="AI Summary"
-                description="Get an AI-generated overview of your case."
-                onClick={() => navigate('/dashboard/ai-summary')}
-              />
-              <NextStepItem
                 icon={<CheckCircle2 size={16} className="text-green-600" />}
-                title="Track your journey"
-                description="See where you are in the Medora care process."
+                title={dt('dashboardTrackJourney')}
+                description={dt('dashboardTrackJourneyDesc')}
                 onClick={() => navigate('/dashboard/journey')}
               />
             </div>
@@ -259,10 +233,6 @@ export default function DashboardHome() {
     </div>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Sub-components
-// ---------------------------------------------------------------------------
 
 function SummaryCard({
   icon,
@@ -364,11 +334,12 @@ function ActionItem({
 }
 
 function StatusBadge({ status }: { status: string }) {
+  const { dt } = useDashboardTranslation();
   const config: Record<string, { text: string; className: string }> = {
-    ASSIGNED: { text: 'In Progress', className: 'bg-green-50 text-green-700' },
-    PENDING: { text: 'Pending', className: 'bg-gold-50 text-gold-700' },
-    OPEN: { text: 'Open', className: 'bg-blue-50 text-blue-700' },
-    CLOSED: { text: 'Closed', className: 'bg-stone-100 text-stone-500' },
+    ASSIGNED: { text: dt('caseInProgress'), className: 'bg-green-50 text-green-700' },
+    PENDING: { text: dt('caseAwaitingQuotes'), className: 'bg-gold-50 text-gold-700' },
+    OPEN: { text: dt('ticketsOpen'), className: 'bg-blue-50 text-blue-700' },
+    CLOSED: { text: dt('ticketsClosed'), className: 'bg-stone-100 text-stone-500' },
   };
   const { text, className } = config[status] ?? {
     text: status,
@@ -384,6 +355,7 @@ function StatusBadge({ status }: { status: string }) {
 function CaseCard({ caseData: c }: { caseData: any }) {
   const navigate = useNavigate();
   const { openPanel } = usePatientEntry();
+  const { dt } = useDashboardTranslation();
 
   return (
     <div className="bg-white rounded-xl p-5 border border-stone-100 hover:shadow-md transition-shadow">
@@ -394,13 +366,13 @@ function CaseCard({ caseData: c }: { caseData: any }) {
             <StatusBadge status={c.assignmentStatus} />
           </div>
           <p className="text-stone-700 font-medium truncate">
-            {c.primaryDiagnosis || 'General Consultation'}
+            {c.primaryDiagnosis || dt('caseGeneralConsultation')}
           </p>
           {c.hospitalName && (
             <p className="text-stone-500 text-sm">{c.hospitalName}</p>
           )}
           <p className="text-stone-400 text-xs mt-1">
-            Created {new Date(c.createdAt).toLocaleDateString()}
+            {dt('caseCreated')} {new Date(c.createdAt).toLocaleDateString()}
           </p>
         </div>
 
@@ -416,21 +388,21 @@ function CaseCard({ caseData: c }: { caseData: any }) {
               onClick={openPanel}
               className="text-xs px-3 py-1.5 rounded-lg border border-stone-200 text-stone-600 hover:border-gold-300 hover:text-gold-700 transition-colors"
             >
-              Messages
+              {dt('dashboardMessages')}
             </button>
             {!c.intakeCompleted ? (
               <button
                 onClick={() => navigate(`/dashboard/intake?caseId=${c.id}`)}
                 className="text-xs px-3 py-1.5 rounded-lg bg-gold-600 text-white hover:bg-gold-700 transition-colors"
               >
-                Continue
+                {dt('dashboardStartIntake')}
               </button>
             ) : (
               <button
                 onClick={() => navigate('/dashboard/quotes')}
                 className="text-xs px-3 py-1.5 rounded-lg bg-gold-600 text-white hover:bg-gold-700 transition-colors"
               >
-                Quotes
+                {dt('dashboardQuotes')}
               </button>
             )}
           </div>

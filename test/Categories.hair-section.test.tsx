@@ -12,6 +12,7 @@ vi.mock('@/hooks/useTranslation', () => ({
         exploreBody: 'Explore Body',
         exploreNonsurgical: 'Explore Nonsurgical',
         exploreHair: 'Explore Hair',
+        exploreDental: 'Explore Dental',
         categoryFace: 'Face',
         categoryFaceSubtitle: 'Personalized Facial Rejuvenation',
         categoryFaceDescription: 'Face description',
@@ -40,6 +41,13 @@ vi.mock('@/hooks/useTranslation', () => ({
         categoryHairItem2: 'Hairline Design',
         categoryHairItem3: 'Beard Transplant',
         categoryHairItem4: 'Eyebrow Restoration',
+        categoryDental: 'Dental',
+        categoryDentalSubtitle: 'A brighter smile',
+        categoryDentalDescription: 'Dental description',
+        categoryDentalItem1: 'Teeth Whitening',
+        categoryDentalItem2: 'Porcelain Veneers',
+        categoryDentalItem3: 'Invisalign / Clear Aligners',
+        categoryDentalItem4: 'Smile Design',
       };
 
       return dictionary[key] ?? key;
@@ -52,15 +60,20 @@ vi.mock('@/utils/imageUtils', () => ({
 }));
 
 describe('Categories hair section', () => {
-  it('renders Hair after Non-Surgical with the local homepage video', () => {
+  it('renders Hair and Dental after Non-Surgical with R2 homepage videos', () => {
     const { container } = render(<Categories />);
 
     const categoryIds = Array.from(container.querySelectorAll('div[id]')).map((node) => node.id);
-    expect(categoryIds).toEqual(['face', 'body', 'nonsurgical', 'hair']);
+    expect(categoryIds).toEqual(['face', 'body', 'nonsurgical', 'hair', 'dental']);
     expect(screen.getByRole('heading', { name: 'Hair' })).toBeInTheDocument();
     expect(screen.getByText('"Personalized Hair Restorations"')).toBeInTheDocument();
     expect(screen.getByText('Hair Transplant')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Explore Hair' })).toBeInTheDocument();
-    expect(container.querySelector('source[src="/homepage/hair.mp4"]')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Dental' })).toBeInTheDocument();
+    expect(screen.getByText('"A brighter smile"')).toBeInTheDocument();
+    expect(screen.getByText('Teeth Whitening')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Explore Dental' })).toBeInTheDocument();
+    expect(container.querySelector('source[src="https://videos.medorabeauty.com/homepage/hair.mp4"]')).toBeInTheDocument();
+    expect(container.querySelector('source[src="https://videos.medorabeauty.com/homepage/dental.mp4"]')).toBeInTheDocument();
   });
 });

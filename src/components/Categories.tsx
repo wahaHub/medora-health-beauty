@@ -3,6 +3,14 @@ import { ArrowRight } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { getHomepageImage } from '@/utils/imageUtils';
 
+const HOMEPAGE_VIDEO_BASE_URL = (
+  import.meta.env.VITE_R2_CUSTOM_DOMAIN ||
+  import.meta.env.VITE_R2_PUBLIC_URL ||
+  'https://videos.medorabeauty.com'
+).replace(/\/+$/, '');
+
+const getHomepageVideo = (filename: string) => `${HOMEPAGE_VIDEO_BASE_URL}/homepage/${filename}`;
+
 interface CategoryProps {
   title: string;
   subtitle: string;
@@ -134,6 +142,7 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
             {id === 'body' && t('exploreBody')}
             {id === 'nonsurgical' && t('exploreNonsurgical')}
             {id === 'hair' && t('exploreHair')}
+            {id === 'dental' && t('exploreDental')}
           </button>
         </div>
       </div>
@@ -155,7 +164,7 @@ const Categories: React.FC = () => {
       description: t('categoryFaceDescription'),
       items: [t('categoryFaceItem1'), t('categoryFaceItem2'), t('categoryFaceItem3'), t('categoryFaceItem4')],
       image: faceImage,
-      videoSrc: 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/face.mp4',
+      videoSrc: getHomepageVideo('face.mp4'),
       theme: 'warm', // Light Sage Gradient
       align: 'left'
     },
@@ -166,7 +175,7 @@ const Categories: React.FC = () => {
       description: t('categoryBodyDescription'),
       items: [t('categoryBodyItem1'), t('categoryBodyItem2'), t('categoryBodyItem3'), t('categoryBodyItem4')],
       image: bodyImage,
-      videoSrc: 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/body.mp4',
+      videoSrc: getHomepageVideo('body.mp4'),
       theme: 'warm', // Light Sage Gradient
       align: 'right'
     },
@@ -177,7 +186,7 @@ const Categories: React.FC = () => {
       description: t('categoryNonsurgicalDescription'),
       items: [t('categoryNonsurgicalItem1'), t('categoryNonsurgicalItem2'), t('categoryNonsurgicalItem3'), t('categoryNonsurgicalItem4')],
       image: nonSurgicalImage,
-      videoSrc: 'https://pub-364a76a828f94fbeb2b09c625907dcf5.r2.dev/homepage/non-surgical.mp4',
+      videoSrc: getHomepageVideo('non-surgical.mp4'),
       theme: 'warm', // Dark Forest Gradient
       align: 'left'
     },
@@ -188,7 +197,18 @@ const Categories: React.FC = () => {
       description: t('categoryHairDescription'),
       items: [t('categoryHairItem1'), t('categoryHairItem2'), t('categoryHairItem3'), t('categoryHairItem4')],
       image: nonSurgicalImage,
-      videoSrc: '/homepage/hair.mp4',
+      videoSrc: getHomepageVideo('hair.mp4'),
+      theme: 'warm',
+      align: 'left'
+    },
+    {
+      id: "dental",
+      title: t('categoryDental'),
+      subtitle: t('categoryDentalSubtitle'),
+      description: t('categoryDentalDescription'),
+      items: [t('categoryDentalItem1'), t('categoryDentalItem2'), t('categoryDentalItem3'), t('categoryDentalItem4')],
+      image: nonSurgicalImage,
+      videoSrc: getHomepageVideo('dental.mp4'),
       theme: 'warm',
       align: 'left'
     }

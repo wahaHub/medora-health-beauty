@@ -45,10 +45,10 @@ describe('Beauty dashboard route inventory', () => {
     expect(nav.getByRole('link', { name: /home/i })).toHaveAttribute('href', '/dashboard?tab=home');
     expect(nav.getByRole('link', { name: /quotes/i })).toHaveAttribute('href', '/dashboard?tab=quotes');
     expect(nav.getByRole('link', { name: /messages/i })).toHaveAttribute('href', '/dashboard?tab=messages');
-    expect(nav.getByRole('link', { name: /tickets/i })).toHaveAttribute('href', '/dashboard?tab=tickets');
     expect(nav.getByRole('link', { name: /orders/i })).toHaveAttribute('href', '/dashboard?tab=orders');
     expect(nav.getByRole('link', { name: /journey/i })).toHaveAttribute('href', '/dashboard?tab=journey');
-    expect(nav.getByRole('link', { name: /ai summary/i })).toHaveAttribute('href', '/dashboard?tab=ai-summary');
+    expect(nav.queryByRole('link', { name: /tickets/i })).not.toBeInTheDocument();
+    expect(nav.queryByRole('link', { name: /ai summary/i })).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /quotes/i })).toBeInTheDocument();
   });
 

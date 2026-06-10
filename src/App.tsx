@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, Routes, Route, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ConsultationProvider } from '@/contexts/ConsultationContext';
 import Header from '@/components/Header';
@@ -43,10 +43,8 @@ import QuotesPage from '@/pages/dashboard/QuotesPage';
 import IntakePage from '@/pages/dashboard/IntakePage';
 import AccountPage from '@/pages/dashboard/AccountPage';
 import LoginPage from '@/pages/dashboard/LoginPage';
-import TicketsPage from '@/pages/dashboard/TicketsPage';
 import OrdersPage from '@/pages/dashboard/OrdersPage';
 import JourneyPage from '@/pages/dashboard/JourneyPage';
-import AiSummaryPage from '@/pages/dashboard/AiSummaryPage';
 import PackagesCatalog from '@/pages/PackagesCatalog';
 import VideoCases from '@/pages/VideoCases';
 import ProcedureVideoGallery from '@/pages/ProcedureVideoGallery';
@@ -217,11 +215,11 @@ function App() {
                 <Route index element={<DashboardHome />} />
                 <Route path="quotes" element={<QuotesPage />} />
                 <Route path="messages" element={<MessagesPage />} />
-                {/* Phase 2: 4 additional tabs */}
-                <Route path="tickets" element={<TicketsPage />} />
+                {/* Additional tabs */}
                 <Route path="orders" element={<OrdersPage />} />
                 <Route path="journey" element={<JourneyPage />} />
-                <Route path="ai-summary" element={<AiSummaryPage />} />
+                <Route path="tickets" element={<Navigate to="/dashboard" replace />} />
+                <Route path="ai-summary" element={<Navigate to="/dashboard" replace />} />
                 {/* Nested routes — accessible but not top-level nav tabs */}
                 <Route path="intake" element={<IntakePage />} />
                 <Route path="account" element={<AccountPage />} />
