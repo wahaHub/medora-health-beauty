@@ -38,10 +38,20 @@ describe('procedure video case helpers', () => {
   });
 
   it('maps detailed supported procedures onto the v4 video buckets', () => {
-    expect(resolveVideoProjectForProcedure('Revision Rhinoplasty')).toBe('nose-surgery');
-    expect(resolveVideoProjectForProcedure('Dermal Fillers')).toBe('injectables');
+    expect(resolveVideoProjectForProcedure('Rhinoplasty')).toBe('nose-surgery');
+    expect(resolveVideoProjectForProcedure('Facial Injectables')).toBe('injectables');
     expect(resolveVideoProjectForProcedure('Non-surgical Skin Tightening')).toBe('skin-tightening-ns');
     expect(resolveVideoProjectForProcedure('Hair Restoration')).toBe('hair-transplant');
+    expect(resolveVideoProjectForProcedure('Teeth Whitening')).toBe('dental');
+    expect(resolveVideoProjectForProcedure('Porcelain Veneers')).toBe('dental');
+    expect(resolveVideoProjectForProcedure('Invisalign® / Clear Aligners')).toBe('dental');
+    expect(resolveVideoProjectForProcedure('Smile Design')).toBe('dental');
+  });
+
+  it('does not reuse broad video buckets for procedures without matching source data', () => {
+    expect(resolveVideoProjectForProcedure('Nose Tip Refinement')).toBeNull();
+    expect(resolveVideoProjectForProcedure('Revision Rhinoplasty')).toBeNull();
+    expect(resolveVideoProjectForProcedure('Dermal Fillers')).toBeNull();
   });
 
   it('filters video cases to the procedure project', () => {
@@ -58,7 +68,7 @@ describe('procedure video case helpers', () => {
 
   it('uses a single v4 R2 manifest source', () => {
     expect(getVideoCaseManifestUrl('https://cdn.example.com')).toBe(
-      'https://cdn.example.com/video_cases_v4/manifest.json?v=20260610-v4'
+      'https://cdn.example.com/video_cases_v4/manifest.json?v=20260610-v5'
     );
   });
 
@@ -80,6 +90,6 @@ describe('procedure video case helpers', () => {
   });
 
   it('exposes the full supported procedure taxonomy for video filters', () => {
-    expect(getSupportedProcedureOptions()).toHaveLength(74);
+    expect(getSupportedProcedureOptions()).toHaveLength(78);
   });
 });

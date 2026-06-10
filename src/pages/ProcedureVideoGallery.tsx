@@ -19,7 +19,7 @@ import type { TranslationKey } from '@/i18n/translations';
 
 type ProcedureNameTranslations = Record<string, Partial<Record<string, string>>>;
 
-const areaFilters = ['All', 'Face', 'Body', 'Breast', 'Non-Surgical', 'Hair'];
+const areaFilters = ['All', 'Face', 'Body', 'Breast', 'Non-Surgical', 'Hair', 'Dental'];
 const concernFilters = ['Aging', 'Contour', 'Volume Loss', 'Fat', 'Skin Quality', 'Symmetry'];
 const R2_VIDEO_BASE_URL =
   import.meta.env.VITE_R2_CUSTOM_DOMAIN ||
@@ -31,6 +31,7 @@ const areaLabels: Record<string, string> = {
   body: 'Body',
   nonsurgical: 'Non-Surgical',
   hair: 'Hair',
+  dental: 'Dental',
 };
 
 const areaQueryValues: Record<string, string> = {
@@ -40,6 +41,7 @@ const areaQueryValues: Record<string, string> = {
   Breast: 'breast',
   'Non-Surgical': 'nonsurgical',
   Hair: 'hair',
+  Dental: 'dental',
 };
 
 const areaLabelsByQuery = Object.fromEntries(
@@ -53,6 +55,7 @@ const projectArea: Record<string, string> = {
   'eye-surgery': 'Face',
   'facial-contouring': 'Face',
   'hair-transplant': 'Hair',
+  dental: 'Dental',
   injectables: 'Non-Surgical',
   'laser-treatments': 'Non-Surgical',
   'nose-surgery': 'Face',
@@ -65,6 +68,7 @@ const projectConcern: Record<string, string[]> = {
   'eye-surgery': ['Aging', 'Symmetry'],
   'facial-contouring': ['Aging', 'Contour'],
   'hair-transplant': ['Volume Loss'],
+  dental: ['Symmetry', 'Skin Quality'],
   injectables: ['Volume Loss', 'Skin Quality'],
   'nose-surgery': ['Contour', 'Symmetry'],
 };
@@ -79,6 +83,7 @@ const formatTitle = (item: VideoCase, t: (key: TranslationKey) => string) => {
   if (item.project === 'hair-transplant') return t('videoCasesTitleHairline');
   if (item.project === 'body-contouring') return t('videoCasesTitleBody');
   if (item.project === 'breast') return t('videoCasesTitleBreast');
+  if (item.project === 'dental') return t('videoCasesTitleDental');
   if (item.project === 'injectables') return t('videoCasesTitleInjectable');
   return `${doctor} Case Film`;
 };
@@ -92,6 +97,7 @@ const durationFromId = (id: string) => {
 const getProcedureDisplayArea = (procedure: ReturnType<typeof getSupportedProcedureOptions>[number]) => {
   if (procedure.area === 'nonsurgical') return 'Non-Surgical';
   if (procedure.area === 'hair') return 'Hair';
+  if (procedure.area === 'dental') return 'Dental';
   if (procedure.category === 'Breast / Chest') return 'Breast';
   return areaLabels[procedure.area] || 'Face';
 };
@@ -126,6 +132,7 @@ export default function ProcedureVideoGallery() {
     if (area === 'Body') return t('categoryBody');
     if (area === 'Breast') return t('categoryBreast');
     if (area === 'Non-Surgical') return t('categoryNonSurgical');
+    if (area === 'Dental') return t('categoryDental');
     return t('categoryHair');
   };
   const selectedProcedureOption = useMemo(
