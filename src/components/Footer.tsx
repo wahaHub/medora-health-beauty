@@ -4,18 +4,37 @@ import { Facebook, Instagram, Twitter, Phone, Mail } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import procedureNames from '@/i18n/procedureNames.json';
+import { getSupportedProcedureOptions } from '@/data/procedureTaxonomy';
 
 type ProcedureNameTranslations = Record<string, Partial<Record<string, string>>>;
 
 const translatedProcedureNames = procedureNames as ProcedureNameTranslations;
 
-const popularProcedures = [
-  'Rhinoplasty',
-  'Eyelid Surgery',
-  'Liposuction',
-  'Breast Augmentation',
-  'Facial Injectables',
-];
+const supportedProcedures = getSupportedProcedureOptions().map((procedure) => procedure.label);
+
+const supportedProceduresTitle: Record<string, string> = {
+  en: 'Supported Procedures',
+  zh: '支持项目',
+  es: 'Procedimientos Disponibles',
+  fr: 'Procédures Prises en Charge',
+  de: 'Unterstützte Eingriffe',
+  ru: 'Доступные процедуры',
+  ar: 'الإجراءات المدعومة',
+  vi: 'Thủ Thuật Hỗ Trợ',
+  id: 'Prosedur yang Didukung',
+};
+
+const supportedProceduresCountLabel: Record<string, string> = {
+  en: 'available',
+  zh: '个项目',
+  es: 'disponibles',
+  fr: 'disponibles',
+  de: 'verfügbar',
+  ru: 'доступно',
+  ar: 'متاحة',
+  vi: 'có sẵn',
+  id: 'tersedia',
+};
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
@@ -24,6 +43,8 @@ const Footer: React.FC = () => {
 
   const translateProcedureLabel = (label: string) =>
     translatedProcedureNames[label]?.[currentLanguage] || translatedProcedureNames[label]?.en || label;
+  const supportedTitle = supportedProceduresTitle[currentLanguage] || supportedProceduresTitle.en;
+  const supportedCountLabel = supportedProceduresCountLabel[currentLanguage] || supportedProceduresCountLabel.en;
 
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -33,7 +54,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-stone-100 pt-16 pb-8 border-t border-stone-200">
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] mb-12">
 
           {/* Brand */}
           <div>
@@ -67,23 +88,6 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Services */}
-          <div>
-            <h4 className="font-serif text-navy-900 text-lg mb-6">{t('footerPopularProcedures')}</h4>
-            <ul className="space-y-3 text-sm text-stone-500">
-              {popularProcedures.map((procedure) => (
-                <li key={procedure}>
-                  <button
-                    onClick={() => handleNavigate(`/procedure/${encodeURIComponent(procedure)}`)}
-                    className="hover:text-gold-600 transition-colors"
-                  >
-                    {translateProcedureLabel(procedure)}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Contact */}
           <div>
             <h4 className="font-serif text-navy-900 text-lg mb-6">{t('footerContactInfo')}</h4>
@@ -98,6 +102,29 @@ const Footer: React.FC = () => {
               </li>
             </ul>
           </div>
+        </div>
+
+        {/* Supported Procedures */}
+        <div className="mb-12 border-t border-stone-200 pt-10">
+          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <h4 className="font-serif text-navy-900 text-lg">{supportedTitle}</h4>
+            <span className="text-xs uppercase tracking-[0.18em] text-stone-400">
+              {supportedProcedures.length} {supportedCountLabel}
+            </span>
+          </div>
+          <ul className="grid grid-cols-2 gap-x-5 gap-y-2 text-[13px] leading-snug text-stone-500 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+            {supportedProcedures.map((procedure) => (
+              <li key={procedure} className="min-w-0">
+                <button
+                  onClick={() => handleNavigate(`/procedure/${encodeURIComponent(procedure)}`)}
+                  className="text-left transition-colors hover:text-gold-600"
+                  title={translateProcedureLabel(procedure)}
+                >
+                  {translateProcedureLabel(procedure)}
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="border-t border-stone-200 pt-8 text-center text-xs text-stone-400">
