@@ -216,6 +216,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                          focus-visible:ring-2 focus-visible:ring-[#d0a36b]/70
                          transition-all duration-300 flex items-center justify-between gap-2 text-sm
                          shadow-[inset_0_1px_0_rgba(255,255,255,0.045),inset_0_-1px_0_rgba(208,163,107,0.025)] backdrop-blur-md`;
+  const dropdownPanelClass = `absolute top-full left-0 right-0 mt-2 bg-[#143d30] rounded-xl
+                             border border-[#e1c28e]/30 shadow-[0_24px_64px_rgba(0,0,0,0.44),0_0_34px_rgba(208,163,107,0.18)] z-[100] overflow-hidden`;
+  const dropdownItemClass = 'w-full text-left px-4 py-3 text-sm transition-colors';
+  const dropdownItemStateClass = (isSelected: boolean) =>
+    isSelected
+      ? 'bg-[#d0a36b]/22 text-[#f5d49b]'
+      : 'text-white/82 hover:bg-[#1d5140]';
 
   return (
     <div className="relative z-50 mx-auto w-full max-w-5xl">
@@ -252,13 +259,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             </button>
 
             {showProcedureDropdown && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-[#101d18]/96 backdrop-blur-lg rounded-xl
-                             border border-[#e1c28e]/28 shadow-[0_24px_64px_rgba(0,0,0,0.44),0_0_34px_rgba(208,163,107,0.18)] z-[100] overflow-hidden max-h-80 overflow-y-auto">
+              <div className={`${dropdownPanelClass} max-h-80 overflow-y-auto`}>
                 {categorizedProcedures.map((category) => (
                   <div key={category.category}>
                     {/* Category Header (skip for 'all') */}
                     {category.category !== 'all' && (
-                      <div className="sticky top-0 bg-[#07120f] px-4 py-2 border-b border-[#e1c28e]/16">
+                      <div className="sticky top-0 bg-[#143d30] px-4 py-2 border-b border-[#e1c28e]/16">
                         <span className="text-[#d0a36b] text-xs font-bold uppercase tracking-wider">
                           {category.label}
                         </span>
@@ -272,10 +278,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                           setProcedure(p.value);
                           setShowProcedureDropdown(false);
                         }}
-                        className={`w-full text-left px-4 py-3 text-sm transition-colors
-                                  ${procedure === p.value
-                                    ? 'bg-[#d0a36b]/20 text-[#f5d49b]'
-                                    : 'text-white/80 hover:bg-white/10'}
+                        className={`${dropdownItemClass}
+                                  ${dropdownItemStateClass(procedure === p.value)}
                                   ${category.category !== 'all' ? 'pl-6' : ''}`}
                       >
                         {p.label}
@@ -307,8 +311,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
               </button>
 
               {showCountryDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#101d18]/96 backdrop-blur-lg rounded-xl
-                               border border-[#e1c28e]/28 shadow-[0_24px_64px_rgba(0,0,0,0.44),0_0_34px_rgba(208,163,107,0.18)] z-[100] overflow-hidden max-h-60 overflow-y-auto">
+                <div className={`${dropdownPanelClass} max-h-60 overflow-y-auto`}>
                   {countries.map((c) => (
                     <button
                       key={c.value}
@@ -316,10 +319,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                         setCountry(c.value);
                         setShowCountryDropdown(false);
                       }}
-                      className={`w-full text-left px-4 py-3 text-sm transition-colors
-                                ${country === c.value
-                                  ? 'bg-[#d0a36b]/20 text-[#f5d49b]'
-                                  : 'text-white/80 hover:bg-white/10'}`}
+                      className={`${dropdownItemClass} ${dropdownItemStateClass(country === c.value)}`}
                     >
                       {c.label}
                     </button>
@@ -345,8 +345,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
               </button>
 
               {showPriceDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#101d18]/96 backdrop-blur-lg rounded-xl
-                               border border-[#e1c28e]/28 shadow-[0_24px_64px_rgba(0,0,0,0.44),0_0_34px_rgba(208,163,107,0.18)] z-[100] overflow-hidden">
+                <div className={dropdownPanelClass}>
                   {priceRanges.map((p) => (
                     <button
                       key={p.value}
@@ -354,10 +353,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                         setPriceRange(p.value);
                         setShowPriceDropdown(false);
                       }}
-                      className={`w-full text-left px-4 py-3 text-sm transition-colors
-                                ${priceRange === p.value
-                                  ? 'bg-[#d0a36b]/20 text-[#f5d49b]'
-                                  : 'text-white/80 hover:bg-white/10'}`}
+                      className={`${dropdownItemClass} ${dropdownItemStateClass(priceRange === p.value)}`}
                     >
                       {p.label}
                     </button>
