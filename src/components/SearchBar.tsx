@@ -217,15 +217,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                          transition-all duration-300 flex items-center justify-between gap-2 text-sm
                          shadow-[inset_0_1px_0_rgba(255,255,255,0.045),inset_0_-1px_0_rgba(208,163,107,0.025)] backdrop-blur-md`;
   const dropdownPanelClass = `absolute top-full left-0 right-0 mt-2 bg-[#143d30] rounded-xl
-                             border border-[#e1c28e]/30 shadow-[0_24px_64px_rgba(0,0,0,0.44),0_0_34px_rgba(208,163,107,0.18)] z-[100] overflow-hidden`;
-  const dropdownItemClass = 'w-full text-left px-4 py-3 text-sm transition-colors';
+                             border border-[#e1c28e]/30 shadow-[0_24px_64px_rgba(0,0,0,0.58),0_0_34px_rgba(208,163,107,0.22)] z-[9999] overflow-hidden`;
+  const dropdownItemClass = 'w-full text-left px-4 py-3 text-sm text-white transition-colors';
   const dropdownItemStateClass = (isSelected: boolean) =>
     isSelected
       ? 'bg-[#d0a36b]/22 text-[#f5d49b]'
-      : 'text-white/82 hover:bg-[#1d5140]';
+      : 'text-white hover:bg-[#1d5140]';
 
   return (
-    <div className="relative z-50 mx-auto w-full max-w-5xl">
+    <div className="relative z-[9990] mx-auto w-full max-w-5xl">
       <div className="pointer-events-none absolute -inset-5 rounded-[2rem] bg-[#d0a36b]/26 blur-2xl" />
       <div className="pointer-events-none absolute -inset-1 rounded-[1.8rem] shadow-[0_0_34px_rgba(208,163,107,0.38),0_0_92px_rgba(208,163,107,0.24)]" />
 
@@ -264,7 +264,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                   <div key={category.category}>
                     {/* Category Header (skip for 'all') */}
                     {category.category !== 'all' && (
-                      <div className="sticky top-0 bg-[#143d30] px-4 py-2 border-b border-[#e1c28e]/16">
+                      <div className="sticky top-0 z-10 bg-[#143d30] px-4 py-2 border-b border-[#e1c28e]/16">
                         <span className="text-[#d0a36b] text-xs font-bold uppercase tracking-wider">
                           {category.label}
                         </span>
