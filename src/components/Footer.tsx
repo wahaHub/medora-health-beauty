@@ -58,13 +58,12 @@ const Footer: React.FC = () => {
 
           {/* Brand */}
           <div>
-            <div className="mb-6 flex items-baseline gap-2 leading-none">
-              <span className="font-serif text-2xl tracking-widest font-bold text-navy-900">
-                MEDORA HEALTH
-              </span>
-              <span className="text-xs uppercase tracking-[0.2em] text-gold-500 font-medium">
-                : BEAUTY
-              </span>
+            <div className="mb-6">
+              <img
+                src="/brand/medora-beauty-wordmark.png"
+                alt="Medora Beauty"
+                className="h-auto w-64 max-w-full object-contain mix-blend-multiply"
+              />
             </div>
             <p className="text-stone-500 text-sm leading-relaxed mb-6">
               {t('footerDescription')}
@@ -128,7 +127,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="border-t border-stone-200 pt-8 text-center text-xs text-stone-400">
-          <p>&copy; {new Date().getFullYear()} Medora Health : Beauty. {t('footerAllRightsReserved')}</p>
+          <p>&copy; {new Date().getFullYear()} Medora Beauty. {t('footerAllRightsReserved')}</p>
         </div>
       </div>
     </footer>

@@ -360,7 +360,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
         <div className="container mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center h-full">
           <div className="md:w-1/2 text-white z-20">
             <div className="mb-8 opacity-90">
-               <div className="font-serif text-3xl italic tracking-wide">Medora Health</div>
+               <div className="font-serif text-3xl italic tracking-wide">Medora Beauty</div>
                <div className="text-xs uppercase tracking-[0.2em] font-light border-t border-white/30 pt-1 mt-1 inline-block">
                  Center for Plastic Surgery
                </div>

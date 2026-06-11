@@ -23,7 +23,7 @@ const DEPLOYMENT_VERSION = '2026-01-07-R2-INTEGRATION';
 const DEPLOYMENT_TIME = new Date().toISOString();
 
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('🏥 Medora Health & Beauty');
+console.log('🏥 Medora Beauty');
 console.log('📦 部署版本:', DEPLOYMENT_VERSION);
 console.log('⏰ 构建时间:', DEPLOYMENT_TIME);
 console.log('🖼️  R2 图片集成: ✅ 已启用');

@@ -61,11 +61,11 @@ export const translations = {
     scheduleConsultation: 'Schedule Your Consultation',
     
     // Additional UI text
-    medoraHealth: 'Medora Health',
+    medoraHealth: 'Medora Beauty',
     youMayBeGoodCandidate: 'You may be a good candidate for',
     if: 'if:',
     choosingTheRightSurgeon: 'CHOOSING THE RIGHT PLASTIC SURGEON',
-    medoraHealthCenterFull: 'Medora Health Center for Plastic Surgery',
+    medoraHealthCenterFull: 'Medora Beauty Center for Plastic Surgery',
     scheduleConsultationDescription: 'Schedule a consultation to learn more about',
     andDiscoverHow: 'and discover how we can help you achieve your aesthetic goals.',
     risksIntro: 'As with any surgical procedure, it\'s important to be aware of potential risks and considerations:',
@@ -141,7 +141,7 @@ export const translations = {
     travelHome: 'Home',
     travelTravel: 'Travel',
     travelPeaceOfMind: 'Peace of Mind by Design',
-    travelPeaceOfMindDesc1: 'At the Medora Health Center for Plastic Surgery, we take pride in providing unsurpassed concierge-level care for our out-of-town guests, who comprise more than 30% of our patients. For over 20 years, we have successfully aided in the planning and execution of travel arrangements to ensure our in-state, out-of-state, and international patients have an exceptional experience from start to finish.',
+    travelPeaceOfMindDesc1: 'At the Medora Beauty Center for Plastic Surgery, we take pride in providing unsurpassed concierge-level care for our out-of-town guests, who comprise more than 30% of our patients. For over 20 years, we have successfully aided in the planning and execution of travel arrangements to ensure our in-state, out-of-state, and international patients have an exceptional experience from start to finish.',
     travelPeaceOfMindDesc2: 'Our world-class plastic surgeons, knowledgeable Patient Consultants, and skilled support staff ensure that no matter where you are traveling from, you\'ll find support and guidance that begins with a phone call and lasts a lifetime.',
     travelEasyAs123: 'Traveling Here For Surgery',
     travelEasyAs123Subtitle: 'Easy As 1-2-3',
@@ -176,13 +176,13 @@ export const translations = {
     travelGroundTransport: 'Ground transportation',
     travelCarRentals: 'Car rentals',
     travelReadyToStart: 'Are You Ready To Get Started?',
-    travelReadyToStartDesc: 'To begin your life-changing plastic surgery journey with the Medora Health Center, request a virtual or in-person consultation using our online form or call our office at (585) 460-5468 to schedule an appointment.',
+    travelReadyToStartDesc: 'To begin your life-changing plastic surgery journey with the Medora Beauty Center, request a virtual or in-person consultation using our online form or call our office at (585) 460-5468 to schedule an appointment.',
     travelWeCreate: 'We Create Uplifting Experiences That Change People\'s Lives®',
     travelBackToTop: 'Back to Top',
 
     // Homepage Components
     introRenowned: 'RENOWNED FOR EXCELLENCE',
-    introTitle: 'Medora Health Center for Plastic Surgery',
+    introTitle: 'Medora Beauty Center for Plastic Surgery',
     introDescription: 'Excellence in facial rejuvenation, body contouring, and aesthetic enhancement.',
     meetOurDoctors: 'MEET OUR DOCTORS',
     meetDr: 'Meet Dr.',
@@ -276,7 +276,7 @@ export const translations = {
     partnershipQuote: '"Wherever you are, we offer the latest technologies and the most comfortable treatment experience to help you achieve your ideal appearance."',
     
     // Categories Component
-    medoraHealthProcedures: 'Medora Health Procedures',
+    medoraHealthProcedures: 'Medora Beauty Procedures',
     exploreFace: 'Explore Face',
     exploreBody: 'Explore Body',
     exploreNonsurgical: 'Explore Nonsurgical',
@@ -404,7 +404,7 @@ export const translations = {
     bookConsultation: 'Book Consultation',
 
     // Footer Component
-    footerDescription: 'Medora Health : Beauty is dedicated to providing world-class medical aesthetics services. We believe beauty is unique, personal, and deserves expert care.',
+    footerDescription: 'Medora Beauty is dedicated to providing world-class medical aesthetics services. We believe beauty is unique, personal, and deserves expert care.',
     footerQuickLinks: 'Quick Links',
     footerAboutUs: 'About Us',
     footerOurTeam: 'Our Surgeons',
@@ -551,11 +551,11 @@ export const translations = {
     scheduleConsultation: '预约您的咨询',
     
     // Additional UI text
-    medoraHealth: 'Medora Health',
+    medoraHealth: 'Medora Beauty',
     youMayBeGoodCandidate: '如果您符合以下条件，您可能是',
     if: '的理想候选人：',
     choosingTheRightSurgeon: '选择合适的整形外科医生',
-    medoraHealthCenterFull: 'Medora Health 整形外科中心',
+    medoraHealthCenterFull: 'Medora Beauty 整形外科中心',
     scheduleConsultationDescription: '预约咨询以了解更多关于',
     andDiscoverHow: '的信息，发现我们如何帮助您实现美学目标。',
     risksIntro: '与任何外科手术一样，重要的是了解潜在的风险和注意事项：',
@@ -631,7 +631,7 @@ export const translations = {
     travelHome: '首页',
     travelTravel: '旅行',
     travelPeaceOfMind: '精心设计的安心体验',
-    travelPeaceOfMindDesc1: '在 Medora Health 整形外科中心，我们为外地客人提供无与伦比的礼宾级护理服务，这些客人占我们患者的30%以上。20多年来，我们成功协助规划和执行旅行安排，确保我们的州内、州外和国际患者从始至终都能获得卓越的体验。',
+    travelPeaceOfMindDesc1: '在 Medora Beauty 整形外科中心，我们为外地客人提供无与伦比的礼宾级护理服务，这些客人占我们患者的30%以上。20多年来，我们成功协助规划和执行旅行安排，确保我们的州内、州外和国际患者从始至终都能获得卓越的体验。',
     travelPeaceOfMindDesc2: '我们世界级的整形外科医生、知识渊博的患者顾问和技术精湛的支持人员确保无论您从哪里来，都能获得从一个电话开始并持续终生的支持和指导。',
     travelEasyAs123: '来这里做手术',
     travelEasyAs123Subtitle: '简单三步',
@@ -666,13 +666,13 @@ export const translations = {
     travelGroundTransport: '地面交通',
     travelCarRentals: '租车',
     travelReadyToStart: '准备好开始了吗？',
-    travelReadyToStartDesc: '要开始您在 Medora Health 中心改变人生的整形手术之旅，请使用我们的在线表格预约虚拟或面对面咨询，或致电 (585) 460-5468 预约。',
+    travelReadyToStartDesc: '要开始您在 Medora Beauty 中心改变人生的整形手术之旅，请使用我们的在线表格预约虚拟或面对面咨询，或致电 (585) 460-5468 预约。',
     travelWeCreate: '我们创造提升人生的体验®',
     travelBackToTop: '返回顶部',
 
     // Homepage Components
     introRenowned: '卓越声誉',
-    introTitle: 'Medora Health 整形外科中心',
+    introTitle: 'Medora Beauty 整形外科中心',
     introDescription: '面部年轻化、身体塑形和美学提升的卓越典范。',
     meetOurDoctors: '认识我们的医生',
     meetDr: '了解',
@@ -766,7 +766,7 @@ export const translations = {
     partnershipQuote: '"无论您身在何处，我们都提供最新技术和最舒适的治疗体验，帮助您实现理想外观。"',
     
     // Categories Component
-    medoraHealthProcedures: 'Medora Health 手术项目',
+    medoraHealthProcedures: 'Medora Beauty 手术项目',
     exploreFace: '探索面部项目',
     exploreBody: '探索身体项目',
     exploreNonsurgical: '探索非手术项目',
@@ -896,7 +896,7 @@ export const translations = {
     bookConsultation: '预约咨询',
 
     // Footer Component
-    footerDescription: 'Medora Health : Beauty 致力于为每一位求美者提供世界级的医疗美容服务。我们相信美是独特的，是个性的，是需要精心呵护的。',
+    footerDescription: 'Medora Beauty 致力于为每一位求美者提供世界级的医疗美容服务。我们相信美是独特的，是个性的，是需要精心呵护的。',
     footerQuickLinks: '快速链接',
     footerAboutUs: '关于我们',
     footerOurTeam: '专家团队',
@@ -1043,11 +1043,11 @@ export const translations = {
     scheduleConsultation: 'Programe Su Consulta',
     
     // Additional UI text
-    medoraHealth: 'Medora Health',
+    medoraHealth: 'Medora Beauty',
     youMayBeGoodCandidate: 'Puede ser un buen candidato para',
     if: 'si:',
     choosingTheRightSurgeon: 'ELEGIR EL CIRUJANO PLÁSTICO ADECUADO',
-    medoraHealthCenterFull: 'Centro de Cirugía Plástica Medora Health',
+    medoraHealthCenterFull: 'Centro de Cirugía Plástica Medora Beauty',
     scheduleConsultationDescription: 'Programe una consulta para obtener más información sobre',
     andDiscoverHow: 'y descubra cómo podemos ayudarle a alcanzar sus objetivos estéticos.',
     risksIntro: 'Como con cualquier procedimiento quirúrgico, es importante ser consciente de los riesgos potenciales y consideraciones:',
@@ -1110,7 +1110,7 @@ export const translations = {
     
     // Homepage Components
     introRenowned: 'RECONOCIDO POR LA EXCELENCIA',
-    introTitle: 'Centro Medora Health para Cirugía Plástica',
+    introTitle: 'Centro Medora Beauty para Cirugía Plástica',
     introDescription: 'Excelencia en rejuvenecimiento facial, contorno corporal y mejora estética.',
     meetOurDoctors: 'CONOZCA A NUESTROS MÉDICOS',
     meetDr: 'Conocer al Dr.',
@@ -1204,7 +1204,7 @@ export const translations = {
     partnershipQuote: '"Dondequiera que esté, ofrecemos las últimas tecnologías y la experiencia de tratamiento más cómoda para ayudarle a lograr su apariencia ideal."',
     
     // Categories Component
-    medoraHealthProcedures: 'Procedimientos de Medora Health',
+    medoraHealthProcedures: 'Procedimientos de Medora Beauty',
     exploreFace: 'Explorar Rostro',
     exploreBody: 'Explorar Cuerpo',
     exploreNonsurgical: 'Explorar No Quirúrgico',
@@ -1323,7 +1323,7 @@ export const translations = {
     bookConsultation: 'Reservar Consulta',
 
     // Footer Component
-    footerDescription: 'Medora Health : Beauty se dedica a proporcionar servicios de estética médica de clase mundial. Creemos que la belleza es única, personal y merece un cuidado experto.',
+    footerDescription: 'Medora Beauty se dedica a proporcionar servicios de estética médica de clase mundial. Creemos que la belleza es única, personal y merece un cuidado experto.',
     footerQuickLinks: 'Enlaces Rápidos',
     footerAboutUs: 'Sobre Nosotros',
     footerOurTeam: 'Nuestros Cirujanos',
@@ -1470,11 +1470,11 @@ export const translations = {
     scheduleConsultation: 'Planifiez Votre Consultation',
     
     // Additional UI text
-    medoraHealth: 'Medora Health',
+    medoraHealth: 'Medora Beauty',
     youMayBeGoodCandidate: 'Vous pouvez être un bon candidat pour',
     if: 'si:',
     choosingTheRightSurgeon: 'CHOISIR LE BON CHIRURGIEN PLASTICIEN',
-    medoraHealthCenterFull: 'Centre de Chirurgie Plastique Medora Health',
+    medoraHealthCenterFull: 'Centre de Chirurgie Plastique Medora Beauty',
     scheduleConsultationDescription: 'Planifiez une consultation pour en savoir plus sur',
     andDiscoverHow: 'et découvrez comment nous pouvons vous aider à atteindre vos objectifs esthétiques.',
     risksIntro: 'Comme pour toute procédure chirurgicale, il est important d\'être conscient des risques potentiels et des considérations:',
@@ -1537,7 +1537,7 @@ export const translations = {
 
     // Homepage Components
     introRenowned: 'RECONNU POUR L\'EXCELLENCE',
-    introTitle: 'Centre Medora Health pour la Chirurgie Plastique',
+    introTitle: 'Centre Medora Beauty pour la Chirurgie Plastique',
     introDescription: 'Excellence en rajeunissement facial, contour corporel et amélioration esthétique.',
     meetOurDoctors: 'RENCONTREZ NOS MÉDECINS',
     meetDr: 'Rencontrer Dr.',
@@ -1631,7 +1631,7 @@ export const translations = {
     partnershipQuote: '"Où que vous soyez, nous offrons les dernières technologies et l\'expérience de traitement la plus confortable pour vous aider à obtenir votre apparence idéale."',
 
     // Categories Component
-    medoraHealthProcedures: 'Procédures Medora Health',
+    medoraHealthProcedures: 'Procédures Medora Beauty',
     exploreFace: 'Explorer Visage',
     exploreBody: 'Explorer Corps',
     exploreNonsurgical: 'Explorer Non Chirurgical',
@@ -1750,7 +1750,7 @@ export const translations = {
     bookConsultation: 'Réserver une Consultation',
 
     // Footer Component
-    footerDescription: 'Medora Health : Beauty se consacre à fournir des services d\'esthétique médicale de classe mondiale. Nous croyons que la beauté est unique, personnelle et mérite des soins experts.',
+    footerDescription: 'Medora Beauty se consacre à fournir des services d\'esthétique médicale de classe mondiale. Nous croyons que la beauté est unique, personnelle et mérite des soins experts.',
     footerQuickLinks: 'Liens Rapides',
     footerAboutUs: 'À Propos',
     footerOurTeam: 'Nos Chirurgiens',
@@ -1897,11 +1897,11 @@ export const translations = {
     scheduleConsultation: 'Planen Sie Ihre Beratung',
     
     // Additional UI text
-    medoraHealth: 'Medora Health',
+    medoraHealth: 'Medora Beauty',
     youMayBeGoodCandidate: 'Sie können ein guter Kandidat für',
     if: 'sein, wenn:',
     choosingTheRightSurgeon: 'DEN RICHTIGEN PLASTISCHEN CHIRURGEN WÄHLEN',
-    medoraHealthCenterFull: 'Medora Health Zentrum für Plastische Chirurgie',
+    medoraHealthCenterFull: 'Medora Beauty Zentrum für Plastische Chirurgie',
     scheduleConsultationDescription: 'Vereinbaren Sie einen Beratungstermin, um mehr über',
     andDiscoverHow: 'zu erfahren und entdecken Sie, wie wir Ihnen helfen können, Ihre ästhetischen Ziele zu erreichen.',
     risksIntro: 'Wie bei jedem chirurgischen Eingriff ist es wichtig, sich über mögliche Risiken und Überlegungen bewusst zu sein:',
@@ -1964,7 +1964,7 @@ export const translations = {
 
     // Homepage Components
     introRenowned: 'ANERKANNT FÜR EXZELLENZ',
-    introTitle: 'Medora Health Zentrum für Plastische Chirurgie',
+    introTitle: 'Medora Beauty Zentrum für Plastische Chirurgie',
     introDescription: 'Exzellenz in Gesichtsverjüngung, Körperformung und ästhetischer Verbesserung.',
     meetOurDoctors: 'LERNEN SIE UNSERE ÄRZTE KENNEN',
     meetDr: 'Dr. kennenlernen',
@@ -2059,7 +2059,7 @@ export const translations = {
     partnershipQuote: '"Wo auch immer Sie sind, wir bieten die neuesten Technologien und die komfortabelste Behandlungserfahrung, um Ihnen zu helfen, Ihr ideales Aussehen zu erreichen."',
 
     // Categories Component
-    medoraHealthProcedures: 'Medora Health Verfahren',
+    medoraHealthProcedures: 'Medora Beauty Verfahren',
     exploreFace: 'Gesicht Erkunden',
     exploreBody: 'Körper Erkunden',
     exploreNonsurgical: 'Nicht-Chirurgisch Erkunden',
@@ -2178,7 +2178,7 @@ export const translations = {
     bookConsultation: 'Beratung Buchen',
 
     // Footer Component
-    footerDescription: 'Medora Health : Beauty widmet sich der Bereitstellung erstklassiger medizinischer Ästhetikdienste. Wir glauben, dass Schönheit einzigartig, persönlich ist und fachkundige Pflege verdient.',
+    footerDescription: 'Medora Beauty widmet sich der Bereitstellung erstklassiger medizinischer Ästhetikdienste. Wir glauben, dass Schönheit einzigartig, persönlich ist und fachkundige Pflege verdient.',
     footerQuickLinks: 'Schnelllinks',
     footerAboutUs: 'Über Uns',
     footerOurTeam: 'Unsere Chirurgen',
@@ -2325,11 +2325,11 @@ export const translations = {
     scheduleConsultation: 'Запланируйте Вашу Консультацию',
     
     // Additional UI text
-    medoraHealth: 'Medora Health',
+    medoraHealth: 'Medora Beauty',
     youMayBeGoodCandidate: 'Вы можете быть хорошим кандидатом для',
     if: 'если:',
     choosingTheRightSurgeon: 'ВЫБОР ПРАВИЛЬНОГО ПЛАСТИЧЕСКОГО ХИРУРГА',
-    medoraHealthCenterFull: 'Центр пластической хирургии Medora Health',
+    medoraHealthCenterFull: 'Центр пластической хирургии Medora Beauty',
     scheduleConsultationDescription: 'Запланируйте консультацию, чтобы узнать больше о',
     andDiscoverHow: 'и узнайте, как мы можем помочь вам достичь ваших эстетических целей.',
     risksIntro: 'Как и в случае любой хирургической процедуры, важно знать о потенциальных рисках и соображениях:',
@@ -2392,7 +2392,7 @@ export const translations = {
 
     // Homepage Components
     introRenowned: 'ПРИЗНАННЫЙ ПРЕВОСХОДСТВОМ',
-    introTitle: 'Центр Пластической Хирургии Medora Health',
+    introTitle: 'Центр Пластической Хирургии Medora Beauty',
     introDescription: 'Превосходство в омоложении лица, контурировании тела и эстетическом улучшении.',
     meetOurDoctors: 'ПОЗНАКОМЬТЕСЬ С НАШИМИ ВРАЧАМИ',
     meetDr: 'Познакомиться с Др.',
@@ -2487,7 +2487,7 @@ export const translations = {
     partnershipQuote: '"Где бы вы ни находились, мы предлагаем новейшие технологии и наиболее комфортный опыт лечения, чтобы помочь вам достичь идеального внешнего вида."',
 
     // Categories Component
-    medoraHealthProcedures: 'Процедуры Medora Health',
+    medoraHealthProcedures: 'Процедуры Medora Beauty',
     exploreFace: 'Исследовать Лицо',
     exploreBody: 'Исследовать Тело',
     exploreNonsurgical: 'Исследовать Безоперационные',
@@ -2606,7 +2606,7 @@ export const translations = {
     bookConsultation: 'Записаться',
 
     // Footer Component
-    footerDescription: 'Medora Health : Beauty стремится предоставлять услуги медицинской эстетики мирового класса. Мы верим, что красота уникальна, индивидуальна и заслуживает профессионального ухода.',
+    footerDescription: 'Medora Beauty стремится предоставлять услуги медицинской эстетики мирового класса. Мы верим, что красота уникальна, индивидуальна и заслуживает профессионального ухода.',
     footerQuickLinks: 'Быстрые Ссылки',
     footerAboutUs: 'О Нас',
     footerOurTeam: 'Наши Хирурги',
@@ -2753,11 +2753,11 @@ export const translations = {
     scheduleConsultation: 'حدد موعد استشارتك',
     
     // Additional UI text
-    medoraHealth: 'ميدورا هيلث',
+    medoraHealth: 'Medora Beauty',
     youMayBeGoodCandidate: 'قد تكون مرشحًا جيدًا لـ',
     if: 'إذا:',
     choosingTheRightSurgeon: 'اختيار جراح التجميل المناسب',
-    medoraHealthCenterFull: 'مركز ميدورا هيلث للجراحة التجميلية',
+    medoraHealthCenterFull: 'مركز Medora Beauty للجراحة التجميلية',
     scheduleConsultationDescription: 'حدد موعدًا للاستشارة لمعرفة المزيد عن',
     andDiscoverHow: 'واكتشف كيف يمكننا مساعدتك في تحقيق أهدافك الجمالية.',
     risksIntro: 'كما هو الحال مع أي إجراء جراحي، من المهم أن تكون على دراية بالمخاطر والاعتبارات المحتملة:',
@@ -2820,7 +2820,7 @@ export const translations = {
 
     // Homepage Components
     introRenowned: 'معروف بالتميز',
-    introTitle: 'مركز ميدورا الصحي للجراحة التجميلية',
+    introTitle: 'مركز Medora Beauty للجراحة التجميلية',
     introDescription: 'التميز في تجديد الوجه ونحت الجسم والتحسين الجمالي.',
     meetOurDoctors: 'تعرف على أطبائنا',
     meetDr: 'تعرف على د.',
@@ -2915,7 +2915,7 @@ export const translations = {
     partnershipQuote: '"أينما كنت، نقدم أحدث التقنيات وأكثر تجربة علاج راحة لمساعدتك في تحقيق مظهرك المثالي."',
 
     // Categories Component
-    medoraHealthProcedures: 'إجراءات ميدورا الصحية',
+    medoraHealthProcedures: 'إجراءات Medora Beautyة',
     exploreFace: 'استكشف الوجه',
     exploreBody: 'استكشف الجسم',
     exploreNonsurgical: 'استكشف غير الجراحي',
@@ -3034,7 +3034,7 @@ export const translations = {
     bookConsultation: 'حجز استشارة',
 
     // Footer Component
-    footerDescription: 'Medora Health : Beauty مكرسة لتقديم خدمات التجميل الطبي على مستوى عالمي. نؤمن بأن الجمال فريد وشخصي ويستحق رعاية متخصصة.',
+    footerDescription: 'Medora Beauty مكرسة لتقديم خدمات التجميل الطبي على مستوى عالمي. نؤمن بأن الجمال فريد وشخصي ويستحق رعاية متخصصة.',
     footerQuickLinks: 'روابط سريعة',
     footerAboutUs: 'من نحن',
     footerOurTeam: 'جراحونا',
@@ -3181,11 +3181,11 @@ export const translations = {
     scheduleConsultation: 'Lên lịch Tư vấn của Bạn',
     
     // Additional UI text
-    medoraHealth: 'Medora Health',
+    medoraHealth: 'Medora Beauty',
     youMayBeGoodCandidate: 'Bạn có thể là ứng viên tốt cho',
     if: 'nếu:',
     choosingTheRightSurgeon: 'CHỌN BÁC SĨ PHẪU THUẬT THẨM MỸ PHÙHỢP',
-    medoraHealthCenterFull: 'Trung tâm Phẫu thuật Thẩm mỹ Medora Health',
+    medoraHealthCenterFull: 'Trung tâm Phẫu thuật Thẩm mỹ Medora Beauty',
     scheduleConsultationDescription: 'Lên lịch tư vấn để tìm hiểu thêm về',
     andDiscoverHow: 'và khám phá cách chúng tôi có thể giúp bạn đạt được mục tiêu thẩm mỹ của mình.',
     risksIntro: 'Như với bất kỳ thủ thuật phẫu thuật nào, điều quan trọng là phải nhận thức được các rủi ro tiềm ẩn và các cân nhắc:',
@@ -3248,7 +3248,7 @@ export const translations = {
 
     // Homepage Components
     introRenowned: 'NỔI TIẾNG VỀ SỰ XUẤT SẮC',
-    introTitle: 'Trung Tâm Phẫu Thuật Thẩm Mỹ Medora Health',
+    introTitle: 'Trung Tâm Phẫu Thuật Thẩm Mỹ Medora Beauty',
     introDescription: 'Xuất sắc trong trẻ hóa khuôn mặt, tạo hình cơ thể và nâng cao thẩm mỹ.',
     meetOurDoctors: 'GẶP GỠ BÁC SĨ CỦA CHÚNG TÔI',
     meetDr: 'Gặp Bác Sĩ',
@@ -3343,7 +3343,7 @@ export const translations = {
     partnershipQuote: '"Dù bạn ở đâu, chúng tôi đều cung cấp công nghệ mới nhất và trải nghiệm điều trị thoải mái nhất để giúp bạn đạt được vẻ ngoài lý tưởng."',
 
     // Categories Component
-    medoraHealthProcedures: 'Thủ Thuật Medora Health',
+    medoraHealthProcedures: 'Thủ Thuật Medora Beauty',
     exploreFace: 'Khám Phá Khuôn Mặt',
     exploreBody: 'Khám Phá Cơ Thể',
     exploreNonsurgical: 'Khám Phá Không Phẫu Thuật',
@@ -3462,7 +3462,7 @@ export const translations = {
     bookConsultation: 'Đặt Lịch',
 
     // Footer Component
-    footerDescription: 'Medora Health : Beauty cam kết cung cấp dịch vụ thẩm mỹ y tế đẳng cấp thế giới. Chúng tôi tin rằng vẻ đẹp là duy nhất, cá nhân và xứng đáng được chăm sóc chuyên nghiệp.',
+    footerDescription: 'Medora Beauty cam kết cung cấp dịch vụ thẩm mỹ y tế đẳng cấp thế giới. Chúng tôi tin rằng vẻ đẹp là duy nhất, cá nhân và xứng đáng được chăm sóc chuyên nghiệp.',
     footerQuickLinks: 'Liên Kết Nhanh',
     footerAboutUs: 'Về Chúng Tôi',
     footerOurTeam: 'Bác Sĩ Của Chúng Tôi',
@@ -3609,11 +3609,11 @@ export const translations = {
     scheduleConsultation: 'Jadwalkan Konsultasi Anda',
     
     // Additional UI text
-    medoraHealth: 'Medora Health',
+    medoraHealth: 'Medora Beauty',
     youMayBeGoodCandidate: 'Anda mungkin kandidat yang baik untuk',
     if: 'jika:',
     choosingTheRightSurgeon: 'MEMILIH AHLI BEDAH PLASTIK YANG TEPAT',
-    medoraHealthCenterFull: 'Pusat Bedah Plastik Medora Health',
+    medoraHealthCenterFull: 'Pusat Bedah Plastik Medora Beauty',
     scheduleConsultationDescription: 'Jadwalkan konsultasi untuk mempelajari lebih lanjut tentang',
     andDiscoverHow: 'dan temukan bagaimana kami dapat membantu Anda mencapai tujuan estetika Anda.',
     risksIntro: 'Seperti halnya prosedur bedah apa pun, penting untuk menyadari risiko potensial dan pertimbangan:',
@@ -3676,7 +3676,7 @@ export const translations = {
 
     // Homepage Components
     introRenowned: 'TERKENAL UNTUK KEUNGGULAN',
-    introTitle: 'Pusat Bedah Plastik Medora Health',
+    introTitle: 'Pusat Bedah Plastik Medora Beauty',
     introDescription: 'Keunggulan dalam peremajaan wajah, kontur tubuh, dan peningkatan estetika.',
     meetOurDoctors: 'TEMUI DOKTER KAMI',
     meetDr: 'Temui Dr.',
@@ -3771,7 +3771,7 @@ export const translations = {
     partnershipQuote: '"Di mana pun Anda berada, kami menawarkan teknologi terbaru dan pengalaman perawatan paling nyaman untuk membantu Anda mencapai penampilan ideal Anda."',
 
     // Categories Component
-    medoraHealthProcedures: 'Prosedur Medora Health',
+    medoraHealthProcedures: 'Prosedur Medora Beauty',
     exploreFace: 'Jelajahi Wajah',
     exploreBody: 'Jelajahi Tubuh',
     exploreNonsurgical: 'Jelajahi Non-Bedah',
@@ -3902,7 +3902,7 @@ export const translations = {
     bookConsultation: 'Pesan Konsultasi',
 
     // Footer Component
-    footerDescription: 'Medora Health : Beauty berdedikasi untuk menyediakan layanan estetika medis kelas dunia. Kami percaya bahwa kecantikan itu unik, personal, dan layak mendapat perawatan ahli.',
+    footerDescription: 'Medora Beauty berdedikasi untuk menyediakan layanan estetika medis kelas dunia. Kami percaya bahwa kecantikan itu unik, personal, dan layak mendapat perawatan ahli.',
     footerQuickLinks: 'Tautan Cepat',
     footerAboutUs: 'Tentang Kami',
     footerOurTeam: 'Dokter Bedah Kami',
