@@ -86,7 +86,7 @@ const Header: React.FC = () => {
   const [doctorCarouselPage, setDoctorCarouselPage] = useState(0);
   const [isDoctorCarouselPaused, setIsDoctorCarouselPaused] = useState(false);
   const doctorsHospitalsLabel = currentLanguage === 'zh' ? '医生' : 'DOCTORS';
-  const proceduresLabel = currentLanguage === 'zh' ? '项目' : 'PROCEDURES';
+  const proceduresLabel = currentLanguage === 'zh' ? '案例' : 'CASES';
 
   // Fetch surgeons using React Query hook
   const shouldLoadSurgeons = hoveredNav === doctorsHospitalsLabel;
