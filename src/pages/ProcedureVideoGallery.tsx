@@ -114,11 +114,11 @@ export default function ProcedureVideoGallery() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation();
-  const legacyProcedureName = urlProcedureName ? decodeURIComponent(urlProcedureName) : '';
+  const pathProcedureName = urlProcedureName ? decodeURIComponent(urlProcedureName) : '';
   const procedureFromQuery = searchParams.get('procedure') || '';
   const projectFromQuery = searchParams.get('project');
   const areaFromQuery = searchParams.get('area') || 'all';
-  const requestedProcedureName = procedureFromQuery || legacyProcedureName;
+  const requestedProcedureName = procedureFromQuery || pathProcedureName;
   const requestedProcedureProject = resolveVideoProjectForProcedure(requestedProcedureName);
   const selectedProject =
     projectFromQuery ||
@@ -162,19 +162,6 @@ export default function ProcedureVideoGallery() {
         : procedureOptions.filter((procedure) => areaQueryValues[getProcedureDisplayArea(procedure)] === activeAreaFilter),
     [activeAreaFilter, procedureOptions]
   );
-
-  useEffect(() => {
-    if (!legacyProcedureName) return;
-
-    const legacyProject = resolveVideoProjectForProcedure(legacyProcedureName);
-    const params = new URLSearchParams(searchParams);
-    if (legacyProject) {
-      params.set('project', legacyProject);
-    } else if (legacyProcedureName) {
-      params.set('procedure', legacyProcedureName);
-    }
-    navigate(`/procedure/videos?${params.toString()}`, { replace: true });
-  }, [legacyProcedureName, navigate, searchParams]);
 
   useEffect(() => {
     let active = true;
