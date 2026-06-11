@@ -70,8 +70,8 @@ const Footer: React.FC = () => {
               {t('footerDescription')}
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-navy-900 hover:text-gold-500 transition-colors"><Instagram size={20} /></a>
-              <a href="#" className="text-navy-900 hover:text-gold-500 transition-colors"><Facebook size={20} /></a>
+              <a href="https://www.instagram.com/china_hair_transplant_guide/" target="_blank" rel="noopener noreferrer" className="text-navy-900 hover:text-gold-500 transition-colors"><Instagram size={20} /></a>
+              <a href="https://www.facebook.com/profile.php?id=61590498216426&locale=zh_CN" target="_blank" rel="noopener noreferrer" className="text-navy-900 hover:text-gold-500 transition-colors"><Facebook size={20} /></a>
               <a href="#" className="text-navy-900 hover:text-gold-500 transition-colors"><Twitter size={20} /></a>
             </div>
           </div>

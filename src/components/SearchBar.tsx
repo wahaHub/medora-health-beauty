@@ -116,11 +116,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   // Build categorized procedures
   const categorizedProcedures = [
     {
-      category: 'all',
-      label: t('allProcedures'),
-      items: [{ value: '', label: t('allProcedures') }]
-    },
-    {
       category: 'face',
       label: t('categoryFace'),
       items: faceProcedures
@@ -178,6 +173,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     { value: 'over20k', label: t('priceOver20k') },
   ];
 
+  const countryDropdownOptions = countries.filter((option) => option.value);
+  const priceDropdownOptions = priceRanges.filter((option) => option.value);
+
   const handleSearch = () => {
     if (onSearch) {
       onSearch(procedure, country, priceRange);
@@ -232,7 +230,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       <div className="relative overflow-visible rounded-[1.55rem] border border-transparent bg-[#07120f]/[0.24] p-3 shadow-[0_24px_80px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.045),inset_0_-1px_0_rgba(244,216,164,0.035)] backdrop-blur-2xl">
         <div className="pointer-events-none absolute inset-0 rounded-[1.55rem] bg-gradient-to-b from-white/[0.045] via-white/[0.012] to-[#07120f]/[0.10]" />
         <div className="pointer-events-none absolute inset-x-14 top-0 h-px bg-gradient-to-r from-transparent via-[#ffe5b5]/10 to-transparent" />
-        <div className="relative z-10 flex flex-col gap-3 lg:flex-row lg:items-stretch">
+        <div className="relative z-[10000] flex flex-col gap-3 lg:flex-row lg:items-stretch">
           <div className="hidden shrink-0 items-center justify-center lg:flex">
             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-transparent bg-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.045),0_0_24px_rgba(208,163,107,0.18)] backdrop-blur-md">
               <Search size={27} className="text-[#f3dcc0]" strokeWidth={1.65} />
@@ -312,7 +310,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
               {showCountryDropdown && (
                 <div className={`${dropdownPanelClass} max-h-60 overflow-y-auto`}>
-                  {countries.map((c) => (
+                  {countryDropdownOptions.map((c) => (
                     <button
                       key={c.value}
                       onClick={() => {
@@ -346,7 +344,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
               {showPriceDropdown && (
                 <div className={dropdownPanelClass}>
-                  {priceRanges.map((p) => (
+                  {priceDropdownOptions.map((p) => (
                     <button
                       key={p.value}
                       onClick={() => {
@@ -376,7 +374,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           </div>
         </div>
 
-        <div className="relative z-10 mt-5 hidden border-t border-[#d0a36b]/6 pt-4 text-[#f0ebe2]/90 md:grid md:grid-cols-3">
+        <div className="relative z-0 mt-5 hidden border-t border-[#d0a36b]/6 pt-4 text-[#f0ebe2]/90 md:grid md:grid-cols-3">
           <div className="flex items-center justify-center gap-3 text-xs">
             <ShieldCheck size={17} className="text-[#d0a36b]" strokeWidth={1.5} />
             <span>{t('trustVerifiedDoctors')}</span>
