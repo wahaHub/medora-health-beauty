@@ -147,21 +147,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
   const countries = [
     { value: '', label: t('allCountries') },
-    { value: 'korea', label: t('countryKorea') },
-    { value: 'thailand', label: t('countryThailand') },
-    { value: 'turkey', label: t('countryTurkey') },
-    { value: 'brazil', label: t('countryBrazil') },
-    { value: 'mexico', label: t('countryMexico') },
-    { value: 'colombia', label: t('countryColombia') },
-    { value: 'usa', label: t('countryUSA') },
-    { value: 'germany', label: t('countryGermany') },
-    { value: 'spain', label: t('countrySpain') },
-    { value: 'italy', label: t('countryItaly') },
-    { value: 'poland', label: t('countryPoland') },
-    { value: 'uk', label: t('countryUK') },
-    { value: 'uae', label: t('countryUAE') },
-    { value: 'india', label: t('countryIndia') },
-    { value: 'japan', label: t('countryJapan') },
     { value: 'china', label: t('countryChina') },
   ];
 
