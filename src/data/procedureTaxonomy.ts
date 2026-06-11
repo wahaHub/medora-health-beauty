@@ -106,25 +106,58 @@ export const proceduresByCategory: Record<ProcedureCategoryKey, ProcedureItem[]>
 };
 
 const normalizeProcedureLabel = (label: string) =>
-  label
+  decodeURIComponent(label || '')
     .toLowerCase()
     .replace(/[®™©]/g, '')
+    .replace(/&/g, ' and ')
+    .replace(/\//g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 
+const getProcedureAreaQueryValueFromOption = (procedure: ProcedureItem & { area: ProcedureCategoryKey }) => {
+  if (procedure.area === 'body' && procedure.category === 'Breast / Chest') return 'breast';
+  return procedure.area;
+};
+
+const getAllProcedureOptions = () =>
+  (Object.entries(proceduresByCategory) as Array<[ProcedureCategoryKey, ProcedureItem[]]>).flatMap(([area, procedures]) =>
+    procedures.map((procedure) => ({
+      ...procedure,
+      area,
+    }))
+  );
+
 export const getSupportedProcedureOptions = () => {
   const seen = new Set<string>();
-  return (Object.entries(proceduresByCategory) as Array<[ProcedureCategoryKey, ProcedureItem[]]>)
-    .flatMap(([area, procedures]) =>
-      procedures.map((procedure) => ({
-        ...procedure,
-        area,
-      }))
-    )
+  return getAllProcedureOptions()
     .filter((procedure) => {
       const key = normalizeProcedureLabel(procedure.label);
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     });
+};
+
+export const getProcedureAreaQueryValue = (procedureName: string) => {
+  const normalizedProcedureName = normalizeProcedureLabel(procedureName);
+  const matchedProcedures = getAllProcedureOptions().filter(
+    (procedure) => normalizeProcedureLabel(procedure.label) === normalizedProcedureName
+  );
+  const preferredAreaOrder = ['dental', 'hair', 'nonsurgical', 'breast', 'body', 'face'];
+  const matchedProcedure = matchedProcedures.sort(
+    (a, b) =>
+      preferredAreaOrder.indexOf(getProcedureAreaQueryValueFromOption(a)) -
+      preferredAreaOrder.indexOf(getProcedureAreaQueryValueFromOption(b))
+  )[0];
+
+  return matchedProcedure ? getProcedureAreaQueryValueFromOption(matchedProcedure) : 'all';
+};
+
+export const getProcedureVideoGalleryUrl = (procedureName: string) => {
+  const params = new URLSearchParams({
+    procedure: decodeURIComponent(procedureName || ''),
+    area: getProcedureAreaQueryValue(procedureName),
+  });
+
+  return `/procedure/videos?${params.toString()}`;
 };

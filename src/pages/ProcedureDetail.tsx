@@ -8,8 +8,8 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useConsultation } from '@/contexts/ConsultationContext';
 import procedureNames from '@/i18n/procedureNames.json';
+import { getProcedureVideoGalleryUrl } from '@/data/procedureTaxonomy';
 import { getProcedureImage, getProcedureCaseImage } from '@/utils/imageUtils';
-import { resolveVideoProjectForProcedure } from '@/utils/procedureVideoCases';
 
 interface ProcedureDetailProps {
   procedureName?: string;
@@ -351,10 +351,7 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
   };
   
   const displayName = getTranslatedName();
-  const videoProject = resolveVideoProjectForProcedure(procedureName || displayName);
-  const videoGalleryPath = videoProject
-    ? `/procedure/videos?project=${encodeURIComponent(videoProject)}`
-    : `/procedure/videos?procedure=${encodeURIComponent(procedureName || displayName)}`;
+  const videoGalleryPath = getProcedureVideoGalleryUrl(procedure.procedure_name || procedureName || displayName);
 
   return (
     <div className="bg-white animate-fade-in-up spring-scroll-container">
@@ -397,6 +394,23 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
               }}
             />
           </div>
+        </div>
+      </section>
+
+      {/* 2. CASE LIBRARY CTA */}
+      <section className="bg-white border-b border-stone-200">
+        <div className="container mx-auto px-6 py-8">
+          <button
+            type="button"
+            onClick={() => {
+              navigate(videoGalleryPath);
+              window.scrollTo(0, 0);
+            }}
+            className="group inline-flex items-center gap-3 border border-navy-900 px-7 py-4 text-xs font-bold uppercase tracking-[0.18em] text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+          >
+            View All Cases
+            <ArrowRight size={16} strokeWidth={1.8} className="transition-transform group-hover:translate-x-1" />
+          </button>
         </div>
       </section>
 
