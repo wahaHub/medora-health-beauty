@@ -425,35 +425,55 @@ const Header: React.FC = () => {
       route: 'face',
       icon: ScanFace,
       viewAllLabel: 'View all Face Procedures',
-      items: proceduresByCategory.face.map((procedure) => ({ label: procedure.label, isSub: true }))
+      items: proceduresByCategory.face.map((procedure) => ({
+        label: procedure.label,
+        isSub: true,
+        href: getProcedureVideoGalleryUrl(procedure.label),
+      }))
     },
     {
       title: 'Body',
       route: 'body',
       icon: BicepsFlexed,
       viewAllLabel: 'View all Body Procedures',
-      items: proceduresByCategory.body.map((procedure) => ({ label: procedure.label, isSub: true }))
+      items: proceduresByCategory.body.map((procedure) => ({
+        label: procedure.label,
+        isSub: true,
+        href: getProcedureVideoGalleryUrl(procedure.label),
+      }))
     },
     {
       title: 'Skin & Injectables',
       route: 'nonsurgical',
       icon: Droplet,
       viewAllLabel: 'View all Non-Surgical Procedures',
-      items: proceduresByCategory.nonsurgical.map((procedure) => ({ label: procedure.label, isSub: true }))
+      items: proceduresByCategory.nonsurgical.map((procedure) => ({
+        label: procedure.label,
+        isSub: true,
+        href: getProcedureVideoGalleryUrl(procedure.label),
+      }))
     },
     {
       title: 'Hair Restoration',
       route: 'hair',
       icon: Waves,
       viewAllLabel: 'View all Hair Procedures',
-      items: proceduresByCategory.hair.map((procedure) => ({ label: procedure.label, isSub: true }))
+      items: proceduresByCategory.hair.map((procedure) => ({
+        label: procedure.label,
+        isSub: true,
+        href: getProcedureVideoGalleryUrl(procedure.label),
+      }))
     },
     {
       title: 'Dental',
       route: 'dental',
       icon: Smile,
       viewAllLabel: 'View all Dental Procedures',
-      items: proceduresByCategory.dental.map((procedure) => ({ label: procedure.label, isSub: true }))
+      items: proceduresByCategory.dental.map((procedure) => ({
+        label: procedure.label,
+        isSub: true,
+        href: getProcedureVideoGalleryUrl(procedure.label),
+      }))
     }
   ];
 
@@ -593,7 +613,11 @@ const Header: React.FC = () => {
 
         {/* Mobile Menu Toggle */}
         <div className="lg:hidden z-50">
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`transition-colors ${hasWhiteBg ? 'text-navy-900' : 'text-white'}`}>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={`transition-colors ${hasWhiteBg ? 'text-navy-900' : 'text-white'}`}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -766,7 +790,7 @@ const Header: React.FC = () => {
                             {section.items.map((item) => (
                               <a
                                 key={item.label}
-                                href={item.href || '#'}
+                                href={item.href}
                                 onClick={(event) => handleLinkClick(event, item.label, true, item.href)}
                                 className="group/item flex min-h-12 items-center border-b border-[#d0b083]/15 py-3 text-sm font-medium leading-tight text-[#d8e0dc] transition-colors hover:text-[#e4bd83]"
                               >
@@ -893,25 +917,23 @@ const Header: React.FC = () => {
                         return (
                           <>
                             {limitedItems.map((item, idx) => (
-                              <div
+                              <a
                                 key={idx}
+                                href={item.href}
                                 className={`text-stone-600 text-sm ${item.isSub ? 'pl-4' : ''}`}
                                 onClick={(e) => handleLinkClick(e, item.label, true, item.href)}
                               >
                                 {translateLabel(item.label)}
-                              </div>
+                              </a>
                             ))}
                             {allItems.length > limitedItems.length && (
-                              <div
+                              <a
+                                href="/procedures/face"
                                 className="text-gold-600 text-sm font-medium italic cursor-pointer hover:text-gold-700"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setMobileMenuOpen(false);
-                                  navigate('/procedures/face');
-                                }}
+                                onClick={(e) => handleLinkClick(e, 'View all Face Procedures', true, '/procedures/face')}
                               >
                                 + {allItems.length - limitedItems.length} more procedures
-                              </div>
+                              </a>
                             )}
                           </>
                         );

@@ -1,0 +1,38 @@
+# Medora Beauty
+
+## Medora Beauty
+Medora Beauty is a medical aesthetics and beauty travel platform helping patients research cosmetic procedures, compare qualified doctors and hospitals, and request care guidance for treatment planning.
+
+## Key Pages
+- Home: https://medorabeauty.com/
+- Surgeons: https://medorabeauty.com/surgeons
+- Gallery: https://medorabeauty.com/gallery
+- Travel: https://medorabeauty.com/travel
+- Reviews: https://medorabeauty.com/reviews
+- Video cases: https://medorabeauty.com/video-cases
+- Consultation: https://medorabeauty.com/get-quote
+
+## Procedure Areas
+- Face: https://medorabeauty.com/procedures/face
+- Body: https://medorabeauty.com/procedures/body
+- Nonsurgical: https://medorabeauty.com/procedures/nonsurgical
+- Hair: https://medorabeauty.com/procedures/hair
+- Dental: https://medorabeauty.com/procedures/dental
+
+## Procedure Guides
+Procedure guide pages explain treatment goals, candidacy, recovery considerations, risks, expected questions, and related case examples for currently supported procedures.
+
+## Doctors and Hospitals
+Doctor and hospital pages are intended to help patients understand provider qualifications, specialties, facilities, languages, and available procedure experience.
+
+## Cases and Gallery
+Case galleries and video case pages show procedure-specific examples where available. Case content should be interpreted as educational context, not a guaranteed individual result.
+
+## Editorial Standards
+Medora Beauty content should be medically cautious, procedure-specific, reviewed for factual consistency, and written to distinguish general education from personalized clinical advice.
+
+## Medical Disclaimer
+Medora Beauty does not provide diagnosis, emergency care, or a substitute for consultation with a licensed clinician. Individual risks, outcomes, recovery time, and eligibility vary by patient.
+
+## Contact
+Patients can start a consultation request at https://medorabeauty.com/get-quote or use the contact section on https://medorabeauty.com/.
