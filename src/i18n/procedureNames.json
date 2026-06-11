@@ -1506,6 +1506,160 @@
     "vi": "Triệt Lông",
     "id": "Penghilangan Bulu"
   },
+  "Face": {
+    "en": "Face",
+    "zh": "面部",
+    "es": "Rostro",
+    "fr": "Visage",
+    "de": "Gesicht",
+    "ru": "Лицо",
+    "ar": "الوجه",
+    "vi": "Khuôn Mặt",
+    "id": "Wajah"
+  },
+  "Body": {
+    "en": "Body",
+    "zh": "身体",
+    "es": "Cuerpo",
+    "fr": "Corps",
+    "de": "Körper",
+    "ru": "Тело",
+    "ar": "الجسم",
+    "vi": "Cơ Thể",
+    "id": "Tubuh"
+  },
+  "Skin & Injectables": {
+    "en": "Skin & Injectables",
+    "zh": "皮肤与注射",
+    "es": "Piel e Inyectables",
+    "fr": "Peau et Injectables",
+    "de": "Haut & Injektionen",
+    "ru": "Кожа и Инъекции",
+    "ar": "البشرة والحقن",
+    "vi": "Da & Tiêm Thẩm Mỹ",
+    "id": "Kulit & Suntikan"
+  },
+  "Breast Surgery": {
+    "en": "Breast Surgery",
+    "zh": "胸部手术",
+    "es": "Cirugía de Senos",
+    "fr": "Chirurgie Mammaire",
+    "de": "Brustchirurgie",
+    "ru": "Операция на груди",
+    "ar": "جراحة الثدي",
+    "vi": "Phẫu Thuật Ngực",
+    "id": "Bedah Payudara"
+  },
+  "Body Contouring": {
+    "en": "Body Contouring",
+    "zh": "身体塑形",
+    "es": "Contorno Corporal",
+    "fr": "Contour Corporel",
+    "de": "Körperkonturierung",
+    "ru": "Контурирование тела",
+    "ar": "نحت الجسم",
+    "vi": "Tạo Đường Viền Cơ Thể",
+    "id": "Kontur Tubuh"
+  },
+  "Laser Treatments": {
+    "en": "Laser Treatments",
+    "zh": "激光治疗",
+    "es": "Tratamientos Láser",
+    "fr": "Traitements Laser",
+    "de": "Laserbehandlungen",
+    "ru": "Лазерные процедуры",
+    "ar": "علاجات الليزر",
+    "vi": "Điều Trị Laser",
+    "id": "Perawatan Laser"
+  },
+  "PRP Rejuvenation": {
+    "en": "PRP Rejuvenation",
+    "zh": "PRP 焕肤",
+    "es": "Rejuvenecimiento PRP",
+    "fr": "Rajeunissement PRP",
+    "de": "PRP-Verjüngung",
+    "ru": "PRP-омоложение",
+    "ar": "تجديد البشرة بالبلازما",
+    "vi": "Trẻ Hóa PRP",
+    "id": "Peremajaan PRP"
+  },
+  "Hair Transplant": {
+    "en": "Hair Transplant",
+    "zh": "植发",
+    "es": "Trasplante Capilar",
+    "fr": "Greffe de Cheveux",
+    "de": "Haartransplantation",
+    "ru": "Пересадка волос",
+    "ar": "زراعة الشعر",
+    "vi": "Cấy Tóc",
+    "id": "Transplantasi Rambut"
+  },
+  "PRP Hair Treatment": {
+    "en": "PRP Hair Treatment",
+    "zh": "PRP 生发治疗",
+    "es": "Tratamiento Capilar PRP",
+    "fr": "Traitement Capillaire PRP",
+    "de": "PRP-Haarbehandlung",
+    "ru": "PRP-терапия для волос",
+    "ar": "علاج الشعر بالبلازما",
+    "vi": "Điều Trị Tóc PRP",
+    "id": "Perawatan Rambut PRP"
+  },
+  "Hairline Restoration": {
+    "en": "Hairline Restoration",
+    "zh": "发际线修复",
+    "es": "Restauración de la Línea Capilar",
+    "fr": "Restauration de la Ligne Frontale",
+    "de": "Haarlinien-Wiederherstellung",
+    "ru": "Восстановление линии роста волос",
+    "ar": "استعادة خط الشعر",
+    "vi": "Phục Hồi Đường Chân Tóc",
+    "id": "Restorasi Garis Rambut"
+  },
+  "View all Face Procedures": {
+    "en": "View all Face Cases",
+    "zh": "查看全部面部案例",
+    "es": "Ver todos los casos faciales",
+    "fr": "Voir tous les cas du visage",
+    "de": "Alle Gesichtsfälle ansehen",
+    "ru": "Смотреть все кейсы для лица",
+    "ar": "عرض جميع حالات الوجه",
+    "vi": "Xem tất cả ca khuôn mặt",
+    "id": "Lihat semua kasus wajah"
+  },
+  "View all Body Procedures": {
+    "en": "View all Body Cases",
+    "zh": "查看全部身体案例",
+    "es": "Ver todos los casos corporales",
+    "fr": "Voir tous les cas du corps",
+    "de": "Alle Körperfälle ansehen",
+    "ru": "Смотреть все кейсы для тела",
+    "ar": "عرض جميع حالات الجسم",
+    "vi": "Xem tất cả ca cơ thể",
+    "id": "Lihat semua kasus tubuh"
+  },
+  "View all Non-Surgical Procedures": {
+    "en": "View all Non-Surgical Cases",
+    "zh": "查看全部非手术案例",
+    "es": "Ver todos los casos no quirúrgicos",
+    "fr": "Voir tous les cas non chirurgicaux",
+    "de": "Alle nicht-chirurgischen Fälle ansehen",
+    "ru": "Смотреть все безоперационные кейсы",
+    "ar": "عرض جميع الحالات غير الجراحية",
+    "vi": "Xem tất cả ca không phẫu thuật",
+    "id": "Lihat semua kasus non-bedah"
+  },
+  "View all Hair Procedures": {
+    "en": "View all Hair Cases",
+    "zh": "查看全部毛发案例",
+    "es": "Ver todos los casos capilares",
+    "fr": "Voir tous les cas capillaires",
+    "de": "Alle Haarfälle ansehen",
+    "ru": "Смотреть все кейсы для волос",
+    "ar": "عرض جميع حالات الشعر",
+    "vi": "Xem tất cả ca tóc",
+    "id": "Lihat semua kasus rambut"
+  },
   "Dental": {
     "en": "Dental",
     "zh": "牙齿",
@@ -1595,14 +1749,14 @@
     "id": "Desain Senyum"
   },
   "View all Dental Procedures": {
-    "en": "View all Dental Procedures",
-    "zh": "查看全部牙齿项目",
-    "es": "Ver todos los procedimientos dentales",
-    "fr": "Voir toutes les procédures dentaires",
-    "de": "Alle Dental-Behandlungen ansehen",
-    "ru": "Смотреть все стоматологические процедуры",
-    "ar": "عرض جميع إجراءات الأسنان",
-    "vi": "Xem tất cả thủ thuật nha khoa",
-    "id": "Lihat semua prosedur dental"
+    "en": "View all Dental Cases",
+    "zh": "查看全部牙齿案例",
+    "es": "Ver todos los casos dentales",
+    "fr": "Voir tous les cas dentaires",
+    "de": "Alle Dentalfälle ansehen",
+    "ru": "Смотреть все стоматологические кейсы",
+    "ar": "عرض جميع حالات الأسنان",
+    "vi": "Xem tất cả ca nha khoa",
+    "id": "Lihat semua kasus dental"
   }
 }

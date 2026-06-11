@@ -12,6 +12,24 @@
   scrollbar-width: none;
 }
 
+.procedure-menu-scroller {
+  scrollbar-color: rgba(196, 147, 91, 0.72) rgba(216, 176, 131, 0.12);
+  scrollbar-width: thin;
+}
+
+.procedure-menu-scroller::-webkit-scrollbar {
+  width: 5px;
+}
+
+.procedure-menu-scroller::-webkit-scrollbar-track {
+  background: rgba(216, 176, 131, 0.12);
+}
+
+.procedure-menu-scroller::-webkit-scrollbar-thumb {
+  background: rgba(196, 147, 91, 0.72);
+  border-radius: 999px;
+}
+
 .animate-fade-in-up {
   animation: fadeInUp 0.8s ease-out forwards;
   opacity: 0;

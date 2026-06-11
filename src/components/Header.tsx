@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowRight, BicepsFlexed, Droplet, Menu, ScanFace, Smile, Sparkles, Waves, X } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
@@ -6,6 +6,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSurgeonsList } from '@/hooks/useData';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
+import { proceduresByCategory } from '@/data/procedureTaxonomy';
 import procedureNames from '@/i18n/procedureNames.json';
 import { getProcedureAreaQueryValue, getProcedureVideoGalleryUrl } from '@/data/procedureTaxonomy';
 
@@ -69,6 +70,146 @@ const doctorFallbackImages = [
   'https://images.unsplash.com/photo-1589992896844-9b720813d1cb?q=80&w=1200&auto=format&fit=crop',
 ];
 
+const headerDropdownCopy = {
+  en: {
+    meetOurExperts: 'Meet Our\nExperts',
+    featuredDoctors: 'Featured Doctors',
+    viewAllDoctors: 'View All Doctors',
+    viewProfile: 'View Profile',
+    procedures: 'Cases',
+    proceduresIntro: 'Advanced aesthetic care. Personalised for you. Performed by trusted experts.',
+  },
+  zh: {
+    meetOurExperts: '认识我们的\n专家',
+    featuredDoctors: '精选医生',
+    viewAllDoctors: '查看全部医生',
+    viewProfile: '查看资料',
+    procedures: '案例',
+    proceduresIntro: '先进医美护理，为你个性化定制，由值得信赖的专家完成。',
+  },
+  es: {
+    meetOurExperts: 'Conozca a\nNuestros Expertos',
+    featuredDoctors: 'Doctores Destacados',
+    viewAllDoctors: 'Ver Todos los Doctores',
+    viewProfile: 'Ver Perfil',
+    procedures: 'Casos',
+    proceduresIntro: 'Atención estética avanzada. Personalizada para usted. Realizada por expertos de confianza.',
+  },
+  fr: {
+    meetOurExperts: 'Rencontrez Nos\nExperts',
+    featuredDoctors: 'Médecins à la Une',
+    viewAllDoctors: 'Voir Tous les Médecins',
+    viewProfile: 'Voir le Profil',
+    procedures: 'Cas',
+    proceduresIntro: 'Soins esthétiques avancés. Personnalisés pour vous. Réalisés par des experts de confiance.',
+  },
+  de: {
+    meetOurExperts: 'Lernen Sie Unsere\nExperten Kennen',
+    featuredDoctors: 'Ausgewählte Ärzte',
+    viewAllDoctors: 'Alle Ärzte Ansehen',
+    viewProfile: 'Profil Ansehen',
+    procedures: 'Fälle',
+    proceduresIntro: 'Fortschrittliche ästhetische Pflege. Persönlich auf Sie abgestimmt. Von vertrauenswürdigen Experten durchgeführt.',
+  },
+  ru: {
+    meetOurExperts: 'Познакомьтесь с\nНашими Экспертами',
+    featuredDoctors: 'Избранные врачи',
+    viewAllDoctors: 'Смотреть всех врачей',
+    viewProfile: 'Смотреть профиль',
+    procedures: 'Кейсы',
+    proceduresIntro: 'Передовая эстетическая помощь. Индивидуально для вас. Выполняется проверенными экспертами.',
+  },
+  ar: {
+    meetOurExperts: 'تعرف على\nخبرائنا',
+    featuredDoctors: 'الأطباء المميزون',
+    viewAllDoctors: 'عرض جميع الأطباء',
+    viewProfile: 'عرض الملف',
+    procedures: 'الحالات',
+    proceduresIntro: 'رعاية تجميلية متقدمة. مخصصة لك. يقدمها خبراء موثوقون.',
+  },
+  vi: {
+    meetOurExperts: 'Gặp Gỡ\nChuyên Gia',
+    featuredDoctors: 'Bác Sĩ Nổi Bật',
+    viewAllDoctors: 'Xem Tất Cả Bác Sĩ',
+    viewProfile: 'Xem Hồ Sơ',
+    procedures: 'Ca Thực Tế',
+    proceduresIntro: 'Chăm sóc thẩm mỹ tiên tiến. Cá nhân hóa cho bạn. Được thực hiện bởi các chuyên gia đáng tin cậy.',
+  },
+  id: {
+    meetOurExperts: 'Temui\nPara Ahli Kami',
+    featuredDoctors: 'Dokter Unggulan',
+    viewAllDoctors: 'Lihat Semua Dokter',
+    viewProfile: 'Lihat Profil',
+    procedures: 'Kasus',
+    proceduresIntro: 'Perawatan estetika modern. Dipersonalisasi untuk Anda. Dilakukan oleh ahli tepercaya.',
+  },
+} as const;
+
+const casesNavLabels = {
+  en: 'CASES',
+  zh: '案例',
+  es: 'CASOS',
+  fr: 'CAS',
+  de: 'FÄLLE',
+  ru: 'КЕЙСЫ',
+  ar: 'الحالات',
+  vi: 'CA THỰC TẾ',
+  id: 'KASUS',
+} as const;
+
+const doctorMetaTranslations = {
+  'Plastic Surgery': {
+    zh: '整形外科',
+    es: 'Cirugía Plástica',
+    fr: 'Chirurgie Plastique',
+    de: 'Plastische Chirurgie',
+    ru: 'Пластическая хирургия',
+    ar: 'جراحة التجميل',
+    vi: 'Phẫu Thuật Thẩm Mỹ',
+    id: 'Bedah Plastik',
+  },
+  'Aesthetic Plastic Surgeon': {
+    zh: '医美整形外科医生',
+    es: 'Cirujano Plástico Estético',
+    fr: 'Chirurgien Plasticien Esthétique',
+    de: 'Ästhetischer Plastischer Chirurg',
+    ru: 'Эстетический пластический хирург',
+    ar: 'جراح تجميل تجميلي',
+    vi: 'Bác Sĩ Phẫu Thuật Thẩm Mỹ',
+    id: 'Dokter Bedah Plastik Estetik',
+  },
+  'Board-Certified Plastic Surgeon': {
+    zh: '认证整形外科医生',
+    es: 'Cirujano Plástico Certificado',
+    fr: 'Chirurgien Plasticien Certifié',
+    de: 'Facharzt für Plastische Chirurgie',
+    ru: 'Сертифицированный пластический хирург',
+    ar: 'جراح تجميل معتمد',
+    vi: 'Bác Sĩ Phẫu Thuật Thẩm Mỹ Được Chứng Nhận',
+    id: 'Dokter Bedah Plastik Bersertifikat',
+  },
+  'Consultant Plastic Surgeon': {
+    zh: '顾问整形外科医生',
+    es: 'Cirujano Plástico Consultor',
+    fr: 'Chirurgien Plasticien Consultant',
+    de: 'Leitender Plastischer Chirurg',
+    ru: 'Консультирующий пластический хирург',
+    ar: 'استشاري جراحة تجميل',
+    vi: 'Bác Sĩ Tư Vấn Phẫu Thuật Thẩm Mỹ',
+    id: 'Konsultan Bedah Plastik',
+  },
+  'Medora Health : Beauty': {
+    zh: 'Medora Health : Beauty',
+    es: 'Medora Health : Beauty',
+    fr: 'Medora Health : Beauty',
+    de: 'Medora Health : Beauty',
+    ru: 'Medora Health : Beauty',
+    ar: 'Medora Health : Beauty',
+    vi: 'Medora Health : Beauty',
+    id: 'Medora Health : Beauty',
+  },
+} as const;
+
 function getSurgeonImage(surgeon: Surgeon, index: number) {
   return surgeon.images?.hero || surgeon.image_url || doctorFallbackImages[index % doctorFallbackImages.length];
 }
@@ -85,8 +226,11 @@ const Header: React.FC = () => {
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
   const [doctorCarouselPage, setDoctorCarouselPage] = useState(0);
   const [isDoctorCarouselPaused, setIsDoctorCarouselPaused] = useState(false);
+  const [pausedProcedureSection, setPausedProcedureSection] = useState<string | null>(null);
+  const procedureScrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const doctorsHospitalsLabel = currentLanguage === 'zh' ? '医生' : 'DOCTORS';
-  const proceduresLabel = currentLanguage === 'zh' ? '案例' : 'CASES';
+  const proceduresLabel = casesNavLabels[currentLanguage] || casesNavLabels.en;
+  const dropdownCopy = headerDropdownCopy[currentLanguage] || headerDropdownCopy.en;
 
   // Fetch surgeons using React Query hook
   const shouldLoadSurgeons = hoveredNav === doctorsHospitalsLabel;
@@ -121,6 +265,24 @@ const Header: React.FC = () => {
     return englishLabel; // Fallback to English if no translation found
   };
 
+  const translateDoctorMeta = (label: string) => {
+    const direct = doctorMetaTranslations[label as keyof typeof doctorMetaTranslations];
+    if (direct?.[currentLanguage as keyof typeof direct]) {
+      return direct[currentLanguage as keyof typeof direct];
+    }
+
+    const matchedPrefix = Object.keys(doctorMetaTranslations).find((prefix) => label.startsWith(prefix));
+    if (matchedPrefix) {
+      const translatedPrefix =
+        doctorMetaTranslations[matchedPrefix as keyof typeof doctorMetaTranslations][
+          currentLanguage as keyof (typeof doctorMetaTranslations)[keyof typeof doctorMetaTranslations]
+        ];
+      if (translatedPrefix) return label.replace(matchedPrefix, translatedPrefix);
+    }
+
+    return translateLabel(label);
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -152,6 +314,22 @@ const Header: React.FC = () => {
 
     return () => window.clearInterval(timer);
   }, [doctorsHospitalsLabel, featuredDoctorPages.length, hoveredNav, isDoctorCarouselPaused]);
+
+  useEffect(() => {
+    if (hoveredNav !== proceduresLabel) return;
+
+    const timer = window.setInterval(() => {
+      Object.entries(procedureScrollerRefs.current).forEach(([sectionTitle, scroller]) => {
+        if (!scroller || pausedProcedureSection === sectionTitle) return;
+        if (scroller.scrollHeight <= scroller.clientHeight + 1) return;
+
+        const isAtBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1;
+        scroller.scrollTop = isAtBottom ? 0 : scroller.scrollTop + 0.5;
+      });
+    }, 80);
+
+    return () => window.clearInterval(timer);
+  }, [hoveredNav, pausedProcedureSection, proceduresLabel]);
 
   const handleLinkClick = (e: React.MouseEvent, pageName: string, isMenuLink: boolean, href?: string) => {
     e.preventDefault();
@@ -247,69 +425,35 @@ const Header: React.FC = () => {
       route: 'face',
       icon: ScanFace,
       viewAllLabel: 'View all Face Procedures',
-      items: [
-        { label: 'Eyelid Surgery', isSub: true },
-        { label: 'Rhinoplasty', isSub: true },
-        { label: 'Revision Rhinoplasty', isSub: true },
-        { label: 'Nose Tip Refinement', isSub: true },
-        { label: 'Facelift', isSub: true },
-        { label: 'Mini Facelift', isSub: true },
-        { label: 'Neck Lift', isSub: true },
-        { label: 'Brow Lift', isSub: true },
-        { label: 'Facial Contouring', isSub: true }
-      ]
+      items: proceduresByCategory.face.map((procedure) => ({ label: procedure.label, isSub: true }))
     },
     {
       title: 'Body',
       route: 'body',
       icon: BicepsFlexed,
       viewAllLabel: 'View all Body Procedures',
-      items: [
-        { label: 'Liposuction', isSub: true },
-        { label: 'Tummy Tuck', isSub: true },
-        { label: 'Breast Surgery', isSub: true },
-        { label: 'Body Contouring', isSub: true },
-        { label: 'Fat Transfer', isSub: true }
-      ]
+      items: proceduresByCategory.body.map((procedure) => ({ label: procedure.label, isSub: true }))
     },
     {
       title: 'Skin & Injectables',
       route: 'nonsurgical',
       icon: Droplet,
       viewAllLabel: 'View all Non-Surgical Procedures',
-      items: [
-        { label: 'BOTOX® & Neurotoxins', isSub: true },
-        { label: 'Dermal Fillers', isSub: true },
-        { label: 'Skin Tightening', isSub: true },
-        { label: 'Skin Resurfacing', isSub: true },
-        { label: 'Laser Treatments', isSub: true },
-        { label: 'Fat Dissolving Injections', isSub: true },
-        { label: 'PRP Rejuvenation', isSub: true }
-      ]
+      items: proceduresByCategory.nonsurgical.map((procedure) => ({ label: procedure.label, isSub: true }))
     },
     {
       title: 'Hair Restoration',
       route: 'hair',
       icon: Waves,
       viewAllLabel: 'View all Hair Procedures',
-      items: [
-        { label: 'Hair Restoration', isSub: true },
-        { label: 'Hair Transplant', isSub: true },
-        { label: 'PRP Hair Treatment', isSub: true },
-        { label: 'Hairline Restoration', isSub: true }
-      ]
+      items: proceduresByCategory.hair.map((procedure) => ({ label: procedure.label, isSub: true }))
     },
     {
       title: 'Dental',
       route: 'dental',
       icon: Smile,
       viewAllLabel: 'View all Dental Procedures',
-      items: [
-        { label: 'Teeth Whitening', isSub: true },
-        { label: 'Porcelain Veneers', isSub: true },
-        { label: 'Invisalign® / Clear Aligners', isSub: true },
-        { label: 'Smile Design', isSub: true }
-      ]
+      items: proceduresByCategory.dental.map((procedure) => ({ label: procedure.label, isSub: true }))
     }
   ];
 
@@ -478,7 +622,12 @@ const Header: React.FC = () => {
                       <Sparkles className="mt-10 text-[#c4935b]" size={22} strokeWidth={1.35} />
                     </div>
                     <div className="font-sans text-sm font-medium uppercase leading-[1.55] tracking-wide text-[#c4935b]">
-                      Meet Our<br />Experts
+                      {dropdownCopy.meetOurExperts.split('\n').map((line, index) => (
+                        <React.Fragment key={line}>
+                          {index > 0 && <br />}
+                          {line}
+                        </React.Fragment>
+                      ))}
                     </div>
                     <div className="mt-4 h-[2px] w-14 bg-[#c4935b]" />
                   </aside>
@@ -486,14 +635,14 @@ const Header: React.FC = () => {
                   <div className="min-w-0 pt-1">
                     <div className="mb-5 flex items-center justify-between gap-4">
                       <h3 className="font-sans text-sm font-medium uppercase tracking-[0.1em] text-[#c4935b]">
-                        Featured Doctors
+                        {dropdownCopy.featuredDoctors}
                       </h3>
                       <a
                         href="/surgeons"
                         onClick={(event) => handleLinkClick(event, 'View All Doctors →', true, '/surgeons')}
                         className="font-sans text-sm font-medium uppercase tracking-[0.1em] text-[#c4935b] transition-colors hover:text-[#f0d3a9]"
                       >
-                        View All Doctors <span aria-hidden>→</span>
+                        {dropdownCopy.viewAllDoctors} <span aria-hidden>→</span>
                       </a>
                     </div>
 
@@ -546,13 +695,13 @@ const Header: React.FC = () => {
                                       {surgeon.name}
                                     </h4>
                                     <p className="mt-1 font-sans line-clamp-1 text-[13px] font-normal leading-[1.35] text-[#c6d3cf]">
-                                      {surgeon.specialties?.[0] || 'Plastic Surgery'}
+                                      {translateDoctorMeta(surgeon.specialties?.[0] || 'Plastic Surgery')}
                                     </p>
                                     <p className="mt-0.5 font-sans line-clamp-1 text-xs font-normal leading-[1.35] text-[#aebdb8]">
-                                      {surgeon.title || 'Medora Health : Beauty'}
+                                      {translateDoctorMeta(surgeon.title || 'Medora Health : Beauty')}
                                     </p>
                                     <span className="mt-auto pt-3 font-sans text-[13px] font-medium text-[#c4935b]">
-                                      View Profile <span aria-hidden>→</span>
+                                      {dropdownCopy.viewProfile} <span aria-hidden>→</span>
                                     </span>
                                   </div>
                                 </a>
@@ -574,10 +723,10 @@ const Header: React.FC = () => {
                       <div className="mt-6 h-[2px] w-20 bg-[#c4935b]" />
                     </div>
                     <h3 className="font-sans text-sm font-medium uppercase tracking-wide text-[#c4935b]">
-                      Procedures
+                      {dropdownCopy.procedures}
                     </h3>
                     <p className="mt-9 max-w-[12rem] font-sans text-sm font-light leading-[1.8] text-[#d5ded9]">
-                      Advanced aesthetic care. Personalised for you. Performed by trusted experts.
+                      {dropdownCopy.proceduresIntro}
                     </p>
                     <div className="mt-auto h-32 opacity-[0.14]">
                       <div className="h-full w-full rounded-full border border-[#d0b083]/50 blur-[1px]" />
@@ -604,7 +753,16 @@ const Header: React.FC = () => {
                             </div>
                           </div>
 
-                          <div className="space-y-0">
+                          <div
+                            ref={(node) => {
+                              procedureScrollerRefs.current[section.title] = node;
+                            }}
+                            className="procedure-menu-scroller h-[18.25rem] min-h-0 overflow-y-auto pr-2"
+                            onMouseEnter={() => setPausedProcedureSection(section.title)}
+                            onMouseLeave={() => setPausedProcedureSection(null)}
+                            onFocus={() => setPausedProcedureSection(section.title)}
+                            onBlur={() => setPausedProcedureSection(null)}
+                          >
                             {section.items.map((item) => (
                               <a
                                 key={item.label}
