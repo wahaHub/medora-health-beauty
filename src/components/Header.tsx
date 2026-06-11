@@ -473,10 +473,10 @@ const Header: React.FC = () => {
                       <span className="font-serif text-[6.9rem] leading-none text-[#f3f0e8] drop-shadow-[0_2px_2px_rgba(0,0,0,0.32)]">M</span>
                       <Sparkles className="mt-10 text-[#c4935b]" size={22} strokeWidth={1.35} />
                     </div>
-                    <div className="font-serif text-[2.45rem] uppercase leading-[1.22] tracking-[0.2em] text-[#c4935b]">
+                    <div className="font-sans text-sm font-medium uppercase leading-[1.55] tracking-wide text-[#c4935b]">
                       Meet Our<br />Experts
                     </div>
-                    <div className="mt-7 h-[3px] w-14 bg-[#c4935b]" />
+                    <div className="mt-4 h-[2px] w-14 bg-[#c4935b]" />
                   </aside>
 
                   <div className="min-w-0 pt-1">
@@ -538,7 +538,7 @@ const Header: React.FC = () => {
                                     />
                                   </div>
                                   <div className="flex flex-1 flex-col px-1.5 pb-2 pt-2.5">
-                                    <h4 className="font-sans line-clamp-2 min-h-[2.15rem] text-[16px] font-medium leading-[1.08] text-[#f5f4ee]">
+                                    <h4 className="font-sans line-clamp-2 min-h-[2.15rem] text-sm font-medium leading-[1.2] text-[#f5f4ee]">
                                       {surgeon.name}
                                     </h4>
                                     <p className="mt-1 font-sans line-clamp-1 text-[13px] font-normal leading-[1.35] text-[#c6d3cf]">
@@ -569,10 +569,10 @@ const Header: React.FC = () => {
                       </span>
                       <div className="mt-6 h-[2px] w-20 bg-[#c4935b]" />
                     </div>
-                    <h3 className="text-[15px] font-semibold uppercase tracking-[0.32em] text-[#c4935b]">
+                    <h3 className="font-sans text-sm font-medium uppercase tracking-wide text-[#c4935b]">
                       Procedures
                     </h3>
-                    <p className="mt-9 max-w-[12rem] font-serif text-[1.05rem] leading-[1.65] text-[#d5ded9]">
+                    <p className="mt-9 max-w-[12rem] font-sans text-sm font-light leading-[1.8] text-[#d5ded9]">
                       Advanced aesthetic care. Personalised for you. Performed by trusted experts.
                     </p>
                     <div className="mt-auto h-32 opacity-[0.14]">
@@ -590,13 +590,13 @@ const Header: React.FC = () => {
                             sectionIdx > 0 ? 'lg:border-l lg:border-[#d0b083]/18' : ''
                           }`}
                         >
-                          <div className="mb-7 flex h-[5.8rem] items-start gap-5">
-                            <Icon className="h-12 w-12 shrink-0 text-[#c4935b]" strokeWidth={1.35} />
+                          <div className="mb-7 flex h-[5.8rem] items-start gap-4">
+                            <Icon className="h-10 w-10 shrink-0 text-[#c4935b]" strokeWidth={1.35} />
                             <div>
-                              <h3 className="whitespace-nowrap font-serif text-[1.55rem] leading-none text-[#f1f0eb] drop-shadow-[0_2px_2px_rgba(0,0,0,0.38)] 2xl:text-[1.7rem]">
+                              <h3 className="whitespace-nowrap font-sans text-sm font-medium leading-[1.35] tracking-wide text-[#f1f0eb]">
                                 {translateLabel(section.title)}
                               </h3>
-                              <div className="mt-3 h-[2px] w-16 bg-[#c4935b]" />
+                              <div className="mt-3 h-[2px] w-14 bg-[#c4935b]" />
                             </div>
                           </div>
 
@@ -606,7 +606,7 @@ const Header: React.FC = () => {
                                 key={item.label}
                                 href={item.href || '#'}
                                 onClick={(event) => handleLinkClick(event, item.label, true, item.href)}
-                                className="group/item flex min-h-12 items-center border-b border-[#d0b083]/15 py-3 text-[15px] font-medium leading-tight text-[#d8e0dc] transition-colors hover:text-[#e4bd83]"
+                                className="group/item flex min-h-12 items-center border-b border-[#d0b083]/15 py-3 text-sm font-medium leading-tight text-[#d8e0dc] transition-colors hover:text-[#e4bd83]"
                               >
                                 <span className="mr-4 h-1.5 w-1.5 rounded-full bg-[#c4935b] transition-transform group-hover/item:scale-125" />
                                 {translateLabel(item.label)}
@@ -617,7 +617,7 @@ const Header: React.FC = () => {
                           <a
                             href={`/procedures/${section.route}`}
                             onClick={(event) => handleLinkClick(event, section.viewAllLabel, true, `/procedures/${section.route}`)}
-                            className="mt-auto flex items-center gap-4 pt-8 text-[14px] font-medium text-[#d7ddd9] transition-colors hover:text-[#e4bd83]"
+                            className="mt-auto flex items-center gap-4 pt-8 text-sm font-medium text-[#d7ddd9] transition-colors hover:text-[#e4bd83]"
                           >
                             <ArrowRight className="h-5 w-5 text-[#c4935b]" strokeWidth={1.7} />
                             {translateLabel(section.viewAllLabel)}
