@@ -4,6 +4,7 @@ import { BadgeCheck, ChevronDown, LockKeyhole, Search, ShieldCheck } from 'lucid
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import procedureNames from '@/i18n/procedureNames.json';
+import { getProcedureVideoGalleryUrl } from '@/data/procedureTaxonomy';
 
 interface SearchBarProps {
   onSearch?: (procedure: string, country: string, priceRange: string) => void;
@@ -181,12 +182,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     if (onSearch) {
       onSearch(procedure, country, priceRange);
     }
-    // Navigate to search results page with procedure query
-    const searchParams = new URLSearchParams();
     if (procedure) {
-      searchParams.set('procedure', procedure);
+      navigate(getProcedureVideoGalleryUrl(procedure));
+    } else {
+      navigate('/procedure/videos');
     }
-    navigate(`/search?${searchParams.toString()}`);
     window.scrollTo(0, 0);
   };
 

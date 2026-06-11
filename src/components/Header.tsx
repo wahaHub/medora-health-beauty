@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useSurgeonsList } from '@/hooks/useData';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import procedureNames from '@/i18n/procedureNames.json';
+import { getProcedureAreaQueryValue, getProcedureVideoGalleryUrl } from '@/data/procedureTaxonomy';
 
 interface SubMenuItem {
   label: string;
@@ -183,9 +184,12 @@ const Header: React.FC = () => {
       navigate(`/surgeon/${surgeonName}`);
       window.scrollTo(0, 0);
     } else if (isMenuLink) {
-      // It's a procedure from the dropdown menu
-      const procedureName = encodeURIComponent(pageName);
-      navigate(`/procedure/${procedureName}`);
+      const procedureArea = getProcedureAreaQueryValue(pageName);
+      const menuPath =
+        procedureArea === 'all'
+          ? `/procedure/${encodeURIComponent(pageName)}`
+          : getProcedureVideoGalleryUrl(pageName);
+      navigate(menuPath);
       window.scrollTo(0, 0);
     } else {
       // Basic anchor scrolling for home page sections (ABOUT, CONTACT, etc.)

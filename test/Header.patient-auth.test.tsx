@@ -4,11 +4,21 @@ import { MemoryRouter } from 'react-router-dom';
 
 import Header from '@/components/Header';
 
+const navigateMock = vi.hoisted(() => vi.fn());
+
 const patientAuthState = vi.hoisted(() => ({
   isAuthenticated: false,
   isLoading: false,
   patient: null,
 }));
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => navigateMock,
+  };
+});
 
 vi.mock('@/contexts/PatientAuthContext', () => ({
   usePatientAuth: () => patientAuthState,
@@ -55,6 +65,7 @@ describe('Header patient auth CTA', () => {
     patientAuthState.isAuthenticated = false;
     patientAuthState.isLoading = false;
     patientAuthState.patient = null;
+    navigateMock.mockClear();
     Object.defineProperty(window, 'scrollY', { value: 0, writable: true });
     window.scrollTo = vi.fn();
   });
@@ -136,6 +147,20 @@ describe('Header patient auth CTA', () => {
     expect(screen.getByRole('link', { name: 'View all Dental Procedures' })).toHaveAttribute(
       'href',
       '/procedures/dental',
+    );
+  });
+
+  it('routes concrete procedure menu clicks to video cases with procedure and area filters', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Header />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('link', { name: 'Revision Rhinoplasty' }));
+
+    expect(navigateMock).toHaveBeenCalledWith(
+      '/procedure/videos?procedure=Revision+Rhinoplasty&area=face',
     );
   });
 });
