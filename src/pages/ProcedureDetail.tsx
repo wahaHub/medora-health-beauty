@@ -381,18 +381,6 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
             <div className="max-w-md text-gray-300 text-sm md:text-base leading-relaxed hidden md:block">
               {translation?.overview?.substring(0, 150)}...
             </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                navigate(videoGalleryPath);
-                window.scrollTo(0, 0);
-              }}
-              className="group mt-8 inline-flex items-center gap-3 border border-white/70 px-7 py-4 text-xs font-bold uppercase tracking-[0.18em] text-white transition-colors hover:bg-white hover:text-navy-900"
-            >
-              View All Cases
-              <ArrowRight size={16} strokeWidth={1.8} className="transition-transform group-hover:translate-x-1" />
-            </button>
           </div>
 
           <div className="absolute inset-0 md:relative md:w-1/2 h-full">
@@ -406,6 +394,23 @@ const ProcedureDetail: React.FC<ProcedureDetailProps> = ({
               }}
             />
           </div>
+        </div>
+      </section>
+
+      {/* 2. CASE VIDEO CTA */}
+      <section className="bg-white border-b border-stone-200">
+        <div className="container mx-auto px-6 py-8">
+          <button
+            type="button"
+            onClick={() => {
+              navigate(videoGalleryPath);
+              window.scrollTo(0, 0);
+            }}
+            className="group inline-flex items-center gap-3 border border-navy-900 px-7 py-4 text-xs font-bold uppercase tracking-[0.18em] text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+          >
+            {t('viewAllVideoCases')}
+            <ArrowRight size={16} strokeWidth={1.8} className="transition-transform group-hover:translate-x-1" />
+          </button>
         </div>
       </section>
 
