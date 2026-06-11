@@ -491,6 +491,10 @@ export const crmApi = {
     destination?: string;
     preferredLanguage?: string;
     captchaToken?: string;
+    source?: string;
+    zipCode?: string;
+    preferredProvider?: string;
+    message?: string;
   }) =>
     request<{
       patientId: string;

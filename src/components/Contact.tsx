@@ -5,6 +5,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import procedureNames from '@/i18n/procedureNames.json';
 import { fetchSurgeonsData, type Surgeon } from '@/services/surgeons';
+import { crmApi } from '@/services/crmApiClient';
+import { usePatientAuth } from '@/contexts/PatientAuthContext';
+import { usePatientEntry } from '@/hooks/usePatientEntry';
 
 // Type for procedure names translation
 type ProcedureNameTranslations = {
@@ -23,11 +26,39 @@ type ProcedureNameTranslations = {
 
 const typedProcedureNames = procedureNames as ProcedureNameTranslations;
 
+type ContactFormData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  zipCode: string;
+  procedure: string;
+  provider: string;
+  message: string;
+};
+
+const emptyContactForm: ContactFormData = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  zipCode: '',
+  procedure: '',
+  provider: '',
+  message: '',
+};
+
 const Contact: React.FC = () => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
+  const { bootstrapSession } = usePatientAuth();
+  const { applyOnboardingResult } = usePatientEntry();
   const [surgeons, setSurgeons] = useState<Surgeon[]>([]);
   const [loadingSurgeons, setLoadingSurgeons] = useState(true);
+  const [formData, setFormData] = useState<ContactFormData>(emptyContactForm);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Enable scroll reveal animations
   useScrollReveal(true);
@@ -96,6 +127,84 @@ const Contact: React.FC = () => {
     { label: t('categoryNonSurgical'), procedures: nonSurgicalProcedures },
   ];
 
+  const getProcedureCategory = (procedureName: string): string | undefined => {
+    if (!procedureName) return undefined;
+    if (faceProcedures.includes(procedureName)) return 'face';
+    if (bodyProcedures.includes(procedureName)) return 'body';
+    if (breastProcedures.includes(procedureName)) return 'breast';
+    if (nonSurgicalProcedures.includes(procedureName)) return 'non-surgical';
+    return undefined;
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const name = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
+      const result = await crmApi.initOnboarding({
+        name,
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        disease: formData.procedure,
+        category: getProcedureCategory(formData.procedure),
+        preferredLanguage: currentLanguage || 'en',
+        source: 'homepage_contact',
+        zipCode: formData.zipCode.trim(),
+        preferredProvider: formData.provider || undefined,
+        message: formData.message.trim() || undefined,
+      });
+
+      const widgetConversation = result.widgetChatTarget?.kind === 'CHATBOT_SESSION'
+        ? [{
+            id: result.widgetChatTarget.sessionId,
+            type: 'patient-admin' as const,
+            category: 'ADMIN_PATIENT',
+          }]
+        : [];
+      const conversations = result.conversations?.length
+        ? result.conversations
+        : widgetConversation;
+      const nextStep: 'select-hospitals' | 'messages-ready' =
+        widgetConversation.length > 0
+          ? 'messages-ready'
+          : ((result.nextStep as 'select-hospitals' | 'messages-ready') ?? 'messages-ready');
+
+      bootstrapSession({
+        patientId: result.patientId,
+        caseId: result.caseId,
+        name,
+        email: formData.email.trim(),
+        restoreToken: result.restoreToken ?? '',
+        nextStep,
+      });
+
+      applyOnboardingResult({
+        patientId: result.patientId,
+        caseId: result.caseId,
+        nextStep,
+        conversations,
+      });
+
+      setIsSubmitted(true);
+      setFormData(emptyContactForm);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Something went wrong');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section id="contact" className="relative py-24 bg-forest-gradient text-white">
       {/* Map Background Pattern */}
@@ -119,24 +228,32 @@ const Contact: React.FC = () => {
 
         <div className="max-w-4xl mx-auto scroll-reveal">
           <p className="text-xs text-sage-300 mb-2 font-sans">{t('contactRequired')}</p>
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          {isSubmitted && (
+            <div className="mb-6 border border-emerald-400/30 bg-emerald-500/10 px-5 py-4 text-center text-sage-50">
+              <p className="font-serif text-2xl text-white">{t('consultationThankYou') || 'Thank you!'}</p>
+              <p className="mt-1 text-sm text-sage-100">
+                {t('consultationSuccess') || 'We have received your consultation request and will contact you shortly.'}
+              </p>
+            </div>
+          )}
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input required type="text" placeholder={t('contactFirstName')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
-              <input required type="text" placeholder={t('contactLastName')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
+              <input required type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} placeholder={t('contactFirstName')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
+              <input required type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} placeholder={t('contactLastName')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input required type="email" placeholder={t('contactEmail')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
-              <input required type="tel" placeholder={t('contactPhoneField')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
+              <input required type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder={t('contactEmail')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
+              <input required type="tel" name="phone" value={formData.phone} onChange={handleInputChange} placeholder={t('contactPhoneField')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input required type="text" placeholder={t('contactZipCode')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
+              <input required type="text" name="zipCode" value={formData.zipCode} onChange={handleInputChange} placeholder={t('contactZipCode')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
 
               {/* Procedure Interest Dropdown - with all procedures */}
               <div className="relative">
-                <select required className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 appearance-none rounded-none cursor-pointer">
-                  <option value="" disabled selected className="text-navy-900">{t('contactProcedureInterest')}</option>
+                <select required name="procedure" value={formData.procedure} onChange={handleInputChange} aria-label={t('contactProcedureInterest')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 appearance-none rounded-none cursor-pointer">
+                  <option value="" disabled className="text-navy-900">{t('contactProcedureInterest')}</option>
                   {allProcedureCategories.map((category) => (
                     <optgroup key={category.label} label={category.label} className="text-navy-900 font-semibold">
                       {category.procedures
@@ -155,8 +272,8 @@ const Contact: React.FC = () => {
 
             {/* Preferred Provider Dropdown - with all surgeons */}
             <div className="relative">
-              <select className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 appearance-none rounded-none cursor-pointer">
-                <option value="" disabled selected className="text-navy-900">{t('contactPreferredProvider')}</option>
+              <select name="provider" value={formData.provider} onChange={handleInputChange} aria-label={t('contactPreferredProvider')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 appearance-none rounded-none cursor-pointer">
+                <option value="" disabled className="text-navy-900">{t('contactPreferredProvider')}</option>
                 <option value="any" className="text-navy-900">{t('contactFirstAvailable')}</option>
                 {!loadingSurgeons && surgeons.map((surgeon) => (
                   <option key={surgeon.surgeon_id} value={surgeon.surgeon_id} className="text-navy-900">
@@ -169,13 +286,20 @@ const Contact: React.FC = () => {
 
             <textarea
               rows={6}
+              name="message"
+              value={formData.message}
+              onChange={handleInputChange}
               placeholder={t('contactHowCanWeHelp')}
               className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all resize-none placeholder-sage-300"
             ></textarea>
 
+            {submitError && (
+              <p className="text-center text-sm text-red-300">{submitError}</p>
+            )}
+
             <div className="pt-8 text-center">
-              <button type="submit" className="bg-gold-500 text-white px-12 py-4 uppercase tracking-[0.2em] text-sm font-bold hover:bg-gold-600 transition-all duration-300 hover:scale-105 shadow-lg shadow-gold-500/20">
-                {t('contactSubmit')}
+              <button type="submit" disabled={isSubmitting} className="bg-gold-500 text-white px-12 py-4 uppercase tracking-[0.2em] text-sm font-bold hover:bg-gold-600 transition-all duration-300 hover:scale-105 shadow-lg shadow-gold-500/20 disabled:cursor-not-allowed disabled:opacity-60">
+                {isSubmitting ? (t('submitting') || 'Submitting...') : t('contactSubmit')}
               </button>
             </div>
           </form>
