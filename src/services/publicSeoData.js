@@ -36,7 +36,7 @@ const reportWarnings = (warnings, logger) => {
 export async function loadPublicSeoData(config = {}) {
   const logger = config.logger || defaultLogger;
   const [fallbackData, supabaseData] = await Promise.all([
-    loadPublicSeoFallbackData(),
+    loadPublicSeoFallbackData({ env: config.env }),
     loadPublicSeoSupabaseData({ env: config.env }),
   ]);
 
@@ -56,6 +56,7 @@ export async function loadPublicSeoData(config = {}) {
     surgeons,
     hospitals,
     videoCases: fallbackData.videoCases,
+    videoCaseSource: fallbackData.videoCaseSource,
     routeExtras,
     warnings,
   };

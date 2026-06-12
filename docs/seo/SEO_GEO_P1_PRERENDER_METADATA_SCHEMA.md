@@ -97,6 +97,19 @@ Create a public SEO data layer that can run in build-time scripts:
 
 The build should fail loudly only for broken code. Missing optional SEO data should produce warnings and fallback metadata so deployment is not blocked.
 
+Current status:
+
+| Item | Status | Notes |
+| --- | --- | --- |
+| Build-time public SEO data layer | Done | `loadPublicSeoData` combines procedure taxonomy/content, generated surgeon data, Supabase public data when configured, and video case data. |
+| R2 v4 video manifest ingestion | Done | Build-time video SEO data tries `SEO_VIDEO_CASE_MANIFEST_URL`, `VIDEO_CASE_MANIFEST_URL`, `VITE_R2_CUSTOM_DOMAIN`, `VITE_R2_PUBLIC_URL`, `R2_PUBLIC_URL`, then the default Medora video domain. |
+| Checked-in video manifest fallback | Done | If the remote R2 manifest is unavailable, build falls back to `public/video-cases.json` and emits a warning rather than failing deployment. |
+| Procedure-specific video case summaries | Done | Priority procedure video pages include privacy-safe case summaries in initial HTML. |
+| `VideoObject` schema for video pages | Done for manifest-level data | Procedure video pages and generic video case collection pages emit `VideoObject` JSON-LD from manifest data. |
+| Per-video thumbnails | Not done | The v4 manifest does not currently provide thumbnail URLs; schema uses the brand case-collage fallback image. |
+| Transcripts and detailed case outcomes | Not done | Manifest data does not yet include transcripts, patient concern, treatment approach, visible result, timeline, or richer outcome summaries. |
+| Source duration metadata | Partial | Current SEO duration is deterministic fallback derived from case id when source duration is absent. Replace when v4 manifest exposes actual duration. |
+
 ## JSON-LD Requirements
 
 JSON-LD must be included in initial HTML for prerendered routes.

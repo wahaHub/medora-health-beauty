@@ -15,19 +15,28 @@ const nodeFacingModules = [
 describe('public SEO data loader', () => {
   it('returns fallback SEO data and warnings when Supabase env is missing', async () => {
     const warn = vi.fn();
-    const data = await loadPublicSeoData({
-      env: {},
-      logger: { warn },
-    });
+    const fetch = vi.fn();
+    vi.stubGlobal('fetch', fetch);
 
-    expect(data.procedures).toHaveLength(20);
-    expect(data.surgeons.length).toBeGreaterThan(0);
-    expect(data.hospitals).toEqual([]);
-    expect(data.videoCases.length).toBeGreaterThan(0);
-    expect(data.procedures.find((procedure) => procedure.label === 'Rhinoplasty')?.videoCases?.length).toBeGreaterThan(0);
-    expect(data.routeExtras).toEqual(expect.arrayContaining(data.surgeons.map((surgeon) => surgeon.route)));
-    expect(data.warnings).toContain('Supabase env is missing; using public SEO fallback data.');
-    expect(warn).toHaveBeenCalledWith('[public-seo] Supabase env is missing; using public SEO fallback data.');
+    try {
+      const data = await loadPublicSeoData({
+        env: {},
+        logger: { warn },
+      });
+
+      expect(fetch).not.toHaveBeenCalled();
+      expect(data.procedures).toHaveLength(20);
+      expect(data.surgeons.length).toBeGreaterThan(0);
+      expect(data.hospitals).toEqual([]);
+      expect(data.videoCases.length).toBeGreaterThan(0);
+      expect(data.videoCaseSource).toBe('public/video-cases.json');
+      expect(data.procedures.find((procedure) => procedure.label === 'Rhinoplasty')?.videoCases?.length).toBeGreaterThan(0);
+      expect(data.routeExtras).toEqual(expect.arrayContaining(data.surgeons.map((surgeon) => surgeon.route)));
+      expect(data.warnings).toContain('Supabase env is missing; using public SEO fallback data.');
+      expect(warn).toHaveBeenCalledWith('[public-seo] Supabase env is missing; using public SEO fallback data.');
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it('builds metadata-ready procedure records for every P1 priority seed', async () => {

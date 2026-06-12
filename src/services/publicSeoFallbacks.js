@@ -12,6 +12,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, '..', '..');
 const VIDEO_CASE_THUMBNAIL_FALLBACK = '/homepage/aesthetic-cases-collage.png';
 const VIDEO_CASE_LIMIT_PER_PROCEDURE = 6;
+const VIDEO_CASE_MANIFEST_VERSION = '20260610-v6';
+const DEFAULT_R2_PUBLIC_URL = 'https://videos.medorabeauty.com';
+const VIDEO_CASE_MANIFEST_TIMEOUT_MS = 10000;
 
 const VIDEO_PROJECT_ALIASES = {
   blepharoplasty: 'eye-surgery',
@@ -58,6 +61,42 @@ const safeReadJson = async (relativePath) => {
     return null;
   }
 };
+
+const getEnv = (configEnv) => configEnv || process.env;
+
+const resolveRemoteVideoManifestUrl = (configEnv) => {
+  const env = getEnv(configEnv);
+  const explicitUrl = env.SEO_VIDEO_CASE_MANIFEST_URL || env.VIDEO_CASE_MANIFEST_URL;
+  if (explicitUrl) return explicitUrl;
+
+  if (configEnv && !env.VITE_R2_CUSTOM_DOMAIN && !env.VITE_R2_PUBLIC_URL && !env.R2_PUBLIC_URL) {
+    return null;
+  }
+
+  const baseUrl =
+    env.VITE_R2_CUSTOM_DOMAIN ||
+    env.VITE_R2_PUBLIC_URL ||
+    env.R2_PUBLIC_URL ||
+    DEFAULT_R2_PUBLIC_URL;
+  return `${baseUrl.replace(/\/+$/, '')}/video_cases_v4/manifest.json?v=${VIDEO_CASE_MANIFEST_VERSION}`;
+};
+
+const fetchJsonWithTimeout = async (url) => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), VIDEO_CASE_MANIFEST_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    return await response.json();
+  } finally {
+    clearTimeout(timer);
+  }
+};
+
+const hasVideoCaseRows = (manifest) => Array.isArray(manifest?.cases) && manifest.cases.length > 0;
 
 const firstSentence = (value) => {
   const text = String(value || '').replace(/\s+/g, ' ').trim();
@@ -166,13 +205,41 @@ const normalizeVideoCase = (item, index, generatedAt) => {
   };
 };
 
-export async function loadFallbackVideoCases() {
-  const manifest = await safeReadJson('public/video-cases.json');
+export async function loadFallbackVideoCases(config = {}) {
+  const warnings = [];
+  const remoteUrl = resolveRemoteVideoManifestUrl(config.env);
+  let manifest = null;
+  let source = 'public/video-cases.json';
+
+  if (remoteUrl) {
+    try {
+      manifest = await fetchJsonWithTimeout(remoteUrl);
+      if (!hasVideoCaseRows(manifest)) {
+        throw new Error('missing cases array');
+      }
+      source = remoteUrl;
+    } catch (error) {
+      warnings.push(`R2 video case manifest unavailable (${error.message}); using checked-in public/video-cases.json fallback.`);
+      manifest = null;
+    }
+  }
+
+  if (!manifest) {
+    manifest = await safeReadJson('public/video-cases.json');
+    if (!hasVideoCaseRows(manifest)) {
+      warnings.push('Checked-in public/video-cases.json fallback is unavailable or empty; video case SEO data will be omitted.');
+    }
+  }
+
   const cases = Array.isArray(manifest?.cases) ? manifest.cases : [];
 
-  return cases
-    .map((item, index) => normalizeVideoCase(item, index, manifest?.generatedAt))
-    .filter((item) => item.videoUrl && item.project);
+  return {
+    source,
+    warnings,
+    cases: cases
+      .map((item, index) => normalizeVideoCase(item, index, manifest?.generatedAt))
+      .filter((item) => item.videoUrl && item.project),
+  };
 }
 
 const getVideoCasesForProcedure = (videoCases, procedureName) => {
@@ -225,12 +292,13 @@ export async function loadFallbackSurgeons() {
   return surgeons.map(normalizeSurgeon).filter(Boolean);
 }
 
-export async function loadPublicSeoFallbackData() {
-  const [procedures, surgeons, videoCases] = await Promise.all([
+export async function loadPublicSeoFallbackData(config = {}) {
+  const [procedures, surgeons, videoCaseData] = await Promise.all([
     loadFallbackProcedures(),
     loadFallbackSurgeons(),
-    loadFallbackVideoCases(),
+    loadFallbackVideoCases({ env: config.env }),
   ]);
+  const videoCases = videoCaseData.cases;
   const proceduresWithVideoCases = procedures.map((procedure) => ({
     ...procedure,
     videoCases: getVideoCasesForProcedure(videoCases, procedure.label),
@@ -241,6 +309,7 @@ export async function loadPublicSeoFallbackData() {
     surgeons,
     hospitals: [],
     videoCases,
-    warnings: [],
+    videoCaseSource: videoCaseData.source,
+    warnings: videoCaseData.warnings,
   };
 }

@@ -97,6 +97,18 @@ The query-filter video route is compatibility-only. Do not promote it in sitemap
 
 ## Phase Overview
 
+## Current Implementation Status
+
+| Phase | Status | Notes |
+| --- | --- | --- |
+| P0 crawl foundation | Done | `robots.txt`, `llms.txt`, generated sitemap, real Header/Footer procedure links, and current URL preservation are implemented. |
+| P1 URL cleanup | Done for current Vite routes | Current SEO/internal-link route is `/procedure/:procedureName/videos`; query-filter video URLs remain compatibility-only. Future slugged routes are not implemented yet. |
+| P1 prerender pipeline | Done for first wave | Build generates initial HTML for priority static pages, procedure guides, procedure video pages, surgeon pages, and hospital pages. |
+| P1 metadata/schema | Partially done | Page-specific metadata and JSON-LD are implemented for priority routes. Video pages now use R2 v4 manifest data when available and fallback manifest data otherwise. |
+| P1 video case data quality | Partially done | Initial HTML includes privacy-safe video case summaries and `VideoObject` schema. Per-video thumbnails, transcripts, richer outcome summaries, and duration from source metadata are still not done. |
+| P2 answer-ready content | Not started | FAQs, short-answer blocks, medical reviewer fields, cost factors, avoidance criteria, and richer destination/guide hubs still need implementation. |
+| P3 multilingual/authority | Not started | URL-level language routing, hreflang, editorial policy, medical review policy, and authority workflows still need implementation. |
+
 ### P0: Crawl Foundation
 
 Fix discovery and crawl basics:
