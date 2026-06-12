@@ -59,6 +59,16 @@ The implementation plan must choose exactly 20 initial procedure guide/video-cas
 - hair transplant
 - veneers
 
+P1 uses the current implemented route family:
+
+- procedure guides: `/procedure/:procedureName`
+- procedure video cases: `/procedure/:procedureName/videos`
+- generic video cases: `/procedure/videos`
+
+Do not use query-filter URLs such as `/procedure/videos?procedure=Rhinoplasty&area=face` as sitemap URLs, Header Cases links, or page-specific static canonical pages. They remain compatibility/filter URLs only.
+
+Do not emit future slugged deep URLs such as `/procedures/face/rhinoplasty` or `/procedures/face/rhinoplasty/video-cases` until real routes, prerender output, sitemap support, and canonical/redirect behavior exist.
+
 ## Metadata Requirements
 
 Every prerendered public page needs:
@@ -73,6 +83,8 @@ Every prerendered public page needs:
 - JSON-LD
 
 Do not add hreflang until P3 language URLs exist.
+
+Default metadata should be global-first. Generic procedure guide titles should not default to `in China`; destination modifiers such as China, Korea, Thailand, and Turkey belong on dedicated destination landing pages or destination-specific guide variants.
 
 ## Data Flow
 
@@ -94,9 +106,10 @@ Schema requirements are defined in `SEO_GEO_SCHEMA_LIBRARY.md`.
 ## Validation
 
 ```bash
-curl -sL https://medorabeauty.com/procedures/face/rhinoplasty | grep -i "rhinoplasty"
-curl -sL https://medorabeauty.com/procedures/face/rhinoplasty | grep -i "canonical"
-curl -sL https://medorabeauty.com/procedures/face/rhinoplasty | grep -i "application/ld+json"
+curl -sL https://medorabeauty.com/procedure/Rhinoplasty | grep -i "rhinoplasty"
+curl -sL https://medorabeauty.com/procedure/Rhinoplasty | grep -i "canonical"
+curl -sL https://medorabeauty.com/procedure/Rhinoplasty | grep -i "application/ld+json"
+curl -sL https://medorabeauty.com/procedure/Rhinoplasty/videos | grep -i "Video Cases"
 curl -sL https://medorabeauty.com/surgeon/example | grep -i "Physician"
 ```
 

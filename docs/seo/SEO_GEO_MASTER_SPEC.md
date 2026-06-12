@@ -22,6 +22,7 @@ The first layer helps discovery. The second layer determines the ceiling.
 
 - Keep procedure guide pages. Do not replace `ProcedureDetail.tsx` with video cases.
 - Treat Cases as the conversion path and Procedure Guides as the SEO/GEO education path.
+- Treat Medora Beauty as a global-first platform. Default procedure-guide metadata should not be China-focused; China, Korea, Thailand, Turkey, and other destinations should appear as destination-specific modifiers and landing pages.
 - Use real `<a href>` links for public internal links. Avoid button-only navigation for crawl-critical links.
 - Generate real `robots.txt`, `sitemap.xml`, and `llms.txt` files.
 - Preserve old procedure URLs until redirects and canonical rules are proven.
@@ -61,13 +62,25 @@ Top navigation:
 - Resources
 - Contact
 
-Cases navigation should link to case-first pages:
+During the current Vite transition, Cases navigation and sitemap video-case URLs should use implemented, prerendered path routes:
+
+- `/procedure/Rhinoplasty/videos`
+- `/procedure/Liposuction/videos`
+- `/procedure/Hair%20Transplant/videos`
+
+The future target Cases URLs are:
 
 - `/procedures/face/rhinoplasty/video-cases`
 - `/procedures/body/liposuction/video-cases`
 - `/procedures/hair/hair-transplant/video-cases`
 
-Resources, footer, sitemap, and editorial links should point to guide pages:
+During the current Vite transition, Resources, footer, sitemap, and editorial guide links may use implemented guide routes:
+
+- `/procedure/Rhinoplasty`
+- `/procedure/Liposuction`
+- `/procedure/Hair%20Transplant`
+
+The future target guide URLs are:
 
 - `/procedures/face/rhinoplasty`
 - `/procedures/body/liposuction`
@@ -79,6 +92,8 @@ Legacy routes remain valid during migration:
 - `/procedure/rhinoplasty`
 - `/procedure/rhinoplasty/videos`
 - `/procedure/videos?procedure=Rhinoplasty&area=face`
+
+The query-filter video route is compatibility-only. Do not promote it in sitemap or crawl-critical Header/Footer links. Use `/procedure/:procedureName/videos` as the current SEO/internal-link route until the future `/procedures/:category/:slug/video-cases` routes exist.
 
 ## Phase Overview
 
