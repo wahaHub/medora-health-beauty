@@ -138,19 +138,19 @@ Query-route rule:
 
 Modify:
 
-- `package.json`  
+- `package.json`
   Add `generate:seo` or `prerender:seo`; run it after `vite build`.
 
-- `scripts/generate-sitemap.mjs`  
+- `scripts/generate-sitemap.mjs`
   Reuse shared route selection so sitemap and prerender route sets do not drift.
 
-- `src/data/procedureTaxonomyCore.js`  
+- `src/data/procedureTaxonomyCore.js`
   Add only missing pure helpers needed for P1 route aliases if necessary.
 
-- `src/data/procedureTaxonomy.ts`  
+- `src/data/procedureTaxonomy.ts`
   Re-export any new pure helpers.
 
-- `index.html`  
+- `index.html`
   Add deterministic placeholder comments only if the post-build injector needs them. Preserve existing favicon/title changes.
 
 Create:
@@ -171,7 +171,7 @@ Create:
 
 Optional:
 
-- `src/components/SeoHead.tsx`  
+- `src/components/SeoHead.tsx`
   Add only if runtime client navigation needs metadata parity. It must consume the same metadata model and must not be the crawler-critical path.
 
 Node-runtime rule:
@@ -677,13 +677,13 @@ Expected: FAIL.
 
 `src/seo/renderStaticHtml.js` should expose pure functions:
 
-- `createSeoBody(payload)`  
+- `createSeoBody(payload)`
   Renders semantic static HTML: `<main data-seo-prerender="true">`, H1, summary, key links, and safe fallback sections.
 
-- `injectSeoIntoHtml(html, payload)`  
+- `injectSeoIntoHtml(html, payload)`
   Replaces the title/head metadata and injects static SEO body near the root while preserving the SPA root and script.
 
-- `routeToOutputPath(route)`  
+- `routeToOutputPath(route)`
   Handles `/` and normal path routes deterministically.
 
 Path encoding rule:
