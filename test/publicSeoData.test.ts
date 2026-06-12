@@ -23,6 +23,8 @@ describe('public SEO data loader', () => {
     expect(data.procedures).toHaveLength(20);
     expect(data.surgeons.length).toBeGreaterThan(0);
     expect(data.hospitals).toEqual([]);
+    expect(data.videoCases.length).toBeGreaterThan(0);
+    expect(data.procedures.find((procedure) => procedure.label === 'Rhinoplasty')?.videoCases?.length).toBeGreaterThan(0);
     expect(data.routeExtras).toEqual(expect.arrayContaining(data.surgeons.map((surgeon) => surgeon.route)));
     expect(data.warnings).toContain('Supabase env is missing; using public SEO fallback data.');
     expect(warn).toHaveBeenCalledWith('[public-seo] Supabase env is missing; using public SEO fallback data.');

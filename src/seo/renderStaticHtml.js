@@ -94,13 +94,20 @@ export function createSeoPayload(route, data) {
   }
 
   if (procedure && route === procedure.videoUrl) {
+    const videoCases = Array.isArray(procedure.videoCases) ? procedure.videoCases : [];
     return {
       route,
       type: 'procedureVideo',
       metadata: createProcedureVideoMetadata(procedure),
-      schema: createProcedureVideoSchema(procedure, []),
+      schema: createProcedureVideoSchema(procedure, videoCases),
       heading: `${procedure.label} Video Cases`,
       summary: `Watch consent-backed ${procedure.label} case summaries and compare real procedure journeys with Medora Beauty.`,
+      sections: [
+        {
+          title: 'Featured Video Case Summaries',
+          items: videoCases.map((item) => item.summary || item.description || item.title).filter(Boolean),
+        },
+      ],
       links: [
         { label: 'Procedure Guide', url: procedure.guideUrl },
         { label: 'All Video Cases', url: '/procedure/videos' },
@@ -138,19 +145,20 @@ export function createSeoPayload(route, data) {
     };
   }
 
-  const staticPayload = createStaticPayload(route);
+  const staticPayload = createStaticPayload(route, data);
   return staticPayload;
 }
 
-function createStaticPayload(route) {
+function createStaticPayload(route, data = {}) {
   const metadata = createStaticPageMetadata(route);
   const heading = metadata.title.replace(/\s*\|\s*Medora Beauty.*$/i, '');
   let schema = createArticleSchema({ title: heading, route, description: metadata.description });
+  const videoCases = Array.isArray(data.videoCases) ? data.videoCases.slice(0, 12) : [];
 
   if (route === '/gallery') {
     schema = createGallerySchema([]);
   } else if (route === '/video-cases' || route === '/procedure/videos') {
-    schema = createVideoCasesCollectionSchema([]);
+    schema = createVideoCasesCollectionSchema(videoCases);
   } else if (route.startsWith('/procedures/')) {
     schema = createCategorySchema({ name: heading, route, description: metadata.description });
   }

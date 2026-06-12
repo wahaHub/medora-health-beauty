@@ -30,6 +30,7 @@ const reportWarnings = (warnings, logger) => {
  * @property {string[]} risks
  * @property {string=} recovery
  * @property {string=} imageUrl
+ * @property {Object[]=} videoCases
  */
 
 export async function loadPublicSeoData(config = {}) {
@@ -54,6 +55,7 @@ export async function loadPublicSeoData(config = {}) {
     procedures: fallbackData.procedures,
     surgeons,
     hospitals,
+    videoCases: fallbackData.videoCases,
     routeExtras,
     warnings,
   };

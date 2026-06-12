@@ -90,8 +90,11 @@ describe('SEO prerender HTML', () => {
       expect(guideHtml).toContain('Rhinoplasty');
       expect(existsSync(join(distDir, 'procedure', 'Rhinoplasty.html'))).toBe(true);
       expect(videoHtml).toContain('Rhinoplasty Video Cases');
+      expect(videoHtml).toContain('Featured Video Case Summaries');
+      expect(videoHtml).toContain('"@type":"VideoObject"');
       expect(existsSync(join(distDir, 'procedure', 'Rhinoplasty', 'videos.html'))).toBe(true);
       expect(genericVideoHtml).toContain('All Cosmetic Procedure Video Cases');
+      expect(genericVideoHtml).toContain('"@type":"VideoObject"');
       expect(existsSync(join(distDir, 'procedure', 'videos.html'))).toBe(true);
       expect(bblHtml).toContain('Brazilian Butt Lift');
       expect(existsSync(join(distDir, 'procedure', 'Brazilian Butt Lift (BBL).html'))).toBe(true);

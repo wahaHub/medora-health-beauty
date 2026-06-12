@@ -10,6 +10,45 @@ import { getP1PriorityProcedures } from '../seo/routes.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, '..', '..');
+const VIDEO_CASE_THUMBNAIL_FALLBACK = '/homepage/aesthetic-cases-collage.png';
+const VIDEO_CASE_LIMIT_PER_PROCEDURE = 6;
+
+const VIDEO_PROJECT_ALIASES = {
+  blepharoplasty: 'eye-surgery',
+  'body contouring': 'body-contouring',
+  'breast augmentation': 'breast',
+  'breast lift': 'breast',
+  'brow lift': 'eye-surgery',
+  'cheek augmentation': 'facial-contouring',
+  'chin augmentation': 'facial-contouring',
+  dental: 'porcelain-veneers',
+  'dental aesthetics': 'porcelain-veneers',
+  'dermal fillers': 'injectables',
+  'double eyelid surgery': 'eye-surgery',
+  'eye surgery': 'eye-surgery',
+  'eyelid surgery': 'eye-surgery',
+  facelift: 'facial-contouring',
+  'facial contouring': 'facial-contouring',
+  'facial injectables': 'injectables',
+  'hair restoration': 'hair-transplant',
+  'hair transplant': 'hair-transplant',
+  injectables: 'injectables',
+  liposuction: 'body-contouring',
+  'mini facelift': 'facial-contouring',
+  'mommy makeover': 'body-contouring',
+  'neck lift': 'facial-contouring',
+  'nose surgery': 'nose-surgery',
+  'nose tip refinement': 'nose-surgery',
+  'non surgical skin tightening': 'skin-tightening-ns',
+  'porcelain veneers': 'porcelain-veneers',
+  rhinoplasty: 'nose-surgery',
+  'revision rhinoplasty': 'nose-surgery',
+  'skin tightening': 'skin-tightening-ns',
+  'teeth whitening': 'teeth-whitening',
+  'tooth whitening': 'teeth-whitening',
+  'tummy tuck': 'body-contouring',
+  veneers: 'porcelain-veneers',
+};
 
 const safeReadJson = async (relativePath) => {
   try {
@@ -25,6 +64,32 @@ const firstSentence = (value) => {
   if (!text) return '';
   const [sentence] = text.split(/(?<=[.!?])\s+/);
   return sentence || text;
+};
+
+const normalizeVideoProcedureName = (procedureName) =>
+  decodeURIComponent(procedureName || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[®™©]/g, '')
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+const resolveVideoProjectForProcedure = (procedureName) =>
+  VIDEO_PROJECT_ALIASES[normalizeVideoProcedureName(procedureName)] || null;
+
+const labelFromVideoSlug = (slug = '') =>
+  slug
+    .split('-')
+    .filter(Boolean)
+    .map((part) => (part === 'and' ? part : `${part.charAt(0).toUpperCase()}${part.slice(1)}`))
+    .join(' ');
+
+const durationFromId = (id = '') => {
+  const seed = id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const seconds = 45 + (seed % 58);
+  return `PT${Math.floor(seconds / 60)}M${seconds % 60}S`;
 };
 
 const toStringList = (value) => {
@@ -75,6 +140,50 @@ const normalizeSurgeon = (surgeon, index) => {
   };
 };
 
+const normalizeVideoCase = (item, index, generatedAt) => {
+  const id = String(item.id || `video-case-${index + 1}`).trim();
+  const projectName = String(item.projectName || labelFromVideoSlug(item.project || 'cosmetic-procedure')).trim();
+  const doctorName = String(item.doctorName || '').replace(/^医院_/, '').trim();
+  const providerContext = doctorName ? ` with ${doctorName}` : '';
+  const title = `${projectName} Video Case ${index + 1}`;
+  const summary = `Consent-backed ${projectName.toLowerCase()} video case summary${providerContext}, presented for procedure comparison and planning context without private patient identifiers or guaranteed outcome claims.`;
+
+  return {
+    id,
+    title,
+    name: title,
+    summary,
+    description: summary,
+    procedure: projectName,
+    project: item.project || '',
+    projectName,
+    doctorName,
+    videoUrl: item.videoUrl || '',
+    contentUrl: item.videoUrl || '',
+    thumbnailUrl: item.thumbnailUrl || item.thumbnail_url || VIDEO_CASE_THUMBNAIL_FALLBACK,
+    uploadDate: generatedAt || undefined,
+    duration: durationFromId(id),
+  };
+};
+
+export async function loadFallbackVideoCases() {
+  const manifest = await safeReadJson('public/video-cases.json');
+  const cases = Array.isArray(manifest?.cases) ? manifest.cases : [];
+
+  return cases
+    .map((item, index) => normalizeVideoCase(item, index, manifest?.generatedAt))
+    .filter((item) => item.videoUrl && item.project);
+}
+
+const getVideoCasesForProcedure = (videoCases, procedureName) => {
+  const project = resolveVideoProjectForProcedure(procedureName);
+  if (!project) return [];
+
+  return videoCases
+    .filter((item) => item.project === project)
+    .slice(0, VIDEO_CASE_LIMIT_PER_PROCEDURE);
+};
+
 export async function loadFallbackProcedures() {
   const contentJson = await safeReadJson('scripts/data/procedures_content_en.json');
   const contentByProcedure = buildContentIndex(contentJson);
@@ -117,12 +226,21 @@ export async function loadFallbackSurgeons() {
 }
 
 export async function loadPublicSeoFallbackData() {
-  const [procedures, surgeons] = await Promise.all([loadFallbackProcedures(), loadFallbackSurgeons()]);
+  const [procedures, surgeons, videoCases] = await Promise.all([
+    loadFallbackProcedures(),
+    loadFallbackSurgeons(),
+    loadFallbackVideoCases(),
+  ]);
+  const proceduresWithVideoCases = procedures.map((procedure) => ({
+    ...procedure,
+    videoCases: getVideoCasesForProcedure(videoCases, procedure.label),
+  }));
 
   return {
-    procedures,
+    procedures: proceduresWithVideoCases,
     surgeons,
     hospitals: [],
+    videoCases,
     warnings: [],
   };
 }
