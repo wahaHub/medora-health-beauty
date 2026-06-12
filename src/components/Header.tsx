@@ -764,11 +764,11 @@ const Header: React.FC = () => {
                       return (
                         <section
                           key={section.title}
-                          className={`flex min-h-[31rem] flex-col lg:px-5 xl:px-7 2xl:px-9 ${
+                          className={`flex min-h-[31rem] flex-col lg:px-4 xl:px-5 2xl:px-6 ${
                             sectionIdx > 0 ? 'lg:border-l lg:border-[#d0b083]/18' : ''
                           }`}
                         >
-                          <div className="mb-1 flex h-16 items-center gap-4">
+                          <div className="mb-2 flex h-16 items-start gap-3">
                             <span className="flex h-16 w-16 shrink-0 items-center justify-center">
                               <img
                                 src={section.iconSrc}
@@ -777,7 +777,7 @@ const Header: React.FC = () => {
                                 loading="lazy"
                               />
                             </span>
-                            <div className="pt-0.5">
+                            <div className="pt-2">
                               <h3 className="whitespace-nowrap font-sans text-sm font-medium leading-[1.35] tracking-wide text-[#f1f0eb]">
                                 {translateLabel(section.title)}
                               </h3>
