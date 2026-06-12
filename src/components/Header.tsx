@@ -744,14 +744,16 @@ const Header: React.FC = () => {
                             sectionIdx > 0 ? 'lg:border-l lg:border-[#d0b083]/18' : ''
                           }`}
                         >
-                          <div className="mb-7 flex h-[5.8rem] items-start gap-4">
-                            <img
-                              src={section.iconSrc}
-                              alt=""
-                              className="h-11 w-11 shrink-0 object-contain"
-                              loading="lazy"
-                            />
-                            <div>
+                          <div className="mb-1 flex h-16 items-center gap-4">
+                            <span className="flex h-16 w-16 shrink-0 items-center justify-center">
+                              <img
+                                src={section.iconSrc}
+                                alt=""
+                                className="h-full w-full object-contain"
+                                loading="lazy"
+                              />
+                            </span>
+                            <div className="pt-0.5">
                               <h3 className="whitespace-nowrap font-sans text-sm font-medium leading-[1.35] tracking-wide text-[#f1f0eb]">
                                 {translateLabel(section.title)}
                               </h3>
