@@ -63,8 +63,11 @@ photos/
 wechat-beauty-cases/
 wechat_liyuan_cases/
 
-# Generated data (already in Supabase)
-scripts/data/
+# Generated data (already in Supabase), except the English procedure
+# content file used by build-time SEO prerendering.
+!scripts/data/
+scripts/data/*
+!scripts/data/procedures_content_en.json
 translations/
 
 # Separate projects (have their own git repos)
