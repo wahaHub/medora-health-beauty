@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { crmApi } from '@/services/crmApiClient';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 interface ProcedureOption {
   id: string;
@@ -32,6 +33,7 @@ export function OnboardingDetailsStep({
   onDestinationChange,
   onNext,
 }: OnboardingDetailsStepProps) {
+  const { dt } = useDashboardTranslation();
   const [procedures, setProcedures] = useState<ProcedureOption[]>([]);
   const [destinations, setDestinations] = useState<string[]>([]);
   const [loadingProcedures, setLoadingProcedures] = useState(false);
@@ -49,7 +51,7 @@ export function OnboardingDetailsStep({
       })
       .catch((err: Error) => {
         if (!active) return;
-        setError(err.message ?? 'Failed to load destinations');
+        setError(err.message ?? dt('chatLoadDestinationsFailed'));
       })
       .finally(() => {
         if (!active) return;
@@ -77,7 +79,7 @@ export function OnboardingDetailsStep({
       })
       .catch((err: Error) => {
         if (!active) return;
-        setError(err.message ?? 'Failed to load procedures');
+        setError(err.message ?? dt('chatLoadProceduresFailed'));
       })
       .finally(() => {
         if (!active) return;
@@ -101,30 +103,30 @@ export function OnboardingDetailsStep({
 
   return (
     <div className="p-4 h-full flex flex-col overflow-y-auto">
-      <h4 className="text-stone-800 font-serif text-lg mb-1">Tell us what you need</h4>
+      <h4 className="text-stone-800 font-serif text-lg mb-1">{dt('chatTellUsNeed')}</h4>
       <p className="text-stone-500 text-sm mb-4">
-        Select category, procedure, and destination in one step.
+        {dt('chatSelectDetailsDescription')}
       </p>
 
       <div className="space-y-3 flex-1">
         <div>
-          <label className="text-stone-600 text-xs font-medium mb-1 block">Category</label>
+          <label className="text-stone-600 text-xs font-medium mb-1 block">{dt('chatCategory')}</label>
           <select
             value={category}
             onChange={(e) => onCategoryChange(e.target.value)}
             className="w-full px-3 py-2 border border-stone-200 rounded-xl text-sm bg-stone-50 focus:outline-none focus:border-gold-500"
           >
-            <option value="">Select category</option>
+            <option value="">{dt('chatSelectCategory')}</option>
             {CATEGORY_OPTIONS.map((option) => (
               <option key={option.id} value={option.id}>
-                {option.label}
+                {dt(option.id === 'face' ? 'chatFace' : option.id === 'body' ? 'chatBody' : 'chatNonSurgical')}
               </option>
             ))}
           </select>
         </div>
 
         <div>
-          <label className="text-stone-600 text-xs font-medium mb-1 block">Procedure</label>
+          <label className="text-stone-600 text-xs font-medium mb-1 block">{dt('chatConditionProcedure')}</label>
           <div className="relative">
             <select
               value={procedureId}
@@ -136,7 +138,7 @@ export function OnboardingDetailsStep({
               className="w-full px-3 py-2 border border-stone-200 rounded-xl text-sm bg-stone-50 focus:outline-none focus:border-gold-500 disabled:opacity-60"
             >
               <option value="">
-                {!category ? 'Select category first' : 'Select procedure'}
+                {!category ? dt('chatSelectCategoryFirst') : dt('chatSelectProcedure')}
               </option>
               {procedures.map((procedure) => (
                 <option key={procedure.id} value={procedure.id}>
@@ -151,7 +153,7 @@ export function OnboardingDetailsStep({
         </div>
 
         <div>
-          <label className="text-stone-600 text-xs font-medium mb-1 block">Destination</label>
+          <label className="text-stone-600 text-xs font-medium mb-1 block">{dt('chatDestination')}</label>
           <div className="relative">
             <select
               value={destination}
@@ -159,7 +161,7 @@ export function OnboardingDetailsStep({
               onChange={(e) => onDestinationChange(e.target.value)}
               className="w-full px-3 py-2 border border-stone-200 rounded-xl text-sm bg-stone-50 focus:outline-none focus:border-gold-500 disabled:opacity-60"
             >
-              <option value="">Select destination</option>
+              <option value="">{dt('chatSelectDestination')}</option>
               {destinations.map((value) => (
                 <option key={value} value={value}>
                   {value}
@@ -183,7 +185,7 @@ export function OnboardingDetailsStep({
         disabled={!canNext}
         className="mt-4 w-full bg-gold-600 hover:bg-gold-700 disabled:bg-stone-300 text-white py-2.5 rounded-xl font-medium transition-all duration-300"
       >
-        Next
+        {dt('next')}
       </button>
     </div>
   );

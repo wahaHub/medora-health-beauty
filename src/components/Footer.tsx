@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Phone, Mail } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -39,15 +39,13 @@ const supportedProceduresCountLabel: Record<string, string> = {
 const Footer: React.FC = () => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
-  const navigate = useNavigate();
 
   const translateProcedureLabel = (label: string) =>
     translatedProcedureNames[label]?.[currentLanguage] || translatedProcedureNames[label]?.en || label;
   const supportedTitle = supportedProceduresTitle[currentLanguage] || supportedProceduresTitle.en;
   const supportedCountLabel = supportedProceduresCountLabel[currentLanguage] || supportedProceduresCountLabel.en;
 
-  const handleNavigate = (path: string) => {
-    navigate(path);
+  const handleLinkClick = () => {
     window.scrollTo(0, 0);
   };
 
@@ -79,11 +77,11 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-serif text-navy-900 text-lg mb-6">{t('footerQuickLinks')}</h4>
             <ul className="space-y-3 text-sm text-stone-500">
-              <li><button onClick={() => handleNavigate('/team')} className="hover:text-gold-600 transition-colors">{t('footerAboutUs')}</button></li>
-              <li><button onClick={() => handleNavigate('/surgeons')} className="hover:text-gold-600 transition-colors">{t('footerOurTeam')}</button></li>
-              <li><button onClick={() => handleNavigate('/gallery')} className="hover:text-gold-600 transition-colors">{t('footerProcedures')}</button></li>
-              <li><button onClick={() => handleNavigate('/reviews')} className="hover:text-gold-600 transition-colors">{t('footerReviews')}</button></li>
-              <li><button onClick={() => handleNavigate('/travel')} className="hover:text-gold-600 transition-colors">{t('footerTravel')}</button></li>
+              <li><Link to="/team" onClick={handleLinkClick} className="hover:text-gold-600 transition-colors">{t('footerAboutUs')}</Link></li>
+              <li><Link to="/surgeons" onClick={handleLinkClick} className="hover:text-gold-600 transition-colors">{t('footerOurTeam')}</Link></li>
+              <li><Link to="/gallery" onClick={handleLinkClick} className="hover:text-gold-600 transition-colors">{t('footerProcedures')}</Link></li>
+              <li><Link to="/reviews" onClick={handleLinkClick} className="hover:text-gold-600 transition-colors">{t('footerReviews')}</Link></li>
+              <li><Link to="/travel" onClick={handleLinkClick} className="hover:text-gold-600 transition-colors">{t('footerTravel')}</Link></li>
             </ul>
           </div>
 
@@ -114,13 +112,14 @@ const Footer: React.FC = () => {
           <ul className="grid grid-cols-2 gap-x-5 gap-y-2 text-[13px] leading-snug text-stone-500 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
             {supportedProcedures.map((procedure) => (
               <li key={procedure} className="min-w-0">
-                <button
-                  onClick={() => handleNavigate(`/procedure/${encodeURIComponent(procedure)}`)}
+                <Link
+                  to={`/procedure/${encodeURIComponent(procedure)}`}
+                  onClick={handleLinkClick}
                   className="text-left transition-colors hover:text-gold-600"
                   title={translateProcedureLabel(procedure)}
                 >
                   {translateProcedureLabel(procedure)}
-                </button>
+                </Link>
               </li>
             ))}
           </ul>

@@ -3,6 +3,8 @@ import { Loader2 } from 'lucide-react';
 import { crmApi } from '@/services/crmApiClient';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { usePatientEntry } from '@/hooks/usePatientEntry';
+import { useDashboardTranslation, type DashboardTranslationKey } from '@/hooks/useDashboardTranslation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type ProcedureOption = {
   id: string;
@@ -11,18 +13,20 @@ type ProcedureOption = {
 
 type ProcedureGroup = {
   category: string;
-  label: string;
+  labelKey: DashboardTranslationKey;
   procedures: ProcedureOption[];
 };
 
-const PROCEDURE_GROUPS: Array<{ category: string; label: string }> = [
-  { category: 'face', label: 'Face' },
-  { category: 'body', label: 'Body' },
-  { category: 'non-surgical', label: 'Non-Surgical' },
-  { category: 'hair', label: 'Hair' },
+const PROCEDURE_GROUPS: Array<{ category: string; labelKey: DashboardTranslationKey }> = [
+  { category: 'face', labelKey: 'chatFace' },
+  { category: 'body', labelKey: 'chatBody' },
+  { category: 'non-surgical', labelKey: 'chatNonSurgical' },
+  { category: 'hair', labelKey: 'chatHair' },
 ];
 
 export function ContactInfoStep() {
+  const { dt } = useDashboardTranslation();
+  const { currentLanguage } = useLanguage();
   const { bootstrapSession } = usePatientAuth();
   const { profileDraft, patchProfileDraft, applyOnboardingResult } = usePatientEntry();
   const [procedureGroups, setProcedureGroups] = useState<ProcedureGroup[]>([]);
@@ -40,7 +44,7 @@ export function ContactInfoStep() {
         const response = await crmApi.getProcedures(group.category);
         return {
           category: group.category,
-          label: group.label,
+          labelKey: group.labelKey,
           procedures: Array.isArray(response?.procedures) ? response.procedures : [],
         };
       }),
@@ -51,7 +55,7 @@ export function ContactInfoStep() {
       })
       .catch((err: Error) => {
         if (!active) return;
-        setError(err.message ?? 'Failed to load procedures');
+        setError(err.message ?? dt('chatLoadProceduresFailed'));
       })
       .finally(() => {
         if (!active) return;
@@ -73,7 +77,7 @@ export function ContactInfoStep() {
       })
       .catch((err: Error) => {
         if (!active) return;
-        setError(err.message ?? 'Failed to load destinations');
+        setError(err.message ?? dt('chatLoadDestinationsFailed'));
       })
       .finally(() => {
         if (!active) return;
@@ -121,7 +125,7 @@ export function ContactInfoStep() {
         disease: profileDraft.disease,
         category: profileDraft.category || undefined,
         destination: profileDraft.destination,
-        preferredLanguage: 'en',
+        preferredLanguage: currentLanguage,
       });
 
       const widgetConversation = result.widgetChatTarget?.kind === 'CHATBOT_SESSION'
@@ -155,7 +159,7 @@ export function ContactInfoStep() {
         conversations,
       });
     } catch (err: any) {
-      setError(err.message ?? 'Something went wrong');
+      setError(err.message ?? dt('chatSomethingWentWrong'));
     } finally {
       setSubmitting(false);
     }
@@ -163,23 +167,23 @@ export function ContactInfoStep() {
 
   return (
     <div className="mx-3 my-2 p-4 bg-stone-50 border border-stone-200 rounded-2xl">
-      <h4 className="text-stone-800 font-serif text-base mb-0.5">Your Info</h4>
-      <p className="text-stone-500 text-xs mb-3">We&apos;ll match you with the best hospitals.</p>
+      <h4 className="text-stone-800 font-serif text-base mb-0.5">{dt('chatYourInfo')}</h4>
+      <p className="text-stone-500 text-xs mb-3">{dt('chatMatchHospitals')}</p>
 
       <div className="space-y-2.5">
         <div>
-          <label htmlFor="patient-name" className="text-stone-600 text-xs font-medium mb-1 block">Name *</label>
+          <label htmlFor="patient-name" className="text-stone-600 text-xs font-medium mb-1 block">{dt('chatName')}</label>
           <input
             id="patient-name"
             type="text"
             value={profileDraft.name}
             onChange={(e) => patchProfileDraft({ name: e.target.value })}
-            placeholder="Your full name"
+            placeholder={dt('chatNamePlaceholder')}
             className="w-full px-3 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-gold-500 transition-colors bg-white"
           />
         </div>
         <div>
-          <label htmlFor="patient-email" className="text-stone-600 text-xs font-medium mb-1 block">Email *</label>
+          <label htmlFor="patient-email" className="text-stone-600 text-xs font-medium mb-1 block">{dt('chatEmail')}</label>
           <input
             id="patient-email"
             type="email"
@@ -190,7 +194,7 @@ export function ContactInfoStep() {
           />
         </div>
         <div>
-          <label htmlFor="patient-phone" className="text-stone-600 text-xs font-medium mb-1 block">Phone</label>
+          <label htmlFor="patient-phone" className="text-stone-600 text-xs font-medium mb-1 block">{dt('chatPhone')}</label>
           <input
             id="patient-phone"
             type="tel"
@@ -201,19 +205,19 @@ export function ContactInfoStep() {
           />
         </div>
         <div>
-          <label htmlFor="patient-procedure" className="text-stone-600 text-xs font-medium mb-1 block">Condition / Procedure</label>
+          <label htmlFor="patient-procedure" className="text-stone-600 text-xs font-medium mb-1 block">{dt('chatConditionProcedure')}</label>
           <div className="relative">
             <select
               id="patient-procedure"
-              aria-label="Condition / Procedure"
+              aria-label={dt('chatConditionProcedure')}
               value={profileDraft.procedureId}
               disabled={loadingProcedures}
               onChange={(e) => handleProcedureChange(e.target.value)}
               className="w-full px-3 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-gold-500 transition-colors bg-white disabled:opacity-60"
             >
-              <option value="">Select a procedure</option>
+              <option value="">{dt('chatSelectProcedure')}</option>
               {procedureGroups.map((group) => (
-                <optgroup key={group.category} label={group.label}>
+                <optgroup key={group.category} label={dt(group.labelKey)}>
                   {group.procedures.map((procedure) => (
                     <option key={procedure.id} value={procedure.id}>
                       {procedure.name}
@@ -228,17 +232,17 @@ export function ContactInfoStep() {
           </div>
         </div>
         <div>
-          <label htmlFor="patient-destination" className="text-stone-600 text-xs font-medium mb-1 block">Destination</label>
+          <label htmlFor="patient-destination" className="text-stone-600 text-xs font-medium mb-1 block">{dt('chatDestination')}</label>
           <div className="relative">
             <select
               id="patient-destination"
-              aria-label="Destination"
+              aria-label={dt('chatDestination')}
               value={profileDraft.destination}
               disabled={loadingDestinations}
               onChange={(e) => patchProfileDraft({ destination: e.target.value })}
               className="w-full px-3 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-gold-500 transition-colors bg-white disabled:opacity-60"
             >
-              <option value="">Select destination</option>
+              <option value="">{dt('chatSelectDestination')}</option>
               {destinations.map((destination) => (
                 <option key={destination} value={destination}>
                   {destination}
@@ -260,7 +264,7 @@ export function ContactInfoStep() {
         className="mt-3 w-full bg-gold-600 hover:bg-gold-700 disabled:bg-stone-300 text-white py-2 rounded-xl font-medium text-sm transition-all duration-300 flex items-center justify-center gap-2"
       >
         {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-        Submit details
+        {dt('chatSubmitDetails')}
       </button>
     </div>
   );

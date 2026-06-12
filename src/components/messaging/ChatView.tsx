@@ -46,14 +46,14 @@ export function ChatView({ conversation }: ChatViewProps) {
   const starterPrompts =
     conversation.type === 'patient-admin'
       ? [
-          'Hi, I would like help with my treatment plan.',
-          'Can you help me review my next steps?',
-          'I have a question about pricing and timeline.',
+          dt('chatAdminStarterPlanning'),
+          dt('chatAdminStarterSteps'),
+          dt('chatAdminStarterPricing'),
         ]
       : [
-          'Hi, I would like to learn more about this hospital.',
-          'Can you share available appointment times?',
-          'What information do you need from me to get started?',
+          dt('chatHospitalStarterLearnMore'),
+          dt('chatHospitalStarterAppointment'),
+          dt('chatHospitalStarterInfo'),
         ];
 
   const handleMessageSent = (newMessage: any) => {
@@ -84,12 +84,12 @@ export function ChatView({ conversation }: ChatViewProps) {
               <Sparkles size={22} />
             </div>
             <h4 className="text-xl font-serif font-semibold text-navy-900 mb-2">
-              Start a new conversation
+              {dt('chatStartConversation')}
             </h4>
             <p className="text-sm text-stone-500 leading-6 mb-5">
               {conversation.type === 'patient-admin'
-                ? 'Send your first message to the Medora care team. You can ask about planning, quotes, next steps, or any support you need.'
-                : `Start the conversation with ${title}. Ask about availability, treatment options, pricing, or preparation details.`}
+                ? dt('chatAdminEmptyDescription')
+                : dt('chatHospitalEmptyDescription', { title })}
             </p>
             <div className="flex flex-wrap gap-2">
               {starterPrompts.map((prompt) => (

@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 
 import ChatWidget from '@/components/ChatWidget';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 
 const patientEntryState = vi.hoisted(() => ({
   isWidgetOpen: false,
@@ -52,6 +54,19 @@ vi.mock('@/components/chat/OnboardingFlow', () => ({
 }));
 
 describe('ChatWidget CRM-backed entry shell', () => {
+  function renderWidget(path = '/') {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={[path]}>
+          <ChatWidget />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+  }
+
   const desktopMatchMedia = (matches = false) => vi.fn().mockImplementation(() => ({
     matches,
     media: '(max-width: 767px)',
@@ -65,6 +80,7 @@ describe('ChatWidget CRM-backed entry shell', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    window.localStorage.clear();
     patientEntryState.isWidgetOpen = false;
     patientEntryState.phase = 'collect-profile';
     patientEntryState.activeConversationId = null;
@@ -89,11 +105,7 @@ describe('ChatWidget CRM-backed entry shell', () => {
   });
 
   it('hides the floating widget on /login', () => {
-    render(
-      <MemoryRouter initialEntries={['/login']}>
-        <ChatWidget />
-      </MemoryRouter>,
-    );
+    renderWidget('/login');
 
     expect(screen.queryByLabelText(/close chat/i)).toBeNull();
     expect(screen.queryByTestId('onboarding-shell')).toBeNull();
@@ -102,11 +114,7 @@ describe('ChatWidget CRM-backed entry shell', () => {
   it('keeps the floating widget available on the authenticated dashboard workspace', () => {
     patientAuthState.isAuthenticated = true;
 
-    render(
-      <MemoryRouter initialEntries={['/dashboard']}>
-        <ChatWidget />
-      </MemoryRouter>,
-    );
+    renderWidget('/dashboard');
 
     expect(screen.getByRole('button', { name: /open chat/i })).toBeInTheDocument();
   });
@@ -114,11 +122,7 @@ describe('ChatWidget CRM-backed entry shell', () => {
   it('hides the floating widget on the unauthenticated dashboard workspace', () => {
     patientAuthState.isAuthenticated = false;
 
-    render(
-      <MemoryRouter initialEntries={['/dashboard']}>
-        <ChatWidget />
-      </MemoryRouter>,
-    );
+    renderWidget('/dashboard');
 
     expect(screen.queryByRole('button', { name: /open chat/i })).toBeNull();
   });
@@ -129,11 +133,7 @@ describe('ChatWidget CRM-backed entry shell', () => {
       patientEntryState.phase = phase;
       patientEntryState.isWidgetOpen = true;
 
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <ChatWidget />
-        </MemoryRouter>,
-      );
+      renderWidget();
 
       expect(screen.getByTestId('onboarding-shell')).toBeInTheDocument();
     },
@@ -172,11 +172,7 @@ describe('ChatWidget CRM-backed entry shell', () => {
       ],
     };
 
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <ChatWidget />
-      </MemoryRouter>,
-    );
+    renderWidget();
 
     expect(screen.getByTestId('compact-session-switcher')).toBeInTheDocument();
     expect(screen.queryByTestId('sidebar-session-list')).toBeNull();
@@ -187,6 +183,61 @@ describe('ChatWidget CRM-backed entry shell', () => {
     expect(screen.getByRole('link', { name: /full workspace/i })).toHaveAttribute('href', '/dashboard/messages');
     expect(screen.queryByRole('button', { name: /open messages/i })).toBeNull();
     expect(screen.queryByTestId('onboarding-shell')).toBeNull();
+  });
+
+  it('uses dashboard translations for the floating chat shell', () => {
+    window.localStorage.setItem('medora-language', 'zh');
+    patientAuthState.isAuthenticated = true;
+    patientEntryState.phase = 'messages-ready';
+    conversationsState.data = [];
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+
+    const view = render(
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          <MemoryRouter initialEntries={['/dashboard']}>
+            <ChatWidget />
+          </MemoryRouter>
+        </LanguageProvider>
+      </QueryClientProvider>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '打开聊天' }));
+    patientEntryState.isWidgetOpen = true;
+    view.rerender(
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          <MemoryRouter initialEntries={['/dashboard']}>
+            <ChatWidget />
+          </MemoryRouter>
+        </LanguageProvider>
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByRole('dialog', { name: 'Medora Beauty 聊天' })).toBeInTheDocument();
+    expect(screen.getByText('消息')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '完整工作台' })).toHaveAttribute('href', '/dashboard/messages');
+    expect(screen.getByText('消息会显示在这里')).toBeInTheDocument();
+    expect(screen.queryByText('Messages will appear here')).toBeNull();
+  });
+
+  it('localizes the floating chat button for non-Chinese languages', () => {
+    window.localStorage.setItem('medora-language', 'ru');
+    patientAuthState.isAuthenticated = true;
+
+    render(
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <LanguageProvider>
+          <MemoryRouter initialEntries={['/dashboard']}>
+            <ChatWidget />
+          </MemoryRouter>
+        </LanguageProvider>
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Открыть чат' })).toHaveTextContent('Чат');
   });
 
   it('opens as a larger panel, can maximize to modal, then minimize back to panel', () => {
@@ -210,17 +261,15 @@ describe('ChatWidget CRM-backed entry shell', () => {
       },
     ];
 
-    const view = render(
-      <MemoryRouter initialEntries={['/']}>
-        <ChatWidget />
-      </MemoryRouter>,
-    );
+    const view = renderWidget();
 
     fireEvent.click(screen.getByRole('button', { name: /open chat/i }));
     view.rerender(
-      <MemoryRouter initialEntries={['/']}>
-        <ChatWidget />
-      </MemoryRouter>,
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <MemoryRouter initialEntries={['/']}>
+          <ChatWidget />
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
 
     expect(screen.getByTestId('chat-window')).toHaveAttribute('data-chat-display-mode', 'panel');
@@ -252,11 +301,7 @@ describe('ChatWidget CRM-backed entry shell', () => {
       },
     ];
 
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <ChatWidget />
-      </MemoryRouter>,
-    );
+    renderWidget();
 
     expect(screen.getByTestId('chat-window')).toHaveAttribute('data-chat-display-mode', 'mobile-panel');
     expect(screen.queryByRole('button', { name: /maximize chat/i })).toBeNull();

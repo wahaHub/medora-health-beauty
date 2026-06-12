@@ -3,8 +3,10 @@ import { Loader2, Check, ArrowRight } from 'lucide-react';
 import { crmApi } from '@/services/crmApiClient';
 import { usePatientEntry } from '@/hooks/usePatientEntry';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 export function HospitalCards() {
+  const { dt } = useDashboardTranslation();
   const {
     caseId,
     profileDraft,
@@ -48,7 +50,7 @@ export function HospitalCards() {
   const handleSubmit = async () => {
     if (selectedHospitalIds.length === 0 || submitting || !caseId) return;
     if (!patient?.id) {
-      setError('Session expired. Please refresh and try again.');
+      setError(dt('chatSessionExpired'));
       return;
     }
     setSubmitting(true);
@@ -83,7 +85,7 @@ export function HospitalCards() {
       });
       openPanel();
     } catch (err: any) {
-      setError(err.message ?? 'Failed to select hospitals');
+      setError(err.message ?? dt('chatSelectHospitalsFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -107,8 +109,8 @@ export function HospitalCards() {
 
   return (
     <div className="mx-3 my-2 p-4 bg-stone-50 border border-stone-200 rounded-2xl flex flex-col">
-      <h4 className="text-stone-800 font-serif text-base mb-0.5">Recommended Hospitals</h4>
-      <p className="text-stone-500 text-xs mb-3">Select hospitals to start chatting with.</p>
+      <h4 className="text-stone-800 font-serif text-base mb-0.5">{dt('chatRecommendedHospitals')}</h4>
+      <p className="text-stone-500 text-xs mb-3">{dt('chatSelectHospitals')}</p>
 
       <div className="space-y-2 max-h-56 overflow-y-auto -mr-1 pr-1">
         {matchedHospitals.map((h) => {
@@ -143,7 +145,7 @@ export function HospitalCards() {
           );
         })}
         {matchedHospitals.length === 0 && (
-          <p className="text-stone-400 text-sm text-center py-4">No hospitals found.</p>
+          <p className="text-stone-400 text-sm text-center py-4">{dt('chatNoHospitals')}</p>
         )}
       </div>
 
@@ -158,7 +160,7 @@ export function HospitalCards() {
           <Loader2 className="w-4 h-4 animate-spin" />
         ) : (
           <>
-            Start Chatting
+            {dt('chatStartChatting')}
             <ArrowRight className="w-4 h-4" />
           </>
         )}

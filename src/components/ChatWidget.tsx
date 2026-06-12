@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { MessageCircleMore } from 'lucide-react';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { usePatientEntry } from '@/hooks/usePatientEntry';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 import { ChatWindow, type ChatWindowDisplayMode } from './chat/ChatWindow';
 
 const HIDDEN_PATTERNS = ['/login'];
@@ -24,6 +25,7 @@ function readIsMobileViewport() {
 
 export default function ChatWidget() {
   const location = useLocation();
+  const { dt } = useDashboardTranslation();
   const { isAuthenticated } = usePatientAuth();
   const { isWidgetOpen, openWidget, closeWidget } = usePatientEntry();
   const [isMobileViewport, setIsMobileViewport] = useState(() => readIsMobileViewport());
@@ -82,11 +84,11 @@ export default function ChatWidget() {
           <button
             type="button"
             onClick={openPanel}
-            aria-label="Open chat"
+            aria-label={dt('chatOpen')}
             className="inline-flex h-14 items-center gap-2 rounded-full bg-teal-600 px-5 text-sm font-semibold text-white shadow-xl shadow-teal-950/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-teal-700"
           >
             <MessageCircleMore className="h-5 w-5" />
-            Chat
+            {dt('chatWidgetLabel')}
           </button>
         </div>
       )}

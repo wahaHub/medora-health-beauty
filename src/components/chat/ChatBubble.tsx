@@ -1,4 +1,5 @@
 import { MessageCircle, X } from 'lucide-react';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 interface ChatBubbleProps {
   isOpen: boolean;
@@ -7,13 +8,15 @@ interface ChatBubbleProps {
 }
 
 export function ChatBubble({ isOpen, onClick, unreadCount = 0 }: ChatBubbleProps) {
+  const { dt } = useDashboardTranslation();
+
   return (
     <button
       onClick={onClick}
       className={`fixed bottom-6 right-6 z-[9999] w-14 h-14 rounded-full shadow-lg transition-all duration-300 hover:scale-105 flex items-center justify-center ${
         isOpen ? 'bg-stone-800 rotate-90' : 'bg-gold-600 hover:bg-gold-700'
       }`}
-      aria-label={isOpen ? 'Close chat' : 'Open chat'}
+      aria-label={isOpen ? dt('chatClose') : dt('chatOpen')}
     >
       {isOpen ? (
         <X className="text-white w-6 h-6" />

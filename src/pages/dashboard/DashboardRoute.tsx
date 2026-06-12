@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 import { Loader2 } from 'lucide-react';
 
 interface DashboardRouteProps {
@@ -9,6 +10,7 @@ interface DashboardRouteProps {
 }
 
 export default function DashboardRoute({ children }: DashboardRouteProps) {
+  const { dt } = useDashboardTranslation();
   const { isAuthenticated, isLoading, error } = usePatientAuth();
   const [gracePeriod, setGracePeriod] = useState(true);
 
@@ -28,7 +30,7 @@ export default function DashboardRoute({ children }: DashboardRouteProps) {
       <div className="min-h-screen bg-sage-50 flex items-center justify-center">
         <div className="text-center space-y-4">
           <Loader2 className="w-10 h-10 text-gold-600 animate-spin mx-auto" />
-          <p className="text-stone-500 text-sm">Restoring your session...</p>
+          <p className="text-stone-500 text-sm">{dt('sessionRestoring')}</p>
         </div>
       </div>
     );
@@ -42,7 +44,7 @@ export default function DashboardRoute({ children }: DashboardRouteProps) {
             <span className="text-red-500 text-xl">!</span>
           </div>
           <h2 className="text-lg font-serif font-bold text-stone-800 mb-2">
-            Session Error
+            {dt('sessionError')}
           </h2>
           <p className="text-stone-500 text-sm mb-6">
             {error}
@@ -51,7 +53,7 @@ export default function DashboardRoute({ children }: DashboardRouteProps) {
             href="/login"
             className="inline-block bg-gold-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-gold-700 transition-colors"
           >
-            Sign in again
+            {dt('signInAgain')}
           </a>
         </div>
       </div>
