@@ -91,6 +91,8 @@ describe('SEO prerender HTML', () => {
       expect(existsSync(join(distDir, 'procedure', 'Rhinoplasty.html'))).toBe(true);
       expect(videoHtml).toContain('Rhinoplasty Video Cases');
       expect(videoHtml).toContain('Featured Video Case Summaries');
+      expect(videoHtml).toContain('Manifest lists this media as Nose Surgery case video');
+      expect(videoHtml).toContain('Exact treatment and recovery dates are not published');
       expect(videoHtml).toContain('"@type":"VideoObject"');
       expect(existsSync(join(distDir, 'procedure', 'Rhinoplasty', 'videos.html'))).toBe(true);
       expect(genericVideoHtml).toContain('All Cosmetic Procedure Video Cases');

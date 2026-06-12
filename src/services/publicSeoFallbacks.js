@@ -125,12 +125,6 @@ const labelFromVideoSlug = (slug = '') =>
     .map((part) => (part === 'and' ? part : `${part.charAt(0).toUpperCase()}${part.slice(1)}`))
     .join(' ');
 
-const durationFromId = (id = '') => {
-  const seed = id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  const seconds = 45 + (seed % 58);
-  return `PT${Math.floor(seconds / 60)}M${seconds % 60}S`;
-};
-
 const toStringList = (value) => {
   if (!Array.isArray(value)) return [];
   return value
@@ -179,16 +173,29 @@ const normalizeSurgeon = (surgeon, index) => {
   };
 };
 
-const normalizeVideoCase = (item, index, generatedAt) => {
+const normalizeVideoCase = (item, index) => {
   const id = String(item.id || `video-case-${index + 1}`).trim();
+  const shortId = id.slice(0, 8) || String(index + 1);
   const projectName = String(item.projectName || labelFromVideoSlug(item.project || 'cosmetic-procedure')).trim();
   const doctorName = String(item.doctorName || '').replace(/^医院_/, '').trim();
   const providerContext = doctorName ? ` with ${doctorName}` : '';
-  const title = `${projectName} Video Case ${index + 1}`;
-  const summary = `Consent-backed ${projectName.toLowerCase()} video case summary${providerContext}, presented for procedure comparison and planning context without private patient identifiers or guaranteed outcome claims.`;
+  const title = `${projectName} Video Case ${shortId}`;
+  const confidence = String(item.classificationConfidence || '').trim();
+  const sourceKind = String(item.sourceKind || '').replace(/[_-]+/g, ' ').trim();
+  const privacyNote = 'Consent-backed case media is summarized without private patient identifiers or guaranteed outcome claims.';
+  const timelineNote = 'Exact treatment and recovery dates are not published in the public manifest.';
+  const sourceNote = [sourceKind && `source: ${sourceKind}`, confidence && `classification confidence: ${confidence}`]
+    .filter(Boolean)
+    .join('; ');
+  const caseContext = `Manifest lists this media as ${projectName} case video ${shortId}${providerContext}.`;
+  const sourceContext = sourceNote ? `Manifest source context: ${sourceNote}.` : '';
+  const resultViewingContext = 'Use this media for consultation research and provider-style comparison, not as a guaranteed individual result.';
+  const summary = [caseContext, resultViewingContext, privacyNote, sourceContext].filter(Boolean).join(' ');
+  const mediaAltText = `${projectName} video case ${shortId}${providerContext} from Medora Beauty case media.`;
 
   return {
     id,
+    caseNumber: shortId,
     title,
     name: title,
     summary,
@@ -197,11 +204,26 @@ const normalizeVideoCase = (item, index, generatedAt) => {
     project: item.project || '',
     projectName,
     doctorName,
+    provider: doctorName,
+    patientConcern: item.patientConcern || item.patient_concern || undefined,
+    treatmentApproach: item.treatmentApproach || item.treatment_approach || item.treatmentPlan || item.treatment_plan || undefined,
+    outcomeSummary: item.outcomeSummary || item.outcome_summary || undefined,
+    timeline: item.timeline || item.recoveryTimeline || item.recovery_timeline || undefined,
+    caseContext,
+    sourceContext,
+    resultViewingContext,
+    timelineNote,
+    mediaAltText,
+    privacyNote,
+    sourceSet: item.sourceSet || '',
+    sourceKind: item.sourceKind || '',
+    classificationConfidence: item.classificationConfidence || '',
     videoUrl: item.videoUrl || '',
     contentUrl: item.videoUrl || '',
     thumbnailUrl: item.thumbnailUrl || item.thumbnail_url || VIDEO_CASE_THUMBNAIL_FALLBACK,
-    uploadDate: generatedAt || undefined,
-    duration: durationFromId(id),
+    uploadDate: item.uploadDate || item.upload_date || undefined,
+    duration: item.duration || item.videoDuration || item.video_duration || undefined,
+    transcript: item.transcript || item.videoTranscript || item.video_transcript || undefined,
   };
 };
 
@@ -237,7 +259,7 @@ export async function loadFallbackVideoCases(config = {}) {
     source,
     warnings,
     cases: cases
-      .map((item, index) => normalizeVideoCase(item, index, manifest?.generatedAt))
+      .map((item, index) => normalizeVideoCase(item, index))
       .filter((item) => item.videoUrl && item.project),
   };
 }

@@ -143,10 +143,28 @@ export function createProcedureVideoSchema(procedure = {}, videos = []) {
   ];
 
   videos.filter(hasVideoMetadata).forEach((video) => {
+    const description =
+      compact(video.outcomeSummary || video.outcome_summary || video.description || video.summary)
+      || `${PRIVACY_NOTE} Procedure: ${label}.`;
+    const text = compact(
+      [
+        video.mediaAltText || video.media_alt_text,
+        video.caseContext || video.case_context,
+        video.sourceContext || video.source_context,
+        video.resultViewingContext || video.result_viewing_context,
+        video.patientConcern || video.patient_concern,
+        video.treatmentApproach || video.treatment_approach || video.treatmentPlan || video.treatment_plan,
+        video.timeline || video.timelineNote || video.timeline_note,
+        video.privacyNote || video.privacy_note || PRIVACY_NOTE,
+      ]
+        .filter(Boolean)
+        .join(' ')
+    );
+
     items.push(pruneUndefined(withContext({
       '@type': 'VideoObject',
       name: compact(video.title || video.name),
-      description: compact(video.description || video.summary) || `${PRIVACY_NOTE} Procedure: ${label}.`,
+      description,
       thumbnailUrl: imageUrl(video.thumbnailUrl || video.thumbnail_url || video.imageUrl || video.image_url),
       contentUrl: compact(video.videoUrl || video.video_url || video.contentUrl || video.content_url) || undefined,
       embedUrl: compact(video.embedUrl || video.embed_url) || undefined,
@@ -157,7 +175,7 @@ export function createProcedureVideoSchema(procedure = {}, videos = []) {
         '@type': 'MedicalProcedure',
         name: label,
       },
-      text: PRIVACY_NOTE,
+      text: text || PRIVACY_NOTE,
     })));
   });
 

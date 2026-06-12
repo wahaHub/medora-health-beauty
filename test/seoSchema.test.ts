@@ -86,6 +86,11 @@ describe('SEO JSON-LD schema builders', () => {
       {
         title: 'Rhinoplasty consultation story',
         description: 'Consent-backed patient video summary.',
+        outcomeSummary: 'Rhinoplasty planning case with privacy-safe outcome context.',
+        mediaAltText: 'Rhinoplasty video case media.',
+        caseContext: 'Manifest lists this media as Rhinoplasty case video abcd1234.',
+        resultViewingContext: 'Use this media for consultation research, not as a guaranteed individual result.',
+        timelineNote: 'Exact treatment and recovery dates are not published.',
         thumbnailUrl: '/homepage/aesthetic-cases-collage.png',
         videoUrl: 'https://cdn.example.com/rhinoplasty.mp4',
       },
@@ -96,6 +101,8 @@ describe('SEO JSON-LD schema builders', () => {
     expect(types(withVideos)).toEqual(expect.arrayContaining(['MedicalProcedure', 'BreadcrumbList', 'VideoObject']));
     expect(JSON.stringify(withVideos)).not.toMatch(/duration|uploadDate/);
     expect(JSON.stringify(withVideos)).toContain('Consent-backed');
+    expect(JSON.stringify(withVideos)).toContain('Manifest lists this media as Rhinoplasty case video');
+    expect(JSON.stringify(withVideos)).toContain('Rhinoplasty video case media');
   });
 
   it('builds surgeon and hospital schemas without invented credentials or ratings', () => {

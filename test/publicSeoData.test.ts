@@ -30,7 +30,16 @@ describe('public SEO data loader', () => {
       expect(data.hospitals).toEqual([]);
       expect(data.videoCases.length).toBeGreaterThan(0);
       expect(data.videoCaseSource).toBe('public/video-cases.json');
-      expect(data.procedures.find((procedure) => procedure.label === 'Rhinoplasty')?.videoCases?.length).toBeGreaterThan(0);
+      const rhinoplastyVideoCase = data.procedures.find((procedure) => procedure.label === 'Rhinoplasty')?.videoCases?.[0];
+      expect(rhinoplastyVideoCase?.caseNumber).toMatch(/^[a-f0-9]{8}$/);
+      expect(rhinoplastyVideoCase?.caseContext).toContain('Manifest lists this media as Nose Surgery case video');
+      expect(rhinoplastyVideoCase?.resultViewingContext).toContain('not as a guaranteed individual result');
+      expect(rhinoplastyVideoCase?.privacyNote).toContain('without private patient identifiers');
+      expect(rhinoplastyVideoCase?.mediaAltText).toContain('Nose Surgery video case');
+      expect(rhinoplastyVideoCase?.patientConcern).toBeUndefined();
+      expect(rhinoplastyVideoCase?.treatmentApproach).toBeUndefined();
+      expect(rhinoplastyVideoCase?.outcomeSummary).toBeUndefined();
+      expect(rhinoplastyVideoCase?.duration).toBeUndefined();
       expect(data.routeExtras).toEqual(expect.arrayContaining(data.surgeons.map((surgeon) => surgeon.route)));
       expect(data.warnings).toContain('Supabase env is missing; using public SEO fallback data.');
       expect(warn).toHaveBeenCalledWith('[public-seo] Supabase env is missing; using public SEO fallback data.');

@@ -106,9 +106,10 @@ Current status:
 | Checked-in video manifest fallback | Done | If the remote R2 manifest is unavailable, build falls back to `public/video-cases.json` and emits a warning rather than failing deployment. |
 | Procedure-specific video case summaries | Done | Priority procedure video pages include privacy-safe case summaries in initial HTML. |
 | `VideoObject` schema for video pages | Done for manifest-level data | Procedure video pages and generic video case collection pages emit `VideoObject` JSON-LD from manifest data. |
+| Manifest-derived case context | Partial | Video case records include stable case ids, project/provider names when available, video URLs, neutral manifest/media context, media alt text, and privacy notes. Richer source set/source kind/classification confidence appears only when a manifest provides it. True patient concern, treatment approach, and outcome details are not inferred. |
 | Per-video thumbnails | Not done | The v4 manifest does not currently provide thumbnail URLs; schema uses the brand case-collage fallback image. |
-| Transcripts and detailed case outcomes | Not done | Manifest data does not yet include transcripts, patient concern, treatment approach, visible result, timeline, or richer outcome summaries. |
-| Source duration metadata | Partial | Current SEO duration is deterministic fallback derived from case id when source duration is absent. Replace when v4 manifest exposes actual duration. |
+| Transcripts | Not done | Manifest data does not yet include real transcripts. Summaries are not labeled as transcripts. |
+| Source duration metadata | Partial | SEO uses source duration only when the manifest provides it. It no longer fabricates duration from the case id. |
 
 ## JSON-LD Requirements
 

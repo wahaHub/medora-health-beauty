@@ -105,7 +105,22 @@ export function createSeoPayload(route, data) {
       sections: [
         {
           title: 'Featured Video Case Summaries',
-          items: videoCases.map((item) => item.summary || item.description || item.title).filter(Boolean),
+          items: videoCases
+            .map((item) =>
+              [
+                item.title,
+                item.caseContext,
+                item.sourceContext,
+                item.resultViewingContext,
+                item.patientConcern,
+                item.treatmentApproach,
+                item.outcomeSummary || item.summary || item.description,
+                item.timeline || item.timelineNote,
+              ]
+                .filter(Boolean)
+                .join(' ')
+            )
+            .filter(Boolean),
         },
       ],
       links: [
