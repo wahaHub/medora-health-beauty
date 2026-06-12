@@ -88,6 +88,14 @@ describe('SEO prerender HTML', () => {
       const botoxHtml = await readFile(join(distDir, 'procedure', 'BOTOX® & Neurotoxins', 'index.html'), 'utf8');
 
       expect(guideHtml).toContain('Rhinoplasty');
+      expect(guideHtml).toContain('Short Answer');
+      expect(guideHtml).toContain('Who Should Avoid or Delay');
+      expect(guideHtml).toContain('Cost Factors');
+      expect(guideHtml).toContain('FAQ');
+      expect(guideHtml).toContain('What affects Rhinoplasty cost?');
+      expect(guideHtml).toContain('Open (External) Rhinoplasty');
+      expect(guideHtml).toContain('This guide is educational and does not replace consultation');
+      expect(guideHtml).toContain('"@type":"FAQPage"');
       expect(existsSync(join(distDir, 'procedure', 'Rhinoplasty.html'))).toBe(true);
       expect(videoHtml).toContain('Rhinoplasty Video Cases');
       expect(videoHtml).toContain('Featured Video Case Summaries');
@@ -99,6 +107,7 @@ describe('SEO prerender HTML', () => {
       expect(genericVideoHtml).toContain('"@type":"VideoObject"');
       expect(existsSync(join(distDir, 'procedure', 'videos.html'))).toBe(true);
       expect(bblHtml).toContain('Brazilian Butt Lift');
+      expect(bblHtml).toContain('Standard BBL with Liposuction and Fat Transfer');
       expect(existsSync(join(distDir, 'procedure', 'Brazilian Butt Lift (BBL).html'))).toBe(true);
       expect(botoxHtml).toContain('BOTOX');
       expect(existsSync(join(distDir, 'procedure', 'BOTOX® & Neurotoxins.html'))).toBe(true);

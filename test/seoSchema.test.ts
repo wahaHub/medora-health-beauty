@@ -46,13 +46,16 @@ describe('SEO JSON-LD schema builders', () => {
       bodyLocation: 'Nose',
       risks: ['Swelling', 'Bleeding'],
       recovery: 'Most patients plan visible social recovery time before travel.',
-      faq: [{ question: 'Is consultation required?', answer: 'Yes, a surgeon consultation is required before treatment planning.' }],
+      faqItems: [
+        { question: 'Is consultation required?', answer: 'Yes, a surgeon consultation is required before treatment planning.' },
+      ],
     };
 
     const schema = createProcedureSchema(procedure);
     const noFaqSchema = createProcedureSchema({ label: 'Facelift' });
 
     expect(types(schema)).toEqual(expect.arrayContaining(['MedicalProcedure', 'BreadcrumbList', 'FAQPage']));
+    expect(JSON.stringify(schema)).toContain('Is consultation required?');
     expect(types(noFaqSchema)).not.toContain('FAQPage');
     expect(JSON.stringify(schema)).not.toMatch(/AggregateRating|reviewCount|ratingValue/);
     expect(JSON.stringify(schema)).not.toContain('uploadDate');

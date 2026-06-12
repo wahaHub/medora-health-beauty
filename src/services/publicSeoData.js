@@ -25,10 +25,18 @@ const reportWarnings = (warnings, logger) => {
  * @property {string} title
  * @property {string} description
  * @property {string=} overview
+ * @property {string=} shortAnswerSummary
  * @property {string[]} benefits
  * @property {string[]} candidacy
+ * @property {string[]=} whoShouldAvoid
+ * @property {string[]=} techniques
  * @property {string[]} risks
  * @property {string=} recovery
+ * @property {string[]=} recoveryTimeline
+ * @property {string[]=} recoveryTips
+ * @property {string[]=} costFactors
+ * @property {{question:string, answer:string}[]=} faqItems
+ * @property {string=} medicalDisclaimer
  * @property {string=} imageUrl
  * @property {Object[]=} videoCases
  */

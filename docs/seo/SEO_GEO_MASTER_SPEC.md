@@ -106,7 +106,7 @@ The query-filter video route is compatibility-only. Do not promote it in sitemap
 | P1 prerender pipeline | Done for first wave | Build generates initial HTML for priority static pages, procedure guides, procedure video pages, surgeon pages, and hospital pages. |
 | P1 metadata/schema | Partially done | Page-specific metadata and JSON-LD are implemented for priority routes. Video pages now use R2 v4 manifest data when available and fallback manifest data otherwise. |
 | P1 video case data quality | Partially done | Initial HTML includes privacy-safe video case summaries and `VideoObject` schema. Per-video thumbnails, transcripts, richer outcome summaries, and duration from source metadata are still not done. |
-| P2 answer-ready content | Not started | FAQs, short-answer blocks, medical reviewer fields, cost factors, avoidance criteria, and richer destination/guide hubs still need implementation. |
+| P2 answer-ready procedure content | Partially done | Priority prerendered procedure guides now include short-answer summaries, overview, candidacy, conservative avoidance guidance, techniques, recovery timeline/tips, risks, cost factors, FAQs, and a medical disclaimer in initial HTML. Medical reviewer fields, last-updated fields, related surgeons/destinations, case galleries, destination hubs, and guide hubs are still not done. |
 | P3 multilingual/authority | Not started | URL-level language routing, hreflang, editorial policy, medical review policy, and authority workflows still need implementation. |
 
 ### P0: Crawl Foundation
@@ -147,6 +147,8 @@ Make content extractable and citable by search engines and AI systems:
 - avoidance criteria
 - case/video text summaries
 - destination and guide hubs
+
+Current implementation note: priority procedure guide pages now expose the first wave of answer-ready content in initial HTML using existing procedure content and conservative planning guidance. Destination pages, standalone guide hubs, reviewer fields, last-updated fields, and richer case/gallery text remain future work.
 
 Detailed spec: `SEO_GEO_P2_CONTENT_ARCHITECTURE.md`
 

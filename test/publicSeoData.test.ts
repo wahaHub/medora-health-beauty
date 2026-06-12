@@ -62,10 +62,25 @@ describe('public SEO data loader', () => {
       expect(procedure.videoUrl).toBe(`${procedure.guideUrl}/videos`);
       expect(procedure.title).toContain(procedure.label);
       expect(procedure.description.length).toBeGreaterThan(80);
+      expect(procedure.shortAnswerSummary.length).toBeGreaterThan(100);
       expect(procedure.benefits.length).toBeGreaterThan(0);
       expect(procedure.candidacy.length).toBeGreaterThan(0);
+      expect(procedure.whoShouldAvoid.length).toBeGreaterThan(0);
+      expect(procedure.costFactors.length).toBeGreaterThan(0);
+      expect(procedure.faqItems.length).toBeGreaterThan(0);
+      expect(procedure.medicalDisclaimer).toContain('does not replace consultation');
       expect(procedure.risks.length).toBeGreaterThan(0);
     });
+
+    const rhinoplasty = data.procedures.find((procedure) => procedure.label === 'Rhinoplasty');
+    expect(rhinoplasty?.techniques?.[0]).toContain('Open (External) Rhinoplasty');
+    expect(rhinoplasty?.recoveryTimeline?.[0]).toContain('Day of surgery');
+    expect(rhinoplasty?.recoveryTips?.[0]).toContain('head elevated');
+    expect(rhinoplasty?.faqItems?.map((item) => item.question)).toContain('What affects Rhinoplasty cost?');
+
+    const bbl = data.procedures.find((procedure) => procedure.label === 'Brazilian Butt Lift (BBL)');
+    expect(bbl?.techniques?.[0]).toContain('Standard BBL with Liposuction and Fat Transfer');
+    expect(bbl?.recoveryTimeline?.[0]).toContain('avoid sitting or lying directly on your buttocks');
   });
 
   it('keeps build-time modules Node-resolvable and independent of browser Supabase singleton', async () => {

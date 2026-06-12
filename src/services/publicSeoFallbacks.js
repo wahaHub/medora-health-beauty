@@ -53,6 +53,13 @@ const VIDEO_PROJECT_ALIASES = {
   veneers: 'porcelain-veneers',
 };
 
+const PROCEDURE_CONTENT_ALIASES = {
+  [normalizeProcedureLabel('Brazilian Butt Lift (BBL)')]: [
+    'Brazilian Butt Lift',
+    'Brazilian Butt Lift (Buttock Fat Transfer / Buttock Enhancement)',
+  ],
+};
+
 const safeReadJson = async (relativePath) => {
   try {
     const source = await readFile(join(rootDir, relativePath), 'utf8');
@@ -137,19 +144,125 @@ const toStringList = (value) => {
     .filter(Boolean);
 };
 
+const toTechniqueList = (value) => {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => {
+      if (typeof item === 'string') return item;
+      if (!item || typeof item !== 'object') return '';
+      const name = String(item.name || item.title || '').trim();
+      const description = String(item.description || item.guidance || '').replace(/\s+/g, ' ').trim();
+      return [name, description].filter(Boolean).join(': ');
+    })
+    .filter(Boolean);
+};
+
+const toTimelineList = (value) => {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => {
+      if (typeof item === 'string') return item;
+      if (!item || typeof item !== 'object') return '';
+      const timepoint = String(item.timepoint || item.time || item.stage || '').trim();
+      const guidance = String(item.guidance || item.description || '').replace(/\s+/g, ' ').trim();
+      return [timepoint, guidance].filter(Boolean).join(': ');
+    })
+    .filter(Boolean);
+};
+
 const createFallbackDescription = (procedure) =>
   `${procedure.label} guide from Medora Beauty with procedure overview, candidacy, benefits, recovery considerations, and planning context for patients comparing aesthetic care options.`;
 
+const MEDICAL_DISCLAIMER =
+  'This guide is educational and does not replace consultation with a qualified clinician who can review your health history, anatomy, goals, and destination-specific care plan.';
+
+const createShortAnswer = (procedure, overview) => {
+  const sourceSummary = firstSentence(overview);
+  if (sourceSummary) {
+    return `${sourceSummary} Medora Beauty uses this guide to help patients compare procedure goals, risks, recovery, case media, and provider options before consultation.`;
+  }
+
+  return `${procedure.label} is an aesthetic treatment option that should be evaluated through a qualified consultation. Medora Beauty helps patients compare goals, risks, recovery, case media, and provider options before planning care.`;
+};
+
+const createWhoShouldAvoid = (procedure) => [
+  `People considering ${procedure.label} should delay or avoid treatment until cleared by a qualified clinician if they have uncontrolled medical conditions, active infection, or healing risks that could make treatment unsafe.`,
+  'Patients who cannot pause nicotine use, follow recovery restrictions, attend follow-up care, or accept realistic limitations may not be ready for treatment.',
+  'Anyone seeking guaranteed, perfectly symmetrical, or risk-free results should revisit expectations with a clinician before booking.',
+];
+
+const createCostFactors = (procedure) => [
+  `${procedure.label} cost can vary by destination, provider experience, facility setting, anesthesia needs, and whether the plan is surgical, nonsurgical, primary, revision, or combined with other procedures.`,
+  'Travel planning, recovery lodging, medications, garments, imaging, lab work, follow-up visits, and revision policies can affect the total patient budget.',
+  'A final quote should come after consultation because anatomy, goals, safety requirements, and recovery logistics change the treatment plan.',
+];
+
+const createFaqItems = (procedure, fields) => {
+  const items = [
+    {
+      question: `What is ${procedure.label}?`,
+      answer: fields.shortAnswerSummary,
+    },
+    {
+      question: `Who may be a candidate for ${procedure.label}?`,
+      answer:
+        fields.candidacy[0] ||
+        `Candidates for ${procedure.label} should be assessed through consultation, health screening, and realistic goal review.`,
+    },
+    {
+      question: `Who should avoid or delay ${procedure.label}?`,
+      answer: fields.whoShouldAvoid[0],
+    },
+    {
+      question: `What affects ${procedure.label} cost?`,
+      answer: fields.costFactors.join(' '),
+    },
+    {
+      question: `What are the main ${procedure.label} risks?`,
+      answer: [
+        fields.risks.slice(0, 2).join(' '),
+        'Risk level depends on health history, technique, provider judgment, and recovery compliance.',
+      ]
+        .filter(Boolean)
+        .join(' '),
+    },
+  ];
+
+  if (fields.recovery) {
+    items.splice(3, 0, {
+      question: `How long is ${procedure.label} recovery?`,
+      answer: fields.recovery,
+    });
+  }
+
+  return items.filter((item) => item.question && item.answer);
+};
+
 const getContentForProcedure = (contentByProcedure, procedure) => {
   const normalizedLabel = normalizeProcedureLabel(procedure.label);
-  return contentByProcedure.get(normalizedLabel) || null;
+  const directMatch = contentByProcedure.get(normalizedLabel);
+  if (directMatch) return directMatch;
+
+  const aliases = PROCEDURE_CONTENT_ALIASES[normalizedLabel] || [];
+  for (const alias of aliases) {
+    const match = contentByProcedure.get(normalizeProcedureLabel(alias));
+    if (match) return match;
+  }
+
+  return null;
 };
 
 const buildContentIndex = (contentJson) => {
   const procedures = Array.isArray(contentJson?.procedures) ? contentJson.procedures : [];
   return new Map(
     procedures.flatMap((item) => {
-      const names = [item.procedureName, item.procedure].filter(Boolean);
+      const names = [item.procedureName, item.procedure]
+        .flatMap((name) => {
+          if (!name) return [];
+          const primaryName = String(name).replace(/\s*\([^)]*\)\s*/g, ' ').replace(/\s+/g, ' ').trim();
+          return [name, primaryName];
+        })
+        .filter(Boolean);
       return names.map((name) => [normalizeProcedureLabel(name), item]);
     })
   );
@@ -284,10 +397,31 @@ export async function loadFallbackProcedures() {
     const benefits = toStringList(content?.benefits);
     const candidacy = toStringList(content?.candidacy);
     const risks = toStringList(content?.risksAndConsiderations);
+    const techniques = toTechniqueList(content?.techniques);
+    const recoveryTimeline = toTimelineList(content?.recoveryTimeline);
+    const recoveryTips = toStringList(content?.recoveryTips);
+    const complementaryProcedures = toStringList(content?.complementaryProcedures);
     const recovery =
       typeof content?.recovery === 'string'
         ? content.recovery
         : content?.recovery?.recovery_time || content?.recoveryTimeline?.[0]?.description || '';
+    const procedureDescription = content?.procedure || '';
+    const expectedResults =
+      typeof content?.recovery === 'object' && content?.recovery?.final_results
+        ? `Final results: ${content.recovery.final_results}`
+        : '';
+    const sourceFields = {
+      benefits: benefits.length > 0 ? benefits : [`Learn whether ${procedure.label} may fit your aesthetic goals.`],
+      candidacy: candidacy.length > 0 ? candidacy : ['Best evaluated through a consultation with a qualified clinician.'],
+      risks: risks.length > 0 ? risks : ['All procedures involve individual risks, recovery variables, and suitability limits.'],
+    };
+    const answerFields = {
+      ...sourceFields,
+      shortAnswerSummary: createShortAnswer(procedure, overview),
+      whoShouldAvoid: createWhoShouldAvoid(procedure),
+      costFactors: createCostFactors(procedure),
+      recovery,
+    };
 
     return {
       label: procedure.label,
@@ -299,10 +433,21 @@ export async function loadFallbackProcedures() {
       title: `${procedure.label} Guide | Medora Beauty`,
       description: firstSentence(overview) || createFallbackDescription(procedure),
       overview,
-      benefits: benefits.length > 0 ? benefits : [`Learn whether ${procedure.label} may fit your aesthetic goals.`],
-      candidacy: candidacy.length > 0 ? candidacy : ['Best evaluated through a consultation with a qualified clinician.'],
-      risks: risks.length > 0 ? risks : ['All procedures involve individual risks, recovery variables, and suitability limits.'],
+      shortAnswerSummary: answerFields.shortAnswerSummary,
+      benefits: sourceFields.benefits,
+      candidacy: sourceFields.candidacy,
+      whoShouldAvoid: answerFields.whoShouldAvoid,
+      techniques,
+      procedureDescription,
+      expectedResults,
+      risks: sourceFields.risks,
       recovery,
+      recoveryTimeline,
+      recoveryTips,
+      costFactors: answerFields.costFactors,
+      complementaryProcedures,
+      faqItems: createFaqItems(procedure, answerFields),
+      medicalDisclaimer: MEDICAL_DISCLAIMER,
       imageUrl: '',
     };
   });
