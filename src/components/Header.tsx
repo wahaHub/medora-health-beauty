@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowRight, BicepsFlexed, Droplet, Menu, ScanFace, Smile, Sparkles, Waves, X } from 'lucide-react';
+import { ArrowRight, Menu, Sparkles, X } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -20,7 +20,7 @@ interface SubMenuItem {
 interface ProcedureMenuSection {
   title: string;
   route: 'face' | 'body' | 'nonsurgical' | 'hair' | 'dental';
-  icon: React.ComponentType<{ className?: string; size?: number; strokeWidth?: number }>;
+  iconSrc: string;
   items: SubMenuItem[];
   viewAllLabel: string;
 }
@@ -198,15 +198,15 @@ const doctorMetaTranslations = {
     vi: 'Bác Sĩ Tư Vấn Phẫu Thuật Thẩm Mỹ',
     id: 'Konsultan Bedah Plastik',
   },
-  'Medora Health : Beauty': {
-    zh: 'Medora Health : Beauty',
-    es: 'Medora Health : Beauty',
-    fr: 'Medora Health : Beauty',
-    de: 'Medora Health : Beauty',
-    ru: 'Medora Health : Beauty',
-    ar: 'Medora Health : Beauty',
-    vi: 'Medora Health : Beauty',
-    id: 'Medora Health : Beauty',
+  'Medora Beauty': {
+    zh: 'Medora Beauty',
+    es: 'Medora Beauty',
+    fr: 'Medora Beauty',
+    de: 'Medora Beauty',
+    ru: 'Medora Beauty',
+    ar: 'Medora Beauty',
+    vi: 'Medora Beauty',
+    id: 'Medora Beauty',
   },
 } as const;
 
@@ -423,7 +423,7 @@ const Header: React.FC = () => {
     {
       title: 'Face',
       route: 'face',
-      icon: ScanFace,
+      iconSrc: '/brand/procedure-icons/face.png',
       viewAllLabel: 'View all Face Procedures',
       items: proceduresByCategory.face.map((procedure) => ({
         label: procedure.label,
@@ -434,7 +434,7 @@ const Header: React.FC = () => {
     {
       title: 'Body',
       route: 'body',
-      icon: BicepsFlexed,
+      iconSrc: '/brand/procedure-icons/body.png',
       viewAllLabel: 'View all Body Procedures',
       items: proceduresByCategory.body.map((procedure) => ({
         label: procedure.label,
@@ -445,7 +445,7 @@ const Header: React.FC = () => {
     {
       title: 'Skin & Injectables',
       route: 'nonsurgical',
-      icon: Droplet,
+      iconSrc: '/brand/procedure-icons/nonsurgical.png',
       viewAllLabel: 'View all Non-Surgical Procedures',
       items: proceduresByCategory.nonsurgical.map((procedure) => ({
         label: procedure.label,
@@ -456,7 +456,7 @@ const Header: React.FC = () => {
     {
       title: 'Hair Restoration',
       route: 'hair',
-      icon: Waves,
+      iconSrc: '/brand/procedure-icons/hair.png',
       viewAllLabel: 'View all Hair Procedures',
       items: proceduresByCategory.hair.map((procedure) => ({
         label: procedure.label,
@@ -467,7 +467,7 @@ const Header: React.FC = () => {
     {
       title: 'Dental',
       route: 'dental',
-      icon: Smile,
+      iconSrc: '/brand/procedure-icons/dental.png',
       viewAllLabel: 'View all Dental Procedures',
       items: proceduresByCategory.dental.map((procedure) => ({
         label: procedure.label,
@@ -555,18 +555,20 @@ const Header: React.FC = () => {
       onMouseLeave={() => setHoveredNav(null)}
     >
       <div className={`w-full px-6 flex justify-between items-center relative z-50 ${isScrolled || hoveredNav ? 'h-20' : 'h-24'}`}>
-        {/* Logo - Single Line */}
+        {/* Logo */}
         <div 
-          className={`z-50 transition-colors duration-300 cursor-pointer flex items-baseline gap-3 group shrink-0`}
+          className="z-50 flex shrink-0 cursor-pointer items-center gap-2 transition-colors duration-300 group sm:gap-3"
           onClick={(e) => handleLinkClick(e, 'intro', false)}
         >
-          <span className={`font-serif text-lg lg:text-xl tracking-[0.14em] font-bold transition-colors ${
+          <span className={`flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border transition-colors lg:h-10 lg:w-10 ${
+            hasWhiteBg ? 'border-[#d6b25f]/45 bg-white' : 'border-white/35 bg-white/95'
+          }`}>
+            <img src="/brand/medora-beauty-mark.png" alt="" className="h-full w-full object-cover" />
+          </span>
+          <span className={`font-serif text-base font-semibold uppercase tracking-[0.12em] transition-colors sm:tracking-[0.16em] lg:text-xl ${
             hasWhiteBg ? 'text-navy-900 group-hover:text-gold-600' : 'text-white group-hover:text-gold-300'
           }`}>
-            MEDORA HEALTH
-          </span>
-          <span className="text-[10px] lg:text-xs uppercase tracking-[0.18em] text-[#bf8755] group-hover:text-navy-900 transition-colors font-semibold">
-            : BEAUTY
+            Medora Beauty
           </span>
         </div>
 
@@ -722,7 +724,7 @@ const Header: React.FC = () => {
                                       {translateDoctorMeta(surgeon.specialties?.[0] || 'Plastic Surgery')}
                                     </p>
                                     <p className="mt-0.5 font-sans line-clamp-1 text-xs font-normal leading-[1.35] text-[#aebdb8]">
-                                      {translateDoctorMeta(surgeon.title || 'Medora Health : Beauty')}
+                                      {translateDoctorMeta(surgeon.title || 'Medora Beauty')}
                                     </p>
                                     <span className="mt-auto pt-3 font-sans text-[13px] font-medium text-[#c4935b]">
                                       {dropdownCopy.viewProfile} <span aria-hidden>→</span>
@@ -759,7 +761,6 @@ const Header: React.FC = () => {
 
                   <div className="grid min-w-0 gap-6 lg:grid-cols-5 lg:gap-0">
                     {link.procedureSections.map((section, sectionIdx) => {
-                      const Icon = section.icon;
                       return (
                         <section
                           key={section.title}
@@ -767,9 +768,16 @@ const Header: React.FC = () => {
                             sectionIdx > 0 ? 'lg:border-l lg:border-[#d0b083]/18' : ''
                           }`}
                         >
-                          <div className="mb-7 flex h-[5.8rem] items-start gap-4">
-                            <Icon className="h-10 w-10 shrink-0 text-[#c4935b]" strokeWidth={1.35} />
-                            <div>
+                          <div className="mb-1 flex h-16 items-center gap-4">
+                            <span className="flex h-16 w-16 shrink-0 items-center justify-center">
+                              <img
+                                src={section.iconSrc}
+                                alt=""
+                                className="h-full w-full object-contain"
+                                loading="lazy"
+                              />
+                            </span>
+                            <div className="pt-0.5">
                               <h3 className="whitespace-nowrap font-sans text-sm font-medium leading-[1.35] tracking-wide text-[#f1f0eb]">
                                 {translateLabel(section.title)}
                               </h3>

@@ -202,7 +202,7 @@ const ConsultationModal: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Mail size={16} className="text-gold-500" />
-                  <span>contact@medicaltourismchina.health</span>
+                  <span>contact@medorabeauty.com</span>
                 </div>
               </div>
             </div>

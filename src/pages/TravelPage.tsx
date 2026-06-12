@@ -20,7 +20,7 @@ const TravelPage: React.FC = () => {
            <div className="text-white pt-20 max-w-2xl">
              {/* Logo Mark */}
              <div className="mb-8 opacity-90">
-                <div className="font-serif text-3xl italic tracking-wide">Medora Health</div>
+                <div className="font-serif text-3xl italic tracking-wide">Medora Beauty</div>
                 <div className="text-xs uppercase tracking-[0.2em] font-light border-t border-white/30 pt-1 mt-1 inline-block">
                   Center for Plastic Surgery
                 </div>
@@ -416,7 +416,7 @@ const TravelPage: React.FC = () => {
             </div>
             <div className="md:w-1/2 flex justify-center md:justify-end">
                <div className="text-navy-900 opacity-80">
-                  <div className="font-serif text-5xl italic tracking-wide">Medora Health</div>
+                  <div className="font-serif text-5xl italic tracking-wide">Medora Beauty</div>
                   <div className="text-sm uppercase tracking-[0.2em] font-light border-t border-navy-900/30 pt-2 mt-2">
                      Center For <br/> Plastic Surgery
                   </div>

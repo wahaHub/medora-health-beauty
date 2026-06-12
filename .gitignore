@@ -60,6 +60,8 @@ venv/
 # Generated images & large assets
 generated_procedure_hero_images/
 photos/
+wechat-beauty-cases/
+wechat_liyuan_cases/
 
 # Generated data (already in Supabase)
 scripts/data/

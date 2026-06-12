@@ -277,7 +277,7 @@ const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
 
         <div className="container mx-auto px-6 relative z-10">
           <div className="mb-8">
-             <div className="font-serif text-3xl italic tracking-wide text-white">Medora Health</div>
+             <div className="font-serif text-3xl italic tracking-wide text-white">Medora Beauty</div>
              <div className="text-xs uppercase tracking-[0.2em] font-light text-sage-200 border-t border-sage-200/30 pt-1 mt-1 inline-block">
                Center for Plastic Surgery
              </div>
