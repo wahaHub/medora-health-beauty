@@ -4,6 +4,7 @@ import { Maximize2, MessageSquare, Minimize2, X } from 'lucide-react';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { usePatientEntry } from '@/hooks/usePatientEntry';
 import { usePatientConversations } from '@/hooks/usePatientConversations';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 import { ChatView } from '../messaging/ChatView';
 import { ConversationList } from '../messaging/ConversationList';
 import { OnboardingFlow } from './OnboardingFlow';
@@ -41,13 +42,14 @@ function ChatHeader(props: {
   onMinimize?: () => void;
 }) {
   const { displayMode, onClose, onMaximize, onMinimize } = props;
+  const { dt } = useDashboardTranslation();
 
   return (
     <div className="bg-gradient-to-r from-teal-700 to-sky-700 px-4 py-3 flex items-center justify-between shrink-0">
       <div className="min-w-0">
         <h3 className="truncate text-white font-serif tracking-wide text-lg">Medora Beauty</h3>
         <p className="mt-0.5 text-[11px] uppercase tracking-[0.18em] text-sage-200/80">
-          CRM v2 patient concierge
+          {dt('chatHeaderSubtitle')}
         </p>
       </div>
       <div className="ml-4 flex items-center gap-1.5">
@@ -55,7 +57,7 @@ function ChatHeader(props: {
           <button
             onClick={onMaximize}
             className="rounded-full p-2 text-stone-400 transition-colors hover:bg-white/10 hover:text-white"
-            aria-label="Maximize chat"
+            aria-label={dt('chatMaximize')}
           >
             <Maximize2 className="h-4 w-4" />
           </button>
@@ -64,7 +66,7 @@ function ChatHeader(props: {
           <button
             onClick={onMinimize}
             className="rounded-full p-2 text-stone-400 transition-colors hover:bg-white/10 hover:text-white"
-            aria-label="Minimize chat"
+            aria-label={dt('chatMinimize')}
           >
             <Minimize2 className="h-4 w-4" />
           </button>
@@ -72,7 +74,7 @@ function ChatHeader(props: {
         <button
           onClick={onClose}
           className="rounded-full p-2 text-stone-400 transition-colors hover:bg-white/10 hover:text-white"
-          aria-label="Close chat"
+          aria-label={dt('chatClose')}
         >
           <X className="w-5 h-5" />
         </button>
@@ -103,14 +105,15 @@ function MessagesReadyContent(props: {
   } = props;
 
   const usesSplitLayout = displayMode === 'modal';
+  const { dt } = useDashboardTranslation();
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-stone-50">
       <div className="flex items-center justify-between gap-3 border-b border-stone-200 bg-white px-4 py-3">
         <div>
-          <h4 className="font-serif text-base text-navy-900">Messages</h4>
+          <h4 className="font-serif text-base text-navy-900">{dt('dashboardMessages')}</h4>
           <p className="text-xs text-stone-500">
-            Continue your case conversations across support and hospital sessions.
+            {dt('chatMessagesDescription')}
           </p>
         </div>
         <Link
@@ -118,7 +121,7 @@ function MessagesReadyContent(props: {
           onClick={onClose}
           className="rounded-lg border border-gold-200 bg-gold-50 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-gold-700 transition-colors hover:bg-gold-100"
         >
-          Full Workspace
+          {dt('chatFullWorkspace')}
         </Link>
       </div>
 
@@ -132,9 +135,9 @@ function MessagesReadyContent(props: {
             <MessageSquare className="h-7 w-7 text-gold-600" />
           </div>
           <div>
-            <p className="font-serif text-lg text-stone-800">Messages will appear here</p>
+            <p className="font-serif text-lg text-stone-800">{dt('chatMessagesEmptyTitle')}</p>
             <p className="mt-1 text-sm text-stone-500">
-              Once CRM conversations are ready, you can continue them directly in this chat.
+              {dt('chatMessagesEmptyDescription')}
             </p>
           </div>
         </div>
@@ -155,7 +158,7 @@ function MessagesReadyContent(props: {
               <ChatView conversation={activeConversation} />
             ) : (
               <div className="flex h-full items-center justify-center px-6 text-center text-sm text-stone-400">
-                Select a conversation to continue messaging.
+                {dt('chatSelectConversation')}
               </div>
             )}
           </div>
@@ -173,7 +176,7 @@ function MessagesReadyContent(props: {
               <ChatView conversation={activeConversation} />
             ) : (
               <div className="flex h-full items-center justify-center px-6 text-center text-sm text-stone-400">
-                Select a conversation to continue messaging.
+                {dt('chatSelectConversation')}
               </div>
             )}
           </div>
@@ -184,6 +187,7 @@ function MessagesReadyContent(props: {
 }
 
 export function ChatWindow({ displayMode, onClose, onMaximize, onMinimize }: ChatWindowProps) {
+  const { dt } = useDashboardTranslation();
   const { isLoading } = usePatientAuth();
   const {
     phase,
@@ -249,7 +253,7 @@ export function ChatWindow({ displayMode, onClose, onMaximize, onMinimize }: Cha
       data-chat-display-mode={displayMode}
       role="dialog"
       aria-modal={displayMode === 'modal'}
-      aria-label="Medora Beauty chat"
+      aria-label={dt('chatWindowLabel')}
     >
       <ChatHeader
         displayMode={displayMode}
@@ -278,7 +282,7 @@ export function ChatWindow({ displayMode, onClose, onMaximize, onMinimize }: Cha
           />
         ) : (
           <div className="flex items-center justify-center h-full">
-            <div className="text-sm text-stone-500">Preparing your patient entry…</div>
+            <div className="text-sm text-stone-500">{dt('chatPreparingEntry')}</div>
           </div>
         )}
       </div>

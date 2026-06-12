@@ -4,6 +4,7 @@ import { usePatientEntry } from '@/hooks/usePatientEntry';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { useLanguage, type LanguageCode } from '@/contexts/LanguageContext';
 import { usePatientConversations } from '@/hooks/usePatientConversations';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 import { MessageInput } from '../messaging/MessageInput';
 import { ContactInfoStep } from './ContactInfoStep';
 import { HospitalCards } from './HospitalCards';
@@ -36,6 +37,7 @@ function MessageBubble({ message }: { message: PreBootstrapMessage }) {
 // ---------------------------------------------------------------------------
 
 function PreBootstrapInput() {
+  const { dt } = useDashboardTranslation();
   const { appendPreBootstrapMessage } = usePatientEntry();
   const [content, setContent] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -75,8 +77,8 @@ function PreBootstrapInput() {
         <button
           type="button"
           disabled
-          aria-label="Attach files"
-          title="Attachments become available once your patient chat session is ready."
+          aria-label={dt('messageAttachFiles')}
+          title={dt('chatAttachUnavailable')}
           className="rounded-full p-2 text-stone-300"
         >
           <Paperclip size={16} />
@@ -86,14 +88,14 @@ function PreBootstrapInput() {
           value={content}
           onChange={handleInput}
           onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
+          placeholder={dt('messagePlaceholder')}
           rows={1}
           className="flex-1 bg-transparent outline-none text-sm text-stone-700 placeholder-stone-400 resize-none max-h-[120px]"
         />
         <button
           onClick={handleSend}
           disabled={!content.trim()}
-          aria-label="Send message"
+          aria-label={dt('messageSend')}
           className={`p-2 rounded-full transition-colors shrink-0 ${
             content.trim()
               ? 'bg-gold-600 text-white hover:bg-gold-700'
@@ -116,6 +118,7 @@ interface OnboardingFlowProps {
 }
 
 function SubmittedDetailsCard() {
+  const { dt } = useDashboardTranslation();
   const { patient } = usePatientAuth();
   const { profileDraft } = usePatientEntry();
 
@@ -127,10 +130,10 @@ function SubmittedDetailsCard() {
   };
 
   const rows = [
-    ['Name', mergedProfile.name],
-    ['Email', mergedProfile.email],
-    ['Condition / Procedure', mergedProfile.disease],
-    ['Destination', mergedProfile.destination],
+    [dt('chatName').replace(' *', ''), mergedProfile.name],
+    [dt('emailAddress'), mergedProfile.email],
+    [dt('chatConditionProcedure'), mergedProfile.disease],
+    [dt('chatDestination'), mergedProfile.destination],
   ].filter(([, value]) => value.trim() !== '');
 
   return (
@@ -140,9 +143,9 @@ function SubmittedDetailsCard() {
           <CheckCircle2 className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-lg font-semibold text-stone-900">Submitted details</div>
+          <div className="text-lg font-semibold text-stone-900">{dt('chatSubmittedDetails')}</div>
           <p className="mt-1 text-sm text-stone-500">
-            Our concierge team is reviewing your profile in chat and will guide the next step from CRM.
+            {dt('chatSubmittedDetailsDescription')}
           </p>
           <div className="mt-4 space-y-2">
             {rows.map(([label, value]) => (
@@ -373,6 +376,7 @@ function MaterialCollectionPanel() {
 }
 
 export function OnboardingFlow({ onClose }: OnboardingFlowProps = {}) {
+  const { dt } = useDashboardTranslation();
   const {
     phase,
     preBootstrapMessages,
@@ -431,8 +435,8 @@ export function OnboardingFlow({ onClose }: OnboardingFlowProps = {}) {
               <MessageSquare className="w-8 h-8 text-gold-600" />
             </div>
             <div>
-              <h4 className="text-stone-800 font-serif text-lg mb-1">Welcome Back</h4>
-              <p className="text-stone-500 text-sm">View your hospital conversations and messages.</p>
+              <h4 className="text-stone-800 font-serif text-lg mb-1">{dt('chatWelcomeBack')}</h4>
+              <p className="text-stone-500 text-sm">{dt('chatViewHospitalConversations')}</p>
             </div>
             <button
               onClick={() => {
@@ -441,23 +445,23 @@ export function OnboardingFlow({ onClose }: OnboardingFlowProps = {}) {
               }}
               className="bg-gold-600 hover:bg-gold-700 text-white px-6 py-2.5 rounded-xl font-medium transition-all duration-300"
             >
-              Open Messages
+              {dt('dashboardOpenMessages')}
             </button>
           </div>
         )}
 
         {phase === 'bootstrap-error' && (
           <div className="mx-3 my-2 p-4 bg-red-50 border border-red-200 rounded-2xl">
-            <p className="text-red-700 text-sm font-medium mb-1">Something went wrong</p>
+            <p className="text-red-700 text-sm font-medium mb-1">{dt('chatSomethingWentWrong')}</p>
             <p className="text-red-600 text-xs mb-3">
-              {bootstrapError ?? 'Unable to set up your session. Please try again.'}
+              {bootstrapError ?? dt('chatUnableSetup')}
             </p>
             <button
               onClick={clearBootstrapError}
               className="flex items-center gap-1.5 text-sm font-medium text-red-700 hover:text-red-800 transition-colors"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              Try Again
+              {dt('chatTryAgain')}
             </button>
           </div>
         )}
