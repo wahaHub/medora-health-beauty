@@ -66,7 +66,7 @@ describe('Header SEO links', () => {
     window.scrollTo = vi.fn();
   });
 
-  it('renders desktop Rhinoplasty procedure links with video-gallery hrefs', () => {
+  it('renders desktop Rhinoplasty procedure links with path video-case hrefs', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Header />
@@ -78,12 +78,23 @@ describe('Header SEO links', () => {
     expect(rhinoplastyLinks.length).toBeGreaterThan(0);
     expect(rhinoplastyLinks[0]).toHaveAttribute(
       'href',
-      '/procedure/videos?procedure=Rhinoplasty&area=face',
+      '/procedure/Rhinoplasty/videos',
     );
     expect(rhinoplastyLinks.every((link) => link.getAttribute('href') !== '#')).toBe(true);
   });
 
-  it('opens the mobile menu by accessible name and includes a real Rhinoplasty link', () => {
+  it('renders crawl-critical top-level public links with real hrefs', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Header />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('link', { name: 'GALLERY' })).toHaveAttribute('href', '/gallery');
+    expect(screen.getByRole('link', { name: 'TRAVEL' })).toHaveAttribute('href', '/travel');
+  });
+
+  it('opens the mobile menu by accessible name and includes a path Rhinoplasty video link', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Header />
@@ -96,7 +107,7 @@ describe('Header SEO links', () => {
     expect(
       screen
         .getAllByRole('link', { name: 'Rhinoplasty' })
-        .some((link) => link.getAttribute('href') === '/procedure/videos?procedure=Rhinoplasty&area=face'),
+        .some((link) => link.getAttribute('href') === '/procedure/Rhinoplasty/videos'),
     ).toBe(true);
   });
 });

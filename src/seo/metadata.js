@@ -3,16 +3,16 @@ import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_ORIGIN } from './site.js';
 
 const STATIC_PAGE_COPY = {
   '/surgeons': {
-    title: 'Cosmetic Surgeons in China | Medora Beauty',
-    description: 'Meet Medora Beauty partner surgeons and compare specialties, destinations, and consultation options for aesthetic treatment planning in China.',
+    title: 'Global Cosmetic Surgeons | Medora Beauty',
+    description: 'Meet Medora Beauty partner surgeons and compare specialties, destinations, and consultation options for international aesthetic treatment planning.',
   },
   '/gallery': {
     title: 'Before and After Cosmetic Surgery Gallery | Medora Beauty',
     description: 'Explore consent-aware Medora Beauty case media for cosmetic procedures, with privacy-first summaries for international aesthetic patients.',
   },
   '/travel': {
-    title: 'Travel to China for Cosmetic Surgery | Medora Beauty',
-    description: 'Plan medical travel for cosmetic surgery in China with Medora Beauty guidance on destinations, consultation steps, and coordinated patient support.',
+    title: 'Medical Travel for Cosmetic Surgery | Medora Beauty',
+    description: 'Plan international medical travel for cosmetic surgery with Medora Beauty guidance on destinations, consultation steps, and coordinated patient support.',
   },
   '/reviews': {
     title: 'Patient Reviews and Experiences | Medora Beauty',
@@ -74,8 +74,8 @@ function encodePathSegment(value) {
 }
 
 function createMetadata({ title, description, path = '/', image = DEFAULT_OG_IMAGE, type = 'website' }) {
-  const safeTitle = compact(title) || `${SITE_NAME} | Cosmetic Surgery in China`;
-  const safeDescription = compact(description) || 'Medora Beauty helps international patients compare cosmetic procedures, hospitals, surgeons, and medical travel options in China.';
+  const safeTitle = compact(title) || `${SITE_NAME} | Global Cosmetic Surgery Planning`;
+  const safeDescription = compact(description) || 'Medora Beauty helps international patients compare cosmetic procedures, hospitals, surgeons, and global medical travel options.';
   const canonicalUrl = createCanonicalUrl(path);
   const imageUrl = createImageUrl(image);
 
@@ -102,8 +102,8 @@ function createMetadata({ title, description, path = '/', image = DEFAULT_OG_IMA
 
 export function createHomeMetadata() {
   return createMetadata({
-    title: 'Medora Beauty | Cosmetic Surgery in China',
-    description: 'Medora Beauty helps international patients compare cosmetic surgery procedures, trusted providers, case media, and coordinated medical travel in China.',
+    title: 'Medora Beauty | Global Cosmetic Surgery Planning',
+    description: 'Medora Beauty helps international patients compare cosmetic surgery procedures, trusted providers, case media, and coordinated global medical travel.',
     path: '/',
   });
 }
@@ -112,7 +112,7 @@ export function createStaticPageMetadata(route, overrides = {}) {
   const path = route || '/';
   const copy = STATIC_PAGE_COPY[path] || {
     title: `${titleFromRoute(path)} | ${SITE_NAME}`,
-    description: `Explore Medora Beauty guidance for ${titleFromRoute(path).toLowerCase()}, including provider comparison and medical travel planning for aesthetic care in China.`,
+    description: `Explore Medora Beauty guidance for ${titleFromRoute(path).toLowerCase()}, including provider comparison and medical travel planning for international aesthetic care.`,
   };
 
   return createMetadata({
@@ -128,7 +128,7 @@ export function createProcedureMetadata(procedure = {}) {
   const description = compact(procedure.description) || `Learn about ${label}, including consultation planning, provider comparison, recovery considerations, and medical travel support with Medora Beauty.`;
 
   return createMetadata({
-    title: `${label} in China | Procedure Guide | ${SITE_NAME}`,
+    title: `${label} Procedure Guide | ${SITE_NAME}`,
     description: `${description} Compare ${category} procedure options with Medora Beauty before choosing a provider.`,
     path: `/procedure/${encodePathSegment(label)}`,
     image: procedure.imageUrl || procedure.image_url || procedure.image || DEFAULT_OG_IMAGE,
@@ -167,7 +167,7 @@ export function createSurgeonMetadata(surgeon = {}) {
 
 export function createHospitalMetadata(hospital = {}) {
   const name = compact(hospital.name || hospital.hospital_name || 'Medora Beauty Hospital');
-  const city = compact(hospital.city || hospital.location?.city || hospital.destination || 'China');
+  const city = compact(hospital.city || hospital.location?.city || hospital.destination || 'Global Network');
   const specialties = normalizeList(hospital.specialties || hospital.specialty).join(', ');
   const path = compact(hospital.route) || `/hospital/${encodePathSegment(name)}`;
 

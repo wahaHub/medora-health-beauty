@@ -41,9 +41,12 @@ describe('SEO metadata builders', () => {
 
     expectCompleteMetadata(home);
     expect(home.canonicalUrl).toBe(`${SITE_ORIGIN}/`);
+    expect(home.title).toContain('Global');
+    expect(home.description).toContain('global medical travel');
     expectCompleteMetadata(travel);
     expect(travel.canonicalUrl).toBe(`${SITE_ORIGIN}/travel`);
     expect(travel.title).toContain('Travel');
+    expect(travel.description).toContain('international medical travel');
   });
 
   it('builds procedure and procedure video metadata on implemented canonical URLs', () => {
@@ -53,6 +56,7 @@ describe('SEO metadata builders', () => {
 
     expectCompleteMetadata(guide);
     expect(guide.title).toContain('Rhinoplasty');
+    expect(guide.title).not.toContain('in China');
     expect(guide.canonicalUrl).toBe(`${SITE_ORIGIN}/procedure/Rhinoplasty`);
     expectCompleteMetadata(video);
     expect(video.title).toContain('Rhinoplasty');

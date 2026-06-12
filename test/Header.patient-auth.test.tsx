@@ -150,7 +150,7 @@ describe('Header patient auth CTA', () => {
     );
   });
 
-  it('routes concrete procedure menu clicks to video cases with procedure and area filters', () => {
+  it('routes concrete procedure menu clicks to path video cases', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Header />
@@ -159,8 +159,6 @@ describe('Header patient auth CTA', () => {
 
     fireEvent.click(screen.getByRole('link', { name: 'Revision Rhinoplasty' }));
 
-    expect(navigateMock).toHaveBeenCalledWith(
-      '/procedure/videos?procedure=Revision+Rhinoplasty&area=face',
-    );
+    expect(navigateMock).toHaveBeenCalledWith('/procedure/Revision%20Rhinoplasty/videos');
   });
 });

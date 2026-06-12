@@ -55,7 +55,7 @@ export function createHomepageSchema() {
       name: SITE_NAME,
       url,
       logo,
-      description: 'Medora Beauty helps international patients compare cosmetic surgery procedures, hospitals, surgeons, and medical travel options in China.',
+      description: 'Medora Beauty helps international patients compare cosmetic surgery procedures, hospitals, surgeons, and global medical travel options.',
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'patient concierge',
@@ -77,7 +77,7 @@ export function createHomepageSchema() {
       name: SITE_NAME,
       url,
       image: logo,
-      description: 'Aesthetic care coordination and cosmetic surgery planning support for international patients considering treatment in China.',
+      description: 'Aesthetic care coordination and cosmetic surgery planning support for international patients comparing global treatment destinations.',
     }),
   ];
 }
@@ -207,7 +207,7 @@ export function createHospitalSchema(hospital = {}) {
       ? {
           '@type': 'PostalAddress',
           addressLocality: city,
-          addressCountry: compact(hospital.country) || 'China',
+          addressCountry: compact(hospital.country) || undefined,
         }
       : undefined,
   }));

@@ -23,6 +23,8 @@ describe('SEO JSON-LD schema builders', () => {
 
     expect(types(schema)).toEqual(expect.arrayContaining(['Organization', 'WebSite', 'MedicalBusiness']));
     expect(JSON.stringify(schema)).toContain('https://medorabeauty.com/');
+    expect(JSON.stringify(schema)).toContain('global medical travel options');
+    expect(JSON.stringify(schema)).not.toContain('treatment in China');
   });
 
   it('builds breadcrumb schema from route items', () => {

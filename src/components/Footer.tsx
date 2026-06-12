@@ -80,7 +80,7 @@ const Footer: React.FC = () => {
             <ul className="space-y-3 text-sm text-stone-500">
               <li><Link to="/team" onClick={handleLinkClick} className="hover:text-gold-600 transition-colors">{t('footerAboutUs')}</Link></li>
               <li><Link to="/surgeons" onClick={handleLinkClick} className="hover:text-gold-600 transition-colors">{t('footerOurTeam')}</Link></li>
-              <li><Link to="/gallery" onClick={handleLinkClick} className="hover:text-gold-600 transition-colors">{t('footerProcedures')}</Link></li>
+              <li><Link to="/procedures/face" onClick={handleLinkClick} className="hover:text-gold-600 transition-colors">{t('footerProcedures')}</Link></li>
               <li><Link to="/reviews" onClick={handleLinkClick} className="hover:text-gold-600 transition-colors">{t('footerReviews')}</Link></li>
               <li><Link to="/travel" onClick={handleLinkClick} className="hover:text-gold-600 transition-colors">{t('footerTravel')}</Link></li>
             </ul>

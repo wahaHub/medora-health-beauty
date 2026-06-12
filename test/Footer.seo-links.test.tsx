@@ -45,6 +45,7 @@ describe('Footer SEO links', () => {
       'href',
       '/procedure/Rhinoplasty',
     );
+    expect(screen.getByRole('link', { name: 'Procedures' })).toHaveAttribute('href', '/procedures/face');
     expect(screen.getByRole('link', { name: 'Reviews' })).toHaveAttribute('href', '/reviews');
     expect(screen.getByRole('link', { name: 'Travel' })).toHaveAttribute('href', '/travel');
   });

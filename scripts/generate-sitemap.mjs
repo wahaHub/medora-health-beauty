@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 import {
   getImplementedProcedureGalleryUrl,
   getImplementedProcedureGuideUrl,
-  getProcedureVideoGalleryUrl,
+  getImplementedProcedureVideoUrl,
   getSupportedProcedureOptions,
 } from '../src/data/procedureTaxonomyCore.js';
 
@@ -135,7 +135,7 @@ const buildSitemap = async () => {
   getSupportedProcedureOptions().forEach((procedure) => {
     addUrl(urls, getImplementedProcedureGuideUrl(procedure.label));
     addUrl(urls, getImplementedProcedureGalleryUrl(procedure.label));
-    addUrl(urls, getProcedureVideoGalleryUrl(procedure.label));
+    addUrl(urls, getImplementedProcedureVideoUrl(procedure.label));
   });
 
   await addSupabaseUrls(urls);

@@ -58,7 +58,7 @@ export function createSeoPayload(route, data) {
       metadata: createHomeMetadata(),
       schema: createHomepageSchema(),
       heading: 'Medora Beauty',
-      summary: 'Compare cosmetic surgery procedures, trusted providers, case media, and medical travel planning support in China.',
+      summary: 'Compare cosmetic surgery procedures, trusted providers, case media, and global medical travel planning support.',
       links: [
         { label: 'Doctors', url: '/surgeons' },
         { label: 'Cases', url: '/video-cases' },

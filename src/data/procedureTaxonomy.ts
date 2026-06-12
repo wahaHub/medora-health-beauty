@@ -28,6 +28,10 @@ export const getImplementedProcedureGalleryUrl = procedureTaxonomyCore.getImplem
   procedureName: string
 ) => string;
 
+export const getImplementedProcedureVideoUrl = procedureTaxonomyCore.getImplementedProcedureVideoUrl as (
+  procedureName: string
+) => string;
+
 export const getImplementedProcedureCanonicalUrl = procedureTaxonomyCore.getImplementedProcedureCanonicalUrl as (
   procedureName: string
 ) => string;

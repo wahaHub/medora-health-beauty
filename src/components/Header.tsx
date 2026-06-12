@@ -8,7 +8,7 @@ import { useSurgeonsList } from '@/hooks/useData';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { proceduresByCategory } from '@/data/procedureTaxonomy';
 import procedureNames from '@/i18n/procedureNames.json';
-import { getProcedureAreaQueryValue, getProcedureVideoGalleryUrl } from '@/data/procedureTaxonomy';
+import { getImplementedProcedureVideoUrl, getProcedureAreaQueryValue } from '@/data/procedureTaxonomy';
 
 interface SubMenuItem {
   label: string;
@@ -366,7 +366,7 @@ const Header: React.FC = () => {
       const menuPath =
         procedureArea === 'all'
           ? `/procedure/${encodeURIComponent(pageName)}`
-          : getProcedureVideoGalleryUrl(pageName);
+          : getImplementedProcedureVideoUrl(pageName);
       navigate(menuPath);
       window.scrollTo(0, 0);
     } else {
@@ -428,7 +428,7 @@ const Header: React.FC = () => {
       items: proceduresByCategory.face.map((procedure) => ({
         label: procedure.label,
         isSub: true,
-        href: getProcedureVideoGalleryUrl(procedure.label),
+        href: getImplementedProcedureVideoUrl(procedure.label),
       }))
     },
     {
@@ -439,7 +439,7 @@ const Header: React.FC = () => {
       items: proceduresByCategory.body.map((procedure) => ({
         label: procedure.label,
         isSub: true,
-        href: getProcedureVideoGalleryUrl(procedure.label),
+        href: getImplementedProcedureVideoUrl(procedure.label),
       }))
     },
     {
@@ -450,7 +450,7 @@ const Header: React.FC = () => {
       items: proceduresByCategory.nonsurgical.map((procedure) => ({
         label: procedure.label,
         isSub: true,
-        href: getProcedureVideoGalleryUrl(procedure.label),
+        href: getImplementedProcedureVideoUrl(procedure.label),
       }))
     },
     {
@@ -461,7 +461,7 @@ const Header: React.FC = () => {
       items: proceduresByCategory.hair.map((procedure) => ({
         label: procedure.label,
         isSub: true,
-        href: getProcedureVideoGalleryUrl(procedure.label),
+        href: getImplementedProcedureVideoUrl(procedure.label),
       }))
     },
     {
@@ -472,7 +472,7 @@ const Header: React.FC = () => {
       items: proceduresByCategory.dental.map((procedure) => ({
         label: procedure.label,
         isSub: true,
-        href: getProcedureVideoGalleryUrl(procedure.label),
+        href: getImplementedProcedureVideoUrl(procedure.label),
       }))
     }
   ];
@@ -497,8 +497,8 @@ const Header: React.FC = () => {
         { label: section.viewAllLabel, href: `/procedures/${section.route}` }
       ])
     },
-    { name: t('navGallery'), href: '#gallery' },
-    { name: t('navTravel'), href: '#travel' },
+    { name: t('navGallery'), href: '/gallery' },
+    { name: t('navTravel'), href: '/travel' },
     { 
       name: t('navResources'), 
       href: '#resources',

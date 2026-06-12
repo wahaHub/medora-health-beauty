@@ -128,6 +128,9 @@ export const getImplementedProcedureGuideUrl = (procedureName) =>
 export const getImplementedProcedureGalleryUrl = (procedureName) =>
   `${getImplementedProcedureGuideUrl(procedureName)}/gallery`;
 
+export const getImplementedProcedureVideoUrl = (procedureName) =>
+  `${getImplementedProcedureGuideUrl(procedureName)}/videos`;
+
 export const getImplementedProcedureCanonicalUrl = (procedureName) =>
   getImplementedProcedureGuideUrl(procedureName);
 

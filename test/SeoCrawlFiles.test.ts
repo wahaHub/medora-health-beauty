@@ -59,10 +59,9 @@ describe('SEO crawl files', () => {
     expect(sitemap).toContain('<loc>https://medorabeauty.com/procedures/face</loc>');
     expect(sitemap).toContain('<loc>https://medorabeauty.com/procedure/Rhinoplasty</loc>');
     expect(sitemap).toContain('<loc>https://medorabeauty.com/procedure/Rhinoplasty/gallery</loc>');
-    expect(sitemap).toContain(
-      '<loc>https://medorabeauty.com/procedure/videos?procedure=Rhinoplasty&amp;area=face</loc>'
-    );
+    expect(sitemap).toContain('<loc>https://medorabeauty.com/procedure/Rhinoplasty/videos</loc>');
 
+    expect(sitemap).not.toContain('/procedure/videos?procedure=');
     expect(sitemap).not.toContain('/procedures/face/rhinoplasty');
     expect(sitemap).not.toContain('/procedures/face/rhinoplasty/video-cases');
     expect(sitemap).not.toContain('/procedures/face/rhinoplasty/before-after');

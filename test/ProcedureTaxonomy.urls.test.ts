@@ -4,6 +4,7 @@ import {
   getImplementedProcedureCanonicalUrl,
   getImplementedProcedureGalleryUrl,
   getImplementedProcedureGuideUrl,
+  getImplementedProcedureVideoUrl,
   getProcedureAreaQueryValue,
   getProcedureSlug,
   getProcedureVideoGalleryUrl,
@@ -24,11 +25,18 @@ describe('procedure taxonomy implemented URLs', () => {
     expect(getImplementedProcedureGalleryUrl('Rhinoplasty')).toBe('/procedure/Rhinoplasty/gallery');
   });
 
+  it('keeps procedure video case URLs on the implemented path route', () => {
+    expect(getImplementedProcedureVideoUrl('Rhinoplasty')).toBe('/procedure/Rhinoplasty/videos');
+    expect(getImplementedProcedureVideoUrl('BOTOX® & Neurotoxins')).toBe(
+      '/procedure/BOTOX%C2%AE%20%26%20Neurotoxins/videos'
+    );
+  });
+
   it('uses the implemented guide route as the P0 canonical URL', () => {
     expect(getImplementedProcedureCanonicalUrl('Rhinoplasty')).toBe('/procedure/Rhinoplasty');
   });
 
-  it('builds video case URLs with procedure and implemented area filters', () => {
+  it('keeps query video case URLs as compatibility filter URLs', () => {
     expect(getProcedureVideoGalleryUrl('Breast Augmentation')).toBe(
       '/procedure/videos?procedure=Breast+Augmentation&area=breast'
     );
