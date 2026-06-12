@@ -40,7 +40,7 @@ vi.mock('@/hooks/useTranslation', () => ({
       categoryNonSurgical: 'Non Surgical',
       contactTitle: 'Contact',
       contactPhone: 'Phone: (201) 406-6514',
-      contactEmailDisplay: 'Email: contact@medicaltourismchina.health',
+      contactEmailDisplay: 'Email: contact@medorabeauty.com',
       contactRequired: '* Required',
       contactFirstName: 'First Name*',
       contactLastName: 'Last Name*',

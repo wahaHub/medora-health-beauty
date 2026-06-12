@@ -95,7 +95,7 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="text-gold-500 shrink-0" size={18} />
-                <span>contact@medicaltourismchina.health</span>
+                <span>contact@medorabeauty.com</span>
               </li>
             </ul>
           </div>
