@@ -4,8 +4,11 @@ import { ChevronDown, MapPin, Play, Video, X } from 'lucide-react';
 import { getSupportedProcedureOptions } from '@/data/procedureTaxonomy';
 import {
   discoveryItemsWithVideos,
+  getDiscoverySubtype,
   getDiscoveryLabel,
+  matchesDiscoverySubtype,
   procedureDiscoveryGroups,
+  type ProcedureDiscoverySubtype,
   type ProcedureDiscoveryItem,
 } from '@/data/procedureDiscovery';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -125,6 +128,7 @@ export default function ProcedureVideoGallery() {
   const procedureFromQuery = searchParams.get('procedure') || '';
   const projectFromQuery = searchParams.get('project');
   const areaFromQuery = searchParams.get('area') || 'all';
+  const subtypeFromQuery = searchParams.get('subtype');
   const requestedProcedureName = procedureFromQuery || pathProcedureName;
   const requestedProcedureProject = resolveVideoProjectForProcedure(requestedProcedureName);
   const selectedProject =
@@ -162,6 +166,8 @@ export default function ProcedureVideoGallery() {
       : 'All';
   const activeArea = areaFromQuery !== 'all' ? areaLabelsByQuery[areaFromQuery] || inferredArea : inferredArea;
   const activeAreaFilter = areaQueryValues[activeArea] || 'all';
+  const activeDiscoveryItem = discoveryItemsWithVideos.find((item) => item.project === selectedProject);
+  const activeSubtype = getDiscoverySubtype(activeDiscoveryItem, subtypeFromQuery);
   useEffect(() => {
     let active = true;
     fetch(getVideoCaseManifestUrl(R2_VIDEO_BASE_URL))
@@ -189,7 +195,9 @@ export default function ProcedureVideoGallery() {
     return cases;
   }, [activeAreaFilter, payload, selectedProject]);
 
-  const filteredCases = projectCases;
+  const filteredCases = activeSubtype
+    ? projectCases.filter((item) => matchesDiscoverySubtype(item, activeSubtype))
+    : projectCases;
 
   const paginatedCases = useMemo(
     () => paginateVideoCases(filteredCases, page, VIDEO_CASES_PER_PAGE),
@@ -198,7 +206,7 @@ export default function ProcedureVideoGallery() {
 
   useEffect(() => {
     setPage(1);
-  }, [selectedProject]);
+  }, [selectedProject, subtypeFromQuery]);
 
   const activeConcerns = selectedProject !== 'all' ? projectConcern[selectedProject] || ['Contour'] : [];
   const activeProjectLabel = requestedProcedureName
@@ -220,6 +228,7 @@ export default function ProcedureVideoGallery() {
     const params = new URLSearchParams(searchParams);
     params.delete('project');
     params.delete('procedure');
+    params.delete('subtype');
     const nextArea = areaQueryValues[area] || 'all';
     if (nextArea === 'all') {
       params.delete('area');
@@ -233,6 +242,7 @@ export default function ProcedureVideoGallery() {
   const updateProcedureFilter = (procedure: string) => {
     const params = new URLSearchParams(searchParams);
     params.delete('project');
+    params.delete('subtype');
     if (procedure === 'all') {
       params.delete('procedure');
     } else {
@@ -252,8 +262,20 @@ export default function ProcedureVideoGallery() {
   const updateDiscoveryFilter = (item: ProcedureDiscoveryItem) => {
     const params = new URLSearchParams(searchParams);
     params.delete('procedure');
+    params.delete('subtype');
     params.set('project', item.project);
     params.set('area', item.area);
+    setPage(1);
+    setSearchParams(params, { replace: false });
+  };
+
+  const updateSubtypeFilter = (subtype: ProcedureDiscoverySubtype | null) => {
+    const params = new URLSearchParams(searchParams);
+    if (subtype) {
+      params.set('subtype', subtype.id);
+    } else {
+      params.delete('subtype');
+    }
     setPage(1);
     setSearchParams(params, { replace: false });
   };
@@ -303,7 +325,7 @@ export default function ProcedureVideoGallery() {
             }}
             className="mt-7 inline-flex h-12 items-center justify-center bg-[#173d31] px-7 text-sm font-bold uppercase tracking-[0.2em] text-white shadow-[0_16px_36px_rgba(23,61,49,0.18)] transition hover:bg-[#102a22] active:translate-y-px"
           >
-            立即咨询
+            {t('consultationNow')}
           </button>
         )}
       </section>
@@ -407,6 +429,53 @@ export default function ProcedureVideoGallery() {
                   ))}
               </div>
             </div>
+
+            {activeDiscoveryItem?.subtypes && activeDiscoveryItem.subtypes.length > 0 && (
+              <div className="border-b border-stone-200 py-5">
+                <button type="button" className="flex w-full items-center justify-between text-left">
+                  <span className="text-xs font-bold uppercase tracking-[0.22em] text-stone-700">{t('videoCasesSubtype')}</span>
+                  <ChevronDown size={17} className="text-stone-500" />
+                </button>
+                <div className="mt-4 space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => updateSubtypeFilter(null)}
+                    className="flex w-full items-center gap-3 text-left text-sm text-stone-600 transition hover:text-[#173d31]"
+                  >
+                    <span
+                      className={`flex h-5 w-5 items-center justify-center rounded-[3px] border ${
+                        !activeSubtype ? 'border-[#173d31] bg-[#173d31] text-white' : 'border-stone-300 bg-white'
+                      }`}
+                    >
+                      {!activeSubtype && <span className="h-2 w-2 bg-white" />}
+                    </span>
+                    <span className={!activeSubtype ? 'font-semibold text-stone-900' : ''}>{t('videoCasesAllSubtypes')}</span>
+                  </button>
+                  {activeDiscoveryItem.subtypes.map((subtype) => {
+                    const active = activeSubtype?.id === subtype.id;
+                    return (
+                      <button
+                        key={subtype.id}
+                        type="button"
+                        onClick={() => updateSubtypeFilter(subtype)}
+                        className="flex w-full items-center gap-3 text-left text-sm text-stone-600 transition hover:text-[#173d31]"
+                      >
+                        <span
+                          className={`flex h-5 w-5 items-center justify-center rounded-[3px] border ${
+                            active ? 'border-[#173d31] bg-[#173d31] text-white' : 'border-stone-300 bg-white'
+                          }`}
+                        >
+                          {active && <span className="h-2 w-2 bg-white" />}
+                        </span>
+                        <span className={`min-w-0 truncate ${active ? 'font-semibold text-stone-900' : ''}`}>
+                          {getDiscoveryLabel(subtype, currentLanguage)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             <div className="border-b border-stone-200 py-5">
               <button type="button" className="flex w-full items-center justify-between text-left">

@@ -58,6 +58,8 @@ describe('SearchBar video cases navigation', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /All Procedures/i }));
     expect(screen.queryByRole('button', { name: 'Invisalign' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Eyes' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /eyelids, eye bags/i })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Nose' }));
     fireEvent.click(screen.getByRole('button', { name: /Search/i }));

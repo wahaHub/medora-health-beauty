@@ -17,7 +17,9 @@ vi.mock('@/hooks/useTranslation', () => ({
         videoCasesOf: 'of',
         videoCasesNoCasesTitle: 'No cases found',
         videoCasesNoCasesDescription: 'Try another filter.',
-        consultationNow: '立即咨询',
+        videoCasesSubtype: 'Treatment Focus',
+        videoCasesAllSubtypes: 'All Focuses',
+        consultationNow: 'Start Consultation',
       };
       return dictionary[key] ?? key;
     },
@@ -41,6 +43,22 @@ const emptyVideoCasePayload = {
   projects: [],
   cases: [],
 };
+
+const makeVideoCase = (id: string, sourcePath: string) => ({
+  id,
+  doctor: 'medora',
+  doctorName: 'Medora',
+  project: 'eye-surgery',
+  projectName: 'Eye Surgery',
+  objectKey: `video_cases_v4/videos/eye-surgery/medora/${id}/video.mp4`,
+  videoUrl: `https://videos.example/${id}.mp4`,
+  size: 1000,
+  sourceSet: 'test',
+  sourcePath,
+  sourceKind: 'test',
+  classificationSource: 'test',
+  classificationConfidence: 'high',
+});
 
 const renderGalleryAt = (initialEntry: string) =>
   render(
@@ -98,7 +116,7 @@ describe('ProcedureVideoGallery SEO route stability', () => {
     const user = userEvent.setup();
     renderGalleryAt('/procedure/videos?procedure=Hair%20Restoration&area=hair');
 
-    const consultationButton = await screen.findByRole('button', { name: '立即咨询' });
+    const consultationButton = await screen.findByRole('button', { name: 'Start Consultation' });
     await user.click(consultationButton);
 
     expect(screen.getByTestId('location')).toHaveTextContent('/consultation-upload');
@@ -110,6 +128,37 @@ describe('ProcedureVideoGallery SEO route stability', () => {
 
     await screen.findByText(/Hair Restoration videos/i);
 
-    expect(screen.queryByRole('button', { name: '立即咨询' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Start Consultation' })).not.toBeInTheDocument();
+  });
+
+  it('filters eye videos by treatment focus subtype', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      json: vi.fn().mockResolvedValue({
+        count: 2,
+        doctors: [],
+        projects: [],
+        cases: [
+          makeVideoCase('eyelid-case', '/Users/haowang/Desktop/雷鸣视频下载/Dr.刘春案例【眼睛】1/video.mp4'),
+          makeVideoCase('eye-bag-case', '/Users/haowang/Desktop/雷鸣视频下载/提眉眼袋合集/video.mp4'),
+        ],
+      }),
+    } as unknown as Response);
+    const user = userEvent.setup();
+    renderGalleryAt('/procedure/videos?project=eye-surgery&area=face');
+
+    expect(await screen.findByText('Treatment Focus')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Eye Bags' })).toBeInTheDocument();
+    const filterText = document.body.textContent || '';
+    expect(filterText.indexOf('procedureType')).toBeLessThan(filterText.indexOf('Treatment Focus'));
+    expect(filterText.indexOf('Treatment Focus')).toBeLessThan(filterText.indexOf('videoCasesConcern'));
+
+    await user.click(screen.getByRole('button', { name: 'Eye Bags' }));
+
+    expect(screen.getByTestId('location')).toHaveTextContent(
+      '/procedure/videos?project=eye-surgery&area=face&subtype=eye-bags',
+    );
+    await waitFor(() => {
+      expect(document.body.textContent).toMatch(/Showing\s+1-1\s+of\s+1\s+Eyes\s+videos/i);
+    });
   });
 });

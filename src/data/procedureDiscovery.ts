@@ -1,11 +1,20 @@
 export type DiscoveryArea = 'face' | 'body' | 'nonsurgical' | 'hair' | 'dental';
 
+export type ProcedureDiscoverySubtype = {
+  id: string;
+  label: string;
+  zhLabel: string;
+  includeAny: RegExp[];
+  excludeAny?: RegExp[];
+};
+
 export type ProcedureDiscoveryItem = {
   id: string;
   label: string;
   zhLabel: string;
   area: DiscoveryArea;
   project: string;
+  subtypes?: ProcedureDiscoverySubtype[];
 };
 
 export type ProcedureDiscoveryGroup = {
@@ -13,6 +22,18 @@ export type ProcedureDiscoveryGroup = {
   label: string;
   zhLabel: string;
   items: ProcedureDiscoveryItem[];
+};
+
+type SearchableVideoCase = {
+  project?: string;
+  projectName?: string;
+  doctorName?: string;
+  objectKey?: string;
+  videoUrl?: string;
+  sourcePath?: string;
+  sourceSet?: string;
+  sourceKind?: string;
+  classificationSource?: string;
 };
 
 export const procedureDiscoveryGroups: ProcedureDiscoveryGroup[] = [
@@ -23,10 +44,31 @@ export const procedureDiscoveryGroups: ProcedureDiscoveryGroup[] = [
     items: [
       {
         id: 'eyes',
-        label: 'Eyes: eyelids, eye bags, eye rejuvenation',
-        zhLabel: '眼睛：眼睑、眼袋、眼部年轻化',
+        label: 'Eyes',
+        zhLabel: '眼睛',
         area: 'face',
         project: 'eye-surgery',
+        subtypes: [
+          {
+            id: 'eyelids',
+            label: 'Eyelids',
+            zhLabel: '眼睑',
+            includeAny: [/眼睛/i, /眼案例/i, /双眼皮/i, /眼睑/i, /眼皮/i, /重睑/i, /上睑/i, /提肌/i, /eyelids?/i, /\blids?\b/i],
+            excludeAny: [/眼袋/i, /泪沟/i, /眼部综合/i, /眼综合/i, /年轻/i, /抗衰/i, /提眉/i],
+          },
+          {
+            id: 'eye-bags',
+            label: 'Eye Bags',
+            zhLabel: '眼袋',
+            includeAny: [/眼袋/i, /泪沟/i, /eye\s*bags?/i, /under.?eye/i],
+          },
+          {
+            id: 'eye-rejuvenation',
+            label: 'Eye Rejuvenation',
+            zhLabel: '眼部年轻化',
+            includeAny: [/眼部综合/i, /眼综合/i, /年轻/i, /抗衰/i, /提眉/i, /rejuven/i, /refresh/i],
+          },
+        ],
       },
       {
         id: 'nose',
@@ -151,11 +193,39 @@ export const getDiscoveryLabel = (
   language: string,
 ) => (language === 'zh' ? item.zhLabel : item.label);
 
-export const getDiscoveryVideoUrl = (item: ProcedureDiscoveryItem) => {
+export const getDiscoveryVideoUrl = (item: ProcedureDiscoveryItem, subtype?: ProcedureDiscoverySubtype) => {
   const params = new URLSearchParams({
     project: item.project,
     area: item.area,
   });
+  if (subtype) params.set('subtype', subtype.id);
 
   return `/procedure/videos?${params.toString()}`;
+};
+
+export const getDiscoverySubtype = (item: ProcedureDiscoveryItem | undefined, subtypeId: string | null) =>
+  item?.subtypes?.find((subtype) => subtype.id === subtypeId) || null;
+
+const searchableCaseText = (item: SearchableVideoCase) =>
+  [
+    item.project,
+    item.projectName,
+    item.doctorName,
+    item.objectKey,
+    item.videoUrl,
+    item.sourcePath,
+    item.sourceSet,
+    item.sourceKind,
+    item.classificationSource,
+  ]
+    .filter((value): value is string => typeof value === 'string')
+    .join(' ');
+
+export const matchesDiscoverySubtype = (
+  item: SearchableVideoCase,
+  subtype: ProcedureDiscoverySubtype,
+) => {
+  const text = searchableCaseText(item);
+  if (subtype.excludeAny?.some((pattern) => pattern.test(text))) return false;
+  return subtype.includeAny.some((pattern) => pattern.test(text));
 };
