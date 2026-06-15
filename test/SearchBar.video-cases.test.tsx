@@ -49,7 +49,7 @@ describe('SearchBar video cases navigation', () => {
     window.scrollTo = vi.fn();
   });
 
-  it('routes a selected procedure search to the matching video cases gallery', () => {
+  it('routes a selected video procedure search to the matching project gallery', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <SearchBar />
@@ -57,12 +57,12 @@ describe('SearchBar video cases navigation', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: /All Procedures/i }));
-    fireEvent.click(screen.getByRole('button', { name: 'Revision Rhinoplasty' }));
+    expect(screen.queryByRole('button', { name: 'Invisalign' })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Nose' }));
     fireEvent.click(screen.getByRole('button', { name: /Search/i }));
 
-    expect(navigateMock).toHaveBeenCalledWith(
-      '/procedure/videos?procedure=Revision+Rhinoplasty&area=face',
-    );
+    expect(navigateMock).toHaveBeenCalledWith('/procedure/videos?project=nose-surgery&area=face');
   });
 
   it('routes an empty homepage search directly to all video cases', () => {

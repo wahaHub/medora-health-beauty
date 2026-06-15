@@ -3,29 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { BadgeCheck, ChevronDown, LockKeyhole, Search, ShieldCheck } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import procedureNames from '@/i18n/procedureNames.json';
-import { getProcedureVideoGalleryUrl } from '@/data/procedureTaxonomy';
+import {
+  discoveryItemsWithVideos,
+  getDiscoveryLabel,
+  getDiscoveryVideoUrl,
+  procedureDiscoveryGroups,
+} from '@/data/procedureDiscovery';
 
 interface SearchBarProps {
   onSearch?: (procedure: string, country: string, priceRange: string) => void;
 }
-
-// Type for procedure names translation
-type ProcedureNameTranslations = {
-  [key: string]: {
-    en: string;
-    zh: string;
-    es: string;
-    fr: string;
-    de: string;
-    ru: string;
-    ar: string;
-    vi: string;
-    id: string;
-  };
-};
-
-const typedProcedureNames = procedureNames as ProcedureNameTranslations;
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const navigate = useNavigate();
@@ -62,89 +49,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     };
   }, []);
 
-  // Get translated procedure name
-  const getTranslatedProcedure = (englishName: string): string => {
-    const translation = typedProcedureNames[englishName];
-    if (translation && translation[currentLanguage as keyof typeof translation]) {
-      return translation[currentLanguage as keyof typeof translation];
-    }
-    return englishName;
-  };
-
-  // Define procedure categories
-  const faceProcedures = [
-    'Brow Lift', 'Temples Lift / Temporofrontal Lift', 'Forehead Reduction Surgery',
-    'Eyelid Surgery', 'Facelift', 'Midface Lift', 'Mini Facelift', 'Neck Lift',
-    'Deep Neck Contouring', 'Neck Liposuction', 'Platysmaplasty', 'Cervicoplasty',
-    'Otoplasty', 'Rhinoplasty', 'Revision Rhinoplasty', 'Nose Tip Refinement',
-    'Mohs Skin Cancer Reconstruction', 'Cheek Augmentation', 'Chin Augmentation',
-    'Jawline Contouring', 'Zygomatic Arch Contouring', 'Facial Implants',
-    'Submalar Implants', 'Buccal Fat Removal', 'Fat Transfer', 'Lip Augmentation',
-    'Lip Lift', 'Eye Surgery', 'Nose Surgery', 'Facelift Surgery', 'Facial Contouring',
-    'Other Facial Surgery', 'Neck Surgery'
-  ];
-
-  const bodyProcedures = [
-    'Liposuction', 'Laser Liposuction', 'Tummy Tuck', 'Mommy Makeover',
-    'Arm Lift', 'Thigh Lift', 'Bra Line Back Lift', 'Body Contouring After Weight Loss',
-    'Lower Body Lift / 360 Body Lift', 'Upper Body Lift', 'Panniculectomy',
-    'Mons Pubis Reduction / Lift', 'Brazilian Butt Lift', 'Buttock Lift',
-    'Labiaplasty', 'Scar Reduction & Revision', 'Core Body Contouring',
-    'Arms / Legs / Back', 'After Weight Loss / Body Lifts', 'Buttocks', 'Intimate'
-  ];
-
-  const breastProcedures = [
-    'Breast Augmentation', 'Breast Lift', 'Breast Reduction',
-    'Breast Implant Removal / Exchange & Revision', 'Gynecomastia Surgery',
-    'Breast / Chest'
-  ];
-
-  const nonSurgicalProcedures = [
-    'Facial Injectables', 'BOTOX® & Neurotoxins', 'Dermal Fillers', 'Lip Filler',
-    'Lip Injections', 'Fat Dissolving Injections', 'Facial Rejuvenation with PRP',
-    'Neck Tightening', 'Renuvion® Skin Tightening Treatment', 'Skin Resurfacing',
-    'Microdermabrasion', 'Hair Restoration', 'Medical Weight Loss Injections',
-    'Avéli® Cellulite Treatment', 'BOTOX® Cosmetic', 'Non-surgical Skin Tightening',
-    'Chemical Peels', 'Laser Skin Resurfacing', 'IPL / Photofacial',
-    'Laser Hair Removal', 'Collagen Stimulators / Non-HA Fillers', 'Microneedling',
-    'PRP / PRF', 'Skin Tightening & Resurfacing', 'Injectables & Regenerative',
-    'Injectables', 'Skin Tightening', 'Resurfacing / Skin Renewal',
-    'Light / Laser-Based Skin Treatments', 'Hair Removal', 'Collagen / Regenerative',
-    'Cellulite', 'Weight Loss Injections'
-  ];
-
-  // Build categorized procedures
-  const categorizedProcedures = [
-    {
-      category: 'face',
-      label: t('categoryFace'),
-      items: faceProcedures
-        .filter(name => typedProcedureNames[name])
-        .map(name => ({ value: name, label: getTranslatedProcedure(name) }))
-    },
-    {
-      category: 'body',
-      label: t('categoryBody'),
-      items: bodyProcedures
-        .filter(name => typedProcedureNames[name])
-        .map(name => ({ value: name, label: getTranslatedProcedure(name) }))
-    },
-    {
-      category: 'breast',
-      label: t('categoryBreast'),
-      items: breastProcedures
-        .filter(name => typedProcedureNames[name])
-        .map(name => ({ value: name, label: getTranslatedProcedure(name) }))
-    },
-    {
-      category: 'nonSurgical',
-      label: t('categoryNonSurgical'),
-      items: nonSurgicalProcedures
-        .filter(name => typedProcedureNames[name])
-        .map(name => ({ value: name, label: getTranslatedProcedure(name) }))
-    }
-  ];
-
   const countries = [
     { value: '', label: t('allCountries') },
     { value: 'china', label: t('countryChina') },
@@ -162,11 +66,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const priceDropdownOptions = priceRanges.filter((option) => option.value);
 
   const handleSearch = () => {
+    const selectedDiscoveryItem = discoveryItemsWithVideos.find((item) => item.id === procedure);
     if (onSearch) {
-      onSearch(procedure, country, priceRange);
+      onSearch(selectedDiscoveryItem?.label || procedure, country, priceRange);
     }
-    if (procedure) {
-      navigate(getProcedureVideoGalleryUrl(procedure));
+    if (selectedDiscoveryItem) {
+      navigate(getDiscoveryVideoUrl(selectedDiscoveryItem));
     } else {
       navigate('/procedure/videos');
     }
@@ -175,7 +80,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
   const getProcedureLabel = () => {
     if (!procedure) return t('allProcedures');
-    return getTranslatedProcedure(procedure);
+    const selectedDiscoveryItem = discoveryItemsWithVideos.find((item) => item.id === procedure);
+    return selectedDiscoveryItem ? getDiscoveryLabel(selectedDiscoveryItem, currentLanguage) : t('allProcedures');
   };
 
   const getCountryLabel = () => {
@@ -243,29 +149,35 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
             {showProcedureDropdown && (
               <div className={`${dropdownPanelClass} max-h-80 overflow-y-auto`}>
-                {categorizedProcedures.map((category) => (
-                  <div key={category.category}>
-                    {/* Category Header (skip for 'all') */}
-                    {category.category !== 'all' && (
-                      <div className="sticky top-0 z-10 bg-[#143d30] px-4 py-2 border-b border-[#e1c28e]/16">
-                        <span className="text-[#d0a36b] text-xs font-bold uppercase tracking-wider">
-                          {category.label}
-                        </span>
-                      </div>
-                    )}
-                    {/* Category Items */}
-                    {category.items.map((p) => (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProcedure('');
+                    setShowProcedureDropdown(false);
+                  }}
+                  className={`${dropdownItemClass} ${dropdownItemStateClass(!procedure)}`}
+                >
+                  {t('allProcedures')}
+                </button>
+                {procedureDiscoveryGroups.map((category) => (
+                  <div key={category.id}>
+                    <div className="sticky top-0 z-10 border-b border-[#e1c28e]/16 bg-[#143d30] px-4 py-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-[#d0a36b]">
+                        {getDiscoveryLabel(category, currentLanguage)}
+                      </span>
+                    </div>
+                    {category.items.map((item) => (
                       <button
-                        key={p.value || 'all'}
+                        key={item.id}
                         onClick={() => {
-                          setProcedure(p.value);
+                          setProcedure(item.id);
                           setShowProcedureDropdown(false);
                         }}
                         className={`${dropdownItemClass}
-                                  ${dropdownItemStateClass(procedure === p.value)}
-                                  ${category.category !== 'all' ? 'pl-6' : ''}`}
+                                  ${dropdownItemStateClass(procedure === item.id)}
+                                  pl-6`}
                       >
-                        {p.label}
+                        {getDiscoveryLabel(item, currentLanguage)}
                       </button>
                     ))}
                   </div>

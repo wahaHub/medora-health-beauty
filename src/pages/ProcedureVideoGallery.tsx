@@ -2,6 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ChevronDown, MapPin, Play, Video, X } from 'lucide-react';
 import { getSupportedProcedureOptions } from '@/data/procedureTaxonomy';
+import {
+  discoveryItemsWithVideos,
+  getDiscoveryLabel,
+  procedureDiscoveryGroups,
+  type ProcedureDiscoveryItem,
+} from '@/data/procedureDiscovery';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import procedureNames from '@/i18n/procedureNames.json';
@@ -19,7 +25,7 @@ import type { TranslationKey } from '@/i18n/translations';
 
 type ProcedureNameTranslations = Record<string, Partial<Record<string, string>>>;
 
-const areaFilters = ['All', 'Face', 'Body', 'Breast', 'Non-Surgical', 'Hair', 'Dental'];
+const areaFilters = ['All', 'Face', 'Body', 'Non-Surgical', 'Hair', 'Dental'];
 const concernFilters = ['Aging', 'Contour', 'Volume Loss', 'Fat', 'Skin Quality', 'Symmetry'];
 const R2_VIDEO_BASE_URL =
   import.meta.env.VITE_R2_CUSTOM_DOMAIN ||
@@ -50,7 +56,7 @@ const areaLabelsByQuery = Object.fromEntries(
 
 const projectArea: Record<string, string> = {
   'body-contouring': 'Body',
-  breast: 'Breast',
+  breast: 'Body',
   collagen: 'Non-Surgical',
   'eye-surgery': 'Face',
   'facial-contouring': 'Face',
@@ -156,14 +162,6 @@ export default function ProcedureVideoGallery() {
       : 'All';
   const activeArea = areaFromQuery !== 'all' ? areaLabelsByQuery[areaFromQuery] || inferredArea : inferredArea;
   const activeAreaFilter = areaQueryValues[activeArea] || 'all';
-  const visibleProcedureOptions = useMemo(
-    () =>
-      activeAreaFilter === 'all'
-        ? procedureOptions
-        : procedureOptions.filter((procedure) => areaQueryValues[getProcedureDisplayArea(procedure)] === activeAreaFilter),
-    [activeAreaFilter, procedureOptions]
-  );
-
   useEffect(() => {
     let active = true;
     fetch(getVideoCaseManifestUrl(R2_VIDEO_BASE_URL))
@@ -206,7 +204,13 @@ export default function ProcedureVideoGallery() {
   const activeProjectLabel = requestedProcedureName
     ? translateProcedureLabel(requestedProcedureName)
     : selectedProject !== 'all'
-      ? labelFromVideoSlug(selectedProject)
+      ? getDiscoveryLabel(
+          discoveryItemsWithVideos.find((item) => item.project === selectedProject) || {
+            label: labelFromVideoSlug(selectedProject),
+            zhLabel: labelFromVideoSlug(selectedProject),
+          },
+          currentLanguage,
+        )
       : activeAreaFilter !== 'all'
         ? translateAreaLabel(activeArea)
         : t('allProcedures');
@@ -241,6 +245,15 @@ export default function ProcedureVideoGallery() {
         params.set('area', nextArea);
       }
     }
+    setPage(1);
+    setSearchParams(params, { replace: false });
+  };
+
+  const updateDiscoveryFilter = (item: ProcedureDiscoveryItem) => {
+    const params = new URLSearchParams(searchParams);
+    params.delete('procedure');
+    params.set('project', item.project);
+    params.set('area', item.area);
     setPage(1);
     setSearchParams(params, { replace: false });
   };
@@ -354,36 +367,44 @@ export default function ProcedureVideoGallery() {
                     <span className={selectedProject === 'all' ? 'font-semibold text-stone-900' : ''}>{t('allProcedures')}</span>
                   </button>
                 )}
-                {visibleProcedureOptions.map((procedure) => {
-                    const procedureProject = resolveVideoProjectForProcedure(procedure.label);
-                    const active = requestedProcedureName
-                      ? procedure.label.toLowerCase() === requestedProcedureName.toLowerCase()
-                      : Boolean(projectFromQuery && procedureProject === selectedProject);
-                    return (
-                      <button
-                        key={`${procedure.area}-${procedure.label}`}
-                        type="button"
-                        onClick={() => updateProcedureFilter(procedure.label)}
-                        className="flex w-full items-center gap-3 text-left text-sm text-stone-600 transition hover:text-[#173d31]"
-                      >
-                        <span
-                          className={`flex h-5 w-5 items-center justify-center rounded-[3px] border ${
-                            active ? 'border-[#173d31] bg-[#173d31] text-white' : 'border-stone-300 bg-white'
-                          }`}
-                        >
-                          {active && <span className="h-2 w-2 bg-white" />}
-                        </span>
-                        <span className="min-w-0">
-                          <span className={`block truncate ${active ? 'font-semibold text-stone-900' : ''}`}>
-                            {translateProcedureLabel(procedure.label)}
-                          </span>
-                          <span className="block text-[10px] uppercase tracking-[0.16em] text-stone-400">
-                            {translateAreaLabel(getProcedureDisplayArea(procedure))}
-                          </span>
-                        </span>
-                      </button>
-                    );
-                  })}
+                {procedureDiscoveryGroups
+                  .map((group) => ({
+                    ...group,
+                    items:
+                      activeAreaFilter === 'all'
+                        ? group.items
+                        : group.items.filter((item) => item.area === activeAreaFilter),
+                  }))
+                  .filter((group) => group.items.length > 0)
+                  .map((group) => (
+                    <div key={group.id} className="space-y-2">
+                      <p className="pt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#b8946f]">
+                        {getDiscoveryLabel(group, currentLanguage)}
+                      </p>
+                      {group.items.map((item) => {
+                        const active = selectedProject === item.project;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => updateDiscoveryFilter(item)}
+                            className="flex w-full items-center gap-3 text-left text-sm text-stone-600 transition hover:text-[#173d31]"
+                          >
+                            <span
+                              className={`flex h-5 w-5 items-center justify-center rounded-[3px] border ${
+                                active ? 'border-[#173d31] bg-[#173d31] text-white' : 'border-stone-300 bg-white'
+                              }`}
+                            >
+                              {active && <span className="h-2 w-2 bg-white" />}
+                            </span>
+                            <span className={`min-w-0 truncate ${active ? 'font-semibold text-stone-900' : ''}`}>
+                              {getDiscoveryLabel(item, currentLanguage)}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ))}
               </div>
             </div>
 
