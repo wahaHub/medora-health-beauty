@@ -218,18 +218,24 @@
 .cu-channel-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  gap: 22px;
+  max-width: 1050px;
+  margin: 0 auto;
 }
 
 .cu-channel-card {
   position: relative;
-  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  min-height: 360px;
+  padding: 30px 30px 26px;
   text-align: left;
   border: 1px solid var(--cu-line);
-  border-radius: 6px;
+  border-radius: 8px;
   background: white;
   cursor: pointer;
-  transition: .25s ease;
+  box-shadow: 0 14px 38px rgba(24, 56, 50, .04);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
 
 .cu-channel-card:hover {
@@ -239,7 +245,8 @@
 }
 
 .cu-channel-card.featured {
-  border-top: 3px solid var(--cu-gold);
+  border-color: var(--cu-gold);
+  box-shadow: 0 18px 44px rgba(196, 163, 107, .13);
 }
 
 .cu-card-tag {
@@ -261,20 +268,21 @@
 .cu-channel-icon {
   display: grid;
   place-items: center;
-  width: 47px;
-  height: 47px;
+  width: 58px;
+  height: 58px;
   margin-bottom: 24px;
   border-radius: 50%;
   background: var(--cu-mint);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 20px;
+  color: #345f56;
+  font-size: 23px;
 }
 
 .cu-doctor-profile {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 18px;
+  min-height: 58px;
+  margin-bottom: 20px;
   padding-right: 54px;
 }
 
@@ -301,18 +309,19 @@
 .cu-doctor-profile small {
   margin-top: 4px;
   color: var(--cu-muted);
-  font-size: 9px;
+  font-size: 10px;
   line-height: 1.4;
 }
 
 .cu-channel-card h3 {
   margin: 0 0 7px;
-  font-size: 18px;
+  color: #1d302b;
+  font-size: 19px;
 }
 
 .cu-price {
   min-height: 38px;
-  margin: 8px 0;
+  margin: 9px 0;
   color: var(--cu-deep);
   font-family: Georgia, "Times New Roman", serif;
   font-size: 28px;
@@ -329,7 +338,7 @@
 }
 
 .cu-channel-card p {
-  min-height: 43px;
+  min-height: 48px;
   color: var(--cu-muted);
   font-size: 13px;
   line-height: 1.7;
@@ -362,10 +371,10 @@
 }
 
 .cu-doctor-stats span {
-  padding: 9px;
+  padding: 10px 8px;
   text-align: center;
-  background: var(--cu-cream);
-  border-radius: 3px;
+  background: #faf6ee;
+  border-radius: 4px;
 }
 
 .cu-doctor-stats b,
@@ -387,6 +396,9 @@
 .cu-select-cta {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  color: var(--cu-ink);
   font-size: 12px;
   font-weight: 700;
 }
@@ -394,36 +406,44 @@
 .cu-body-parts {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  gap: 16px;
   max-width: 950px;
   margin: 0 auto;
 }
 
 .cu-body-parts button {
-  min-height: 155px;
-  padding: 22px 14px;
+  min-height: 176px;
+  padding: 22px 14px 20px;
   border: 1px solid var(--cu-line);
-  border-radius: 5px;
+  border-radius: 8px;
   background: white;
   cursor: pointer;
-  transition: .2s;
+  box-shadow: 0 10px 28px rgba(24, 56, 50, .04);
+  transition: transform .2s, border-color .2s, background .2s, box-shadow .2s;
 }
 
 .cu-body-parts button:hover {
   transform: translateY(-2px);
   border-color: var(--cu-sage);
   background: #fbfdfc;
+  box-shadow: 0 16px 34px rgba(24, 56, 50, .08);
 }
 
 .cu-part-icon {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 14px;
+  width: 74px;
+  height: 74px;
+  margin: 0 auto 15px;
   border-radius: 50%;
-  background: var(--cu-mint);
-  font-size: 22px;
+  overflow: hidden;
+  background: #f2eee6;
+}
+
+.cu-part-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .cu-body-parts b,
@@ -433,6 +453,8 @@
 
 .cu-body-parts b {
   margin-bottom: 7px;
+  color: #243d37;
+  font-size: 15px;
 }
 
 .cu-body-parts small {
