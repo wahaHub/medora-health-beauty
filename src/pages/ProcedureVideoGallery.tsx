@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ChevronDown, MapPin, Play, Video, X } from 'lucide-react';
 import { getSupportedProcedureOptions } from '@/data/procedureTaxonomy';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -110,6 +110,7 @@ const getProcedureDisplayArea = (procedure: ReturnType<typeof getSupportedProced
 
 export default function ProcedureVideoGallery() {
   const { procedureName: urlProcedureName } = useParams<{ procedureName: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { currentLanguage } = useLanguage();
@@ -209,6 +210,7 @@ export default function ProcedureVideoGallery() {
       : activeAreaFilter !== 'all'
         ? translateAreaLabel(activeArea)
         : t('allProcedures');
+  const showConsultationCta = location.pathname === '/procedure/videos';
 
   const updateAreaFilter = (area: string) => {
     const params = new URLSearchParams(searchParams);
@@ -279,6 +281,18 @@ export default function ProcedureVideoGallery() {
         <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-stone-600 md:text-lg">
           {t('videoCasesDescription')}
         </p>
+        {showConsultationCta && (
+          <button
+            type="button"
+            onClick={() => {
+              navigate('/consultation-upload');
+              window.scrollTo(0, 0);
+            }}
+            className="mt-7 inline-flex h-12 items-center justify-center bg-[#173d31] px-7 text-sm font-bold uppercase tracking-[0.2em] text-white shadow-[0_16px_36px_rgba(23,61,49,0.18)] transition hover:bg-[#102a22] active:translate-y-px"
+          >
+            立即咨询
+          </button>
+        )}
       </section>
 
       <section className="mx-auto grid max-w-[1480px] gap-6 px-4 pb-20 sm:px-6 lg:grid-cols-[300px_minmax(0,1fr)] lg:px-8">

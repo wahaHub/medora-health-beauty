@@ -1,40 +1,45 @@
-.git
-.vercel
-node_modules
-dist
-archive
-wechat_liyuan_cases
+# Keep Vercel uploads focused on deployable app source.
 
+# Dependencies and build outputs
+node_modules/
+dist/
+dist-ssr/
+coverage/
+
+# Local env, platform state, and VCS metadata
 .env
 .env.*
-.DS_Store
+*.local
+.git/
+.vercel/
 
-.claude
-.codex-worktrees
-.deploy-worktrees
-.superpowers
-.tmp-medora-deploy-bin
-.tmp-medora-deploy-home
-.tmp-medora-deploy-ssh
-.venv
-.worktrees
+# Local tool/runtime directories
+.claude/
+.codex-worktrees/
+.deploy-worktrees/
+.gstack/
+.ops/
+.superpowers/
+.venv/
+.worktrees/
+.wrangler/
+venv/
 
-Hainan Island Wellness
-Hospital Navigator
-comparison
-medical-china-comb
-medical-crm
-medical-crm-v2
-medical-crm-v2-deploy
-medical-crm-v2-deploy-clean
-medical-crm-v2-deploy-live
-medical-crm-v2-origin-sync-deploy
-medical-crm-v2-smoke-deploy
-patient-step-confirm-main
-terraform
+# Local/generated project data
+archive/
+beauty_upload/
+docs/reports/
+generated_procedure_hero_images/
+photos/
+translations/
+wechat-beauty-cases/
+wechat_liyuan_cases/
 
-codex-remote-tools
-docs
-migrations/temp
-photos
-test
+# Separate local projects
+medical-china-comb/
+medical-crm/
+medical-crm-v2/
+medical-crm-v2-deploy/
+medical-crm-v2-deploy-clean/
+medical-crm-v2-deploy-live/
+medical-crm-v2-smoke-deploy/

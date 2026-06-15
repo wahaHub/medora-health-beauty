@@ -48,6 +48,7 @@ import JourneyPage from '@/pages/dashboard/JourneyPage';
 import PackagesCatalog from '@/pages/PackagesCatalog';
 import VideoCases from '@/pages/VideoCases';
 import ProcedureVideoGallery from '@/pages/ProcedureVideoGallery';
+import ConsultationUpload from '@/pages/ConsultationUpload';
 
 // Home page component
 function HomePage() {
@@ -191,6 +192,7 @@ function App() {
                 <Route path="/patient-form" element={<PatientForm />} />
                 <Route path="/search" element={<SearchResults />} />
                 <Route path="/get-quote" element={<ConsultationSurvey />} />
+                <Route path="/consultation-upload" element={<ConsultationUpload />} />
                 <Route path="/video-cases" element={<VideoCases />} />
                 <Route path="/hospital/:hospitalSlug" element={<HospitalDetail />} />
                 <Route path="/hospital/:hospitalSlug/gallery" element={<HospitalGallery />} />

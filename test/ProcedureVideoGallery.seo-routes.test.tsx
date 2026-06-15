@@ -1,6 +1,7 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 import ProcedureVideoGallery from '@/pages/ProcedureVideoGallery';
@@ -16,6 +17,7 @@ vi.mock('@/hooks/useTranslation', () => ({
         videoCasesOf: 'of',
         videoCasesNoCasesTitle: 'No cases found',
         videoCasesNoCasesDescription: 'Try another filter.',
+        consultationNow: '立即咨询',
       };
       return dictionary[key] ?? key;
     },
@@ -47,6 +49,7 @@ const renderGalleryAt = (initialEntry: string) =>
       <Routes>
         <Route path="/procedure/videos" element={<ProcedureVideoGallery />} />
         <Route path="/procedure/:procedureName/videos" element={<ProcedureVideoGallery />} />
+        <Route path="/consultation-upload" element={<div>Consultation Upload Page</div>} />
       </Routes>
     </MemoryRouter>,
   );
@@ -89,5 +92,24 @@ describe('ProcedureVideoGallery SEO route stability', () => {
     });
 
     expect(await screen.findByText(/All Procedures videos/i)).toBeInTheDocument();
+  });
+
+  it('lets Hair Restoration visitors start a consultation from the query-filtered video gallery', async () => {
+    const user = userEvent.setup();
+    renderGalleryAt('/procedure/videos?procedure=Hair%20Restoration&area=hair');
+
+    const consultationButton = await screen.findByRole('button', { name: '立即咨询' });
+    await user.click(consultationButton);
+
+    expect(screen.getByTestId('location')).toHaveTextContent('/consultation-upload');
+    expect(screen.getByText('Consultation Upload Page')).toBeInTheDocument();
+  });
+
+  it('does not add the consultation CTA to the legacy procedure-name video route', async () => {
+    renderGalleryAt('/procedure/Hair%20Restoration/videos');
+
+    await screen.findByText(/Hair Restoration videos/i);
+
+    expect(screen.queryByRole('button', { name: '立即咨询' })).not.toBeInTheDocument();
   });
 });
