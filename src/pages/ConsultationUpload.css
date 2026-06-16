@@ -607,18 +607,19 @@
   cursor: pointer;
 }
 
-.cu-primary-btn {
+.consultation-upload .cu-primary-btn {
   padding: 14px 24px;
   border: 0;
   border-radius: 3px;
   background: var(--cu-deep);
-  color: white;
+  color: #fff;
   cursor: pointer;
   font-weight: 600;
 }
 
-.cu-primary-btn:disabled {
-  opacity: .35;
+.consultation-upload .cu-primary-btn:disabled {
+  background: #aebbb7;
+  color: #f8fbfa;
   cursor: not-allowed;
 }
 
