@@ -51,7 +51,13 @@ describe('HomeFloatingActions', () => {
     expect(screen.queryByText('Start Consultation')).toBeNull();
   });
 
-  it('does not render away from the homepage', () => {
+  it('renders on the procedure videos gallery pages', () => {
+    renderActions('/procedure/videos?project=body-contouring&area=body');
+
+    expect(screen.getByRole('button', { name: /start consultation/i })).toBeInTheDocument();
+  });
+
+  it('does not render away from conversion entry pages', () => {
     renderActions('/gallery');
 
     expect(screen.queryByRole('button', { name: /start consultation/i })).toBeNull();

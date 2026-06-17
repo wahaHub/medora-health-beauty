@@ -3,12 +3,15 @@ import { useLocation } from 'react-router-dom';
 import { useConsultation } from '@/contexts/ConsultationContext';
 import { useTranslation } from '@/hooks/useTranslation';
 
+const shouldShowStartConsultation = (pathname: string) =>
+  pathname === '/' || pathname === '/procedure/videos';
+
 export default function HomeFloatingActions() {
   const location = useLocation();
   const { openConsultation } = useConsultation();
   const { t } = useTranslation();
 
-  if (location.pathname !== '/') {
+  if (!shouldShowStartConsultation(location.pathname)) {
     return null;
   }
 
