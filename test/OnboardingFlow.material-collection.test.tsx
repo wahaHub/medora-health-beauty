@@ -50,6 +50,10 @@ const languageState = vi.hoisted(() => ({
   currentLanguage: 'en',
 }));
 
+const crmApiState = vi.hoisted(() => ({
+  getMessages: vi.fn(),
+}));
+
 vi.mock('@/hooks/usePatientEntry', () => ({
   usePatientEntry: () => patientEntryState,
 }));
@@ -62,10 +66,23 @@ vi.mock('@/contexts/LanguageContext', () => ({
   useOptionalLanguage: () => languageState,
 }));
 
+vi.mock('@/services/crmApiClient', async () => {
+  const actual = await vi.importActual<typeof import('@/services/crmApiClient')>('@/services/crmApiClient');
+  return {
+    ...actual,
+    crmApi: {
+      ...actual.crmApi,
+      getMessages: crmApiState.getMessages,
+    },
+  };
+});
+
 describe('OnboardingFlow beauty upload prompt', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     languageState.currentLanguage = 'en';
+    crmApiState.getMessages.mockReset();
+    crmApiState.getMessages.mockResolvedValue({ messages: [] });
     conversationsState.data = [
       {
         id: 'admin-conversation-1',
@@ -93,5 +110,26 @@ describe('OnboardingFlow beauty upload prompt', () => {
     expect(screen.getByText('下一步：上传您的 5 视图')).toBeInTheDocument();
     expect(screen.getByText(/安排线上问诊/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /上传 5 视图/i })).toBeInTheDocument();
+  });
+
+  it('shows the submitted five-view message and CRM input after upload completion', async () => {
+    languageState.currentLanguage = 'zh';
+    crmApiState.getMessages.mockResolvedValue({
+      messages: [
+        {
+          id: 'msg-1',
+          role: 'patient',
+          content: '[Beauty Consultation Upload]\nCase ID: case-1',
+          createdAt: '2026-06-17T00:00:00.000Z',
+        },
+      ],
+    });
+
+    render(<OnboardingFlow />);
+
+    expect(await screen.findByText('您的 5 视图已经安全提交')).toBeInTheDocument();
+    expect(screen.getByText(/24 小时内回复/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('输入消息...')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /上传 5 视图/i })).not.toBeInTheDocument();
   });
 });

@@ -3,6 +3,9 @@ import { ArrowRight, Camera, CheckCircle2, MessageSquare, Paperclip, RefreshCw, 
 import { usePatientEntry } from '@/hooks/usePatientEntry';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
+import { crmApi } from '@/services/crmApiClient';
+import { hasBeautyUploadSubmission } from '@/services/beautyUploadStatus';
+import { MessageInput } from '@/components/messaging/MessageInput';
 import { ContactInfoStep } from './ContactInfoStep';
 import { HospitalCards } from './HospitalCards';
 import type { PreBootstrapMessage } from '@/services/patientEntryStorage';
@@ -193,6 +196,26 @@ function BeautyUploadPromptCard() {
   );
 }
 
+function BeautyUploadSubmittedCard() {
+  const { dt } = useDashboardTranslation();
+
+  return (
+    <div className="mx-3 my-2 rounded-[26px] border border-emerald-100 bg-emerald-50/60 px-5 py-5 shadow-[0_22px_45px_rgba(15,23,42,0.08)]">
+      <div className="flex items-start gap-3">
+        <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-emerald-600 shadow-sm">
+          <CheckCircle2 className="h-5 w-5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h4 className="font-serif text-lg text-stone-900">{dt('chatBeautyUploadSubmittedTitle')}</h4>
+          <p className="mt-2 text-sm leading-6 text-stone-600">
+            {dt('chatBeautyUploadSubmittedDescription')}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function OnboardingFlow({ onClose, onComplete, showPreBootstrapInput = true }: OnboardingFlowProps = {}) {
   const { dt } = useDashboardTranslation();
   const {
@@ -203,6 +226,10 @@ export function OnboardingFlow({ onClose, onComplete, showPreBootstrapInput = tr
     openPanel,
   } = usePatientEntry();
   const { patient } = usePatientAuth();
+  const widgetChatSessionId = patient?.widgetChatTarget?.kind === 'CHATBOT_SESSION'
+    ? patient.widgetChatTarget.sessionId
+    : '';
+  const [beautyUploadSubmitted, setBeautyUploadSubmitted] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const isBackendOwnedHospitalSelection = phase === 'select-hospitals'
@@ -214,6 +241,31 @@ export function OnboardingFlow({ onClose, onComplete, showPreBootstrapInput = tr
       scrollRef.current.scrollTop = phase === 'collect-profile' ? 0 : scrollRef.current.scrollHeight;
     }
   }, [preBootstrapMessages.length, phase]);
+
+  useEffect(() => {
+    if (!isBackendOwnedHospitalSelection || !widgetChatSessionId) {
+      setBeautyUploadSubmitted(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    crmApi.getMessages(widgetChatSessionId, { limit: 100 })
+      .then(({ messages }) => {
+        if (!cancelled) {
+          setBeautyUploadSubmitted(hasBeautyUploadSubmission(messages));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setBeautyUploadSubmitted(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isBackendOwnedHospitalSelection, widgetChatSessionId]);
 
   return (
     <div className="flex flex-col h-full">
@@ -237,7 +289,7 @@ export function OnboardingFlow({ onClose, onComplete, showPreBootstrapInput = tr
         {phase === 'select-hospitals' && isBackendOwnedHospitalSelection && (
           <div className="px-2 space-y-2">
             <SubmittedDetailsCard />
-            <BeautyUploadPromptCard />
+            {beautyUploadSubmitted ? <BeautyUploadSubmittedCard /> : <BeautyUploadPromptCard />}
           </div>
         )}
 
@@ -287,6 +339,9 @@ export function OnboardingFlow({ onClose, onComplete, showPreBootstrapInput = tr
 
       {/* Message input — hidden for returning patients who already have conversations */}
       {showPreBootstrapInput && phase !== 'messages-ready' && !isBackendOwnedHospitalSelection && <PreBootstrapInput />}
+      {showPreBootstrapInput && isBackendOwnedHospitalSelection && beautyUploadSubmitted && widgetChatSessionId && (
+        <MessageInput conversationId={widgetChatSessionId} />
+      )}
     </div>
   );
 }

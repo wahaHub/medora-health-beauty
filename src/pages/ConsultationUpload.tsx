@@ -16,6 +16,7 @@ import {
   uploadFileToSignedUrl,
   type Conversation,
 } from '@/services/crmApiClient';
+import { BEAUTY_UPLOAD_MARKER, hasBeautyUploadSubmission } from '@/services/beautyUploadStatus';
 import doctorLi from '@/assets/consultation-upload/doctor-li.jpg';
 import bodyIcon from '@/assets/consultation-upload/body-icons/body.png';
 import eyesIcon from '@/assets/consultation-upload/body-icons/eyes.png';
@@ -131,8 +132,6 @@ const createConsultationId = () =>
     .slice(2, 8)
     .toUpperCase()}`;
 
-const BEAUTY_UPLOAD_MARKER = '[Beauty Consultation Upload]';
-
 const cropAndCompressImage = (file: File, bodyPart: ConsultationBodyPart, crop: CropConfig) =>
   new Promise<{ data: string; type: string; cropped: boolean }>((resolve, reject) => {
     const image = new Image();
@@ -212,6 +211,15 @@ async function uploadBeautyAttachment(conversationId: string, file: File) {
   return init.asset;
 }
 
+async function hasExistingBeautyUpload(caseId: string): Promise<boolean> {
+  const conversations = await crmApi.getConversations();
+  const targetConversation = selectBeautyUploadConversation(conversations, caseId);
+  if (!targetConversation) return false;
+
+  const { messages } = await crmApi.getMessages(targetConversation.id, { limit: 100 });
+  return hasBeautyUploadSubmission(messages);
+}
+
 export default function ConsultationUpload() {
   const { currentLanguage } = useLanguage();
   const { patient } = usePatientAuth();
@@ -271,6 +279,30 @@ export default function ConsultationUpload() {
       current.map((value, index) => (photos[index] ? value : copy.uploadDefault)),
     );
   }, [copy.uploadDefault, photos]);
+
+  useEffect(() => {
+    if (!hasUploadSession || !crmCaseId) {
+      return;
+    }
+
+    let cancelled = false;
+
+    hasExistingBeautyUpload(crmCaseId)
+      .then((hasSubmission) => {
+        if (cancelled) return;
+        if (hasSubmission) {
+          setCaseId(crmCaseId);
+          setStep(5);
+        }
+      })
+      .catch(() => {
+        // Keep the upload flow available if CRM history cannot be read.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [crmCaseId, hasUploadSession]);
 
   const goToStep = (nextStep: Step) => {
     setStep(nextStep);
@@ -460,7 +492,7 @@ export default function ConsultationUpload() {
               ))}
             </nav>
 
-          <div className={`cu-panel ${step === 1 ? 'active' : ''}`}>
+          <div className={`cu-panel ${step === 1 ? 'active' : ''}`} hidden={step === 5}>
             <div className="cu-section-heading">
               <span>{copy.stepNumbers[0]}</span>
               <h2>{copy.step1Title}</h2>
@@ -660,7 +692,7 @@ export default function ConsultationUpload() {
             </form>
           </div>
 
-          <div className={`cu-panel cu-success-panel ${step === 5 ? 'active' : ''}`}>
+          <div className={`cu-panel cu-success-panel ${step === 5 ? 'active' : ''}`} hidden={step !== 5}>
             <div className="cu-success-check">✓</div>
             <span className="cu-eyebrow">{copy.successEyebrow}</span>
             <h2>{copy.successTitle}</h2>

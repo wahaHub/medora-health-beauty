@@ -10,6 +10,7 @@ import ConsultationUpload from '@/pages/ConsultationUpload';
 const { crmApiState, patientAuthState, patientEntryState } = vi.hoisted(() => ({
   crmApiState: {
     getConversations: vi.fn(),
+    getMessages: vi.fn(),
     initConversationAttachmentUpload: vi.fn(),
     sendMessage: vi.fn(),
   },
@@ -42,6 +43,7 @@ vi.mock('@/services/crmApiClient', async () => {
     ...actual,
     crmApi: {
       getConversations: crmApiState.getConversations,
+      getMessages: crmApiState.getMessages,
       initConversationAttachmentUpload: crmApiState.initConversationAttachmentUpload,
       sendMessage: crmApiState.sendMessage,
     },
@@ -61,8 +63,11 @@ describe('ConsultationUpload page', () => {
   beforeEach(() => {
     localStorage.clear();
     crmApiState.getConversations.mockReset();
+    crmApiState.getMessages.mockReset();
     crmApiState.initConversationAttachmentUpload.mockReset();
     crmApiState.sendMessage.mockReset();
+    crmApiState.getConversations.mockResolvedValue([]);
+    crmApiState.getMessages.mockResolvedValue({ messages: [] });
     patientAuthState.patient = {
       id: 'patient-1',
       caseId: 'case-1',
@@ -85,7 +90,7 @@ describe('ConsultationUpload page', () => {
     expect(screen.getByText('隐私加密传输')).toBeInTheDocument();
   });
 
-  it('uses localized Step 1 consultation cards and Step 2 image icons', () => {
+  it('uses localized Step 1 consultation cards and Step 2 image icons', async () => {
     localStorage.setItem('medora-language', 'en');
     renderPage();
 
@@ -95,10 +100,10 @@ describe('ConsultationUpload page', () => {
     expect(screen.getByRole('button', { name: /Choose a hospital \/ doctor/i })).toBeInTheDocument();
     expect(screen.queryByText('请选择问诊通道')).not.toBeInTheDocument();
 
-    screen.getByRole('button', { name: /Free text consultation/i }).click();
+    fireEvent.click(screen.getByRole('button', { name: /Free text consultation/i }));
 
     for (const label of ['Eyes', 'Nose', 'Lips', 'Facial contour', 'Hair restoration', 'Body contouring', 'Other area']) {
-      expect(screen.getByRole('img', { name: `${label} consultation icon` })).toBeInTheDocument();
+      expect(await screen.findByRole('img', { name: `${label} consultation icon` })).toBeInTheDocument();
     }
   });
 
@@ -132,6 +137,34 @@ describe('ConsultationUpload page', () => {
     expect(screen.getByText(/create your secure CRM consultation record/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Browse video cases/i })).toHaveAttribute('href', '/procedure/videos');
     expect(screen.queryByRole('button', { name: /Free text consultation/i })).not.toBeInTheDocument();
+  });
+
+  it('shows the submitted screen when the CRM case already has five-view uploads', async () => {
+    localStorage.setItem('medora-language', 'zh');
+    crmApiState.getConversations.mockResolvedValue([
+      {
+        id: 'widget-chat:patient-1:case-1',
+        caseId: 'case-1',
+        category: 'ADMIN_PATIENT',
+        type: 'patient-admin',
+      },
+    ]);
+    crmApiState.getMessages.mockResolvedValue({
+      messages: [
+        {
+          id: 'msg-1',
+          role: 'patient',
+          content: '[Beauty Consultation Upload]\nCase ID: case-1',
+          createdAt: '2026-06-17T00:00:00.000Z',
+        },
+      ],
+    });
+
+    renderPage();
+
+    const successHeading = await screen.findByRole('heading', { name: '资料已安全提交' });
+    expect(successHeading.closest('.cu-panel')).toHaveClass('active');
+    expect(screen.getByText('case-1')).toBeInTheDocument();
   });
 
   it('uploads five consultation views into the CRM patient conversation', async () => {
