@@ -144,7 +144,7 @@ describe('ProcedureVideoGallery SEO route stability', () => {
       }),
     } as unknown as Response);
     const user = userEvent.setup();
-    renderGalleryAt('/procedure/videos?project=eye-surgery&area=face');
+    renderGalleryAt('/procedure/videos?area=face&project=eye-surgery');
 
     expect(await screen.findByText('Treatment Focus')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Eye Bags' })).toBeInTheDocument();
@@ -155,7 +155,7 @@ describe('ProcedureVideoGallery SEO route stability', () => {
     await user.click(screen.getByRole('button', { name: 'Eye Bags' }));
 
     expect(screen.getByTestId('location')).toHaveTextContent(
-      '/procedure/videos?project=eye-surgery&area=face&subtype=eye-bags',
+      '/procedure/videos?area=face&project=eye-surgery&subtype=eye-bags',
     );
     await waitFor(() => {
       expect(document.body.textContent).toMatch(/Showing\s+1-1\s+of\s+1\s+Eyes\s+videos/i);

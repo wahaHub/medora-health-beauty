@@ -6,12 +6,18 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSurgeonsList } from '@/hooks/useData';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
-import { proceduresByCategory } from '@/data/procedureTaxonomy';
 import procedureNames from '@/i18n/procedureNames.json';
-import { getImplementedProcedureVideoUrl, getProcedureAreaQueryValue } from '@/data/procedureTaxonomy';
+import {
+  getDiscoveryAreaVideoUrl,
+  getDiscoveryVideoUrl,
+  getPublicProcedureGroupLabel,
+  procedureDiscoveryGroups,
+} from '@/data/publicDiscoveryFilters';
+import type { DiscoveryArea } from '@/data/procedureDiscovery';
 
 interface SubMenuItem {
   label: string;
+  zhLabel?: string;
   isHeader?: boolean;
   isSub?: boolean;
   href?: string;
@@ -19,10 +25,12 @@ interface SubMenuItem {
 
 interface ProcedureMenuSection {
   title: string;
-  route: 'face' | 'body' | 'nonsurgical' | 'hair' | 'dental';
+  zhTitle: string;
+  route: DiscoveryArea;
   iconSrc: string;
   items: SubMenuItem[];
   viewAllLabel: string;
+  viewAllZhLabel: string;
 }
 
 interface NavItem {
@@ -257,7 +265,8 @@ const Header: React.FC = () => {
   }, [featuredDropdownDoctors]);
 
   // Helper function to translate procedure/menu item names
-  const translateLabel = (englishLabel: string): string => {
+  const translateLabel = (englishLabel: string, zhLabel?: string): string => {
+    if (currentLanguage === 'zh' && zhLabel) return zhLabel;
     const translation = typedProcedureNames[englishLabel];
     if (translation && translation[currentLanguage as keyof typeof translation]) {
       return translation[currentLanguage as keyof typeof translation];
@@ -362,12 +371,7 @@ const Header: React.FC = () => {
       navigate(`/surgeon/${surgeonName}`);
       window.scrollTo(0, 0);
     } else if (isMenuLink) {
-      const procedureArea = getProcedureAreaQueryValue(pageName);
-      const menuPath =
-        procedureArea === 'all'
-          ? `/procedure/${encodeURIComponent(pageName)}`
-          : getImplementedProcedureVideoUrl(pageName);
-      navigate(menuPath);
+      navigate(href || '/procedure/videos');
       window.scrollTo(0, 0);
     } else {
       // Basic anchor scrolling for home page sections (ABOUT, CONTACT, etc.)
@@ -419,63 +423,20 @@ const Header: React.FC = () => {
         { label: 'Patient Reviews', isSub: false, href: '/reviews' }
       ];
 
-  const procedureSections: ProcedureMenuSection[] = [
-    {
-      title: 'Face',
-      route: 'face',
-      iconSrc: '/brand/procedure-icons/face.png',
-      viewAllLabel: 'View all Face Procedures',
-      items: proceduresByCategory.face.map((procedure) => ({
-        label: procedure.label,
-        isSub: true,
-        href: getImplementedProcedureVideoUrl(procedure.label),
-      }))
-    },
-    {
-      title: 'Body',
-      route: 'body',
-      iconSrc: '/brand/procedure-icons/body.png',
-      viewAllLabel: 'View all Body Procedures',
-      items: proceduresByCategory.body.map((procedure) => ({
-        label: procedure.label,
-        isSub: true,
-        href: getImplementedProcedureVideoUrl(procedure.label),
-      }))
-    },
-    {
-      title: 'Skin & Injectables',
-      route: 'nonsurgical',
-      iconSrc: '/brand/procedure-icons/nonsurgical.png',
-      viewAllLabel: 'View all Non-Surgical Procedures',
-      items: proceduresByCategory.nonsurgical.map((procedure) => ({
-        label: procedure.label,
-        isSub: true,
-        href: getImplementedProcedureVideoUrl(procedure.label),
-      }))
-    },
-    {
-      title: 'Hair Restoration',
-      route: 'hair',
-      iconSrc: '/brand/procedure-icons/hair.png',
-      viewAllLabel: 'View all Hair Procedures',
-      items: proceduresByCategory.hair.map((procedure) => ({
-        label: procedure.label,
-        isSub: true,
-        href: getImplementedProcedureVideoUrl(procedure.label),
-      }))
-    },
-    {
-      title: 'Dental',
-      route: 'dental',
-      iconSrc: '/brand/procedure-icons/dental.png',
-      viewAllLabel: 'View all Dental Procedures',
-      items: proceduresByCategory.dental.map((procedure) => ({
-        label: procedure.label,
-        isSub: true,
-        href: getImplementedProcedureVideoUrl(procedure.label),
-      }))
-    }
-  ];
+  const procedureSections: ProcedureMenuSection[] = procedureDiscoveryGroups.map((group) => ({
+    title: group.label,
+    zhTitle: group.zhLabel,
+    route: group.id,
+    iconSrc: `/brand/procedure-icons/${group.id}.png`,
+    viewAllLabel: `View all ${group.label} Cases`,
+    viewAllZhLabel: `查看全部${group.zhLabel}案例`,
+    items: group.items.map((item) => ({
+      label: item.label,
+      zhLabel: item.zhLabel,
+      isSub: true,
+      href: getDiscoveryVideoUrl(item),
+    })),
+  }));
 
   const navItems: NavItem[] = [
     {
@@ -489,12 +450,12 @@ const Header: React.FC = () => {
     },
     {
       name: proceduresLabel,
-      href: '/procedures/face',
+      href: '/procedure/videos',
       procedureSections,
       columns: procedureSections.map((section) => [
-        { label: section.title, isHeader: true, href: `/procedures/${section.route}` },
+        { label: section.title, zhLabel: section.zhTitle, isHeader: true, href: getDiscoveryAreaVideoUrl(section.route) },
         ...section.items,
-        { label: section.viewAllLabel, href: `/procedures/${section.route}` }
+        { label: section.viewAllLabel, zhLabel: section.viewAllZhLabel, href: getDiscoveryAreaVideoUrl(section.route) }
       ])
     },
     { name: t('navGallery'), href: '/gallery' },
@@ -779,7 +740,10 @@ const Header: React.FC = () => {
                             </span>
                             <div className="pt-2">
                               <h3 className="whitespace-nowrap font-sans text-sm font-medium leading-[1.35] tracking-wide text-[#f1f0eb]">
-                                {translateLabel(section.title)}
+                                {getPublicProcedureGroupLabel(
+                                  { label: section.title, zhLabel: section.zhTitle },
+                                  currentLanguage,
+                                )}
                               </h3>
                               <div className="mt-3 h-[2px] w-14 bg-[#c4935b]" />
                             </div>
@@ -803,18 +767,18 @@ const Header: React.FC = () => {
                                 className="group/item flex min-h-12 items-center border-b border-[#d0b083]/15 py-3 text-sm font-medium leading-tight text-[#d8e0dc] transition-colors hover:text-[#e4bd83]"
                               >
                                 <span className="mr-4 h-1.5 w-1.5 rounded-full bg-[#c4935b] transition-transform group-hover/item:scale-125" />
-                                {translateLabel(item.label)}
+                                {translateLabel(item.label, item.zhLabel)}
                               </a>
                             ))}
                           </div>
 
                           <a
-                            href={`/procedures/${section.route}`}
-                            onClick={(event) => handleLinkClick(event, section.viewAllLabel, true, `/procedures/${section.route}`)}
+                            href={getDiscoveryAreaVideoUrl(section.route)}
+                            onClick={(event) => handleLinkClick(event, section.viewAllLabel, true, getDiscoveryAreaVideoUrl(section.route))}
                             className="mt-auto flex items-center gap-4 pt-8 text-sm font-medium text-[#d7ddd9] transition-colors hover:text-[#e4bd83]"
                           >
                             <ArrowRight className="h-5 w-5 text-[#c4935b]" strokeWidth={1.7} />
-                            {translateLabel(section.viewAllLabel)}
+                            {translateLabel(section.viewAllLabel, section.viewAllZhLabel)}
                           </a>
                         </section>
                       );
@@ -841,7 +805,7 @@ const Header: React.FC = () => {
                           <div key={itemIdx} className="group/item">
                             {item.isHeader ? (
                               <span className="block text-white text-sm font-medium tracking-wide mb-3 mt-4 first:mt-0">
-                                {translateLabel(item.label)}
+                                {translateLabel(item.label, item.zhLabel)}
                               </span>
                             ) : (
                               <a
@@ -854,7 +818,7 @@ const Header: React.FC = () => {
                                 }`}
                               >
                                 {item.isSub && <span className="inline-block w-1 h-1 rounded-full bg-gold-600 mr-2 opacity-60 group-hover/item:opacity-100 transition-opacity"></span>}
-                                {translateLabel(item.label)}
+                                {translateLabel(item.label, item.zhLabel)}
                               </a>
                             )}
                           </div>
@@ -916,7 +880,7 @@ const Header: React.FC = () => {
                             className="text-stone-600 text-sm font-medium"
                             onClick={(e) => handleLinkClick(e, item.label, true, item.href)}
                           >
-                            {translateLabel(item.label)}
+                            {translateLabel(item.label, item.zhLabel)}
                           </div>
                         ));
                       }
@@ -931,16 +895,16 @@ const Header: React.FC = () => {
                                 className={`text-stone-600 text-sm ${item.isSub ? 'pl-4' : ''}`}
                                 onClick={(e) => handleLinkClick(e, item.label, true, item.href)}
                               >
-                                {translateLabel(item.label)}
+                                {translateLabel(item.label, item.zhLabel)}
                               </a>
                             ))}
                             {allItems.length > limitedItems.length && (
                               <a
-                                href="/procedures/face"
+                                href="/procedure/videos"
                                 className="text-gold-600 text-sm font-medium italic cursor-pointer hover:text-gold-700"
-                                onClick={(e) => handleLinkClick(e, 'View all Face Procedures', true, '/procedures/face')}
+                                onClick={(e) => handleLinkClick(e, 'View all Cases', true, '/procedure/videos')}
                               >
-                                + {allItems.length - limitedItems.length} more procedures
+                                + {allItems.length - limitedItems.length} more cases
                               </a>
                             )}
                           </>
@@ -953,7 +917,7 @@ const Header: React.FC = () => {
                           className={`text-stone-600 text-sm ${item.isSub ? 'pl-4' : ''}`}
                           onClick={(e) => handleLinkClick(e, item.label, true, item.href)}
                         >
-                          {translateLabel(item.label)}
+                          {translateLabel(item.label, item.zhLabel)}
                         </div>
                       ));
                     })()}

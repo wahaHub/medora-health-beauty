@@ -132,33 +132,33 @@ describe('Header patient auth CTA', () => {
     expect(screen.queryByRole('menu')).toBeNull();
   });
 
-  it('includes the Dental procedures section in the desktop mega menu', () => {
+  it('includes the latest discovery sections in the desktop mega menu', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Header />
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('heading', { name: 'Dental' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Dental / Smile' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Teeth Whitening' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Porcelain Veneers' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Invisalign® / Clear Aligners' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Veneers' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Invisalign® / Clear Aligners' })).toBeNull();
     expect(screen.getByRole('link', { name: 'Smile Design' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'View all Dental Procedures' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'View all Dental / Smile Cases' })).toHaveAttribute(
       'href',
-      '/procedures/dental',
+      '/procedure/videos?area=dental',
     );
   });
 
-  it('routes concrete procedure menu clicks to path video cases', () => {
+  it('routes concrete case menu clicks to query-filtered video cases', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Header />
       </MemoryRouter>,
     );
 
-    fireEvent.click(screen.getByRole('link', { name: 'Revision Rhinoplasty' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Nose' }));
 
-    expect(navigateMock).toHaveBeenCalledWith('/procedure/Revision%20Rhinoplasty/videos');
+    expect(navigateMock).toHaveBeenCalledWith('/procedure/videos?area=face&project=nose-surgery');
   });
 });

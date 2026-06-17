@@ -40,6 +40,11 @@ vi.mock('@/hooks/usePatientEntry', () => ({
   usePatientEntry: () => patientEntryState,
 }));
 
+vi.mock('@/contexts/LanguageContext', () => ({
+  useLanguage: () => ({ currentLanguage: 'en' }),
+  useOptionalLanguage: () => ({ currentLanguage: 'en' }),
+}));
+
 vi.mock('@/services/crmApiClient', async () => {
   const actual = await vi.importActual<typeof import('@/services/crmApiClient')>('@/services/crmApiClient');
   return {
@@ -90,8 +95,10 @@ describe('Beauty widget onboarding form', () => {
 
     expect(screen.getByRole('combobox', { name: 'Destination' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Submit details' })).toBeInTheDocument();
-    expect(crmApiState.getProcedures).toHaveBeenCalledWith('hair');
+    expect(crmApiState.getProcedures).not.toHaveBeenCalled();
+    expect(crmApiState.getDestinations).not.toHaveBeenCalled();
     expect(screen.getByRole('option', { name: 'Hair Transplant' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'China' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Find My Hospitals' })).toBeNull();
   });
 
@@ -103,11 +110,11 @@ describe('Beauty widget onboarding form', () => {
     });
 
     fireEvent.change(screen.getByRole('combobox', { name: 'Condition / Procedure' }), {
-      target: { value: 'rhinoplasty' },
+      target: { value: 'nose' },
     });
     view.rerender(<ContactInfoStep />);
     fireEvent.change(screen.getByRole('combobox', { name: 'Destination' }), {
-      target: { value: 'South Korea' },
+      target: { value: 'china' },
     });
     view.rerender(<ContactInfoStep />);
     fireEvent.click(screen.getByRole('button', { name: 'Submit details' }));
@@ -117,9 +124,9 @@ describe('Beauty widget onboarding form', () => {
         name: 'Alice Beauty',
         email: 'alice@example.com',
         phone: '+1 555 0100',
-        disease: 'Rhinoplasty',
+        disease: 'Nose',
         category: 'face',
-        destination: 'South Korea',
+        destination: 'china',
       }));
     });
 
@@ -136,11 +143,11 @@ describe('Beauty widget onboarding form', () => {
     });
 
     fireEvent.change(screen.getByRole('combobox', { name: 'Condition / Procedure' }), {
-      target: { value: 'rhinoplasty' },
+      target: { value: 'nose' },
     });
     view.rerender(<ContactInfoStep />);
     fireEvent.change(screen.getByRole('combobox', { name: 'Destination' }), {
-      target: { value: 'South Korea' },
+      target: { value: 'china' },
     });
     view.rerender(<ContactInfoStep />);
     fireEvent.click(screen.getByRole('button', { name: 'Submit details' }));
@@ -176,7 +183,7 @@ describe('Beauty widget onboarding form', () => {
     });
     view.rerender(<ContactInfoStep />);
     fireEvent.change(screen.getByRole('combobox', { name: 'Destination' }), {
-      target: { value: 'Thailand' },
+      target: { value: 'china' },
     });
     view.rerender(<ContactInfoStep />);
     fireEvent.click(screen.getByRole('button', { name: 'Submit details' }));

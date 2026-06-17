@@ -64,6 +64,7 @@ vi.mock('@/hooks/usePatientConversations', () => ({
 
 vi.mock('@/contexts/LanguageContext', () => ({
   useLanguage: () => languageState,
+  useOptionalLanguage: () => languageState,
 }));
 
 vi.mock('@/components/messaging/MessageInput', () => ({

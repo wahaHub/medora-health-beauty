@@ -9,6 +9,7 @@ import {
   getDiscoveryVideoUrl,
   procedureDiscoveryGroups,
 } from '@/data/procedureDiscovery';
+import { getPublicDestinationLabel, publicDestinationOptions } from '@/data/publicDiscoveryFilters';
 
 interface SearchBarProps {
   onSearch?: (procedure: string, country: string, priceRange: string) => void;
@@ -51,7 +52,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
   const countries = [
     { value: '', label: t('allCountries') },
-    { value: 'china', label: t('countryChina') },
+    ...publicDestinationOptions.map((option) => ({
+      value: option.value,
+      label: getPublicDestinationLabel(option, currentLanguage),
+    })),
   ];
 
   const priceRanges = [

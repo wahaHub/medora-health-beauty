@@ -195,8 +195,8 @@ export const getDiscoveryLabel = (
 
 export const getDiscoveryVideoUrl = (item: ProcedureDiscoveryItem, subtype?: ProcedureDiscoverySubtype) => {
   const params = new URLSearchParams({
-    project: item.project,
     area: item.area,
+    project: item.project,
   });
   if (subtype) params.set('subtype', subtype.id);
 

@@ -66,21 +66,25 @@ describe('Header SEO links', () => {
     window.scrollTo = vi.fn();
   });
 
-  it('renders desktop Rhinoplasty procedure links with path video-case hrefs', () => {
+  it('renders desktop case links from the homepage discovery taxonomy with query filter hrefs', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Header />
       </MemoryRouter>,
     );
 
-    const rhinoplastyLinks = screen.getAllByRole('link', { name: 'Rhinoplasty' });
+    expect(screen.getByRole('link', { name: 'CASES' })).toHaveAttribute('href', '/procedure/videos');
+    expect(screen.getByRole('heading', { name: 'Skin & Injectables' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Rhinoplasty' })).toBeNull();
 
-    expect(rhinoplastyLinks.length).toBeGreaterThan(0);
-    expect(rhinoplastyLinks[0]).toHaveAttribute(
+    const noseLinks = screen.getAllByRole('link', { name: 'Nose' });
+
+    expect(noseLinks.length).toBeGreaterThan(0);
+    expect(noseLinks[0]).toHaveAttribute(
       'href',
-      '/procedure/Rhinoplasty/videos',
+      '/procedure/videos?area=face&project=nose-surgery',
     );
-    expect(rhinoplastyLinks.every((link) => link.getAttribute('href') !== '#')).toBe(true);
+    expect(noseLinks.every((link) => link.getAttribute('href') !== '#')).toBe(true);
   });
 
   it('renders crawl-critical top-level public links with real hrefs', () => {
@@ -94,7 +98,7 @@ describe('Header SEO links', () => {
     expect(screen.getByRole('link', { name: 'TRAVEL' })).toHaveAttribute('href', '/travel');
   });
 
-  it('opens the mobile menu by accessible name and includes a path Rhinoplasty video link', () => {
+  it('opens the mobile menu by accessible name and includes query-filtered case links', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <Header />
@@ -106,8 +110,8 @@ describe('Header SEO links', () => {
     expect(screen.getByRole('button', { name: 'Close menu' })).toBeInTheDocument();
     expect(
       screen
-        .getAllByRole('link', { name: 'Rhinoplasty' })
-        .some((link) => link.getAttribute('href') === '/procedure/Rhinoplasty/videos'),
+        .getAllByRole('link', { name: 'Nose' })
+        .some((link) => link.getAttribute('href') === '/procedure/videos?area=face&project=nose-surgery'),
     ).toBe(true);
   });
 });

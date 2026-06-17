@@ -53,6 +53,7 @@ vi.mock('@/contexts/PatientAuthContext', () => ({
 
 vi.mock('@/contexts/LanguageContext', () => ({
   useLanguage: () => ({ currentLanguage: 'en' }),
+  useOptionalLanguage: () => ({ currentLanguage: 'en' }),
 }));
 
 describe('OnboardingFlow select-hospitals ownership', () => {

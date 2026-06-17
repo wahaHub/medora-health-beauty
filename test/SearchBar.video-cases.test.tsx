@@ -64,7 +64,7 @@ describe('SearchBar video cases navigation', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Nose' }));
     fireEvent.click(screen.getByRole('button', { name: /Search/i }));
 
-    expect(navigateMock).toHaveBeenCalledWith('/procedure/videos?project=nose-surgery&area=face');
+    expect(navigateMock).toHaveBeenCalledWith('/procedure/videos?area=face&project=nose-surgery');
   });
 
   it('routes an empty homepage search directly to all video cases', () => {

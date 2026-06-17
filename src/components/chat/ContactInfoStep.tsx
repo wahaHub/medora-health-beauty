@@ -1,93 +1,31 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { crmApi } from '@/services/crmApiClient';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { usePatientEntry } from '@/hooks/usePatientEntry';
-import { useDashboardTranslation, type DashboardTranslationKey } from '@/hooks/useDashboardTranslation';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
+import {
+  getPublicDestinationLabel,
+  getPublicProcedureGroupLabel,
+  getPublicProcedureLabel,
+  publicDestinationOptions,
+  publicProcedureGroups,
+} from '@/data/publicDiscoveryFilters';
 
-type ProcedureOption = {
-  id: string;
-  name: string;
-};
+interface ContactInfoStepProps {
+  onComplete?: (result: { patientId: string; caseId: string }) => void;
+}
 
-type ProcedureGroup = {
-  category: string;
-  labelKey: DashboardTranslationKey;
-  procedures: ProcedureOption[];
-};
-
-const PROCEDURE_GROUPS: Array<{ category: string; labelKey: DashboardTranslationKey }> = [
-  { category: 'face', labelKey: 'chatFace' },
-  { category: 'body', labelKey: 'chatBody' },
-  { category: 'non-surgical', labelKey: 'chatNonSurgical' },
-  { category: 'hair', labelKey: 'chatHair' },
-];
-
-export function ContactInfoStep() {
+export function ContactInfoStep({ onComplete }: ContactInfoStepProps = {}) {
   const { dt } = useDashboardTranslation();
   const { currentLanguage } = useLanguage();
   const { bootstrapSession } = usePatientAuth();
   const { profileDraft, patchProfileDraft, applyOnboardingResult } = usePatientEntry();
-  const [procedureGroups, setProcedureGroups] = useState<ProcedureGroup[]>([]);
-  const [destinations, setDestinations] = useState<string[]>([]);
-  const [loadingProcedures, setLoadingProcedures] = useState(true);
-  const [loadingDestinations, setLoadingDestinations] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let active = true;
-
-    void Promise.all(
-      PROCEDURE_GROUPS.map(async (group) => {
-        const response = await crmApi.getProcedures(group.category);
-        return {
-          category: group.category,
-          labelKey: group.labelKey,
-          procedures: Array.isArray(response?.procedures) ? response.procedures : [],
-        };
-      }),
-    )
-      .then((groups) => {
-        if (!active) return;
-        setProcedureGroups(groups);
-      })
-      .catch((err: Error) => {
-        if (!active) return;
-        setError(err.message ?? dt('chatLoadProceduresFailed'));
-      })
-      .finally(() => {
-        if (!active) return;
-        setLoadingProcedures(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    let active = true;
-
-    void crmApi.getDestinations()
-      .then((response) => {
-        if (!active) return;
-        setDestinations(Array.isArray(response?.destinations) ? response.destinations : []);
-      })
-      .catch((err: Error) => {
-        if (!active) return;
-        setError(err.message ?? dt('chatLoadDestinationsFailed'));
-      })
-      .finally(() => {
-        if (!active) return;
-        setLoadingDestinations(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
+  const procedureGroups = publicProcedureGroups;
+  const destinations = publicDestinationOptions;
 
   const procedureMetadata = useMemo(() => {
     const byId = new Map<string, { name: string; category: string }>();
@@ -152,12 +90,19 @@ export function ContactInfoStep() {
         nextStep,
       });
 
-      applyOnboardingResult({
+      const applied = applyOnboardingResult({
         patientId: result.patientId,
         caseId: result.caseId,
         nextStep,
         conversations,
       });
+
+      if (applied) {
+        onComplete?.({
+          patientId: result.patientId,
+          caseId: result.caseId,
+        });
+      }
     } catch (err: any) {
       setError(err.message ?? dt('chatSomethingWentWrong'));
     } finally {
@@ -211,24 +156,20 @@ export function ContactInfoStep() {
               id="patient-procedure"
               aria-label={dt('chatConditionProcedure')}
               value={profileDraft.procedureId}
-              disabled={loadingProcedures}
               onChange={(e) => handleProcedureChange(e.target.value)}
-              className="w-full px-3 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-gold-500 transition-colors bg-white disabled:opacity-60"
+              className="w-full px-3 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-gold-500 transition-colors bg-white"
             >
               <option value="">{dt('chatSelectProcedure')}</option>
               {procedureGroups.map((group) => (
-                <optgroup key={group.category} label={dt(group.labelKey)}>
+                <optgroup key={group.category} label={getPublicProcedureGroupLabel(group, currentLanguage)}>
                   {group.procedures.map((procedure) => (
                     <option key={procedure.id} value={procedure.id}>
-                      {procedure.name}
+                      {getPublicProcedureLabel(procedure, currentLanguage)}
                     </option>
                   ))}
                 </optgroup>
               ))}
             </select>
-            {loadingProcedures ? (
-              <Loader2 className="w-4 h-4 animate-spin text-gold-600 absolute right-3 top-2.5" />
-            ) : null}
           </div>
         </div>
         <div>
@@ -238,20 +179,16 @@ export function ContactInfoStep() {
               id="patient-destination"
               aria-label={dt('chatDestination')}
               value={profileDraft.destination}
-              disabled={loadingDestinations}
               onChange={(e) => patchProfileDraft({ destination: e.target.value })}
-              className="w-full px-3 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-gold-500 transition-colors bg-white disabled:opacity-60"
+              className="w-full px-3 py-2 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-gold-500 transition-colors bg-white"
             >
               <option value="">{dt('chatSelectDestination')}</option>
               {destinations.map((destination) => (
-                <option key={destination} value={destination}>
-                  {destination}
+                <option key={destination.value} value={destination.value}>
+                  {getPublicDestinationLabel(destination, currentLanguage)}
                 </option>
               ))}
             </select>
-            {loadingDestinations ? (
-              <Loader2 className="w-4 h-4 animate-spin text-gold-600 absolute right-3 top-2.5" />
-            ) : null}
           </div>
         </div>
       </div>
