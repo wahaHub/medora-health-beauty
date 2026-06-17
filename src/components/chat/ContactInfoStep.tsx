@@ -17,6 +17,14 @@ interface ContactInfoStepProps {
   onComplete?: (result: { patientId: string; caseId: string }) => void;
 }
 
+type CrmBeautyCategory = 'face' | 'body' | 'non-surgical' | 'hair';
+
+const getCrmBeautyCategory = (category: string): CrmBeautyCategory | undefined => {
+  if (category === 'nonsurgical' || category === 'dental') return 'non-surgical';
+  if (category === 'face' || category === 'body' || category === 'hair') return category;
+  return undefined;
+};
+
 export function ContactInfoStep({ onComplete }: ContactInfoStepProps = {}) {
   const { dt } = useDashboardTranslation();
   const { currentLanguage } = useLanguage();
@@ -61,7 +69,7 @@ export function ContactInfoStep({ onComplete }: ContactInfoStepProps = {}) {
         email: profileDraft.email,
         ...(profileDraft.phone.trim() ? { phone: profileDraft.phone.trim() } : {}),
         disease: profileDraft.disease,
-        category: profileDraft.category || undefined,
+        category: getCrmBeautyCategory(profileDraft.category),
         destination: profileDraft.destination,
         preferredLanguage: currentLanguage,
       });
@@ -104,7 +112,9 @@ export function ContactInfoStep({ onComplete }: ContactInfoStepProps = {}) {
         });
       }
     } catch (err: any) {
-      setError(err.message ?? dt('chatSomethingWentWrong'));
+      setError(err.message === 'Validation failed'
+        ? dt('chatValidationFailed')
+        : (err.message ?? dt('chatSomethingWentWrong')));
     } finally {
       setSubmitting(false);
     }

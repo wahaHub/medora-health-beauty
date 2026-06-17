@@ -81,6 +81,8 @@ describe('OnboardingFlow select-hospitals ownership', () => {
 
     expect(screen.getByText(/submitted details/i)).toBeInTheDocument();
     expect(screen.getByText(/reviewing your profile in chat/i)).toBeInTheDocument();
+    expect(screen.getByText(/next: upload your 5 views/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /upload 5 views/i })).toBeInTheDocument();
     expect(screen.queryByText(/recommended hospitals/i)).toBeNull();
     expect(screen.queryByRole('button', { name: /start chatting/i })).toBeNull();
   });
