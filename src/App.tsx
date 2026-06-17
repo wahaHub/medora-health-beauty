@@ -159,20 +159,16 @@ function ProcedureGalleryWrapper() {
   );
 }
 
-// Marketing layout with Header, Footer, and ConsultationModal
+// Marketing layout with Header and Footer
 function MarketingLayout() {
   return (
-    <ConsultationProvider>
-      <div className="min-h-screen flex flex-col font-sans selection:bg-gold-200 selection:text-navy-900">
-        <Header />
-        <main className="flex-grow">
-          <Outlet />
-        </main>
-        <Footer />
-        <HomeFloatingActions />
-        <ConsultationModal />
-      </div>
-    </ConsultationProvider>
+    <div className="min-h-screen flex flex-col font-sans selection:bg-gold-200 selection:text-navy-900">
+      <Header />
+      <main className="flex-grow">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
   );
 }
 
@@ -181,59 +177,63 @@ function App() {
     <LanguageProvider>
       <PatientAuthProvider>
         <PatientEntryProvider>
-          <MessagePanelProvider>
-            <Routes>
-              {/* Marketing routes */}
-              <Route element={<MarketingLayout />}>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/team" element={<OurTeam />} />
-                <Route path="/surgeons" element={<AllSurgeons />} />
-                <Route path="/gallery" element={<GalleryWrapper />} />
-                <Route path="/travel" element={<TravelPage />} />
-                <Route path="/reviews" element={<ReviewsPage />} />
-                <Route path="/patient-form" element={<PatientForm />} />
-                <Route path="/search" element={<SearchResults />} />
-                <Route path="/get-quote" element={<ConsultationSurvey />} />
-                <Route path="/consultation-upload" element={<ConsultationUpload />} />
-                <Route path="/video-cases" element={<VideoCases />} />
-                <Route path="/hospital/:hospitalSlug" element={<HospitalDetail />} />
-                <Route path="/hospital/:hospitalSlug/gallery" element={<HospitalGallery />} />
-                <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
-                <Route path="/procedures/:category" element={<ProceduresList />} />
-                <Route path="/procedure/videos" element={<ProcedureVideoGallery />} />
-                <Route path="/procedure/:procedureName" element={<ProcedureDetailWrapper />} />
-                <Route path="/procedure/:procedureName/gallery" element={<ProcedureGalleryWrapper />} />
-                <Route path="/procedure/:procedureName/videos" element={<ProcedureVideoGallery />} />
-                <Route path="/procedure/:procedureName/case/:caseId" element={<CaseDetailWrapper />} />
-                {/* 通配符路由：处理包含 / 的 procedure 名称 */}
-                <Route path="/procedure/*/case/:caseId" element={<CaseDetailWrapper />} />
-              </Route>
+          <ConsultationProvider>
+            <MessagePanelProvider>
+              <Routes>
+                {/* Marketing routes */}
+                <Route element={<MarketingLayout />}>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/team" element={<OurTeam />} />
+                  <Route path="/surgeons" element={<AllSurgeons />} />
+                  <Route path="/gallery" element={<GalleryWrapper />} />
+                  <Route path="/travel" element={<TravelPage />} />
+                  <Route path="/reviews" element={<ReviewsPage />} />
+                  <Route path="/patient-form" element={<PatientForm />} />
+                  <Route path="/search" element={<SearchResults />} />
+                  <Route path="/get-quote" element={<ConsultationSurvey />} />
+                  <Route path="/consultation-upload" element={<ConsultationUpload />} />
+                  <Route path="/video-cases" element={<VideoCases />} />
+                  <Route path="/hospital/:hospitalSlug" element={<HospitalDetail />} />
+                  <Route path="/hospital/:hospitalSlug/gallery" element={<HospitalGallery />} />
+                  <Route path="/surgeon/:surgeonName" element={<SurgeonProfile />} />
+                  <Route path="/procedures/:category" element={<ProceduresList />} />
+                  <Route path="/procedure/videos" element={<ProcedureVideoGallery />} />
+                  <Route path="/procedure/:procedureName" element={<ProcedureDetailWrapper />} />
+                  <Route path="/procedure/:procedureName/gallery" element={<ProcedureGalleryWrapper />} />
+                  <Route path="/procedure/:procedureName/videos" element={<ProcedureVideoGallery />} />
+                  <Route path="/procedure/:procedureName/case/:caseId" element={<CaseDetailWrapper />} />
+                  {/* 通配符路由：处理包含 / 的 procedure 名称 */}
+                  <Route path="/procedure/*/case/:caseId" element={<CaseDetailWrapper />} />
+                </Route>
 
-              {/* Standalone pages */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/packages" element={<ProtectedRoute><PackagesCatalog /></ProtectedRoute>} />
+                {/* Standalone pages */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/packages" element={<ProtectedRoute><PackagesCatalog /></ProtectedRoute>} />
 
-              {/* Dashboard routes (no marketing Header/Footer) */}
-              <Route path="/dashboard" element={<DashboardRoute><DashboardLayout /></DashboardRoute>}>
-                {/* Phase 1: 3 primary tabs */}
-                <Route index element={<DashboardHome />} />
-                <Route path="quotes" element={<QuotesPage />} />
-                <Route path="messages" element={<MessagesPage />} />
-                {/* Additional tabs */}
-                <Route path="orders" element={<OrdersPage />} />
-                <Route path="journey" element={<JourneyPage />} />
-                <Route path="tickets" element={<Navigate to="/dashboard" replace />} />
-                <Route path="ai-summary" element={<Navigate to="/dashboard" replace />} />
-                {/* Nested routes — accessible but not top-level nav tabs */}
-                <Route path="intake" element={<IntakePage />} />
-                <Route path="account" element={<AccountPage />} />
-              </Route>
-            </Routes>
+                {/* Dashboard routes (no marketing Header/Footer) */}
+                <Route path="/dashboard" element={<DashboardRoute><DashboardLayout /></DashboardRoute>}>
+                  {/* Phase 1: 3 primary tabs */}
+                  <Route index element={<DashboardHome />} />
+                  <Route path="quotes" element={<QuotesPage />} />
+                  <Route path="messages" element={<MessagesPage />} />
+                  {/* Additional tabs */}
+                  <Route path="orders" element={<OrdersPage />} />
+                  <Route path="journey" element={<JourneyPage />} />
+                  <Route path="tickets" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="ai-summary" element={<Navigate to="/dashboard" replace />} />
+                  {/* Nested routes — accessible but not top-level nav tabs */}
+                  <Route path="intake" element={<IntakePage />} />
+                  <Route path="account" element={<AccountPage />} />
+                </Route>
+              </Routes>
 
-            {/* Floating components (visible on all pages) */}
-            <ChatWidget />
-            <PatientMessagePanel />
-          </MessagePanelProvider>
+              {/* Floating components (visible on all pages) */}
+              <ChatWidget />
+              <HomeFloatingActions />
+              <ConsultationModal />
+              <PatientMessagePanel />
+            </MessagePanelProvider>
+          </ConsultationProvider>
         </PatientEntryProvider>
       </PatientAuthProvider>
     </LanguageProvider>

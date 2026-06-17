@@ -6,6 +6,23 @@ import HomeFloatingActions from '@/components/HomeFloatingActions';
 import { ConsultationProvider } from '@/contexts/ConsultationContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 
+const patientAuthState = vi.hoisted(() => ({
+  isAuthenticated: false,
+}));
+
+const uploadStatusState = vi.hoisted(() => ({
+  hasCompletedFiveViewUpload: false,
+  isLoading: false,
+}));
+
+vi.mock('@/contexts/PatientAuthContext', () => ({
+  usePatientAuth: () => patientAuthState,
+}));
+
+vi.mock('@/hooks/useBeautyConsultationUploadStatus', () => ({
+  useBeautyConsultationUploadStatus: () => uploadStatusState,
+}));
+
 function renderActions(path = '/') {
   return render(
     <MemoryRouter initialEntries={[path]}>
@@ -22,6 +39,9 @@ describe('HomeFloatingActions', () => {
   beforeEach(() => {
     document.body.style.overflow = '';
     window.localStorage.clear();
+    patientAuthState.isAuthenticated = false;
+    uploadStatusState.hasCompletedFiveViewUpload = false;
+    uploadStatusState.isLoading = false;
   });
 
   it('renders a large start consultation action on the homepage', () => {
@@ -57,7 +77,34 @@ describe('HomeFloatingActions', () => {
     expect(screen.getByRole('button', { name: /start consultation/i })).toBeInTheDocument();
   });
 
-  it('does not render away from conversion entry pages', () => {
+  it('renders wherever the floating chat entry is available', () => {
+    renderActions('/gallery');
+
+    expect(screen.getByRole('button', { name: /start consultation/i })).toBeInTheDocument();
+  });
+
+  it('does not render on login or unauthenticated dashboard pages', () => {
+    const loginView = renderActions('/login');
+
+    expect(screen.queryByRole('button', { name: /start consultation/i })).toBeNull();
+
+    loginView.unmount();
+    renderActions('/dashboard');
+
+    expect(screen.queryByRole('button', { name: /start consultation/i })).toBeNull();
+  });
+
+  it('renders on authenticated dashboard pages where chat is available', () => {
+    patientAuthState.isAuthenticated = true;
+
+    renderActions('/dashboard/messages');
+
+    expect(screen.getByRole('button', { name: /start consultation/i })).toBeInTheDocument();
+  });
+
+  it('hides after the patient has completed the 5-view upload', () => {
+    uploadStatusState.hasCompletedFiveViewUpload = true;
+
     renderActions('/gallery');
 
     expect(screen.queryByRole('button', { name: /start consultation/i })).toBeNull();

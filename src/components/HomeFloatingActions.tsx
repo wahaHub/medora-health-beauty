@@ -1,17 +1,23 @@
 import { CalendarDays } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useConsultation } from '@/contexts/ConsultationContext';
+import { usePatientAuth } from '@/contexts/PatientAuthContext';
+import { useBeautyConsultationUploadStatus } from '@/hooks/useBeautyConsultationUploadStatus';
 import { useTranslation } from '@/hooks/useTranslation';
-
-const shouldShowStartConsultation = (pathname: string) =>
-  pathname === '/' || pathname === '/procedure/videos';
+import { shouldShowFloatingPatientEntry } from '@/utils/floatingPatientEntryVisibility';
 
 export default function HomeFloatingActions() {
   const location = useLocation();
   const { openConsultation } = useConsultation();
+  const { isAuthenticated } = usePatientAuth();
+  const { hasCompletedFiveViewUpload, isLoading } = useBeautyConsultationUploadStatus();
   const { t } = useTranslation();
 
-  if (!shouldShowStartConsultation(location.pathname)) {
+  if (
+    !shouldShowFloatingPatientEntry(location.pathname, isAuthenticated) ||
+    isLoading ||
+    hasCompletedFiveViewUpload
+  ) {
     return null;
   }
 

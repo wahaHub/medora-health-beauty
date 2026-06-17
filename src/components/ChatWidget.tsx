@@ -4,16 +4,10 @@ import { MessageCircleMore } from 'lucide-react';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { usePatientEntry } from '@/hooks/usePatientEntry';
 import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
+import { shouldShowFloatingPatientEntry } from '@/utils/floatingPatientEntryVisibility';
 import { ChatWindow, type ChatWindowDisplayMode } from './chat/ChatWindow';
 
-const HIDDEN_PATTERNS = ['/login'];
 const MOBILE_MEDIA_QUERY = '(max-width: 767px)';
-
-function shouldHideWidget(pathname: string) {
-  return HIDDEN_PATTERNS.some((pattern) =>
-    pathname === pattern || pathname.startsWith(`${pattern}/`),
-  );
-}
 
 function readIsMobileViewport() {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
@@ -30,7 +24,6 @@ export default function ChatWidget() {
   const { isWidgetOpen, openWidget, closeWidget } = usePatientEntry();
   const [isMobileViewport, setIsMobileViewport] = useState(() => readIsMobileViewport());
   const [desktopDisplayMode, setDesktopDisplayMode] = useState<Exclude<ChatWindowDisplayMode, 'mobile-panel'>>('panel');
-  const isDashboardPath = location.pathname === '/dashboard' || location.pathname.startsWith('/dashboard/');
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
@@ -59,7 +52,7 @@ export default function ChatWidget() {
     }
   }, [isMobileViewport]);
 
-  if (shouldHideWidget(location.pathname) || (isDashboardPath && !isAuthenticated)) {
+  if (!shouldShowFloatingPatientEntry(location.pathname, isAuthenticated)) {
     return null;
   }
 
