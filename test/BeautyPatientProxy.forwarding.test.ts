@@ -8,6 +8,7 @@ type MockRequest = {
   headers: Record<string, string>;
   body?: unknown;
   url: string;
+  [Symbol.asyncIterator]?: () => AsyncGenerator<Buffer>;
 };
 
 function createResponseRecorder() {
@@ -310,6 +311,61 @@ describe('Beauty patient proxy', () => {
     );
   });
 
+  it('forwards raw multipart bodies for the patient upload proxy route', async () => {
+    const multipartBody = Buffer.from('--boundary\r\nfile-body\r\n--boundary--');
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 204,
+      text: vi.fn().mockResolvedValue(''),
+      headers: {
+        get: () => null,
+      },
+    });
+
+    global.fetch = fetchMock as typeof fetch;
+    const originalCrmApiBaseUrl = process.env.CRM_API_BASE_URL;
+    process.env.CRM_API_BASE_URL = 'http://localhost:3001';
+
+    const req: MockRequest = {
+      method: 'POST',
+      query: { path: [] },
+      headers: {
+        cookie: 'patient_session=browser-cookie',
+        'content-type': 'multipart/form-data; boundary=boundary',
+        'transfer-encoding': 'chunked',
+      },
+      url: '/api/patient/uploads/proxy',
+      async *[Symbol.asyncIterator]() {
+        yield multipartBody;
+      },
+    };
+    const res = createResponseRecorder();
+
+    try {
+      await handler(req as never, res as never);
+    } finally {
+      if (typeof originalCrmApiBaseUrl === 'string') {
+        process.env.CRM_API_BASE_URL = originalCrmApiBaseUrl;
+      } else {
+        delete process.env.CRM_API_BASE_URL;
+      }
+    }
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://localhost:3001/api/patient/uploads/proxy',
+      expect.objectContaining({
+        method: 'POST',
+        body: multipartBody,
+        headers: expect.objectContaining({
+          'content-type': 'multipart/form-data; boundary=boundary',
+          'x-medora-site': 'beauty',
+        }),
+      }),
+    );
+    expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty('transfer-encoding');
+    expect(res.statusCode).toBe(204);
+  });
+
   it.each([
     '../api/patient/session/restore.js',
     '../api/patient/cases/[caseId].js',
@@ -332,5 +388,15 @@ describe('Beauty patient proxy', () => {
     const mod = await import(modulePath);
 
     expect(mod.default).toBe(handler);
+  });
+
+  it('disables Vercel body parsing on the multipart upload proxy route', async () => {
+    const mod = await import('../api/patient/uploads/proxy.js');
+
+    expect(mod.config).toEqual({
+      api: {
+        bodyParser: false,
+      },
+    });
   });
 });

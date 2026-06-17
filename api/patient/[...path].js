@@ -60,11 +60,30 @@ function toForwardHeaders(headers = {}) {
   delete forwarded.host;
   delete forwarded.connection;
   delete forwarded['content-length'];
+  delete forwarded['transfer-encoding'];
+  delete forwarded['keep-alive'];
+  delete forwarded['proxy-connection'];
+  delete forwarded.te;
+  delete forwarded.trailer;
+  delete forwarded.upgrade;
 
   return forwarded;
 }
 
-function getRequestBody(req) {
+async function readRawRequestBody(req) {
+  if (typeof req?.[Symbol.asyncIterator] !== 'function') {
+    return undefined;
+  }
+
+  const chunks = [];
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  return chunks.length > 0 ? Buffer.concat(chunks) : undefined;
+}
+
+async function getRequestBody(req) {
   if (req.method === 'GET' || req.method === 'HEAD') {
     return undefined;
   }
@@ -74,7 +93,7 @@ function getRequestBody(req) {
   }
 
   if (typeof req.body === 'undefined' || req.body === null) {
-    return undefined;
+    return readRawRequestBody(req);
   }
 
   return JSON.stringify(req.body);
@@ -97,10 +116,11 @@ function forwardSetCookies(res, upstreamRes) {
 
 export default async function handler(req, res) {
   try {
+    const requestBody = await getRequestBody(req);
     const upstreamRes = await fetch(getUpstreamUrl(req), {
       method: req.method,
       headers: toForwardHeaders(req.headers),
-      body: getRequestBody(req),
+      body: requestBody,
     });
 
     const contentType = upstreamRes.headers.get('content-type');
