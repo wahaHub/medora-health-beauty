@@ -327,6 +327,7 @@ describe('Beauty patient proxy', () => {
     '../api/patient/sessions/[sessionId]/process-confirmation.js',
     '../api/patient/sessions/[sessionId]/chat/events.js',
     '../api/patient/sessions/[sessionId]/attachments/upload.js',
+    '../api/patient/uploads/proxy.js',
   ])('exports the shared proxy handler for nested Vercel route %s', async (modulePath) => {
     const mod = await import(modulePath);
 

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Paperclip, Send, X } from 'lucide-react';
-import { crmApi } from '@/services/crmApiClient';
+import { crmApi, uploadFileToSignedUrl } from '@/services/crmApiClient';
 import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 
 interface MessageInputProps {
@@ -31,17 +31,7 @@ async function uploadAttachment(
     mimeType: file.type || 'application/octet-stream',
   });
 
-  const uploadResponse = await fetch(init.upload.uploadUrl, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': file.type || 'application/octet-stream',
-    },
-    body: file,
-  });
-
-  if (!uploadResponse.ok) {
-    throw new Error(`Attachment upload failed for ${file.name}`);
-  }
+  await uploadFileToSignedUrl(init.upload.uploadUrl, file, file.type || 'application/octet-stream');
 
   return init.asset;
 }

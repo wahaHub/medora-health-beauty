@@ -91,6 +91,68 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
   return body as T;
 }
 
+async function readUploadFailure(response: Response): Promise<string> {
+  const rawBody = await response.text().catch(() => '');
+  if (!rawBody) {
+    return `Upload failed: ${response.status}`;
+  }
+
+  try {
+    const body = JSON.parse(rawBody);
+    return body.error ?? body.message ?? rawBody;
+  } catch {
+    return rawBody;
+  }
+}
+
+async function uploadThroughPatientProxy(
+  uploadUrl: string,
+  file: File,
+  contentType: string,
+): Promise<Response> {
+  const formData = new FormData();
+  formData.append('uploadUrl', uploadUrl);
+  formData.append('file', file, file.name);
+
+  return fetch(buildRequestUrl('/uploads/proxy'), {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'x-medora-site': 'beauty',
+      'x-upload-content-type': contentType,
+    },
+    body: formData,
+  });
+}
+
+export async function uploadFileToSignedUrl(
+  uploadUrl: string,
+  file: File,
+  contentType = file.type || 'application/octet-stream',
+): Promise<void> {
+  let response: Response;
+
+  try {
+    response = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': contentType,
+      },
+      body: file,
+    });
+  } catch (error) {
+    if (!(error instanceof TypeError)) {
+      throw error;
+    }
+
+    response = await uploadThroughPatientProxy(uploadUrl, file, contentType);
+  }
+
+  if (!response.ok) {
+    throw new ApiError(await readUploadFailure(response), response.status || 502);
+  }
+}
+
 export type PatientSessionProfile = {
   id?: string;
   patientId?: string;

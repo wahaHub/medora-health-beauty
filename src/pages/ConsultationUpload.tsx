@@ -13,6 +13,7 @@ import {
   crmApi,
   getPreferredPatientConversationId,
   isAdminPatientConversation,
+  uploadFileToSignedUrl,
   type Conversation,
 } from '@/services/crmApiClient';
 import doctorLi from '@/assets/consultation-upload/doctor-li.jpg';
@@ -206,17 +207,7 @@ async function uploadBeautyAttachment(conversationId: string, file: File) {
     mimeType: file.type || 'image/jpeg',
   });
 
-  const uploadResponse = await fetch(init.upload.uploadUrl, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': file.type || 'image/jpeg',
-    },
-    body: file,
-  });
-
-  if (!uploadResponse.ok) {
-    throw new Error(`Beauty photo upload failed for ${file.name}`);
-  }
+  await uploadFileToSignedUrl(init.upload.uploadUrl, file, file.type || 'image/jpeg');
 
   return init.asset;
 }

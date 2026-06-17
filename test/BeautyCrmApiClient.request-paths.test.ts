@@ -49,4 +49,30 @@ describe('Beauty CRM client request paths', () => {
       }),
     );
   });
+
+  it('falls back to the patient upload proxy when signed-url upload is blocked by the browser', async () => {
+    vi.resetModules();
+    const file = new File(['photo'], 'front.jpg', { type: 'image/jpeg' });
+    const fetchMock = vi.fn()
+      .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: vi.fn().mockResolvedValue(''),
+      });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const mod = await import('@/services/crmApiClient');
+    await mod.uploadFileToSignedUrl('https://uploads.example/front.jpg', file, 'image/jpeg');
+
+    expect(fetchMock).toHaveBeenNthCalledWith(1, 'https://uploads.example/front.jpg', expect.objectContaining({
+      method: 'PUT',
+      body: file,
+    }));
+    expect(fetchMock).toHaveBeenNthCalledWith(2, '/api/patient/uploads/proxy', expect.objectContaining({
+      method: 'POST',
+      credentials: 'include',
+      body: expect.any(FormData),
+    }));
+  });
 });
