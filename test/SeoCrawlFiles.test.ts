@@ -56,6 +56,7 @@ describe('SEO crawl files', () => {
 
     const sitemap = readPublicFile('sitemap.xml');
     expect(sitemap).toContain('<loc>https://medorabeauty.com/</loc>');
+    expect(sitemap).toContain('<loc>https://medorabeauty.com/procedure/videos</loc>');
     expect(sitemap).toContain('<loc>https://medorabeauty.com/procedures/face</loc>');
     expect(sitemap).toContain('<loc>https://medorabeauty.com/procedure/Rhinoplasty</loc>');
     expect(sitemap).toContain('<loc>https://medorabeauty.com/procedure/Rhinoplasty/gallery</loc>');
@@ -65,5 +66,59 @@ describe('SEO crawl files', () => {
     expect(sitemap).not.toContain('/procedures/face/rhinoplasty');
     expect(sitemap).not.toContain('/procedures/face/rhinoplasty/video-cases');
     expect(sitemap).not.toContain('/procedures/face/rhinoplasty/before-after');
+  });
+
+  it('keeps obvious test provider data out of dynamic sitemap routes', async () => {
+    const { isIndexableCaseRoute, isIndexablePublicEntity } = await import('../scripts/generate-sitemap.mjs');
+
+    expect(
+      isIndexablePublicEntity({
+        pathSegment: 'bangkok-aesthetic-center',
+        displayName: 'Bangkok Aesthetic Center',
+      })
+    ).toBe(true);
+    expect(
+      isIndexablePublicEntity({
+        pathSegment: 'doc-test-hospital',
+        displayName: 'Doc Test Hospital',
+      })
+    ).toBe(false);
+    expect(
+      isIndexablePublicEntity({
+        pathSegment: 'testing001-mm7ap1rq',
+        displayName: 'Testing 001',
+      })
+    ).toBe(false);
+    expect(
+      isIndexablePublicEntity({
+        pathSegment: '001-mm8kyv0m',
+        displayName: '001',
+      })
+    ).toBe(false);
+    expect(
+      isIndexablePublicEntity({
+        pathSegment: 'dr-min-zhang',
+        displayName: 'Dr. Min Zhang',
+      })
+    ).toBe(true);
+
+    expect(
+      isIndexableCaseRoute({
+        case_number: '384846',
+        procedures: { procedure_name: 'Tummy Tuck' },
+      })
+    ).toBe(true);
+    expect(
+      isIndexableCaseRoute({
+        case_number: 'case-test-1',
+        procedures: { procedure_name: 'Tummy Tuck' },
+      })
+    ).toBe(false);
+    expect(
+      isIndexableCaseRoute({
+        case_number: '384846',
+        procedures: { procedure_name: 'Experimental Test Procedure' },
+      })
+    ).toBe(false);
   });
 });
