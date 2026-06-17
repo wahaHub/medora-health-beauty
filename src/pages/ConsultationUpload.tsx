@@ -1,12 +1,20 @@
 import React, { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { usePatientAuth } from '@/contexts/PatientAuthContext';
+import { usePatientEntry } from '@/hooks/usePatientEntry';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
   getConsultationUploadCopy,
   type ConsultationBodyPart,
   type ConsultationChannel,
 } from '@/i18n/consultationUploadCopy';
+import {
+  crmApi,
+  getPreferredPatientConversationId,
+  isAdminPatientConversation,
+  type Conversation,
+} from '@/services/crmApiClient';
 import doctorLi from '@/assets/consultation-upload/doctor-li.jpg';
 import bodyIcon from '@/assets/consultation-upload/body-icons/body.png';
 import eyesIcon from '@/assets/consultation-upload/body-icons/eyes.png';
@@ -122,6 +130,8 @@ const createConsultationId = () =>
     .slice(2, 8)
     .toUpperCase()}`;
 
+const BEAUTY_UPLOAD_MARKER = '[Beauty Consultation Upload]';
+
 const cropAndCompressImage = (file: File, bodyPart: ConsultationBodyPart, crop: CropConfig) =>
   new Promise<{ data: string; type: string; cropped: boolean }>((resolve, reject) => {
     const image = new Image();
@@ -165,8 +175,56 @@ const cropAndCompressImage = (file: File, bodyPart: ConsultationBodyPart, crop: 
     image.src = objectUrl;
   });
 
+function dataUrlToFile(dataUrl: string, fileName: string, mimeType: string): File {
+  const [header, payload] = dataUrl.split(',');
+  const type = header.match(/data:(.*?);/)?.[1] || mimeType || 'image/jpeg';
+  const binary = window.atob(payload);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+
+  return new File([bytes], fileName, { type });
+}
+
+function selectBeautyUploadConversation(conversations: Conversation[], caseId: string): Conversation | null {
+  const caseConversations = conversations.filter((conversation) =>
+    !conversation.caseId || conversation.caseId === caseId,
+  );
+  return caseConversations.find(isAdminPatientConversation)
+    ?? caseConversations.find((conversation) => conversation.id.startsWith('widget-chat:'))
+    ?? caseConversations.find((conversation) => conversation.id === getPreferredPatientConversationId(caseConversations))
+    ?? null;
+}
+
+async function uploadBeautyAttachment(conversationId: string, file: File) {
+  const init = await crmApi.initConversationAttachmentUpload({
+    conversationId,
+    fileName: file.name,
+    fileSize: file.size,
+    mimeType: file.type || 'image/jpeg',
+  });
+
+  const uploadResponse = await fetch(init.upload.uploadUrl, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': file.type || 'image/jpeg',
+    },
+    body: file,
+  });
+
+  if (!uploadResponse.ok) {
+    throw new Error(`Beauty photo upload failed for ${file.name}`);
+  }
+
+  return init.asset;
+}
+
 export default function ConsultationUpload() {
   const { currentLanguage } = useLanguage();
+  const { patient } = usePatientAuth();
+  const { caseId: entryCaseId } = usePatientEntry();
   const copy = useMemo(() => getConsultationUploadCopy(currentLanguage), [currentLanguage]);
   const [step, setStep] = useState<Step>(1);
   const [channel, setChannel] = useState<ConsultationChannel>('free');
@@ -185,6 +243,8 @@ export default function ConsultationUpload() {
   const allPhotosReady = photos.every(Boolean);
   const amount = channelPrices[channel];
   const paymentNote = amount > 0 ? copy.paymentPaid(amount) : copy.paymentFree;
+  const crmCaseId = entryCaseId ?? patient?.caseId ?? '';
+  const hasUploadSession = Boolean(patient?.id && crmCaseId);
 
   const steps = useMemo(
     () => [
@@ -281,13 +341,73 @@ export default function ConsultationUpload() {
       setFormError(copy.incompletePhotosError);
       return;
     }
+    if (!patient?.id || !crmCaseId) {
+      setFormError(copy.sessionRequiredDescription);
+      return;
+    }
 
     setSubmitting(true);
     setFormError('');
-    await new Promise((resolve) => setTimeout(resolve, 350));
-    setCaseId(createConsultationId());
-    setSubmitting(false);
-    goToStep(5);
+    try {
+      const conversations = await crmApi.getConversations();
+      const targetConversation = selectBeautyUploadConversation(conversations, crmCaseId);
+
+      if (!targetConversation) {
+        throw new Error('CRM conversation is not ready yet. Please refresh and try again in a moment.');
+      }
+
+      const formData = new FormData(form);
+      const notes = String(formData.get('concerns') ?? '').trim();
+      const preferredHospitalOrDoctor = String(formData.get('preferredHospitalOrDoctor') ?? '').trim();
+      const ageRange = String(formData.get('ageRange') ?? '').trim();
+      const country = String(formData.get('country') ?? '').trim();
+      const contact = String(formData.get('contact') ?? '').trim();
+      const displayName = String(formData.get('name') ?? '').trim();
+      const uploadedPhotos = photos.filter((photo): photo is PhotoRecord => Boolean(photo));
+      const files = uploadedPhotos.map((photo, index) => {
+        const angleCopy = activeAngleCopy[index];
+        const safeAngle = angleCopy.title
+          .replace(/[^\w\s-]/g, '')
+          .trim()
+          .replace(/\s+/g, '-')
+          .toLowerCase();
+        return dataUrlToFile(
+          photo.data,
+          `beauty-${bodyPart}-${safeAngle || `view-${index + 1}`}.jpg`,
+          photo.type,
+        );
+      });
+      const attachments = await Promise.all(
+        files.map((file) => uploadBeautyAttachment(targetConversation.id, file)),
+      );
+      const photoLabels = uploadedPhotos.map((_, index) => activeAngleCopy[index].title);
+      const message = [
+        BEAUTY_UPLOAD_MARKER,
+        `Case ID: ${crmCaseId}`,
+        `Patient name: ${displayName}`,
+        `Contact: ${contact}`,
+        `Channel: ${copy.channels[channel].title}`,
+        `Area: ${selectedPartConfig.name}`,
+        `Age range: ${ageRange || 'Not provided'}`,
+        `Country / region: ${country || 'Not provided'}`,
+        `Preferred hospital / doctor: ${preferredHospitalOrDoctor || 'Not provided'}`,
+        `Five views: ${photoLabels.join(', ')}`,
+        notes ? `Goals / history: ${notes}` : 'Goals / history: Not provided',
+        `Submitted from: medorabeauty.com/consultation-upload`,
+      ].join('\n');
+
+      await crmApi.sendMessage(targetConversation.id, message, {
+        messageType: 'IMAGE',
+        attachments,
+      });
+
+      setCaseId(crmCaseId || createConsultationId());
+      goToStep(5);
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : 'Unable to submit to CRM. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -317,21 +437,37 @@ export default function ConsultationUpload() {
           </div>
         </section>
 
-        <section className="cu-portal" aria-live="polite">
-          <nav className="cu-steps" aria-label={copy.progressLabel}>
-            {steps.map(([itemStep, label], index) => (
-              <React.Fragment key={itemStep}>
-                <button
-                  type="button"
-                  className={`cu-step ${step === itemStep ? 'active' : ''} ${step > itemStep ? 'complete' : ''}`}
-                >
-                  <b>{itemStep}</b>
-                  <span>{label}</span>
-                </button>
-                {index < steps.length - 1 && <span className="cu-step-line" />}
-              </React.Fragment>
-            ))}
-          </nav>
+        {!hasUploadSession ? (
+          <section className="cu-portal" aria-live="polite">
+            <div className="cu-panel active">
+              <div className="cu-section-heading">
+                <span>{copy.stepNumbers[0]}</span>
+                <h2>{copy.sessionRequiredTitle}</h2>
+                <p>{copy.sessionRequiredDescription}</p>
+              </div>
+              <div className="cu-panel-actions">
+                <Link to="/procedure/videos" className="cu-primary-btn cu-link-btn">
+                  {copy.sessionRequiredCta}
+                </Link>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="cu-portal" aria-live="polite">
+            <nav className="cu-steps" aria-label={copy.progressLabel}>
+              {steps.map(([itemStep, label], index) => (
+                <React.Fragment key={itemStep}>
+                  <button
+                    type="button"
+                    className={`cu-step ${step === itemStep ? 'active' : ''} ${step > itemStep ? 'complete' : ''}`}
+                  >
+                    <b>{itemStep}</b>
+                    <span>{label}</span>
+                  </button>
+                  {index < steps.length - 1 && <span className="cu-step-line" />}
+                </React.Fragment>
+              ))}
+            </nav>
 
           <div className={`cu-panel ${step === 1 ? 'active' : ''}`}>
             <div className="cu-section-heading">
@@ -546,6 +682,7 @@ export default function ConsultationUpload() {
             </Link>
           </div>
         </section>
+        )}
       </main>
 
       {doctorModalOpen && (

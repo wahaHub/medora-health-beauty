@@ -80,15 +80,15 @@ export default function ChatWidget() {
   return (
     <>
       {!isWidgetOpen && (
-        <div className="fixed bottom-6 right-6 z-[9998]">
+        <div className="fixed bottom-5 right-4 z-[9998] sm:bottom-6 sm:right-6">
           <button
             type="button"
             onClick={openPanel}
             aria-label={dt('chatOpen')}
-            className="inline-flex h-14 items-center gap-2 rounded-full bg-teal-600 px-5 text-sm font-semibold text-white shadow-xl shadow-teal-950/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-teal-700"
+            className="inline-flex h-16 w-[calc(100vw-2rem)] items-center justify-center gap-3 rounded-full bg-gradient-to-r from-teal-600 to-teal-500 px-8 text-base font-bold text-white shadow-2xl shadow-teal-950/25 transition-all duration-300 hover:-translate-y-0.5 hover:from-teal-500 hover:to-teal-600 sm:w-72"
           >
-            <MessageCircleMore className="h-5 w-5" />
-            {dt('chatWidgetLabel')}
+            <MessageCircleMore className="h-6 w-6" />
+            Chat with Us
           </button>
         </div>
       )}

@@ -159,6 +159,6 @@ describe('Header patient auth CTA', () => {
 
     fireEvent.click(screen.getByRole('link', { name: 'Nose' }));
 
-    expect(navigateMock).toHaveBeenCalledWith('/procedure/videos?area=face&project=nose-surgery');
+    expect(navigateMock).toHaveBeenCalledWith('/procedure/videos?project=nose-surgery&area=face');
   });
 });

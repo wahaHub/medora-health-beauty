@@ -223,7 +223,15 @@ describe('ChatWidget CRM-backed entry shell', () => {
     expect(screen.queryByText('Messages will appear here')).toBeNull();
   });
 
-  it('localizes the floating chat button for non-Chinese languages', () => {
+  it('renders the enlarged floating chat label', () => {
+    patientAuthState.isAuthenticated = true;
+
+    renderWidget('/dashboard');
+
+    expect(screen.getByRole('button', { name: /open chat/i })).toHaveTextContent('Chat with Us');
+  });
+
+  it('keeps the localized chat aria label while showing the updated button copy', () => {
     window.localStorage.setItem('medora-language', 'ru');
     patientAuthState.isAuthenticated = true;
 
@@ -237,7 +245,7 @@ describe('ChatWidget CRM-backed entry shell', () => {
       </QueryClientProvider>,
     );
 
-    expect(screen.getByRole('button', { name: 'Открыть чат' })).toHaveTextContent('Чат');
+    expect(screen.getByRole('button', { name: 'Открыть чат' })).toHaveTextContent('Chat with Us');
   });
 
   it('opens as a larger panel, can maximize to modal, then minimize back to panel', () => {

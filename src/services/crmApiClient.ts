@@ -602,7 +602,9 @@ export const crmApi = {
         fileSize: number;
         storageKey: string;
       };
-    }>(`/conversations/${data.conversationId}/attachments/upload`, {
+    }>(isWidgetChatSessionId(data.conversationId)
+      ? `/sessions/${encodePathSegment(data.conversationId)}/attachments/upload?mode=mechanical`
+      : `/conversations/${encodePathSegment(data.conversationId)}/attachments/upload`, {
       method: 'POST',
       body: JSON.stringify({
         fileName: data.fileName,

@@ -82,7 +82,7 @@ describe('Header SEO links', () => {
     expect(noseLinks.length).toBeGreaterThan(0);
     expect(noseLinks[0]).toHaveAttribute(
       'href',
-      '/procedure/videos?area=face&project=nose-surgery',
+      '/procedure/videos?project=nose-surgery&area=face',
     );
     expect(noseLinks.every((link) => link.getAttribute('href') !== '#')).toBe(true);
   });
@@ -111,7 +111,7 @@ describe('Header SEO links', () => {
     expect(
       screen
         .getAllByRole('link', { name: 'Nose' })
-        .some((link) => link.getAttribute('href') === '/procedure/videos?area=face&project=nose-surgery'),
+        .some((link) => link.getAttribute('href') === '/procedure/videos?project=nose-surgery&area=face'),
     ).toBe(true);
   });
 });

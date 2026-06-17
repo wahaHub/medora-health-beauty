@@ -59,20 +59,52 @@ vi.mock('@/utils/imageUtils', () => ({
   getHomepageImage: (key: string) => `/fallback-${key}.jpg`,
 }));
 
-describe('Categories hair section', () => {
-  it('renders Hair and Dental after Non-Surgical with R2 homepage videos', () => {
+describe('Homepage categories', () => {
+  it('renders homepage sections from the latest public discovery taxonomy', () => {
     const { container } = render(<Categories />);
 
     const categoryIds = Array.from(container.querySelectorAll('div[id]')).map((node) => node.id);
     expect(categoryIds).toEqual(['face', 'body', 'nonsurgical', 'hair', 'dental']);
+    expect(screen.getByRole('heading', { name: 'Face' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Body' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Skin & Injectables' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Hair' })).toBeInTheDocument();
-    expect(screen.getByText('"Personalized Hair Restorations"')).toBeInTheDocument();
-    expect(screen.getByText('Hair Transplant')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Explore Hair' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Dental' })).toBeInTheDocument();
-    expect(screen.getByText('"A brighter smile"')).toBeInTheDocument();
-    expect(screen.getByText('Teeth Whitening')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Explore Dental' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Dental / Smile' })).toBeInTheDocument();
+
+    expect(screen.getByRole('link', { name: /Eyes/i })).toHaveAttribute(
+      'href',
+      '/procedure/videos?project=eye-surgery&area=face',
+    );
+    expect(screen.getByRole('link', { name: /Nose/i })).toHaveAttribute(
+      'href',
+      '/procedure/videos?project=nose-surgery&area=face',
+    );
+    expect(screen.queryByRole('link', { name: /Facelift/i })).toBeNull();
+    expect(screen.queryByRole('link', { name: /Rhinoplasty/i })).toBeNull();
+
+    expect(screen.getByRole('link', { name: /Body Contouring/i })).toHaveAttribute(
+      'href',
+      '/procedure/videos?project=body-contouring&area=body',
+    );
+    expect(screen.getByRole('link', { name: /Breast Surgery/i })).toHaveAttribute(
+      'href',
+      '/procedure/videos?project=breast&area=body',
+    );
+    expect(screen.getByRole('link', { name: /Botox & Fillers/i })).toHaveAttribute(
+      'href',
+      '/procedure/videos?project=injectables&area=nonsurgical',
+    );
+    expect(screen.getByRole('link', { name: /Hair Transplant/i })).toHaveAttribute(
+      'href',
+      '/procedure/videos?project=hair-transplant&area=hair',
+    );
+    expect(screen.getByRole('link', { name: /Veneers/i })).toHaveAttribute(
+      'href',
+      '/procedure/videos?project=porcelain-veneers&area=dental',
+    );
+
+    expect(screen.getByRole('link', { name: 'Explore Face' })).toHaveAttribute('href', '/procedure/videos?area=face');
+    expect(screen.getByRole('link', { name: 'Explore Dental' })).toHaveAttribute('href', '/procedure/videos?area=dental');
     expect(container.querySelector('source[src="https://videos.medorabeauty.com/homepage/hair.mp4"]')).toBeInTheDocument();
     expect(container.querySelector('source[src="https://videos.medorabeauty.com/homepage/dental.mp4"]')).toBeInTheDocument();
   });

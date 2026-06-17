@@ -6,6 +6,17 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 import ProcedureVideoGallery from '@/pages/ProcedureVideoGallery';
 
+const { patientAuthState } = vi.hoisted(() => ({
+  patientAuthState: {
+    patient: {
+      id: 'patient-1',
+      caseId: 'case-1',
+    } as { id: string; caseId: string } | null,
+    isAuthenticated: true,
+    isLoading: false,
+  },
+}));
+
 vi.mock('@/hooks/useTranslation', () => ({
   useTranslation: () => ({
     t: (key: string) => {
@@ -29,6 +40,38 @@ vi.mock('@/hooks/useTranslation', () => ({
 vi.mock('@/contexts/LanguageContext', () => ({
   useLanguage: () => ({
     currentLanguage: 'en',
+  }),
+  useOptionalLanguage: () => ({
+    currentLanguage: 'en',
+  }),
+}));
+
+vi.mock('@/contexts/PatientAuthContext', () => ({
+  usePatientAuth: () => patientAuthState,
+}));
+
+vi.mock('@/hooks/usePatientEntry', () => ({
+  usePatientEntry: () => ({
+    phase: 'collect-profile',
+    preBootstrapMessages: [],
+    profileDraft: {
+      name: '',
+      email: '',
+      phone: '',
+      disease: '',
+      category: '',
+      procedureId: '',
+      destination: '',
+    },
+    patchProfileDraft: vi.fn(),
+    applyOnboardingResult: vi.fn(),
+    bootstrapError: null,
+    clearBootstrapError: vi.fn(),
+    openPanel: vi.fn(),
+    createEntry: vi.fn(),
+    caseId: null,
+    isCreating: false,
+    error: null,
   }),
 }));
 
@@ -74,6 +117,12 @@ const renderGalleryAt = (initialEntry: string) =>
 
 describe('ProcedureVideoGallery SEO route stability', () => {
   beforeEach(() => {
+    patientAuthState.patient = {
+      id: 'patient-1',
+      caseId: 'case-1',
+    };
+    patientAuthState.isAuthenticated = true;
+    patientAuthState.isLoading = false;
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -123,6 +172,35 @@ describe('ProcedureVideoGallery SEO route stability', () => {
     expect(screen.getByText('Consultation Upload Page')).toBeInTheDocument();
   });
 
+  it('opens the onboarding modal before routing when the visitor has no patient case', async () => {
+    patientAuthState.patient = null;
+    patientAuthState.isAuthenticated = false;
+    patientAuthState.isLoading = false;
+    const user = userEvent.setup();
+    renderGalleryAt('/procedure/videos?procedure=Hair%20Restoration&area=hair');
+
+    await user.click(await screen.findByRole('button', { name: 'Start Consultation' }));
+
+    expect(screen.getByTestId('location')).toHaveTextContent('/procedure/videos?procedure=Hair%20Restoration&area=hair');
+    expect(screen.getByRole('dialog', { name: /chat/i })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /name/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Submit details' })).toBeDisabled();
+  });
+
+  it('does not open onboarding while patient auth is still loading', async () => {
+    patientAuthState.patient = null;
+    patientAuthState.isAuthenticated = false;
+    patientAuthState.isLoading = true;
+    const user = userEvent.setup();
+    renderGalleryAt('/procedure/videos?procedure=Hair%20Restoration&area=hair');
+
+    const consultationButton = await screen.findByRole('button', { name: 'Start Consultation' });
+    await user.click(consultationButton);
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent('/procedure/videos?procedure=Hair%20Restoration&area=hair');
+  });
+
   it('does not add the consultation CTA to the legacy procedure-name video route', async () => {
     renderGalleryAt('/procedure/Hair%20Restoration/videos');
 
@@ -144,7 +222,7 @@ describe('ProcedureVideoGallery SEO route stability', () => {
       }),
     } as unknown as Response);
     const user = userEvent.setup();
-    renderGalleryAt('/procedure/videos?area=face&project=eye-surgery');
+    renderGalleryAt('/procedure/videos?project=eye-surgery&area=face');
 
     expect(await screen.findByText('Treatment Focus')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Eye Bags' })).toBeInTheDocument();
@@ -155,7 +233,7 @@ describe('ProcedureVideoGallery SEO route stability', () => {
     await user.click(screen.getByRole('button', { name: 'Eye Bags' }));
 
     expect(screen.getByTestId('location')).toHaveTextContent(
-      '/procedure/videos?area=face&project=eye-surgery&subtype=eye-bags',
+      '/procedure/videos?project=eye-surgery&area=face&subtype=eye-bags',
     );
     await waitFor(() => {
       expect(document.body.textContent).toMatch(/Showing\s+1-1\s+of\s+1\s+Eyes\s+videos/i);

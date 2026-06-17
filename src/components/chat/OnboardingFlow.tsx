@@ -115,6 +115,8 @@ function PreBootstrapInput() {
 
 interface OnboardingFlowProps {
   onClose?: () => void;
+  onComplete?: (result: { patientId: string; caseId: string }) => void;
+  showPreBootstrapInput?: boolean;
 }
 
 function SubmittedDetailsCard() {
@@ -375,7 +377,7 @@ function MaterialCollectionPanel() {
   );
 }
 
-export function OnboardingFlow({ onClose }: OnboardingFlowProps = {}) {
+export function OnboardingFlow({ onClose, onComplete, showPreBootstrapInput = true }: OnboardingFlowProps = {}) {
   const { dt } = useDashboardTranslation();
   const {
     phase,
@@ -393,7 +395,7 @@ export function OnboardingFlow({ onClose }: OnboardingFlowProps = {}) {
   // Auto-scroll to bottom whenever messages or phase changes
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTop = phase === 'collect-profile' ? 0 : scrollRef.current.scrollHeight;
     }
   }, [preBootstrapMessages.length, phase]);
 
@@ -412,7 +414,7 @@ export function OnboardingFlow({ onClose }: OnboardingFlowProps = {}) {
         {/* Phase-specific embedded control */}
         {phase === 'collect-profile' && (
           <div className="px-2">
-            <ContactInfoStep />
+            <ContactInfoStep onComplete={onComplete} />
           </div>
         )}
 
@@ -468,7 +470,7 @@ export function OnboardingFlow({ onClose }: OnboardingFlowProps = {}) {
       </div>
 
       {/* Message input — hidden for returning patients who already have conversations */}
-      {phase !== 'messages-ready' && !isBackendOwnedHospitalSelection && <PreBootstrapInput />}
+      {showPreBootstrapInput && phase !== 'messages-ready' && !isBackendOwnedHospitalSelection && <PreBootstrapInput />}
     </div>
   );
 }

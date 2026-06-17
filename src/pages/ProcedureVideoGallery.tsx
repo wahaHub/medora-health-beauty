@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ChevronDown, MapPin, Play, Video, X } from 'lucide-react';
+import { OnboardingFlow } from '@/components/chat/OnboardingFlow';
+import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { getSupportedProcedureOptions } from '@/data/procedureTaxonomy';
 import {
   discoveryItemsWithVideos,
@@ -12,6 +14,7 @@ import {
   type ProcedureDiscoveryItem,
 } from '@/data/procedureDiscovery';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useDashboardTranslation } from '@/hooks/useDashboardTranslation';
 import { useTranslation } from '@/hooks/useTranslation';
 import procedureNames from '@/i18n/procedureNames.json';
 import {
@@ -123,6 +126,8 @@ export default function ProcedureVideoGallery() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { currentLanguage } = useLanguage();
+  const { patient, isAuthenticated, isLoading: isPatientAuthLoading } = usePatientAuth();
+  const { dt } = useDashboardTranslation();
   const { t } = useTranslation();
   const pathProcedureName = urlProcedureName ? decodeURIComponent(urlProcedureName) : '';
   const procedureFromQuery = searchParams.get('procedure') || '';
@@ -140,6 +145,7 @@ export default function ProcedureVideoGallery() {
   const [payload, setPayload] = useState<VideoCasePayload | null>(null);
   const [page, setPage] = useState(1);
   const [activeCase, setActiveCase] = useState<VideoCase | null>(null);
+  const [consultationModalOpen, setConsultationModalOpen] = useState(false);
   const procedureOptions = useMemo(() => getSupportedProcedureOptions(), []);
   const translateProcedureLabel = (label: string) =>
     translatedProcedureNames[label]?.[currentLanguage] || translatedProcedureNames[label]?.en || label;
@@ -223,6 +229,37 @@ export default function ProcedureVideoGallery() {
         ? translateAreaLabel(activeArea)
         : t('allProcedures');
   const showConsultationCta = location.pathname === '/procedure/videos';
+
+  useEffect(() => {
+    if (!consultationModalOpen || typeof document === 'undefined') {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [consultationModalOpen]);
+
+  const goToConsultationUpload = () => {
+    navigate('/consultation-upload');
+    window.scrollTo(0, 0);
+  };
+
+  const handleConsultationStart = () => {
+    if (isPatientAuthLoading) {
+      return;
+    }
+
+    if (!isPatientAuthLoading && isAuthenticated && patient?.caseId) {
+      goToConsultationUpload();
+      return;
+    }
+
+    setConsultationModalOpen(true);
+  };
 
   const updateAreaFilter = (area: string) => {
     const params = new URLSearchParams(searchParams);
@@ -319,16 +356,62 @@ export default function ProcedureVideoGallery() {
         {showConsultationCta && (
           <button
             type="button"
-            onClick={() => {
-              navigate('/consultation-upload');
-              window.scrollTo(0, 0);
-            }}
+            onClick={handleConsultationStart}
+            disabled={isPatientAuthLoading}
             className="mt-7 inline-flex h-12 items-center justify-center bg-[#173d31] px-7 text-sm font-bold uppercase tracking-[0.2em] text-white shadow-[0_16px_36px_rgba(23,61,49,0.18)] transition hover:bg-[#102a22] active:translate-y-px"
           >
             {t('consultationNow')}
           </button>
         )}
       </section>
+
+      {consultationModalOpen && (
+        <div
+          className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-950/45 px-4 py-6 backdrop-blur-sm"
+          role="presentation"
+          onMouseDown={() => setConsultationModalOpen(false)}
+        >
+          <div
+            className="flex h-[min(94dvh,54rem)] w-[min(44rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-[28px] border border-stone-200 bg-white shadow-[0_34px_120px_rgba(15,23,42,0.28)]"
+            role="dialog"
+            aria-modal="true"
+            aria-label={dt('chatWindowLabel')}
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <div className="flex shrink-0 items-center justify-between bg-gradient-to-r from-teal-700 to-sky-700 px-5 py-4">
+              <div>
+                <h3 className="font-serif text-xl tracking-wide text-white">Medora Beauty</h3>
+                <p className="mt-1 text-[11px] uppercase tracking-[0.22em] text-sage-200/80">
+                  {dt('chatHeaderSubtitle')}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setConsultationModalOpen(false)}
+                className="rounded-full p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
+                aria-label={dt('chatClose')}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="shrink-0 border-b border-stone-200 bg-white px-5 py-4">
+              <div className="rounded-3xl bg-stone-100 px-4 py-3 text-sm leading-6 text-stone-800">
+                Hello! I'm here to help you find the right hospital and procedure. Tell me a bit about yourself to get started.
+              </div>
+            </div>
+            <div className="min-h-0 flex-1 bg-white">
+              <OnboardingFlow
+                onClose={() => setConsultationModalOpen(false)}
+                showPreBootstrapInput={false}
+                onComplete={() => {
+                  setConsultationModalOpen(false);
+                  goToConsultationUpload();
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className="mx-auto grid max-w-[1480px] gap-6 px-4 pb-20 sm:px-6 lg:grid-cols-[300px_minmax(0,1fr)] lg:px-8">
         <aside className="lg:sticky lg:top-28 lg:self-start">

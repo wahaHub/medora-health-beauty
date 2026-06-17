@@ -37,10 +37,10 @@ describe('procedure discovery taxonomy', () => {
 
   it('builds video gallery URLs from project and area filters', () => {
     expect(getDiscoveryVideoUrl(discoveryItemsWithVideos[0])).toBe(
-      '/procedure/videos?area=face&project=eye-surgery',
+      '/procedure/videos?project=eye-surgery&area=face',
     );
     expect(getDiscoveryVideoUrl(discoveryItemsWithVideos.find((item) => item.label === 'Veneers')!)).toBe(
-      '/procedure/videos?area=dental&project=porcelain-veneers',
+      '/procedure/videos?project=porcelain-veneers&area=dental',
     );
   });
 
@@ -54,7 +54,7 @@ describe('procedure discovery taxonomy', () => {
       'Eye Rejuvenation',
     ]);
     expect(getDiscoveryVideoUrl(eyes!, eyes!.subtypes![1])).toBe(
-      '/procedure/videos?area=face&project=eye-surgery&subtype=eye-bags',
+      '/procedure/videos?project=eye-surgery&area=face&subtype=eye-bags',
     );
   });
 

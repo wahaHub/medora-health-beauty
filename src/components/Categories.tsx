@@ -1,5 +1,13 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { useOptionalLanguage } from '@/contexts/LanguageContext';
+import {
+  getDiscoveryLabel,
+  getDiscoveryVideoUrl,
+  procedureDiscoveryGroups,
+  type DiscoveryArea,
+  type ProcedureDiscoveryItem,
+} from '@/data/procedureDiscovery';
 import { useTranslation } from '@/hooks/useTranslation';
 import { getHomepageImage } from '@/utils/imageUtils';
 
@@ -15,16 +23,19 @@ interface CategoryProps {
   title: string;
   subtitle: string;
   description: string;
-  items: string[];
+  items: ProcedureDiscoveryItem[];
   image: string;
   theme: 'light' | 'dark' | 'warm';
   align: 'left' | 'right';
-  id: string;
+  id: DiscoveryArea;
   videoSrc?: string;
+  ctaLabel: string;
 }
 
-const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description, items, image, theme, align, id, videoSrc }) => {
+const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description, items, image, theme, align, id, videoSrc, ctaLabel }) => {
   const { t } = useTranslation();
+  const languageContext = useOptionalLanguage();
+  const currentLanguage = languageContext?.currentLanguage ?? 'en';
   const isDark = theme === 'dark';
   
   // Define colors
@@ -120,30 +131,29 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
           </p>
 
           <div className={`space-y-4 mb-12 ${align === 'right' ? 'flex flex-col items-start' : ''}`}>
-            {items.map((item, idx) => (
-              <a 
-                key={idx} 
-                href="#" 
+            {items.map((item) => (
+              <a
+                key={item.id}
+                href={getDiscoveryVideoUrl(item)}
                 className={`text-lg font-medium tracking-wide flex items-center gap-3 group/link transition-all ${linkColor}`}
               >
                 <span className={`w-1.5 h-1.5 rounded-full transition-transform group-hover/link:scale-150 ${isDark ? 'bg-gold-400' : 'bg-gold-600'}`}></span>
-                {item} 
+                {getDiscoveryLabel(item, currentLanguage)}
                 <ArrowRight size={16} className="opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all duration-300" />
               </a>
             ))}
           </div>
 
-          <button className={`uppercase tracking-[0.2em] text-xs font-bold py-4 px-10 border transition-all duration-300 w-max 
-            ${isDark 
-              ? 'border-white text-white hover:bg-white hover:text-navy-900' 
+          <a
+            href={`/procedure/videos?area=${id}`}
+            className={`uppercase tracking-[0.2em] text-xs font-bold py-4 px-10 border transition-all duration-300 w-max
+            ${isDark
+              ? 'border-white text-white hover:bg-white hover:text-navy-900'
               : 'border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white'
-            }`}>
-            {id === 'face' && t('exploreFace')}
-            {id === 'body' && t('exploreBody')}
-            {id === 'nonsurgical' && t('exploreNonsurgical')}
-            {id === 'hair' && t('exploreHair')}
-            {id === 'dental' && t('exploreDental')}
-          </button>
+            }`}
+          >
+            {ctaLabel}
+          </a>
         </div>
       </div>
     </div>
@@ -152,65 +162,85 @@ const CategorySection: React.FC<CategoryProps> = ({ title, subtitle, description
 
 const Categories: React.FC = () => {
   const { t } = useTranslation();
+  const languageContext = useOptionalLanguage();
+  const currentLanguage = languageContext?.currentLanguage ?? 'en';
   const faceImage = getHomepageImage('face');
   const bodyImage = getHomepageImage('body');
   const nonSurgicalImage = getHomepageImage('non-surgical');
+  const discoveryGroupsByArea = new Map(procedureDiscoveryGroups.map((group) => [group.id, group]));
+  const getDiscoveryGroup = (area: DiscoveryArea) => {
+    const group = discoveryGroupsByArea.get(area);
+    if (!group) {
+      throw new Error(`Missing homepage discovery group for ${area}`);
+    }
+    return group;
+  };
+  const faceGroup = getDiscoveryGroup('face');
+  const bodyGroup = getDiscoveryGroup('body');
+  const nonsurgicalGroup = getDiscoveryGroup('nonsurgical');
+  const hairGroup = getDiscoveryGroup('hair');
+  const dentalGroup = getDiscoveryGroup('dental');
 
   const categories: CategoryProps[] = [
     {
       id: "face",
-      title: t('categoryFace'),
+      title: getDiscoveryLabel(faceGroup, currentLanguage),
       subtitle: t('categoryFaceSubtitle'),
       description: t('categoryFaceDescription'),
-      items: [t('categoryFaceItem1'), t('categoryFaceItem2'), t('categoryFaceItem3'), t('categoryFaceItem4')],
+      items: faceGroup.items,
       image: faceImage,
       videoSrc: getHomepageVideo('face.mp4'),
       theme: 'warm', // Light Sage Gradient
-      align: 'left'
+      align: 'left',
+      ctaLabel: t('exploreFace'),
     },
     {
       id: "body",
-      title: t('categoryBody'),
+      title: getDiscoveryLabel(bodyGroup, currentLanguage),
       subtitle: t('categoryBodySubtitle'),
       description: t('categoryBodyDescription'),
-      items: [t('categoryBodyItem1'), t('categoryBodyItem2'), t('categoryBodyItem3'), t('categoryBodyItem4')],
+      items: bodyGroup.items,
       image: bodyImage,
       videoSrc: getHomepageVideo('body.mp4'),
       theme: 'warm', // Light Sage Gradient
-      align: 'right'
+      align: 'right',
+      ctaLabel: t('exploreBody'),
     },
     {
       id: "nonsurgical",
-      title: t('categoryNonsurgical'),
+      title: getDiscoveryLabel(nonsurgicalGroup, currentLanguage),
       subtitle: t('categoryNonsurgicalSubtitle'),
       description: t('categoryNonsurgicalDescription'),
-      items: [t('categoryNonsurgicalItem1'), t('categoryNonsurgicalItem2'), t('categoryNonsurgicalItem3'), t('categoryNonsurgicalItem4')],
+      items: nonsurgicalGroup.items,
       image: nonSurgicalImage,
       videoSrc: getHomepageVideo('non-surgical.mp4'),
       theme: 'warm', // Dark Forest Gradient
-      align: 'left'
+      align: 'left',
+      ctaLabel: t('exploreNonsurgical'),
     },
     {
       id: "hair",
-      title: t('categoryHair'),
+      title: getDiscoveryLabel(hairGroup, currentLanguage),
       subtitle: t('categoryHairSubtitle'),
       description: t('categoryHairDescription'),
-      items: [t('categoryHairItem1'), t('categoryHairItem2'), t('categoryHairItem3'), t('categoryHairItem4')],
+      items: hairGroup.items,
       image: nonSurgicalImage,
       videoSrc: getHomepageVideo('hair.mp4'),
       theme: 'warm',
-      align: 'left'
+      align: 'left',
+      ctaLabel: t('exploreHair'),
     },
     {
       id: "dental",
-      title: t('categoryDental'),
+      title: getDiscoveryLabel(dentalGroup, currentLanguage),
       subtitle: t('categoryDentalSubtitle'),
       description: t('categoryDentalDescription'),
-      items: [t('categoryDentalItem1'), t('categoryDentalItem2'), t('categoryDentalItem3'), t('categoryDentalItem4')],
+      items: dentalGroup.items,
       image: nonSurgicalImage,
       videoSrc: getHomepageVideo('dental.mp4'),
       theme: 'warm',
-      align: 'left'
+      align: 'left',
+      ctaLabel: t('exploreDental'),
     }
   ];
 

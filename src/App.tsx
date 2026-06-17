@@ -15,6 +15,7 @@ import GalleryCTA from '@/components/GalleryCTA';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import ChatWidget from '@/components/ChatWidget';
+import HomeFloatingActions from '@/components/HomeFloatingActions';
 import { PatientMessagePanel } from '@/components/messaging/PatientMessagePanel';
 import { MessagePanelProvider } from '@/contexts/MessagePanelContext';
 import { PatientAuthProvider } from '@/contexts/PatientAuthContext';
@@ -168,6 +169,7 @@ function MarketingLayout() {
           <Outlet />
         </main>
         <Footer />
+        <HomeFloatingActions />
         <ConsultationModal />
       </div>
     </ConsultationProvider>

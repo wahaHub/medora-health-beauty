@@ -77,6 +77,9 @@ export type ConsultationUploadCopy = {
   preferredDoctorPlaceholder: string;
   consent: string;
   incompletePhotosError: string;
+  sessionRequiredTitle: string;
+  sessionRequiredDescription: string;
+  sessionRequiredCta: string;
   orderChannelLabel: string;
   orderAmountLabel: string;
   submitIdle: string;
@@ -242,6 +245,9 @@ const en: ConsultationUploadCopy = {
   preferredDoctorPlaceholder: 'Enter hospital or doctor name',
   consent: 'I have read and agree that Medora Beauty may collect and process my submitted details and photos for this medical consultation.',
   incompletePhotosError: 'Please upload all 5 photos.',
+  sessionRequiredTitle: 'Start from a video case first',
+  sessionRequiredDescription: 'Please choose a procedure video or case first so we can create your secure CRM consultation record before collecting photos.',
+  sessionRequiredCta: 'Browse video cases',
   orderChannelLabel: 'Consultation',
   orderAmountLabel: 'Amount due',
   submitIdle: 'Securely submit details',
@@ -369,6 +375,9 @@ const zh: ConsultationUploadCopy = {
   preferredDoctorPlaceholder: '请输入医院或医生名称',
   consent: '我已阅读并同意 Medora Beauty 为本次医疗咨询收集和处理我提交的资料及照片。',
   incompletePhotosError: '请上传完整的 5 张照片。',
+  sessionRequiredTitle: '请先从案例视频开始',
+  sessionRequiredDescription: '请先选择一个项目视频或案例，我们会先为您创建安全的 CRM 咨询记录，再收集照片资料。',
+  sessionRequiredCta: '浏览案例视频',
   orderChannelLabel: '本次问诊',
   orderAmountLabel: '应付金额',
   submitIdle: '安全提交资料',
