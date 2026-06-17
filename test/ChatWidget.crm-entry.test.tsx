@@ -231,7 +231,7 @@ describe('ChatWidget CRM-backed entry shell', () => {
     expect(screen.getByRole('button', { name: /open chat/i })).toHaveTextContent('Chat with Us');
   });
 
-  it('keeps the localized chat aria label while showing the updated button copy', () => {
+  it('keeps the localized chat aria label while showing localized button copy', () => {
     window.localStorage.setItem('medora-language', 'ru');
     patientAuthState.isAuthenticated = true;
 
@@ -245,7 +245,8 @@ describe('ChatWidget CRM-backed entry shell', () => {
       </QueryClientProvider>,
     );
 
-    expect(screen.getByRole('button', { name: 'Открыть чат' })).toHaveTextContent('Chat with Us');
+    expect(screen.getByRole('button', { name: 'Открыть чат' })).toHaveTextContent('Написать нам');
+    expect(screen.queryByText('Chat with Us')).toBeNull();
   });
 
   it('opens as a larger panel, can maximize to modal, then minimize back to panel', () => {

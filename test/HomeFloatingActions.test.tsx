@@ -4,13 +4,16 @@ import { MemoryRouter } from 'react-router-dom';
 
 import HomeFloatingActions from '@/components/HomeFloatingActions';
 import { ConsultationProvider } from '@/contexts/ConsultationContext';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 
 function renderActions(path = '/') {
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <ConsultationProvider>
-        <HomeFloatingActions />
-      </ConsultationProvider>
+      <LanguageProvider>
+        <ConsultationProvider>
+          <HomeFloatingActions />
+        </ConsultationProvider>
+      </LanguageProvider>
     </MemoryRouter>,
   );
 }
@@ -18,6 +21,7 @@ function renderActions(path = '/') {
 describe('HomeFloatingActions', () => {
   beforeEach(() => {
     document.body.style.overflow = '';
+    window.localStorage.clear();
   });
 
   it('renders a large start consultation action on the homepage', () => {
@@ -36,6 +40,15 @@ describe('HomeFloatingActions', () => {
     fireEvent.click(screen.getByRole('button', { name: /start consultation/i }));
 
     expect(document.body.style.overflow).toBe('hidden');
+  });
+
+  it('uses the active language for the homepage action copy', () => {
+    window.localStorage.setItem('medora-language', 'zh');
+
+    renderActions('/');
+
+    expect(screen.getByRole('button', { name: '立即咨询' })).toBeInTheDocument();
+    expect(screen.queryByText('Start Consultation')).toBeNull();
   });
 
   it('does not render away from the homepage', () => {

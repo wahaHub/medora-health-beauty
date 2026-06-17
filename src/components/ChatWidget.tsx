@@ -88,7 +88,7 @@ export default function ChatWidget() {
             className="inline-flex h-16 w-[calc(100vw-2rem)] items-center justify-center gap-3 rounded-full bg-gradient-to-r from-teal-600 to-teal-500 px-8 text-base font-bold text-white shadow-2xl shadow-teal-950/25 transition-all duration-300 hover:-translate-y-0.5 hover:from-teal-500 hover:to-teal-600 sm:w-72"
           >
             <MessageCircleMore className="h-6 w-6" />
-            Chat with Us
+            {dt('chatWidgetCta')}
           </button>
         </div>
       )}

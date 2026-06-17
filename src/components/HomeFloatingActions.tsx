@@ -1,10 +1,12 @@
 import { CalendarDays } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useConsultation } from '@/contexts/ConsultationContext';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function HomeFloatingActions() {
   const location = useLocation();
   const { openConsultation } = useConsultation();
+  const { t } = useTranslation();
 
   if (location.pathname !== '/') {
     return null;
@@ -18,7 +20,7 @@ export default function HomeFloatingActions() {
         className="inline-flex h-16 w-[calc(100vw-2rem)] items-center justify-center gap-3 rounded-full bg-gradient-to-r from-gold-600 to-gold-500 px-8 text-base font-bold text-white shadow-2xl shadow-gold-950/25 transition-all duration-300 hover:-translate-y-0.5 hover:from-gold-500 hover:to-gold-600 sm:w-72"
       >
         <CalendarDays className="h-6 w-6" />
-        Start Consultation
+        {t('consultationNow')}
       </button>
     </div>
   );
