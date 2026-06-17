@@ -141,7 +141,7 @@ const addSupabaseUrls = async (urls) => {
   await runPublicQuery('surgeon routes', async (client) => {
     const { data, error } = await client
       .from('surgeons')
-      .select('surgeon_id, name, full_name')
+      .select('surgeon_id, name')
       .not('surgeon_id', 'is', null)
       .order('surgeon_id', { ascending: true });
 
@@ -149,7 +149,7 @@ const addSupabaseUrls = async (urls) => {
     (data || []).filter((surgeon) =>
       isIndexablePublicEntity({
         pathSegment: surgeon.surgeon_id,
-        displayName: surgeon.name || surgeon.full_name,
+        displayName: surgeon.name,
       })
     ).forEach((surgeon) => {
       addUrl(urls, `/surgeon/${encodePathSegment(surgeon.surgeon_id)}`);
