@@ -484,7 +484,7 @@ export const crmApi = {
   initOnboarding: (data: {
     email: string;
     name: string;
-    phone: string;
+    phone?: string;
     disease?: string;
     procedureId?: string;
     category?: string;
@@ -492,8 +492,7 @@ export const crmApi = {
     preferredLanguage?: string;
     captchaToken?: string;
     source?: string;
-    zipCode?: string;
-    preferredProvider?: string;
+    countryOfOrigin?: string;
     message?: string;
   }) =>
     request<{

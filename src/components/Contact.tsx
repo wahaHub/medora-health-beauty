@@ -1,39 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
-import procedureNames from '@/i18n/procedureNames.json';
-import { fetchSurgeonsData, type Surgeon } from '@/services/surgeons';
-import { crmApi } from '@/services/crmApiClient';
 import { usePatientAuth } from '@/contexts/PatientAuthContext';
 import { usePatientEntry } from '@/hooks/usePatientEntry';
-
-// Type for procedure names translation
-type ProcedureNameTranslations = {
-  [key: string]: {
-    en: string;
-    zh: string;
-    es: string;
-    fr: string;
-    de: string;
-    ru: string;
-    ar: string;
-    vi: string;
-    id: string;
-  };
-};
-
-const typedProcedureNames = procedureNames as ProcedureNameTranslations;
+import {
+  getPublicProcedureGroupLabel,
+  getPublicProcedureLabel,
+  publicProcedureGroups,
+} from '@/data/publicDiscoveryFilters';
+import { submitPublicConsultationForm } from '@/services/publicConsultationOnboarding';
 
 type ContactFormData = {
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
-  zipCode: string;
-  procedure: string;
-  provider: string;
+  countryOfOrigin: string;
+  procedureId: string;
   message: string;
 };
 
@@ -42,9 +27,8 @@ const emptyContactForm: ContactFormData = {
   lastName: '',
   email: '',
   phone: '',
-  zipCode: '',
-  procedure: '',
-  provider: '',
+  countryOfOrigin: '',
+  procedureId: '',
   message: '',
 };
 
@@ -53,8 +37,6 @@ const Contact: React.FC = () => {
   const { currentLanguage } = useLanguage();
   const { bootstrapSession } = usePatientAuth();
   const { applyOnboardingResult } = usePatientEntry();
-  const [surgeons, setSurgeons] = useState<Surgeon[]>([]);
-  const [loadingSurgeons, setLoadingSurgeons] = useState(true);
   const [formData, setFormData] = useState<ContactFormData>(emptyContactForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -62,79 +44,6 @@ const Contact: React.FC = () => {
 
   // Enable scroll reveal animations
   useScrollReveal(true);
-
-  // Fetch surgeons from API
-  useEffect(() => {
-    const fetchSurgeons = async () => {
-      try {
-        const data = await fetchSurgeonsData();
-        const allSurgeons = Object.values(data.surgeonsBySpecialty).flat() as Surgeon[];
-        const uniqueSurgeons = allSurgeons.filter((surgeon: Surgeon, index: number, self: Surgeon[]) =>
-          index === self.findIndex((s: Surgeon) => s.surgeon_id === surgeon.surgeon_id)
-        );
-
-        uniqueSurgeons.sort((a, b) => a.name.localeCompare(b.name));
-        setSurgeons(uniqueSurgeons);
-      } catch (error) {
-        console.error('Failed to fetch surgeons:', error);
-      } finally {
-        setLoadingSurgeons(false);
-      }
-    };
-
-    fetchSurgeons();
-  }, []);
-
-  // Get translated procedure name
-  const getTranslatedProcedure = (englishName: string): string => {
-    const translation = typedProcedureNames[englishName];
-    if (translation && translation[currentLanguage as keyof typeof translation]) {
-      return translation[currentLanguage as keyof typeof translation];
-    }
-    return englishName;
-  };
-
-  // Define procedure categories
-  const faceProcedures = [
-    'Brow Lift', 'Eyelid Surgery', 'Facelift', 'Midface Lift', 'Mini Facelift',
-    'Neck Lift', 'Deep Neck Contouring', 'Otoplasty', 'Rhinoplasty',
-    'Revision Rhinoplasty', 'Cheek Augmentation', 'Chin Augmentation',
-    'Jawline Contouring', 'Facial Implants', 'Buccal Fat Removal',
-    'Fat Transfer', 'Lip Augmentation', 'Lip Lift'
-  ];
-
-  const bodyProcedures = [
-    'Liposuction', 'Tummy Tuck', 'Mommy Makeover', 'Arm Lift', 'Thigh Lift',
-    'Brazilian Butt Lift', 'Buttock Lift', 'Labiaplasty'
-  ];
-
-  const breastProcedures = [
-    'Breast Augmentation', 'Breast Lift', 'Breast Reduction',
-    'Gynecomastia Surgery'
-  ];
-
-  const nonSurgicalProcedures = [
-    'BOTOX® Cosmetic', 'Dermal Fillers', 'Lip Filler',
-    'Chemical Peels', 'Laser Skin Resurfacing', 'Microneedling',
-    'Hair Restoration'
-  ];
-
-  // Build categorized procedures for select
-  const allProcedureCategories = [
-    { label: t('categoryFace'), procedures: faceProcedures },
-    { label: t('categoryBody'), procedures: bodyProcedures },
-    { label: t('categoryBreast') || 'Breast', procedures: breastProcedures },
-    { label: t('categoryNonSurgical'), procedures: nonSurgicalProcedures },
-  ];
-
-  const getProcedureCategory = (procedureName: string): string | undefined => {
-    if (!procedureName) return undefined;
-    if (faceProcedures.includes(procedureName)) return 'face';
-    if (bodyProcedures.includes(procedureName)) return 'body';
-    if (breastProcedures.includes(procedureName)) return 'breast';
-    if (nonSurgicalProcedures.includes(procedureName)) return 'non-surgical';
-    return undefined;
-  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
@@ -151,49 +60,12 @@ const Contact: React.FC = () => {
     setSubmitError(null);
 
     try {
-      const name = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
-      const result = await crmApi.initOnboarding({
-        name,
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        disease: formData.procedure,
-        category: getProcedureCategory(formData.procedure),
+      await submitPublicConsultationForm({
+        formData,
         preferredLanguage: currentLanguage || 'en',
         source: 'homepage_contact',
-        zipCode: formData.zipCode.trim(),
-        preferredProvider: formData.provider || undefined,
-        message: formData.message.trim() || undefined,
-      });
-
-      const widgetConversation = result.widgetChatTarget?.kind === 'CHATBOT_SESSION'
-        ? [{
-            id: result.widgetChatTarget.sessionId,
-            type: 'patient-admin' as const,
-            category: 'ADMIN_PATIENT',
-          }]
-        : [];
-      const conversations = result.conversations?.length
-        ? result.conversations
-        : widgetConversation;
-      const nextStep: 'select-hospitals' | 'messages-ready' =
-        widgetConversation.length > 0
-          ? 'messages-ready'
-          : ((result.nextStep as 'select-hospitals' | 'messages-ready') ?? 'messages-ready');
-
-      bootstrapSession({
-        patientId: result.patientId,
-        caseId: result.caseId,
-        name,
-        email: formData.email.trim(),
-        restoreToken: result.restoreToken ?? '',
-        nextStep,
-      });
-
-      applyOnboardingResult({
-        patientId: result.patientId,
-        caseId: result.caseId,
-        nextStep,
-        conversations,
+        bootstrapSession,
+        applyOnboardingResult,
       });
 
       setIsSubmitted(true);
@@ -248,40 +120,23 @@ const Contact: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input required type="text" name="zipCode" value={formData.zipCode} onChange={handleInputChange} placeholder={t('contactZipCode')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
+              <input required type="text" name="countryOfOrigin" value={formData.countryOfOrigin} onChange={handleInputChange} placeholder={t('contactCountryOfOrigin') || 'Country of Origin*'} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 transition-all placeholder-sage-300" />
 
-              {/* Procedure Interest Dropdown - with all procedures */}
               <div className="relative">
-                <select required name="procedure" value={formData.procedure} onChange={handleInputChange} aria-label={t('contactProcedureInterest')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 appearance-none rounded-none cursor-pointer">
+                <select required name="procedureId" value={formData.procedureId} onChange={handleInputChange} aria-label={t('contactProcedureInterest')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 appearance-none rounded-none cursor-pointer">
                   <option value="" disabled className="text-navy-900">{t('contactProcedureInterest')}</option>
-                  {allProcedureCategories.map((category) => (
-                    <optgroup key={category.label} label={category.label} className="text-navy-900 font-semibold">
-                      {category.procedures
-                        .filter(name => typedProcedureNames[name])
-                        .map((procedureName) => (
-                          <option key={procedureName} value={procedureName} className="text-navy-900">
-                            {getTranslatedProcedure(procedureName)}
-                          </option>
-                        ))}
+                  {publicProcedureGroups.map((group) => (
+                    <optgroup key={group.category} label={getPublicProcedureGroupLabel(group, currentLanguage)} className="text-navy-900 font-semibold">
+                      {group.procedures.map((procedure) => (
+                        <option key={procedure.id} value={procedure.id} className="text-navy-900">
+                          {getPublicProcedureLabel(procedure, currentLanguage)}
+                        </option>
+                      ))}
                     </optgroup>
                   ))}
                 </select>
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-sage-300 pointer-events-none" size={20} />
               </div>
-            </div>
-
-            {/* Preferred Provider Dropdown - with all surgeons */}
-            <div className="relative">
-              <select name="provider" value={formData.provider} onChange={handleInputChange} aria-label={t('contactPreferredProvider')} className="w-full bg-white/5 backdrop-blur-sm text-white border border-white/10 p-4 outline-none focus:ring-1 focus:ring-gold-500 focus:bg-white/10 appearance-none rounded-none cursor-pointer">
-                <option value="" disabled className="text-navy-900">{t('contactPreferredProvider')}</option>
-                <option value="any" className="text-navy-900">{t('contactFirstAvailable')}</option>
-                {!loadingSurgeons && surgeons.map((surgeon) => (
-                  <option key={surgeon.surgeon_id} value={surgeon.surgeon_id} className="text-navy-900">
-                    {surgeon.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-sage-300 pointer-events-none" size={20} />
             </div>
 
             <textarea

@@ -7,15 +7,16 @@ import {
 } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import procedureNamesData from '@/i18n/procedureNames.json';
+import { usePatientAuth } from '@/contexts/PatientAuthContext';
+import { usePatientEntry } from '@/hooks/usePatientEntry';
+import {
+  getPublicProcedureGroupLabel,
+  getPublicProcedureLabel,
+  publicProcedureGroups,
+} from '@/data/publicDiscoveryFilters';
+import { submitPublicConsultationForm } from '@/services/publicConsultationOnboarding';
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
-
-type ProcedureNameTranslations = {
-  [key: string]: { [lang: string]: string };
-};
-
-const typedProcedureNames = procedureNamesData as ProcedureNameTranslations;
 
 interface Option {
   value: string;
@@ -35,29 +36,6 @@ interface Answers {
   [key: string]: string | string[];
 }
 
-// ─── Procedure Data (English keys — labels translated at render) ─────────────
-
-const PROCEDURE_KEYS: Record<string, string[]> = {
-  face: [
-    'Rhinoplasty', 'Facelift', 'Eyelid Surgery', 'Brow Lift',
-    'Neck Lift', 'Chin Augmentation', 'Mini Facelift', 'Lip Lift',
-    'Otoplasty', 'Fat Transfer',
-  ],
-  body: [
-    'Liposuction', 'Tummy Tuck', 'Brazilian Butt Lift',
-    'Mommy Makeover', 'Arm Lift', 'Thigh Lift', 'Labiaplasty',
-  ],
-  breast: [
-    'Breast Augmentation', 'Breast Lift', 'Breast Reduction',
-    'Gynecomastia Surgery',
-  ],
-  'non-surgical': [
-    'BOTOX® Cosmetic', 'Dermal Fillers', 'Lip Filler',
-    'Chemical Peels', 'Laser Skin Resurfacing', 'Microneedling',
-    'Hair Restoration',
-  ],
-};
-
 // ─── Component ──────────────────────────────────────────────────────────────────
 
 const ConsultationSurvey: React.FC = () => {
@@ -66,6 +44,8 @@ const ConsultationSurvey: React.FC = () => {
   const hospitalSlug = searchParams.get('hospital');
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
+  const { bootstrapSession } = usePatientAuth();
+  const { applyOnboardingResult } = usePatientEntry();
 
   // State
   const [currentStep, setCurrentStep] = useState(0);
@@ -74,30 +54,21 @@ const ConsultationSurvey: React.FC = () => {
   const [animKey, setAnimKey] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Contact form
   const [contact, setContact] = useState({
     name: '', email: '', phone: '', country: '', message: ''
   });
 
-  // ─── Procedure name translation helper ──────────────────────────────────────
-
-  const tp = useCallback((englishName: string): string => {
-    const entry = typedProcedureNames[englishName];
-    if (entry && entry[currentLanguage]) {
-      return entry[currentLanguage];
-    }
-    return englishName;
-  }, [currentLanguage]);
-
   // ─── Dynamic Steps ──────────────────────────────────────────────────────────
 
   const steps: SurveyStep[] = useMemo(() => {
     const selectedArea = answers.area as string;
-    const procedureKeys = selectedArea ? (PROCEDURE_KEYS[selectedArea] || []) : [];
-    const procedureOptions: Option[] = procedureKeys.map(key => ({
-      value: key,
-      label: tp(key),
+    const selectedGroup = publicProcedureGroups.find((group) => group.category === selectedArea);
+    const procedureOptions: Option[] = (selectedGroup?.procedures ?? []).map((procedure) => ({
+      value: procedure.id,
+      label: getPublicProcedureLabel(procedure, currentLanguage),
     }));
 
     return [
@@ -106,12 +77,10 @@ const ConsultationSurvey: React.FC = () => {
         question: t('surveyAreaQuestion'),
         subtitle: t('surveyAreaSubtitle'),
         type: 'single',
-        options: [
-          { value: 'face', label: t('surveyAreaFace'), description: t('surveyAreaFaceDesc') },
-          { value: 'body', label: t('surveyAreaBody'), description: t('surveyAreaBodyDesc') },
-          { value: 'breast', label: t('surveyAreaBreast'), description: t('surveyAreaBreastDesc') },
-          { value: 'non-surgical', label: t('surveyAreaNonSurgical'), description: t('surveyAreaNonSurgicalDesc') },
-        ],
+        options: publicProcedureGroups.map((group) => ({
+          value: group.category,
+          label: getPublicProcedureGroupLabel(group, currentLanguage),
+        })),
       },
       {
         id: 'procedure',
@@ -176,7 +145,7 @@ const ConsultationSurvey: React.FC = () => {
         type: 'form',
       },
     ];
-  }, [answers.area, t, tp]);
+  }, [answers.area, currentLanguage, t]);
 
   const totalSteps = steps.length;
   const step = steps[currentStep];
@@ -205,7 +174,10 @@ const ConsultationSurvey: React.FC = () => {
   const canProceed = useMemo(() => {
     if (!step) return false;
     if (step.type === 'form') {
-      return contact.name.trim() !== '' && contact.email.trim() !== '' && contact.phone.trim() !== '';
+      return contact.name.trim() !== ''
+        && contact.email.trim() !== ''
+        && contact.phone.trim() !== ''
+        && contact.country.trim() !== '';
     }
     if (step.type === 'multi') {
       const val = answers[step.id] as string[] | undefined;
@@ -239,11 +211,61 @@ const ConsultationSurvey: React.FC = () => {
     goForward();
   }, [canProceed, step, goForward]);
 
+  const getAnswerLabel = useCallback((stepId: string, value: string | string[] | undefined): string => {
+    const sourceStep = steps.find((candidate) => candidate.id === stepId);
+    if (Array.isArray(value)) {
+      return value.map((item) => getAnswerLabel(stepId, item)).join(', ');
+    }
+
+    if (!value) return '';
+    return sourceStep?.options?.find((option) => option.value === value)?.label ?? value;
+  }, [steps]);
+
+  const buildSurveyMessage = useCallback(() => {
+    const summary = [
+      ['area', getAnswerLabel('area', answers.area)],
+      ['procedure', getAnswerLabel('procedure', answers.procedure)],
+      ['experience', getAnswerLabel('experience', answers.experience)],
+      ['timeline', getAnswerLabel('timeline', answers.timeline)],
+      ['budget', getAnswerLabel('budget', answers.budget)],
+      ['conditions', getAnswerLabel('conditions', answers.conditions)],
+      ...(hospitalSlug ? [['hospital', hospitalSlug]] : []),
+    ]
+      .filter(([, value]) => value)
+      .map(([key, value]) => `${key}: ${value}`);
+
+    return [
+      contact.message.trim(),
+      summary.length ? `Survey answers:\n${summary.join('\n')}` : '',
+    ].filter(Boolean).join('\n\n');
+  }, [answers, contact.message, getAnswerLabel, hospitalSlug]);
+
   const handleSubmit = async () => {
+    if (isSubmitting) return;
     setIsSubmitting(true);
-    await new Promise(r => setTimeout(r, 1800));
-    setIsSubmitting(false);
-    setIsComplete(true);
+    setSubmitError(null);
+    try {
+      await submitPublicConsultationForm({
+        formData: {
+          firstName: contact.name,
+          lastName: '',
+          email: contact.email,
+          phone: contact.phone,
+          countryOfOrigin: contact.country,
+          procedureId: (answers.procedure as string) || '',
+          message: buildSurveyMessage(),
+        },
+        preferredLanguage: currentLanguage || 'en',
+        source: 'get_quote',
+        bootstrapSession,
+        applyOnboardingResult,
+      });
+      setIsComplete(true);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Something went wrong');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSingleSelect = useCallback((stepId: string, value: string) => {
@@ -268,8 +290,9 @@ const ConsultationSurvey: React.FC = () => {
   const areaIcons: Record<string, React.ReactNode> = {
     face: <Smile size={28} />,
     body: <Sparkles size={28} />,
-    breast: <Heart size={28} />,
-    'non-surgical': <Syringe size={28} />,
+    nonsurgical: <Syringe size={28} />,
+    hair: <Scissors size={28} />,
+    dental: <Heart size={28} />,
   };
 
   const stepIcons: Record<string, React.ReactNode> = {
@@ -622,6 +645,10 @@ const ConsultationSurvey: React.FC = () => {
                     className="w-full bg-sage-50/50 text-navy-900 border border-stone-200 px-4 py-3.5 rounded-lg outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 transition-all resize-none placeholder-stone-400"
                   />
                 </div>
+
+                {submitError && (
+                  <p className="text-sm text-red-500 text-center">{submitError}</p>
+                )}
               </div>
             </div>
           )}

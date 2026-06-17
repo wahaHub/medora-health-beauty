@@ -1,10 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import Contact from '@/components/Contact';
+import ConsultationModal from '@/components/ConsultationModal';
 
 const crmApiState = vi.hoisted(() => ({
   initOnboarding: vi.fn(),
+}));
+
+const consultationState = vi.hoisted(() => ({
+  isOpen: true,
+  closeConsultation: vi.fn(),
+  preselectedProcedure: '',
+  preselectedSurgeon: '',
 }));
 
 const patientAuthState = vi.hoisted(() => ({
@@ -12,7 +19,7 @@ const patientAuthState = vi.hoisted(() => ({
 }));
 
 const patientEntryState = vi.hoisted(() => ({
-  applyOnboardingResult: vi.fn(),
+  applyOnboardingResult: vi.fn(() => true),
 }));
 
 vi.mock('@/services/crmApiClient', async () => {
@@ -23,6 +30,10 @@ vi.mock('@/services/crmApiClient', async () => {
   };
 });
 
+vi.mock('@/contexts/ConsultationContext', () => ({
+  useConsultation: () => consultationState,
+}));
+
 vi.mock('@/contexts/PatientAuthContext', () => ({
   usePatientAuth: () => patientAuthState,
 }));
@@ -31,16 +42,14 @@ vi.mock('@/hooks/usePatientEntry', () => ({
   usePatientEntry: () => patientEntryState,
 }));
 
+vi.mock('@/hooks/useData', () => ({
+  useSurgeonsList: () => ({ data: { surgeons: [] }, isLoading: false }),
+}));
+
 vi.mock('@/hooks/useTranslation', () => ({
   useTranslation: () => ({
     t: (key: string) => ({
-      categoryFace: 'Face',
-      categoryBody: 'Body',
-      categoryBreast: 'Breast',
-      categoryNonSurgical: 'Non Surgical',
-      contactTitle: 'Contact',
-      contactPhone: 'Phone: (201) 406-6514',
-      contactEmailDisplay: 'Email: contact@medorabeauty.com',
+      scheduleConsultation: 'Schedule Your Consultation',
       contactRequired: '* Required',
       contactFirstName: 'First Name*',
       contactLastName: 'Last Name*',
@@ -64,79 +73,88 @@ vi.mock('@/contexts/LanguageContext', () => ({
   useLanguage: () => ({ currentLanguage: 'en' }),
 }));
 
-vi.mock('@/hooks/useScrollReveal', () => ({
-  useScrollReveal: vi.fn(),
-}));
-
-vi.mock('@/services/surgeons', () => ({
-  fetchSurgeonsData: vi.fn(async () => ({
-    surgeonsBySpecialty: {
-      face: [{ surgeon_id: 'dr-chen', name: 'Dr. Chen' }],
-    },
-  })),
-}));
-
-describe('Homepage contact CRM onboarding', () => {
+describe('Consultation modal CRM onboarding', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    consultationState.isOpen = true;
+    consultationState.preselectedProcedure = '';
+    consultationState.preselectedSurgeon = '';
     crmApiState.initOnboarding.mockResolvedValue({
-      patientId: 'patient-1',
-      caseId: 'case-1',
-      restoreToken: 'restore-token-1',
+      patientId: 'patient-2',
+      caseId: 'case-2',
+      restoreToken: 'restore-token-2',
       nextStep: 'messages-ready',
-      conversations: [],
+      conversations: [{ id: 'conversation-1', type: 'patient-admin' }],
     });
   });
 
-  it('submits homepage consultation details through the CRM onboarding flow', async () => {
-    render(<Contact />);
+  it('uses shared procedure taxonomy and submits through the CRM onboarding flow', async () => {
+    render(<ConsultationModal />);
 
     expect(screen.queryByPlaceholderText('Zip Code*')).not.toBeInTheDocument();
     expect(screen.queryByRole('combobox', { name: 'Preferred Provider*' })).not.toBeInTheDocument();
-    expect(screen.getByRole('option', { name: 'Hair Transplant' })).toBeInTheDocument();
-    expect(screen.getByRole('option', { name: 'Veneers' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Smile Design' })).toBeInTheDocument();
 
     fireEvent.change(screen.getByPlaceholderText('First Name*'), {
-      target: { value: 'Alice' },
+      target: { value: 'Mina' },
     });
     fireEvent.change(screen.getByPlaceholderText('Last Name*'), {
-      target: { value: 'Beauty' },
+      target: { value: 'Patient' },
     });
     fireEvent.change(screen.getByPlaceholderText('Email*'), {
-      target: { value: 'alice@example.com' },
+      target: { value: 'mina@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText('Phone*'), {
-      target: { value: '+1 555 0100' },
+      target: { value: '+86 138 0000 0000' },
     });
     fireEvent.change(screen.getByPlaceholderText('Country of Origin*'), {
-      target: { value: 'United States' },
+      target: { value: 'China' },
     });
     fireEvent.change(screen.getByRole('combobox', { name: 'Procedure Interest*' }), {
-      target: { value: 'nose' },
+      target: { value: 'smile-design' },
     });
     fireEvent.change(screen.getByPlaceholderText('How can we help?'), {
-      target: { value: 'I want a natural result.' },
+      target: { value: 'I want to compare options.' },
     });
 
     fireEvent.click(screen.getByRole('button', { name: 'Submit Inquiry' }));
 
     await waitFor(() => {
       expect(crmApiState.initOnboarding).toHaveBeenCalledWith(expect.objectContaining({
-        name: 'Alice Beauty',
-        email: 'alice@example.com',
-        phone: '+1 555 0100',
-        disease: 'Nose',
-        procedureId: 'nose',
-        category: 'face',
+        name: 'Mina Patient',
+        email: 'mina@example.com',
+        phone: '+86 138 0000 0000',
+        disease: 'Smile Design',
+        procedureId: 'smile-design',
+        category: 'dental',
         preferredLanguage: 'en',
-        source: 'homepage_contact',
-        countryOfOrigin: 'United States',
-        message: 'I want a natural result.',
+        source: 'consultation_modal',
+        countryOfOrigin: 'China',
+        message: 'I want to compare options.',
       }));
     });
 
-    const payload = crmApiState.initOnboarding.mock.calls[0][0] as Record<string, unknown>;
-    expect(payload).not.toHaveProperty('zipCode');
-    expect(payload).not.toHaveProperty('preferredProvider');
+    expect(patientAuthState.bootstrapSession).toHaveBeenCalledWith(expect.objectContaining({
+      patientId: 'patient-2',
+      caseId: 'case-2',
+      name: 'Mina Patient',
+      email: 'mina@example.com',
+      restoreToken: 'restore-token-2',
+      nextStep: 'messages-ready',
+    }));
+    expect(patientEntryState.applyOnboardingResult).toHaveBeenCalledWith(expect.objectContaining({
+      patientId: 'patient-2',
+      caseId: 'case-2',
+      nextStep: 'messages-ready',
+      conversations: [{ id: 'conversation-1', type: 'patient-admin' }],
+    }));
+  });
+
+  it('maps legacy procedure preselection to the shared public taxonomy', () => {
+    consultationState.preselectedProcedure = 'Rhinoplasty';
+
+    render(<ConsultationModal />);
+
+    expect(screen.getByRole('combobox', { name: 'Procedure Interest*' })).toHaveValue('nose');
   });
 });
